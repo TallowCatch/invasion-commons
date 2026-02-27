@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 import yaml
 
 
@@ -20,11 +20,17 @@ class FisheryConfig:
     obs_noise_std: float = 20.0        # 0 means fully observed
     max_harvest_per_agent: float = 10.0
 
+    # Governance knobs (disabled by default)
+    monitoring_prob: float = 0.0       # chance each agent is audited each step
+    quota_fraction: float = 0.0        # per-agent quota = quota_fraction * stock
+    base_fine_rate: float = 1.0        # fine per unit of quota violation
+    fine_growth: float = 0.5           # repeated violations increase fines
+
     # Randomness
     seed: int = 0
 
 
 def load_config(path: str) -> FisheryConfig:
     with open(path, "r") as f:
-        d: Dict[str, Any] = yaml.safe_load(f)
+        d: Dict[str, Any] = yaml.safe_load(f) or {}
     return FisheryConfig(**d)

@@ -40,7 +40,8 @@ def make_population(cfg, n_greedy):
 
 def main():
     base_cfg = load_config(CONFIG_PATH)
-    os.makedirs("results", exist_ok=True)
+    out_dir = "results/runs/baselines"
+    os.makedirs(out_dir, exist_ok=True)
 
     rows = []
 
@@ -73,9 +74,9 @@ def main():
         print(f"Greedy: {n_greedy} | Collapse rate: {collapse_rate:.3f}")
 
     df = pd.DataFrame(rows)
-    df.to_csv("results/greedy_sweep.csv", index=False)
+    df.to_csv(f"{out_dir}/greedy_sweep.csv", index=False)
 
-    print("\nSaved to results/greedy_sweep.csv")
+    print(f"\nSaved to {out_dir}/greedy_sweep.csv")
 
 
 if __name__ == "__main__":

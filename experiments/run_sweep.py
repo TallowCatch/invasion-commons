@@ -9,12 +9,13 @@ from fishery_sim.metrics import gini
 
 
 def make_agents(cfg: FisheryConfig):
-    agents = (
-        [GreedyAgent(max_h=cfg.max_harvest_per_agent)] * 3
-        + [ConditionalCooperator(max_h=cfg.max_harvest_per_agent)] * 3
-        + [ConservativeAgent(max_h=cfg.max_harvest_per_agent)] * 1
-        + [Punisher(max_h=cfg.max_harvest_per_agent)] * 1
-    )
+    agents = []
+    for _ in range(3):
+        agents.append(GreedyAgent(max_h=cfg.max_harvest_per_agent))
+    for _ in range(3):
+        agents.append(ConditionalCooperator(max_h=cfg.max_harvest_per_agent))
+    agents.append(ConservativeAgent(max_h=cfg.max_harvest_per_agent))
+    agents.append(Punisher(max_h=cfg.max_harvest_per_agent))
     cfg.n_agents = len(agents)
     return agents
 
@@ -23,7 +24,8 @@ def main():
     cfg = load_config("experiments/configs/base.yaml")
 
     rows = []
-    os.makedirs("results", exist_ok=True)
+    out_dir = "results/runs/baselines"
+    os.makedirs(out_dir, exist_ok=True)
 
     for seed in tqdm(range(0, 200)):
         cfg.seed = seed
@@ -39,10 +41,12 @@ def main():
             "mean_stock": out["mean_stock"],
             "payoff_sum": float(out["payoffs"].sum()),
             "payoff_gini": gini(out["payoffs"]),
+            "sanction_total": out["sanction_total"],
+            "violation_events": out["violation_events"],
         })
 
     df = pd.DataFrame(rows)
-    df.to_csv("results/sweep.csv", index=False)
+    df.to_csv(f"{out_dir}/sweep.csv", index=False)
     print(df.groupby("collapsed")[["mean_stock", "payoff_sum", "payoff_gini"]].mean())
 
 

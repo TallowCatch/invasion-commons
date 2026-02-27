@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    df = pd.read_csv("results/sweep.csv")
+    df = pd.read_csv("results/runs/baselines/sweep.csv")
 
     # collapse rate
     collapse_rate = df["collapsed"].mean()

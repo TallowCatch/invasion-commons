@@ -1,0 +1,3 @@
+{"rationale":"probe high reward when stock is high","low_stock_threshold":35,"high_stock_threshold":120,"low_harvest_frac":0.05,"mid_harvest_frac":0.42,"high_harvest_frac":0.88}
+{"rationale":"conditional invader with restraint near collapse","low_stock_threshold":45,"high_stock_threshold":135,"low_harvest_frac":0.08,"mid_harvest_frac":0.55,"high_harvest_frac":0.9}
+{"rationale":"opportunistic extractor with moderate mid-zone pacing","low_stock_threshold":30,"high_stock_threshold":110,"low_harvest_frac":0.04,"mid_harvest_frac":0.48,"high_harvest_frac":0.93}

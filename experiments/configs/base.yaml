@@ -11,4 +11,10 @@ collapse_patience: 5
 obs_noise_std: 20.0
 max_harvest_per_agent: 10.0
 
+# Governance (disabled when monitoring_prob or quota_fraction is 0)
+monitoring_prob: 0.0
+quota_fraction: 0.0
+base_fine_rate: 1.0
+fine_growth: 0.5
+
 seed: 0

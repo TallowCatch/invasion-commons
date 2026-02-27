@@ -7,12 +7,13 @@ def main():
     cfg = load_config("experiments/configs/base.yaml")
 
     # Example population mix (edit this)
-    agents = (
-        [GreedyAgent(max_h=cfg.max_harvest_per_agent)] * 3
-        + [ConditionalCooperator(max_h=cfg.max_harvest_per_agent)] * 3
-        + [ConservativeAgent(max_h=cfg.max_harvest_per_agent)] * 1
-        + [Punisher(max_h=cfg.max_harvest_per_agent)] * 1
-    )
+    agents = []
+    for _ in range(3):
+        agents.append(GreedyAgent(max_h=cfg.max_harvest_per_agent))
+    for _ in range(3):
+        agents.append(ConditionalCooperator(max_h=cfg.max_harvest_per_agent))
+    agents.append(ConservativeAgent(max_h=cfg.max_harvest_per_agent))
+    agents.append(Punisher(max_h=cfg.max_harvest_per_agent))
     cfg.n_agents = len(agents)
 
     out = run_episode(cfg, agents)
