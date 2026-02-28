@@ -114,6 +114,15 @@ python -m experiments.run_invasion \
   --output-prefix results/runs/invasion/invasion_ollama
 ```
 
+Compare matched `mutation` vs live Ollama `llm_json` runs:
+
+```bash
+python -m experiments.summarize_injector_comparison \
+  --mutation-prefix results/runs/invasion/invasion_step4_match_mutation \
+  --llm-prefix results/runs/invasion/invasion_step4_match_ollama_live \
+  --output-prefix results/runs/invasion/invasion_step4_match_comparison
+```
+
 Run LLM JSON policy injection using replay file (offline deterministic):
 
 ```bash
