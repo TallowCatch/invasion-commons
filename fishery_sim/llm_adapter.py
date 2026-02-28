@@ -241,6 +241,61 @@ class OpenAIResponsesPolicyLLMClient:
         return ""
 
 
+class OllamaPolicyLLMClient:
+    """
+    Local Ollama client implementing PolicyLLMClient (no paid API key required).
+    """
+
+    def __init__(
+        self,
+        model: str = "qwen2.5:3b-instruct",
+        base_url: str | None = None,
+        timeout_s: float = 120.0,
+        temperature: float = 0.8,
+    ):
+        self.model = model
+        self.base_url = (base_url or os.environ.get("OLLAMA_BASE_URL") or "http://localhost:11434").rstrip("/")
+        self.timeout_s = float(max(1.0, timeout_s))
+        self.temperature = float(max(0.0, temperature))
+
+    def complete(self, prompt: str) -> str:
+        payload = {
+            "model": self.model,
+            "prompt": prompt,
+            "stream": False,
+            "options": {
+                "temperature": self.temperature,
+            },
+        }
+        body = json.dumps(payload).encode("utf-8")
+        req = urlrequest.Request(
+            url=f"{self.base_url}/api/generate",
+            data=body,
+            method="POST",
+            headers={"Content-Type": "application/json"},
+        )
+        try:
+            with urlrequest.urlopen(req, timeout=self.timeout_s) as resp:
+                raw = resp.read().decode("utf-8")
+        except urlerror.HTTPError as e:
+            detail = ""
+            try:
+                detail = e.read().decode("utf-8")
+            except Exception:
+                detail = str(e)
+            raise RuntimeError(f"Ollama API HTTP {e.code}: {detail}") from e
+        except Exception as e:
+            raise RuntimeError(
+                f"Ollama request failed (is Ollama running at {self.base_url}?): {e}"
+            ) from e
+
+        data = json.loads(raw)
+        text = data.get("response", "")
+        if not isinstance(text, str) or not text.strip():
+            raise RuntimeError("Ollama response contained no text.")
+        return text.strip()
+
+
 class FileReplayPolicyLLMClient:
     """
     Offline deterministic client that replays JSON outputs from disk.

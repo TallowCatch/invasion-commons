@@ -8,6 +8,47 @@ import yaml
 
 # Fixed held-out benchmark pack to stress generalization under harsh conditions.
 DEFAULT_BENCHMARK_PACKS: dict[str, list[dict[str, Any]]] = {
+    "heldout_v1": [
+        {
+            "name": "easy_high_regen_low_noise",
+            "overrides": {"regen_rate": 2.20, "obs_noise_std": 5.0},
+        },
+        {
+            "name": "moderate_shift",
+            "overrides": {"regen_rate": 1.55, "obs_noise_std": 12.0},
+        },
+        {
+            "name": "scarcity_start",
+            "overrides": {"stock_init": 120.0, "regen_rate": 1.45, "obs_noise_std": 14.0},
+        },
+        {
+            "name": "harsh_low_regen_high_noise",
+            "overrides": {"regen_rate": 1.10, "obs_noise_std": 25.0},
+        },
+    ],
+    "mixed_v1": [
+        {
+            "name": "moderate_regen_moderate_noise",
+            "overrides": {"regen_rate": 1.30, "obs_noise_std": 14.0},
+        },
+        {
+            "name": "low_regen_moderate_noise",
+            "overrides": {"regen_rate": 1.20, "obs_noise_std": 18.0},
+        },
+        {
+            "name": "fragile_threshold_light",
+            "overrides": {
+                "regen_rate": 1.25,
+                "obs_noise_std": 16.0,
+                "collapse_threshold": 12.0,
+                "collapse_patience": 4,
+            },
+        },
+        {
+            "name": "scarcity_start_moderate",
+            "overrides": {"stock_init": 120.0, "regen_rate": 1.22, "obs_noise_std": 15.0},
+        },
+    ],
     "harsh_v1": [
         {
             "name": "low_regen_high_noise",
@@ -98,4 +139,3 @@ def load_benchmark_pack_file(path: str, pack_name: str | None = None) -> list[di
         validated.append({"name": name, "overrides": dict(overrides)})
 
     return validated
-

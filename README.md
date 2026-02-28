@@ -20,13 +20,18 @@ The project is intentionally "golf-sim" simple:
 - `fishery_sim/simulation.py`: episode runner
 - `fishery_sim/evolution.py`: evolutionary invasion loop and strategy turnover
 - `fishery_sim/llm_adapter.py`: prompt -> JSON policy adapter for LLM strategy injection
-- `fishery_sim/benchmarks.py`: fixed held-out benchmark packs (`harsh_v1`, `harsh_v2`)
+- `fishery_sim/benchmarks.py`: fixed held-out benchmark packs (`heldout_v1`, `mixed_v1`, `harsh_v1`, `harsh_v2`)
 - `experiments/run_single.py`: one rollout sanity check
 - `experiments/run_sweep.py`: seed sweep for fixed population metrics
 - `experiments/run_greedy_sweep.py`: composition tipping-point scan
 - `experiments/run_invasion.py`: multi-generation invasion with train/test regime split
 - `experiments/run_governance_ablation.py`: publishable governance ablation with confidence intervals
 - `experiments/showcase_project.py`: auto-generated narrative report + evidence summary
+- `experiments/check_llm_setup.py`: backend check for replay/ollama/openai JSON policy output
+- `experiments/make_invasion_gif.py`: animated invasion dashboard GIF generator
+- `experiments/make_episode_gif.py`: animated per-step fishery episode GIF generator
+- `experiments/make_governance_comparison_gif.py`: animated side-by-side none vs monitoring+sanctions comparison GIF
+- `experiments/run_visual_governance_pair.py`: one-command matched-seed visual pipeline for slide-ready governance GIFs
 - `experiments/organize_results.py`: organizes CSV/MD artifacts into structured `results/runs/*`
 - `notebooks/02_invasion_benchmark_pack_and_ci.ipynb`: phase-2 reproducibility and reporting notebook
 
@@ -85,9 +90,28 @@ Run LLM JSON policy injection with a **live model** (requires `OPENAI_API_KEY`):
 export OPENAI_API_KEY=...
 python -m experiments.run_invasion \
   --injector-mode llm_json \
+  --llm-provider openai \
   --llm-model gpt-4.1-mini \
   --benchmark-pack harsh_v1 \
   --output-prefix results/runs/invasion/invasion_live
+```
+
+Run LLM JSON policy injection with **free local Ollama** (no paid key):
+
+```bash
+# Install Ollama once from https://ollama.com/download
+ollama pull qwen2.5:3b-instruct
+
+python -m experiments.check_llm_setup \
+  --provider ollama \
+  --model qwen2.5:3b-instruct
+
+python -m experiments.run_invasion \
+  --injector-mode llm_json \
+  --llm-provider ollama \
+  --llm-model qwen2.5:3b-instruct \
+  --benchmark-pack harsh_v1 \
+  --output-prefix results/runs/invasion/invasion_ollama
 ```
 
 Run LLM JSON policy injection using replay file (offline deterministic):
@@ -116,7 +140,7 @@ Generate governance ablation table (`none` vs `monitoring` vs `monitoring+sancti
 
 ```bash
 python -m experiments.run_governance_ablation \
-  --benchmark-pack harsh_v1 \
+  --benchmark-pack heldout_v1 \
   --n-runs 5 \
   --generations 30 \
   --seeds-per-generation 64 \
@@ -131,6 +155,40 @@ python -m experiments.showcase_project \
   --invasion-generations results/runs/invasion/invasion_baseline_generations.csv \
   --output results/runs/showcase/showcase_report.md
 ```
+
+Generate animated GIFs for demos/slides:
+
+```bash
+# Optional: generate a less-saturated visual benchmark first
+python -m experiments.run_invasion \
+  --generations 10 \
+  --seeds-per-generation 24 \
+  --test-seeds-per-generation 24 \
+  --train-regen-rate 1.5 \
+  --train-obs-noise-std 10 \
+  --benchmark-pack heldout_v1 \
+  --output-prefix results/runs/invasion/invasion_visual_benchmark
+
+python -m experiments.make_invasion_gif \
+  --input results/runs/invasion/invasion_visual_benchmark_generations.csv \
+  --output results/runs/showcase/invasion_train_vs_heldout_dynamics.gif
+
+python -m experiments.make_episode_gif \
+  --output results/runs/showcase/episode_stock_harvest_dynamics.gif
+```
+
+Interpretation tip: if every held-out bar is exactly `1.0`, the benchmark pack is saturated (all regimes collapse), which is a regime severity issue rather than a plotting bug.
+
+Generate a SocialJax-style visual comparison pack (matched seeds, moving side-by-side):
+
+```bash
+python -m experiments.run_visual_governance_pair
+```
+
+This writes:
+- `results/runs/showcase/invasion_none_baseline.gif`
+- `results/runs/showcase/invasion_monitoring_sanctions.gif`
+- `results/runs/showcase/invasion_none_vs_monitoring_sanctions.gif`
 
 Organize/cleanup historical CSV/MD outputs:
 
@@ -154,3 +212,4 @@ These metrics are written to:
 - `results/runs/ablation/*_runs.csv`
 - `results/runs/ablation/*_table.csv`
 - `results/runs/showcase/*.md`
+- `results/runs/showcase/*.gif`

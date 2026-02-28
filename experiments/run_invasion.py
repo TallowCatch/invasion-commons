@@ -4,7 +4,11 @@ import os
 from fishery_sim.benchmarks import get_benchmark_pack, load_benchmark_pack_file
 from fishery_sim.config import load_config
 from fishery_sim.evolution import make_strategy_injector, run_evolutionary_invasion
-from fishery_sim.llm_adapter import FileReplayPolicyLLMClient, OpenAIResponsesPolicyLLMClient
+from fishery_sim.llm_adapter import (
+    FileReplayPolicyLLMClient,
+    OllamaPolicyLLMClient,
+    OpenAIResponsesPolicyLLMClient,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -21,8 +25,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--rng-seed", type=int, default=0)
     parser.add_argument("--injector-mode", choices=["mutation", "llm_json"], default="mutation")
     parser.add_argument("--llm-policy-replay-file", default=None)
-    parser.add_argument("--llm-provider", choices=["openai"], default="openai")
-    parser.add_argument("--llm-model", default="gpt-4.1-mini")
+    parser.add_argument("--llm-provider", choices=["openai", "ollama"], default="ollama")
+    parser.add_argument("--llm-model", default="qwen2.5:3b-instruct")
     parser.add_argument("--llm-base-url", default=None)
     parser.add_argument("--llm-api-key-env", default="OPENAI_API_KEY")
     parser.add_argument("--llm-timeout-s", type=float, default=45.0)
@@ -64,21 +68,29 @@ def main() -> None:
     if args.llm_policy_replay_file:
         llm_client = FileReplayPolicyLLMClient(path=args.llm_policy_replay_file)
     elif args.injector_mode == "llm_json":
-        api_key = os.environ.get(args.llm_api_key_env)
-        if not api_key:
-            raise ValueError(
-                f"{args.llm_api_key_env} is required for live LLM injection. "
-                "Set the env var or pass --llm-policy-replay-file."
+        if args.llm_provider == "ollama":
+            llm_client = OllamaPolicyLLMClient(
+                model=args.llm_model,
+                base_url=args.llm_base_url,
+                timeout_s=args.llm_timeout_s,
+                temperature=args.llm_temperature,
             )
-        if args.llm_provider != "openai":
+        elif args.llm_provider == "openai":
+            api_key = os.environ.get(args.llm_api_key_env)
+            if not api_key:
+                raise ValueError(
+                    f"{args.llm_api_key_env} is required for OpenAI injection. "
+                    "Set the env var or switch to --llm-provider ollama / replay file."
+                )
+            llm_client = OpenAIResponsesPolicyLLMClient(
+                model=args.llm_model,
+                api_key=api_key,
+                base_url=args.llm_base_url,
+                timeout_s=args.llm_timeout_s,
+                temperature=args.llm_temperature,
+            )
+        else:
             raise ValueError(f"Unsupported llm provider: {args.llm_provider}")
-        llm_client = OpenAIResponsesPolicyLLMClient(
-            model=args.llm_model,
-            api_key=api_key,
-            base_url=args.llm_base_url,
-            timeout_s=args.llm_timeout_s,
-            temperature=args.llm_temperature,
-        )
     injector = make_strategy_injector(injector_mode=args.injector_mode, llm_client=llm_client)
 
     train_overrides = {
