@@ -205,11 +205,16 @@ Generation-level outputs include:
 - sanction and violation counts
 - strategy diversity and aggressiveness trends
 - per-regime held-out metrics when using benchmark packs
+- robustness timing metrics:
+  - `time_to_collapse` (first generation where test collapse reaches 1.0; right-censored at horizon)
+  - `first_generation_test_collapse_ge_0_8` (first generation where test collapse reaches 0.8; right-censored at horizon)
+  - `per_regime_survival_over_generations_*` (mean survival fraction `1 - collapse_rate`)
 
 These metrics are written to:
 - `results/runs/invasion/*_generations.csv`
 - `results/runs/invasion/*_strategies.csv`
 - `results/runs/ablation/*_runs.csv`
 - `results/runs/ablation/*_table.csv`
+- `results/runs/ablation/*_survival_curves.csv`
 - `results/runs/showcase/*.md`
 - `results/runs/showcase/*.gif`

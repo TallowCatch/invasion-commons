@@ -2,6 +2,7 @@ import argparse
 import copy
 import math
 import os
+import re
 
 import numpy as np
 import pandas as pd
@@ -80,6 +81,34 @@ def _ci95(values: list[float]) -> tuple[float, float, float]:
     return mean, mean - delta, mean + delta
 
 
+def _regime_collapse_columns(df: pd.DataFrame) -> list[str]:
+    return [
+        c
+        for c in df.columns
+        if c.startswith("test_") and c.endswith("_collapse_rate") and c != "test_collapse_rate"
+    ]
+
+
+def _regime_name_from_col(col: str) -> str:
+    if col == "test_collapse_rate":
+        return "overall_test"
+    name = re.sub(r"^test_", "", col)
+    name = re.sub(r"_collapse_rate$", "", name)
+    return name
+
+
+def _first_generation_at_or_above(
+    generation_df: pd.DataFrame,
+    column: str,
+    threshold: float,
+    default_generation: float,
+) -> float:
+    hits = generation_df[generation_df[column] >= threshold]
+    if hits.empty:
+        return float(default_generation)
+    return float(hits["generation"].iloc[0])
+
+
 def _build_llm_client(args: argparse.Namespace):
     if args.llm_policy_replay_file:
         return FileReplayPolicyLLMClient(path=args.llm_policy_replay_file)
@@ -110,7 +139,9 @@ def _build_llm_client(args: argparse.Namespace):
 
 
 def _summary_from_generation_df(condition: str, run_id: int, generation_df: pd.DataFrame) -> dict:
-    return {
+    n_generations = float(generation_df["generation"].max() + 1)
+    regime_cols = _regime_collapse_columns(generation_df)
+    row = {
         "condition": condition,
         "run_id": run_id,
         "train_collapse_mean": float(generation_df["train_collapse_rate"].mean()),
@@ -120,10 +151,34 @@ def _summary_from_generation_df(condition: str, run_id: int, generation_df: pd.D
         "test_mean_stock_mean": float(generation_df["test_mean_stock"].mean()),
         "test_mean_welfare_mean": float(generation_df["test_mean_welfare"].mean()),
         "test_generations_collapse_le_0_5": float((generation_df["test_collapse_rate"] <= 0.5).sum()),
+        # Robustness metrics requested for stability analysis.
+        "time_to_collapse": _first_generation_at_or_above(
+            generation_df=generation_df,
+            column="test_collapse_rate",
+            threshold=1.0 - 1e-12,
+            default_generation=n_generations,
+        ),
+        "first_generation_test_collapse_ge_0_8": _first_generation_at_or_above(
+            generation_df=generation_df,
+            column="test_collapse_rate",
+            threshold=0.8,
+            default_generation=n_generations,
+        ),
         "test_regime_count": float(generation_df["test_regime_count"].iloc[0])
         if "test_regime_count" in generation_df.columns
         else 1.0,
     }
+    if regime_cols:
+        per_regime_survival_means = []
+        for col in regime_cols:
+            key = f"per_regime_survival_over_generations__{_regime_name_from_col(col)}"
+            val = float((1.0 - generation_df[col]).mean())
+            row[key] = val
+            per_regime_survival_means.append(val)
+        row["per_regime_survival_over_generations_mean"] = float(np.mean(per_regime_survival_means))
+    else:
+        row["per_regime_survival_over_generations_mean"] = float((1.0 - generation_df["test_collapse_rate"]).mean())
+    return row
 
 
 def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
@@ -135,7 +190,11 @@ def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
         "test_mean_stock_mean",
         "test_mean_welfare_mean",
         "test_generations_collapse_le_0_5",
+        "time_to_collapse",
+        "first_generation_test_collapse_ge_0_8",
+        "per_regime_survival_over_generations_mean",
     ]
+    metric_keys.extend(sorted([c for c in per_run_df.columns if c.startswith("per_regime_survival_over_generations__")]))
     rows = []
     for condition, cdf in per_run_df.groupby("condition", sort=False):
         row = {"condition": condition, "n_runs": int(len(cdf))}
@@ -150,6 +209,34 @@ def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
     if not out.empty:
         out = out.sort_values("test_collapse_mean_mean", ascending=True).reset_index(drop=True)
     return out
+
+
+def _build_survival_curves(generation_history_df: pd.DataFrame) -> pd.DataFrame:
+    if generation_history_df.empty:
+        return pd.DataFrame()
+
+    regime_cols = _regime_collapse_columns(generation_history_df)
+    collapse_cols = regime_cols[:] if regime_cols else []
+    collapse_cols.append("test_collapse_rate")
+
+    rows: list[dict] = []
+    for col in collapse_cols:
+        regime_name = _regime_name_from_col(col)
+        for (condition, generation), gdf in generation_history_df.groupby(["condition", "generation"], sort=True):
+            values = (1.0 - gdf[col]).tolist()
+            mean, lo, hi = _ci95(values)
+            rows.append(
+                {
+                    "condition": condition,
+                    "generation": int(generation),
+                    "regime": regime_name,
+                    "survival_fraction_mean": round(mean, 6),
+                    "survival_fraction_ci95_low": round(lo, 6),
+                    "survival_fraction_ci95_high": round(hi, 6),
+                    "n_runs": int(len(values)),
+                }
+            )
+    return pd.DataFrame(rows).sort_values(["condition", "regime", "generation"]).reset_index(drop=True)
 
 
 def main() -> None:
@@ -202,6 +289,7 @@ def main() -> None:
     }
 
     per_run_rows = []
+    generation_histories: list[pd.DataFrame] = []
     for name, knobs in conditions.items():
         for run_id in range(args.n_runs):
             cfg = copy.deepcopy(base_cfg)
@@ -232,16 +320,23 @@ def main() -> None:
             strategy_path = f"{args.output_prefix}_{name}_run{run_id:02d}_strategies.csv"
             generation_df.to_csv(generation_path, index=False)
             strategy_df.to_csv(strategy_path, index=False)
+            generation_histories.append(
+                generation_df.assign(condition=name, run_id=run_id)
+            )
             per_run_rows.append(_summary_from_generation_df(name, run_id, generation_df))
 
     per_run_df = pd.DataFrame(per_run_rows)
     table_df = _aggregate_with_ci(per_run_df)
+    history_df = pd.concat(generation_histories, ignore_index=True) if generation_histories else pd.DataFrame()
+    survival_curves_df = _build_survival_curves(history_df)
 
     runs_csv = f"{args.output_prefix}_runs.csv"
     table_csv = f"{args.output_prefix}_table.csv"
     table_md = f"{args.output_prefix}_table.md"
+    survival_curves_csv = f"{args.output_prefix}_survival_curves.csv"
     per_run_df.to_csv(runs_csv, index=False)
     table_df.to_csv(table_csv, index=False)
+    survival_curves_df.to_csv(survival_curves_csv, index=False)
     with open(table_md, "w", encoding="utf-8") as f:
         f.write(_to_markdown_table(table_df))
         f.write("\n")
@@ -249,6 +344,7 @@ def main() -> None:
     print(f"Saved: {runs_csv}")
     print(f"Saved: {table_csv}")
     print(f"Saved: {table_md}")
+    print(f"Saved: {survival_curves_csv}")
     if test_regimes:
         print("Benchmark regimes:", ", ".join([r["name"] for r in test_regimes]))
     print(table_df.to_string(index=False))
