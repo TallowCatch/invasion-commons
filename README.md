@@ -32,7 +32,7 @@ The project is intentionally "golf-sim" simple:
 - `experiments/make_episode_gif.py`: animated per-step fishery episode GIF generator
 - `experiments/make_governance_comparison_gif.py`: animated side-by-side none vs monitoring+sanctions comparison GIF
 - `experiments/run_visual_governance_pair.py`: one-command matched-seed visual pipeline for slide-ready governance GIFs
-- `experiments/organize_results.py`: organizes CSV/MD artifacts into structured `results/runs/*`
+- `experiments/organize_results.py`: buckets results into `curated`, `exploratory`, and `scratch` under each run type
 - `notebooks/02_invasion_benchmark_pack_and_ci.ipynb`: phase-2 reproducibility and reporting notebook
 
 ## Quick Start
@@ -100,6 +100,9 @@ Run LLM JSON policy injection with **free local Ollama** (no paid key):
 
 ```bash
 # Install Ollama once from https://ollama.com/download
+# Start server (if not already running from Ollama app)
+ollama serve
+
 ollama pull qwen2.5:3b-instruct
 
 python -m experiments.check_llm_setup \
@@ -112,6 +115,9 @@ python -m experiments.run_invasion \
   --llm-model qwen2.5:3b-instruct \
   --benchmark-pack harsh_v1 \
   --output-prefix results/runs/invasion/invasion_ollama
+
+# Optional: stop server when done
+pkill -f "ollama serve"
 ```
 
 Compare matched `mutation` vs live Ollama `llm_json` runs:
@@ -155,6 +161,57 @@ python -m experiments.run_governance_ablation \
   --seeds-per-generation 64 \
   --output-prefix results/runs/ablation/governance_ablation
 ```
+
+Run a matched governance-conditioned injector comparison (`none` vs `monitoring+sanctions`, mutation vs live Ollama):
+
+```bash
+python -m experiments.run_governance_ablation \
+  --benchmark-pack heldout_v1 \
+  --n-runs 2 \
+  --generations 10 \
+  --seeds-per-generation 24 \
+  --test-seeds-per-generation 24 \
+  --replacement-fraction 0.2 \
+  --adversarial-pressure 0.3 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --run-seed-stride 1000 \
+  --injector-mode mutation \
+  --output-prefix results/runs/ablation/governance_match_step4_mutation
+
+python -m experiments.run_governance_ablation \
+  --benchmark-pack heldout_v1 \
+  --n-runs 2 \
+  --generations 10 \
+  --seeds-per-generation 24 \
+  --test-seeds-per-generation 24 \
+  --replacement-fraction 0.2 \
+  --adversarial-pressure 0.3 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --run-seed-stride 1000 \
+  --injector-mode llm_json \
+  --llm-provider ollama \
+  --llm-model qwen2.5:3b-instruct \
+  --output-prefix results/runs/ablation/governance_match_step4_ollama_live
+
+python -m experiments.summarize_governance_injector_match \
+  --mutation-table results/runs/ablation/governance_match_step4_mutation_table.csv \
+  --llm-table results/runs/ablation/governance_match_step4_ollama_live_table.csv \
+  --output-prefix results/runs/ablation/governance_match_step4_injector_split
+```
+
+Organize results after experiments (recommended):
+
+```bash
+python -m experiments.organize_results --results-dir results --apply
+```
+
+Result folder convention:
+- `results/runs/invasion/curated`: slide/report-ready invasion artifacts
+- `results/runs/invasion/exploratory`: useful but non-final runs
+- `results/runs/invasion/scratch`: smoke/tmp/check runs
+- same three buckets for `ablation`, `showcase`, and `baselines`
 
 Generate showcase report:
 
