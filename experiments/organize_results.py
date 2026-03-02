@@ -52,6 +52,8 @@ def _classify_invasion(name: str) -> str:
 
 def _classify_ablation(name: str) -> str:
     lower = name.lower()
+    if lower.startswith("paper_v1_appendix_"):
+        return "curated"
     if _is_scratch(name) or "step3_smoke" in lower:
         return "scratch"
     curated_prefixes = (

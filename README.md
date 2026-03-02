@@ -359,6 +359,66 @@ python -m experiments.summarize_paper_v1 \
   --experiment-tag paper_v1
 ```
 
+Run targeted high-power medium-tier reruns (`n_runs=5`) for decision-critical collapse evidence:
+
+```bash
+python -m experiments.run_governance_ablation \
+  --benchmark-pack medium_v1 \
+  --n-runs 5 \
+  --generations 15 \
+  --seeds-per-generation 32 \
+  --test-seeds-per-generation 32 \
+  --replacement-fraction 0.2 \
+  --adversarial-pressure 0.3 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --run-seed-stride 1000 \
+  --injector-mode mutation \
+  --experiment-tag paper_v1 \
+  --manifest-out results/runs/showcase/curated/paper_v1_mutation_medium_manifest.json \
+  --output-prefix results/runs/ablation/curated/paper_v1_mutation_medium_v1
+
+python -m experiments.run_governance_ablation \
+  --benchmark-pack medium_v1 \
+  --n-runs 5 \
+  --generations 15 \
+  --seeds-per-generation 32 \
+  --test-seeds-per-generation 32 \
+  --replacement-fraction 0.2 \
+  --adversarial-pressure 0.3 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --run-seed-stride 1000 \
+  --injector-mode llm_json \
+  --llm-provider ollama \
+  --llm-model qwen2.5:3b-instruct \
+  --experiment-tag paper_v1 \
+  --manifest-out results/runs/showcase/curated/paper_v1_llm_medium_manifest.json \
+  --output-prefix results/runs/ablation/curated/paper_v1_llm_medium_v1
+```
+
+Optional appendix-only hard-tier live smoke (`n_runs=1`) to confirm saturation profile:
+
+```bash
+python -m experiments.run_governance_ablation \
+  --benchmark-pack hard_v1 \
+  --n-runs 1 \
+  --generations 10 \
+  --seeds-per-generation 24 \
+  --test-seeds-per-generation 24 \
+  --replacement-fraction 0.2 \
+  --adversarial-pressure 0.3 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --run-seed-stride 1000 \
+  --injector-mode llm_json \
+  --llm-provider ollama \
+  --llm-model qwen2.5:3b-instruct \
+  --experiment-tag paper_v1_appendix \
+  --manifest-out results/runs/showcase/curated/paper_v1_appendix_llm_hard_smoke_manifest.json \
+  --output-prefix results/runs/ablation/curated/paper_v1_appendix_llm_hard_smoke
+```
+
 Organize results after experiments (recommended):
 
 ```bash

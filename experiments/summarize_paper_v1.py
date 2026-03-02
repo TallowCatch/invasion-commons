@@ -94,6 +94,17 @@ def _bootstrap_ci(
     return mean, float(lo), float(hi)
 
 
+def _effect_size_dz(diffs: np.ndarray) -> float:
+    arr = np.asarray(diffs, dtype=float)
+    if arr.size <= 1:
+        return math.nan
+    mean = float(arr.mean())
+    sd = float(arr.std(ddof=1))
+    if sd <= 1e-12:
+        return 0.0
+    return mean / sd
+
+
 def _normalize_key(v: Any) -> Any:
     if isinstance(v, float) and math.isnan(v):
         return "__nan__"
@@ -129,6 +140,8 @@ def _load_runs(ablation_dir: Path, experiment_tag: str) -> pd.DataFrame:
         if parsed is None:
             continue
         injector, tier = parsed
+        if injector not in {"mutation", "llm_json"}:
+            continue
         df = pd.read_csv(path)
         if "condition" not in df.columns or "run_id" not in df.columns:
             raise ValueError(f"Missing condition/run_id columns in {path}")
@@ -152,6 +165,8 @@ def _load_survival_curves(ablation_dir: Path, experiment_tag: str) -> pd.DataFra
         if parsed is None:
             continue
         injector, tier = parsed
+        if injector not in {"mutation", "llm_json"}:
+            continue
         df = pd.read_csv(path)
         if "condition" not in df.columns or "generation" not in df.columns:
             continue
@@ -256,6 +271,74 @@ def _cross_injector_deltas(
     out = pd.DataFrame(rows)
     if not out.empty:
         out = out.sort_values(["tier", "condition", "metric"]).reset_index(drop=True)
+    return out
+
+
+def _governance_effect_ranking(runs_df: pd.DataFrame) -> pd.DataFrame:
+    rows: list[dict[str, Any]] = []
+    for (injector, tier), gdf in runs_df.groupby(["injector", "tier"], sort=True):
+        none_df = gdf[gdf["condition"] == "none"].copy()
+        ms_df = gdf[gdf["condition"] == "monitoring_sanctions"].copy()
+        if none_df.empty or ms_df.empty:
+            continue
+        _assert_matched(none_df, ms_df, context=f"ranking/{injector}/{tier}")
+        merged = ms_df.merge(
+            none_df,
+            on="run_id",
+            suffixes=("_ms", "_none"),
+            how="inner",
+        )
+        if merged.empty:
+            continue
+
+        collapse_reduction = (
+            merged["test_collapse_mean_none"].to_numpy(dtype=float)
+            - merged["test_collapse_mean_ms"].to_numpy(dtype=float)
+        )
+        stock_gain = (
+            merged["test_mean_stock_mean_ms"].to_numpy(dtype=float)
+            - merged["test_mean_stock_mean_none"].to_numpy(dtype=float)
+        )
+        survival_gain = (
+            merged["per_regime_survival_over_generations_mean_ms"].to_numpy(dtype=float)
+            - merged["per_regime_survival_over_generations_mean_none"].to_numpy(dtype=float)
+        )
+
+        es_collapse = _effect_size_dz(collapse_reduction)
+        es_stock = _effect_size_dz(stock_gain)
+        es_survival = _effect_size_dz(survival_gain)
+        pieces = np.array([es_collapse, es_stock, es_survival], dtype=float)
+        pieces[~np.isfinite(pieces)] = np.nan
+        composite = float(np.nanmean(pieces)) if np.isfinite(pieces).any() else math.nan
+
+        rows.append(
+            {
+                "injector": injector,
+                "tier": tier,
+                "n_pairs": int(len(merged)),
+                "collapse_reduction_mean": float(collapse_reduction.mean()),
+                "stock_gain_mean": float(stock_gain.mean()),
+                "survival_gain_mean": float(survival_gain.mean()),
+                "collapse_reduction_effect_size_dz": es_collapse,
+                "stock_gain_effect_size_dz": es_stock,
+                "survival_gain_effect_size_dz": es_survival,
+                "governance_score_composite": composite,
+            }
+        )
+    out = pd.DataFrame(rows)
+    if out.empty:
+        return out
+    out = out.sort_values("governance_score_composite", ascending=False).reset_index(drop=True)
+    out["rank_global"] = (
+        out["governance_score_composite"]
+        .rank(method="dense", ascending=False)
+        .astype("Int64")
+    )
+    out["rank_within_tier"] = (
+        out.groupby("tier")["governance_score_composite"]
+        .rank(method="dense", ascending=False)
+        .astype("Int64")
+    )
     return out
 
 
@@ -541,6 +624,9 @@ def _write_methods(
     lines.append("- analysis unit: per-run rows from `*_runs.csv`")
     lines.append("- governance contrast: monitoring_sanctions minus none")
     lines.append("- collapse effect report: both `ms-none` and `none-ms` (reduction) are reported")
+    lines.append(
+        "- composite governance score: mean of three paired effect sizes (dz): collapse reduction, stock gain, survival gain"
+    )
     lines.append("")
     lines.append("## Cell Settings")
     lines.append("")
@@ -568,9 +654,11 @@ def _write_main_results(
     gate: dict[str, Any],
     within_df: pd.DataFrame,
     llm_df: pd.DataFrame,
+    ranking_df: pd.DataFrame,
     within_path: Path,
     cross_path: Path,
     llm_path: Path,
+    ranking_path: Path,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     lines: list[str] = []
@@ -617,10 +705,35 @@ def _write_main_results(
                 f"ci_high={row['collapse_reduction_ci95_high']:.6f}"
             )
     lines.append("")
+    lines.append("## Composite Governance Ranking")
+    lines.append("")
+    if ranking_df.empty:
+        lines.append("_No ranking rows found._")
+    else:
+        med = ranking_df[ranking_df["tier"] == "medium_v1"].sort_values(
+            "governance_score_composite", ascending=False
+        )
+        target = med if not med.empty else ranking_df
+        for _, row in target.head(4).iterrows():
+            lines.append(
+                f"- `{row['tier']}` `{row['injector']}` composite={float(row['governance_score_composite']):.6f} "
+                f"(collapse_dz={float(row['collapse_reduction_effect_size_dz']):.6f}, "
+                f"stock_dz={float(row['stock_gain_effect_size_dz']):.6f}, "
+                f"survival_dz={float(row['survival_gain_effect_size_dz']):.6f})"
+            )
+    lines.append("")
     lines.append("## Caveats")
     lines.append("")
     lines.append("- LLM cells are slower and can be sensitive to local model/runtime load.")
-    lines.append("- CI uses bootstrap with small n-runs (3), so intervals remain wide.")
+    pair_counts = sorted(
+        {int(v) for v in within_df["n_pairs"].tolist() if pd.notna(v)}
+    ) if not within_df.empty else []
+    if pair_counts:
+        lines.append(
+            f"- CI uses bootstrap with finite paired-run counts {pair_counts}; intervals can remain wide."
+        )
+    else:
+        lines.append("- CI uses bootstrap with finite runs; intervals can remain wide.")
     if not llm_df.empty:
         for _, row in llm_df.sort_values("tier").iterrows():
             lines.append(
@@ -633,6 +746,7 @@ def _write_main_results(
     lines.append(f"- Table 1 (within-governance deltas): `{within_path}`")
     lines.append(f"- Table 1b (cross-injector deltas): `{cross_path}`")
     lines.append(f"- Table 2 (LLM integrity): `{llm_path}`")
+    lines.append(f"- Table 3 (composite governance ranking): `{ranking_path}`")
     lines.append("")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -661,6 +775,7 @@ def main() -> None:
         rng=rng,
     )
     llm_df = _llm_integrity(runs_df=runs_df)
+    ranking_df = _governance_effect_ranking(runs_df=runs_df)
     gate = _gate_report(within_df=within_df, runs_df=runs_df)
 
     table1_csv = out_ablation / f"{args.experiment_tag}_table1_main_deltas.csv"
@@ -669,10 +784,21 @@ def main() -> None:
     table1b_md = out_ablation / f"{args.experiment_tag}_table1b_cross_injector.md"
     table2_csv = out_ablation / f"{args.experiment_tag}_table2_llm_integrity.csv"
     table2_md = out_ablation / f"{args.experiment_tag}_table2_llm_integrity.md"
+    table3_csv = out_ablation / f"{args.experiment_tag}_table3_effect_size_ranking.csv"
+    table3_md = out_ablation / f"{args.experiment_tag}_table3_effect_size_ranking.md"
+    table3_med_csv = out_ablation / f"{args.experiment_tag}_table3_medium_effect_size_ranking.csv"
+    table3_med_md = out_ablation / f"{args.experiment_tag}_table3_medium_effect_size_ranking.md"
 
     _save_table(within_df, table1_csv, table1_md, title="Table 1: Main Deltas With CI")
     _save_table(cross_df, table1b_csv, table1b_md, title="Table 1b: Cross Injector Deltas With CI")
     _save_table(llm_df, table2_csv, table2_md, title="Table 2: LLM Integrity")
+    _save_table(ranking_df, table3_csv, table3_md, title="Table 3: Composite Governance Ranking")
+    _save_table(
+        ranking_df[ranking_df["tier"] == "medium_v1"].copy(),
+        table3_med_csv,
+        table3_med_md,
+        title="Table 3 (Medium): Composite Governance Ranking",
+    )
 
     gate_json = out_showcase / f"{args.experiment_tag}_gates.json"
     gate_json.write_text(json.dumps(gate, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -690,9 +816,11 @@ def main() -> None:
         gate=gate,
         within_df=within_df,
         llm_df=llm_df,
+        ranking_df=ranking_df,
         within_path=table1_csv,
         cross_path=table1b_csv,
         llm_path=table2_csv,
+        ranking_path=table3_csv,
     )
 
     if not args.skip_figures:
@@ -719,6 +847,10 @@ def main() -> None:
     print(f"Saved: {table1b_md}")
     print(f"Saved: {table2_csv}")
     print(f"Saved: {table2_md}")
+    print(f"Saved: {table3_csv}")
+    print(f"Saved: {table3_md}")
+    print(f"Saved: {table3_med_csv}")
+    print(f"Saved: {table3_med_md}")
     print(f"Saved: {gate_json}")
     print(f"Saved: {methods_md}")
     print(f"Saved: {main_md}")
