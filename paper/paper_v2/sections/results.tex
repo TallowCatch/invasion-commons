@@ -1,0 +1,56 @@
+\section{Results}
+
+Under matched settings with high-power reruns ($n\_pairs=5$), monitoring+sanctions reduced held-out collapse relative to none for both injector types. For mutation, collapse reduction was $0.109896$ (95\% CI $[0.031042, 0.189583]$). For live llm\_json injection, collapse reduction was $0.083542$ (95\% CI $[0.015417, 0.150938]$). Both confidence-interval lower bounds are positive, supporting the medium-tier robustness claim for governance under invasion pressure.
+
+Monitoring+sanctions also improved supporting robustness indicators versus none. Mean held-out stock increased by $23.352178$ for mutation (95\% CI $[15.873344, 31.697602]$) and by $22.402775$ for llm\_json (95\% CI $[18.453585, 27.746404]$). Per-regime survival over generations improved by $0.109896$ for mutation (95\% CI $[0.031042, 0.189583]$) and by $0.083542$ for llm\_json (95\% CI $[0.015417, 0.151667]$). Time to collapse increased by $1.2$ generations for mutation (95\% CI $[0.4, 2.2]$) and by $1.8$ generations for llm\_json (95\% CI $[1.0, 3.0]$).
+
+From the frozen gate file, the cycle-level criteria evaluate as follows: the primary medium reduction gate is \textbf{PASS}, the strong CI lower-bound gate is \textbf{PASS}, and the medium saturation check ($>0.95$ collapse for all conditions) is \textbf{FALSE}.
+
+Easy-tier runs used $n\_pairs=3$ and show wider uncertainty, especially for llm\_json. For collapse reduction, mutation remains positive ($0.170139$, 95\% CI $[0.068750, 0.279167]$), while llm\_json crosses zero ($0.163542$, 95\% CI $[-0.061458, 0.411979]$). This is consistent with treating medium-tier high-power evidence as the decision-critical result.
+
+\begin{table}[H]
+  \centering
+  \caption{Collapse reduction (none minus monitoring+sanctions) by tier and injector. Positive values indicate governance reduces collapse.}
+  \begin{tabular}{lllll}
+    \toprule
+    Tier & Injector & $n\_pairs$ & Mean reduction & 95\% CI \\
+    \midrule
+    easy\_v1 & mutation & 3 & 0.170139 & [0.068750, 0.279167] \\
+    easy\_v1 & llm\_json & 3 & 0.163542 & [-0.061458, 0.411979] \\
+    medium\_v1 & mutation & 5 & 0.109896 & [0.031042, 0.189583] \\
+    medium\_v1 & llm\_json & 5 & 0.083542 & [0.015417, 0.150938] \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Using the composite effect-size score across collapse reduction, stock gain, and survival gain, llm\_json obtains a score of $1.805738$ (rank-within-tier 1) and mutation obtains a score of $1.490345$ (rank-within-tier 2).
+
+Figures~\ref{fig:gov_effect}--\ref{fig:injector_comp} visualize governance effects, time-to-collapse improvements, regime-level survival dynamics, and matched injector comparisons.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{../../results/runs/showcase/curated/paper_v1_figureA_governance_effect.png}
+  \caption{Governance effect by tier/injector with confidence intervals.}
+  \label{fig:gov_effect}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{../../results/runs/showcase/curated/paper_v1_figureB_time_to_collapse_gain.png}
+  \caption{Time-to-collapse gain under governance.}
+  \label{fig:time_gain}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{../../results/runs/showcase/curated/paper_v1_figureC_medium_survival_trajectories.png}
+  \caption{Per-regime survival trajectories in medium tier.}
+  \label{fig:survival_traj}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{../../results/runs/showcase/curated/paper_v1_figureD_injector_comparison.png}
+  \caption{Injector comparison under matched settings.}
+  \label{fig:injector_comp}
+\end{figure}

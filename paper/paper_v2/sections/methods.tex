@@ -1,0 +1,49 @@
+\section{Methods}
+
+The substrate is a minimal renewable fishery commons with a shared stock, per-agent harvest actions, regeneration, and collapse dynamics. Governance mechanisms modify strategic pressure through monitoring and sanctions rather than only post-hoc accounting, so institutional choices can causally affect ecological outcomes.
+
+Each run is evaluated under three governance settings: none, monitoring, and monitoring with sanctions. Primary contrasts are reported as $\Delta(\texttt{monitoring\_sanctions}-\texttt{none})$. For collapse readability, we also report \texttt{none - monitoring\_sanctions} as ``collapse reduction.''
+
+Two injector sources are matched. The first is \textbf{mutation}, a non-LLM strategy variation baseline. The second is \textbf{llm\_json}, where strategies are generated online by Ollama (\texttt{qwen2.5:3b-instruct}) as structured JSON and then adapted into executable policy specifications.
+
+The core matrix spans tiers (\texttt{easy\_v1}, \texttt{medium\_v1}) and injectors (mutation, llm\_json) with shared settings. Run counts follow the curated cycle outputs, where easy-tier cells have $n\_pairs=3$ and medium-tier high-power cells have $n\_pairs=5$.
+
+\begin{table}[H]
+  \centering
+  \caption{Shared run settings for matched comparisons.}
+  \begin{tabular}{ll}
+    \toprule
+    Setting & Value \\
+    \midrule
+    Generations & 15 \\
+    Seeds per generation (train) & 32 \\
+    Seeds per generation (test) & 32 \\
+    Replacement fraction & 0.2 \\
+    Adversarial pressure & 0.3 \\
+    Train regeneration rate & 2.0 \\
+    Train observation noise std & 6.0 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Selection and replacement are performed in train conditions, while governance robustness is evaluated on held-out regime packs each generation. This separates adaptation pressure from generalization assessment.
+
+The primary outcome is held-out collapse reduction. Secondary outcomes are held-out mean stock, time-to-collapse, and per-regime survival fraction over generations. A composite governance score averages paired effect sizes ($d_z$) for collapse reduction, stock gain, and survival gain.
+
+Analysis is run-level and CI reporting uses bootstrap mean confidence intervals (B=5000, percentile 2.5/97.5) over paired governance deltas. Gate logic is evaluated from frozen summary artifacts to prevent post-hoc threshold drift.
+
+Methods and run metadata are frozen in curated outputs. The canonical files are listed below.
+
+\begin{table}[H]
+  \centering
+  \caption{Canonical curated reporting artifacts.}
+  \begin{tabular}{ll}
+    \toprule
+    Artifact & Path \\
+    \midrule
+    Methods summary & \path{results/runs/showcase/curated/paper_v1_methods.md} \\
+    Gate outcomes & \path{results/runs/showcase/curated/paper_v1_gates.json} \\
+    Main delta table & \path{results/runs/ablation/curated/paper_v1_table1_main_deltas.csv} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
