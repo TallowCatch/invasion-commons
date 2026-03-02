@@ -7,7 +7,7 @@ This repo is scoped to the following question:
 
 Are cooperative norms in a renewable commons evolutionarily stable under repeated adversarial strategy injection, and which governance signals improve resistance to invasion?
 
-The project is intentionally "golf-sim" simple:
+The project is intentionally simple:
 - one global renewable stock
 - harvest actions by multiple agents
 - collapse threshold with patience window
@@ -20,7 +20,7 @@ The project is intentionally "golf-sim" simple:
 - `fishery_sim/simulation.py`: episode runner
 - `fishery_sim/evolution.py`: evolutionary invasion loop and strategy turnover
 - `fishery_sim/llm_adapter.py`: prompt -> JSON policy adapter for LLM strategy injection
-- `fishery_sim/benchmarks.py`: fixed held-out benchmark packs (`heldout_v1`, `mixed_v1`, `harsh_v1`, `harsh_v2`)
+- `fishery_sim/benchmarks.py`: fixed held-out benchmark packs (`easy_v1`, `medium_v1`, `hard_v1`, `heldout_v1`, `mixed_v1`, `harsh_v1`, `harsh_v2`)
 - `experiments/run_single.py`: one rollout sanity check
 - `experiments/run_sweep.py`: seed sweep for fixed population metrics
 - `experiments/run_greedy_sweep.py`: composition tipping-point scan
@@ -33,6 +33,7 @@ The project is intentionally "golf-sim" simple:
 - `experiments/make_governance_comparison_gif.py`: animated side-by-side none vs monitoring+sanctions comparison GIF
 - `experiments/run_visual_governance_pair.py`: one-command matched-seed visual pipeline for slide-ready governance GIFs
 - `experiments/organize_results.py`: buckets results into `curated`, `exploratory`, and `scratch` under each run type
+- `experiments/summarize_tiered_ablation.py`: summarizes tiered (`easy/medium/hard`) governance tables into one report
 - `notebooks/02_invasion_benchmark_pack_and_ci.ipynb`: phase-2 reproducibility and reporting notebook
 
 ## Quick Start
@@ -72,6 +73,8 @@ python -m experiments.run_invasion \
   --injector-mode mutation \
   --output-prefix results/runs/invasion/invasion_baseline
 ```
+
+Progress bars are enabled by default for long runs. Use `--no-progress` to disable.
 
 Run held-out train/test regime split:
 
@@ -160,6 +163,70 @@ python -m experiments.run_governance_ablation \
   --generations 30 \
   --seeds-per-generation 64 \
   --output-prefix results/runs/ablation/governance_ablation
+```
+
+Run full-capacity tiered mutation ablations (`easy`, `medium`, `hard`):
+
+```bash
+python -m experiments.run_governance_ablation \
+  --benchmark-pack easy_v1 \
+  --n-runs 5 \
+  --generations 30 \
+  --seeds-per-generation 64 \
+  --test-seeds-per-generation 64 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --injector-mode mutation \
+  --output-prefix results/runs/ablation/tiered_mutation_easy_v1
+
+python -m experiments.run_governance_ablation \
+  --benchmark-pack medium_v1 \
+  --n-runs 5 \
+  --generations 30 \
+  --seeds-per-generation 64 \
+  --test-seeds-per-generation 64 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --injector-mode mutation \
+  --output-prefix results/runs/ablation/tiered_mutation_medium_v1
+
+python -m experiments.run_governance_ablation \
+  --benchmark-pack hard_v1 \
+  --n-runs 5 \
+  --generations 30 \
+  --seeds-per-generation 64 \
+  --test-seeds-per-generation 64 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --injector-mode mutation \
+  --output-prefix results/runs/ablation/tiered_mutation_hard_v1
+```
+
+Run live-Ollama medium-tier governance ablation:
+
+```bash
+python -m experiments.run_governance_ablation \
+  --benchmark-pack medium_v1 \
+  --n-runs 2 \
+  --generations 10 \
+  --seeds-per-generation 24 \
+  --test-seeds-per-generation 24 \
+  --replacement-fraction 0.2 \
+  --adversarial-pressure 0.3 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --injector-mode llm_json \
+  --llm-provider ollama \
+  --llm-model qwen2.5:3b-instruct \
+  --output-prefix results/runs/ablation/tiered_llm_medium_v1
+```
+
+Summarize tier runs:
+
+```bash
+python -m experiments.summarize_tiered_ablation \
+  --ablation-dir results/runs/ablation \
+  --output-prefix results/runs/ablation/tiered_ablation_summary
 ```
 
 Run a matched governance-conditioned injector comparison (`none` vs `monitoring+sanctions`, mutation vs live Ollama):

@@ -16,6 +16,11 @@ from fishery_sim.llm_adapter import (
     OpenAIResponsesPolicyLLMClient,
 )
 
+try:
+    from tqdm.auto import tqdm
+except Exception:  # pragma: no cover
+    tqdm = None
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -57,6 +62,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--sanction-base-fine-rate", type=float, default=2.0)
     parser.add_argument("--sanction-fine-growth", type=float, default=0.8)
     parser.add_argument("--output-prefix", default="results/runs/ablation/governance_ablation")
+    parser.add_argument("--no-progress", action="store_true")
     return parser.parse_args()
 
 
@@ -290,40 +296,64 @@ def main() -> None:
 
     per_run_rows = []
     generation_histories: list[pd.DataFrame] = []
-    for name, knobs in conditions.items():
-        for run_id in range(args.n_runs):
-            cfg = copy.deepcopy(base_cfg)
-            cfg.monitoring_prob = knobs["monitoring_prob"]
-            cfg.quota_fraction = knobs["quota_fraction"]
-            cfg.base_fine_rate = knobs["base_fine_rate"]
-            cfg.fine_growth = knobs["fine_growth"]
-            cfg.seed = args.cfg_seed_start + run_id * args.run_seed_stride
+    use_progress = not args.no_progress
+    total_steps = len(conditions) * args.n_runs * args.generations
+    progress_bar = None
+    if use_progress and tqdm is not None:
+        progress_bar = tqdm(total=total_steps, desc=f"Ablation ({args.injector_mode})")
+    elif use_progress:
+        print(f"Progress: 0/{total_steps} generation-steps")
 
-            run_rng_seed = args.rng_seed_start + run_id * args.run_seed_stride
-            generation_df, strategy_df = run_evolutionary_invasion(
-                base_cfg=cfg,
-                generations=args.generations,
-                population_size=args.population_size,
-                seeds_per_generation=args.seeds_per_generation,
-                test_seeds_per_generation=args.test_seeds_per_generation,
-                replacement_fraction=args.replacement_fraction,
-                collapse_penalty=args.collapse_penalty,
-                adversarial_pressure=args.adversarial_pressure,
-                rng_seed=run_rng_seed,
-                train_overrides=train_overrides,
-                test_overrides=test_overrides,
-                test_regimes=test_regimes,
-                injector=injector,
-            )
+    def _progress(done: int, total: int) -> None:
+        if progress_bar is not None:
+            progress_bar.update(1)
+            return
+        flat_done = _progress.state + 1
+        _progress.state = flat_done
+        if flat_done == total_steps or flat_done % max(1, total_steps // 20) == 0:
+            print(f"Progress: {flat_done}/{total_steps} generation-steps")
 
-            generation_path = f"{args.output_prefix}_{name}_run{run_id:02d}_generations.csv"
-            strategy_path = f"{args.output_prefix}_{name}_run{run_id:02d}_strategies.csv"
-            generation_df.to_csv(generation_path, index=False)
-            strategy_df.to_csv(strategy_path, index=False)
-            generation_histories.append(
-                generation_df.assign(condition=name, run_id=run_id)
-            )
-            per_run_rows.append(_summary_from_generation_df(name, run_id, generation_df))
+    _progress.state = 0  # type: ignore[attr-defined]
+
+    try:
+        for name, knobs in conditions.items():
+            for run_id in range(args.n_runs):
+                cfg = copy.deepcopy(base_cfg)
+                cfg.monitoring_prob = knobs["monitoring_prob"]
+                cfg.quota_fraction = knobs["quota_fraction"]
+                cfg.base_fine_rate = knobs["base_fine_rate"]
+                cfg.fine_growth = knobs["fine_growth"]
+                cfg.seed = args.cfg_seed_start + run_id * args.run_seed_stride
+
+                run_rng_seed = args.rng_seed_start + run_id * args.run_seed_stride
+                generation_df, strategy_df = run_evolutionary_invasion(
+                    base_cfg=cfg,
+                    generations=args.generations,
+                    population_size=args.population_size,
+                    seeds_per_generation=args.seeds_per_generation,
+                    test_seeds_per_generation=args.test_seeds_per_generation,
+                    replacement_fraction=args.replacement_fraction,
+                    collapse_penalty=args.collapse_penalty,
+                    adversarial_pressure=args.adversarial_pressure,
+                    rng_seed=run_rng_seed,
+                    train_overrides=train_overrides,
+                    test_overrides=test_overrides,
+                    test_regimes=test_regimes,
+                    injector=injector,
+                    progress_callback=_progress if use_progress else None,
+                )
+
+                generation_path = f"{args.output_prefix}_{name}_run{run_id:02d}_generations.csv"
+                strategy_path = f"{args.output_prefix}_{name}_run{run_id:02d}_strategies.csv"
+                generation_df.to_csv(generation_path, index=False)
+                strategy_df.to_csv(strategy_path, index=False)
+                generation_histories.append(
+                    generation_df.assign(condition=name, run_id=run_id)
+                )
+                per_run_rows.append(_summary_from_generation_df(name, run_id, generation_df))
+    finally:
+        if progress_bar is not None:
+            progress_bar.close()
 
     per_run_df = pd.DataFrame(per_run_rows)
     table_df = _aggregate_with_ci(per_run_df)

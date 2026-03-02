@@ -59,6 +59,7 @@ def _classify_ablation(name: str) -> str:
         "governance_ablation_highpower_combined_summary",
         "governance_ablation_highpower_heldout_v1_table",
         "governance_ablation_highpower_mixed_v1_table",
+        "tiered_",
     )
     if lower.startswith(curated_prefixes):
         return "curated"
@@ -167,13 +168,15 @@ def _organize_run_type(runs_dir: Path, run_type: str, apply: bool) -> int:
     root = runs_dir / run_type
     if not root.exists():
         return moved
-    for src in sorted(root.iterdir()):
-        if src.is_dir():
+    for src in sorted(root.rglob("*")):
+        if not src.is_file():
             continue
         if src.name.startswith("."):
             continue
         bucket = _classify_bucket(run_type, src.name)
         dst = root / bucket / src.name
+        if src == dst:
+            continue
         _safe_move(src, dst, apply=apply)
         moved += 1
     return moved

@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import copy
 import re
-from typing import Iterable, Protocol
+from typing import Callable, Iterable, Protocol
 
 import numpy as np
 import pandas as pd
@@ -442,6 +442,7 @@ def run_evolutionary_invasion(
     test_overrides: dict[str, float] | None = None,
     test_regimes: list[dict[str, dict[str, float]]] | None = None,
     injector: StrategyInjector | None = None,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Repeatedly removes weak strategies and injects invaders under selection pressure.
@@ -532,6 +533,9 @@ def run_evolutionary_invasion(
         row["mean_sanction_total"] = row["test_mean_sanction_total"]
         row["mean_violation_events"] = row["test_mean_violation_events"]
         generation_rows.append(row)
+
+        if progress_callback is not None:
+            progress_callback(generation + 1, generations)
 
         if generation == generations - 1:
             break

@@ -8,6 +8,70 @@ import yaml
 
 # Fixed held-out benchmark pack to stress generalization under harsh conditions.
 DEFAULT_BENCHMARK_PACKS: dict[str, list[dict[str, Any]]] = {
+    "easy_v1": [
+        {
+            "name": "abundant_clear_signal",
+            "overrides": {"regen_rate": 2.35, "obs_noise_std": 4.0},
+        },
+        {
+            "name": "abundant_mild_noise",
+            "overrides": {"regen_rate": 2.10, "obs_noise_std": 7.0},
+        },
+        {
+            "name": "steady_balanced",
+            "overrides": {"regen_rate": 1.95, "obs_noise_std": 8.0},
+        },
+        {
+            "name": "moderate_starting_stock",
+            "overrides": {"stock_init": 180.0, "regen_rate": 1.90, "obs_noise_std": 9.0},
+        },
+    ],
+    "medium_v1": [
+        {
+            "name": "moderate_regen_low_noise",
+            "overrides": {"regen_rate": 1.70, "obs_noise_std": 10.0},
+        },
+        {
+            "name": "moderate_regen_moderate_noise",
+            "overrides": {"regen_rate": 1.55, "obs_noise_std": 14.0},
+        },
+        {
+            "name": "scarcity_start_moderate",
+            "overrides": {"stock_init": 130.0, "regen_rate": 1.45, "obs_noise_std": 16.0},
+        },
+        {
+            "name": "fragile_threshold_moderate",
+            "overrides": {
+                "regen_rate": 1.40,
+                "obs_noise_std": 15.0,
+                "collapse_threshold": 12.0,
+                "collapse_patience": 4,
+            },
+        },
+    ],
+    "hard_v1": [
+        {
+            "name": "low_regen_high_noise",
+            "overrides": {"regen_rate": 1.10, "obs_noise_std": 28.0},
+        },
+        {
+            "name": "very_low_regen_very_noisy",
+            "overrides": {"regen_rate": 0.95, "obs_noise_std": 35.0},
+        },
+        {
+            "name": "fragile_threshold",
+            "overrides": {
+                "regen_rate": 1.05,
+                "obs_noise_std": 25.0,
+                "collapse_threshold": 14.0,
+                "collapse_patience": 3,
+            },
+        },
+        {
+            "name": "scarcity_shock_like",
+            "overrides": {"stock_init": 80.0, "regen_rate": 1.00, "obs_noise_std": 30.0},
+        },
+    ],
     "heldout_v1": [
         {
             "name": "easy_high_regen_low_noise",

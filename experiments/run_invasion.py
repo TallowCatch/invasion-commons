@@ -10,6 +10,11 @@ from fishery_sim.llm_adapter import (
     OpenAIResponsesPolicyLLMClient,
 )
 
+try:
+    from tqdm.auto import tqdm
+except Exception:  # pragma: no cover
+    tqdm = None
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -32,6 +37,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--llm-timeout-s", type=float, default=45.0)
     parser.add_argument("--llm-temperature", type=float, default=0.8)
     parser.add_argument("--output-prefix", default="results/runs/invasion/invasion")
+    parser.add_argument("--no-progress", action="store_true")
 
     # Regime split controls.
     parser.add_argument("--train-regen-rate", type=float, default=None)
@@ -114,21 +120,47 @@ def main() -> None:
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)
 
-    generation_df, strategy_df = run_evolutionary_invasion(
-        base_cfg=cfg,
-        generations=args.generations,
-        population_size=args.population_size,
-        seeds_per_generation=args.seeds_per_generation,
-        test_seeds_per_generation=args.test_seeds_per_generation,
-        replacement_fraction=args.replacement_fraction,
-        collapse_penalty=args.collapse_penalty,
-        adversarial_pressure=args.adversarial_pressure,
-        rng_seed=args.rng_seed,
-        train_overrides=train_overrides,
-        test_overrides=test_overrides,
-        test_regimes=test_regimes,
-        injector=injector,
-    )
+    use_progress = not args.no_progress
+    progress_bar = None
+    progress_callback = None
+    if use_progress and tqdm is not None:
+        progress_bar = tqdm(total=args.generations, desc="Invasion generations")
+
+        def _callback(done: int, total: int) -> None:
+            del total
+            progress_bar.n = int(done)
+            progress_bar.refresh()
+
+        progress_callback = _callback
+    elif use_progress:
+        print(f"Progress: 0/{args.generations} generations")
+
+        def _callback(done: int, total: int) -> None:
+            if done == total or done % max(1, total // 10) == 0:
+                print(f"Progress: {done}/{total} generations")
+
+        progress_callback = _callback
+
+    try:
+        generation_df, strategy_df = run_evolutionary_invasion(
+            base_cfg=cfg,
+            generations=args.generations,
+            population_size=args.population_size,
+            seeds_per_generation=args.seeds_per_generation,
+            test_seeds_per_generation=args.test_seeds_per_generation,
+            replacement_fraction=args.replacement_fraction,
+            collapse_penalty=args.collapse_penalty,
+            adversarial_pressure=args.adversarial_pressure,
+            rng_seed=args.rng_seed,
+            train_overrides=train_overrides,
+            test_overrides=test_overrides,
+            test_regimes=test_regimes,
+            injector=injector,
+            progress_callback=progress_callback,
+        )
+    finally:
+        if progress_bar is not None:
+            progress_bar.close()
 
     generation_path = f"{args.output_prefix}_generations.csv"
     strategy_path = f"{args.output_prefix}_strategies.csv"
