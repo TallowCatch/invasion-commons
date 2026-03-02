@@ -1,0 +1,40 @@
+\section{Formal Invasion-Stability Model}\label{sec:theory}
+
+This section formalizes the invasion process evaluated in the experiments. Let \(\mathcal{S}_t\) denote the strategy pool at generation \(t\), with population distribution \(p_t\in\Delta(\mathcal{S}_t)\). Let \(g\in\mathcal{G}\) denote governance condition, and let \(r\sim R_{\text{train}}\) or \(r\sim R_{\text{test}}\) denote train or held-out regime draws.
+
+For strategy \(s\in\mathcal{S}_t\), define train-regime fitness as
+\[
+F_t(s;g)=\mathbb{E}_{r\sim R_{\text{train}}}\left[U(s,p_t,g,r)\right],
+\]
+where \(U\) is episodic return. Selection keeps a renormalized top-mass distribution \(\mathcal{T}_q(p_t,F_t)\), where \(q\in(0,1)\) is replacement fraction. New mass is injected by generator \(\mathcal{I}_i\), where \(i\) indexes injector type (mutation or live LLM). The population update is
+\[
+p_{t+1}=(1-q)\,\mathcal{T}_q(p_t,F_t)+q\,\mathcal{I}_i(\mathcal{H}_t),
+\]
+with history \(\mathcal{H}_t\) containing observed strategy performance up to generation \(t\).
+
+Let
+\[
+C(p_t,g,r)=\mathbb{E}[\mathbf{1}\{\text{collapse}\}\mid p_t,g,r]
+\]
+be collapse probability at generation \(t\). For a horizon \(T\), define invasion-robustness on collapse under governance \(g\) versus no governance as
+\[
+\mathcal{R}^{\text{collapse}}_{g,i}(T)=\frac{1}{T}\sum_{t=1}^{T}
+\mathbb{E}_{r\sim R_{\text{test}}}\!
+\left[C\!\left(p_t^{\text{none},i},\text{none},r\right)-C\!\left(p_t^{g,i},g,r\right)\right].
+\]
+Positive values indicate lower collapse under governance during invasion. The paper's reported
+\(\Delta^{\text{collapse}}_{g,i}\) is the empirical estimate of this quantity.
+
+A practical inference rule follows directly: governance is considered invasion-stable on collapse when the lower bound of the 95\% confidence interval for \(\mathcal{R}^{\text{collapse}}_{g,i}(T)\) is strictly positive.
+
+\textbf{Proposition (Saturation non-identifiability).}
+If for a regime pack \(R\), horizon \(T\), and all governance conditions \(g\in\mathcal{G}\),
+\[
+C\!\left(p_t^{g,i},g,r\right)=1\quad \forall t\in\{1,\dots,T\},\ \forall r\sim R,
+\]
+then collapse-based governance ranking is non-identifiable because
+\(\mathcal{R}^{\text{collapse}}_{g,i}(T)=0\) for all \(g\).
+
+\textit{Sketch.} Substituting \(C=1\) into the definition of \(\mathcal{R}^{\text{collapse}}_{g,i}(T)\) yields zero difference at every time and regime, so all governance conditions tie under collapse-based scoring.
+
+This proposition explains why hard-tier saturation is treated as stress confirmation rather than mechanism-separation evidence.

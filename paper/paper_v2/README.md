@@ -20,6 +20,13 @@ TEXMFVAR=/tmp/texmf-var pdflatex -interaction=nonstopmode -halt-on-error main.te
 TEXMFVAR=/tmp/texmf-var pdflatex -interaction=nonstopmode -halt-on-error main.tex
 ```
 
+Regenerate paper_v2 contextual/mechanism artifacts used in the manuscript:
+
+```bash
+cd /Users/ameerfiras/fishery-gov-sim/fishery-gov-sim
+python -m experiments.generate_paper_v2_artifacts
+```
+
 ## Canonical evidence sources
 - `results/runs/showcase/curated/paper_v1_main_results.md`
 - `results/runs/showcase/curated/paper_v1_methods.md`

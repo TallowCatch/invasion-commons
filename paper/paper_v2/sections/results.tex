@@ -4,6 +4,8 @@ Under matched settings with five paired high-power runs, monitoring with sanctio
 
 Monitoring with sanctions also improved supporting robustness indicators relative to none. Mean held-out stock increased by $23.352178$ for mutation with 95\% CI $[15.873344, 31.697602]$, and by $22.402775$ for live JSON-based LLM injection with 95\% CI $[18.453585, 27.746404]$. Per-regime survival over generations improved by $0.109896$ for mutation with 95\% CI $[0.031042, 0.189583]$, and by $0.083542$ for live JSON-based LLM injection with 95\% CI $[0.015417, 0.151667]$. Time to collapse increased by $1.2$ generations for mutation with 95\% CI $[0.4, 2.2]$, and by $1.8$ generations for live JSON-based LLM injection with 95\% CI $[1.0, 3.0]$.
 
+To contextualize magnitude, baseline medium-tier collapse under no governance is high: \(0.9068\) for mutation and \(0.9267\) for live JSON-based LLM injection. The observed improvements correspond to relative collapse reductions of \(11.93\%\) and \(9.26\%\), respectively. Baseline time-to-collapse is \(2.4\) generations for both injectors, so governance-induced delays of \(1.2\) and \(1.8\) generations correspond to relative increases of \(45.83\%\) and \(70.00\%\), respectively.
+
 From the frozen gate file, the cycle-level criteria evaluate as follows: the primary medium reduction gate is PASS, the strong confidence-interval lower-bound gate is PASS, and the medium saturation check is FALSE.
 
 Easy-tier runs used three paired runs and show wider uncertainty, especially for live JSON-based LLM injection. For collapse reduction, mutation remains positive at $0.170139$ with 95\% CI $[0.068750, 0.279167]$, while live JSON-based LLM injection crosses zero at $0.163542$ with 95\% CI $[-0.061458, 0.411979]$. This is consistent with treating medium-tier high-power evidence as the decision-critical result.
@@ -16,41 +18,59 @@ Easy-tier runs used three paired runs and show wider uncertainty, especially for
     Tier & Injector & $n\_pairs$ & Mean reduction & 95\% CI \\
     \midrule
     easy\_v1 & mutation & 3 & 0.170139 & [0.068750, 0.279167] \\
-    easy\_v1 & llm\_json & 3 & 0.163542 & [-0.061458, 0.411979] \\
+    easy\_v1 & Live JSON LLM & 3 & 0.163542 & [-0.061458, 0.411979] \\
     medium\_v1 & mutation & 5 & 0.109896 & [0.031042, 0.189583] \\
-    medium\_v1 & llm\_json & 5 & 0.083542 & [0.015417, 0.150938] \\
+    medium\_v1 & Live JSON LLM & 5 & 0.083542 & [0.015417, 0.150938] \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Using the composite effect-size score across collapse reduction, stock gain, and survival gain, live JSON-based LLM injection obtains a score of $1.805738$ and mutation obtains a score of $1.490345$ in the medium tier.
+Table~\ref{tab:context_magnitude} summarizes the magnitude context in medium-tier runs.
 
-Figures~\ref{fig:gov_effect}--\ref{fig:injector_comp} visualize governance effects, time-to-collapse improvements, regime-level survival dynamics, and matched injector comparisons.
+\begin{table}[H]
+  \centering
+  \caption{Medium-tier magnitude context for monitoring with sanctions relative to none.}
+  \label{tab:context_magnitude}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Injector & Baseline collapse & Abs. reduction & Rel. reduction & Rel. TTC gain \\
+    \midrule
+    Mutation & 0.9068 & 0.1099 & 11.93\% & 45.83\% \\
+    Live JSON LLM & 0.9267 & 0.0835 & 9.26\% & 70.00\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Mechanism proxies suggest that governance acts by suppressing aggressive extraction pressure while improving ecological state. In medium-tier runs, the mean high-harvest fraction drops from \(0.874\) to \(0.790\) for mutation and from \(0.864\) to \(0.781\) for live JSON-based LLM injection when moving from none to monitoring with sanctions. Over the same comparison, mean held-out stock rises from \(28.4\) to \(51.7\) for mutation and from \(25.7\) to \(48.1\) for live JSON-based LLM injection.
+
+Using the composite effect-size score across collapse reduction, stock gain, and survival gain, live JSON-based LLM injection obtains a score of \(1.805738\) and mutation obtains a score of \(1.490345\) in the medium tier. To test whether this ranking is an artifact of equal weighting, we perform a random-weight sensitivity analysis over the same three components. Across 200{,}000 random weight draws, the live JSON-based LLM score ranks first in \(89.99\%\) of cases; equivalently, it ranks first whenever stock-effect weight exceeds approximately \(0.0904\).
+
+Figures~\ref{fig:gov_effect}--\ref{fig:mechanism_proxies} visualize governance effects, time-to-collapse improvements, regime-level survival dynamics, and mechanism proxies.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\linewidth]{../../results/runs/showcase/curated/paper_v1_figureA_governance_effect.png}
+  \includegraphics[width=0.9\linewidth]{figures/governance_effect_ci.png}
   \caption{Governance effect by tier/injector with confidence intervals.}
   \label{fig:gov_effect}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\linewidth]{../../results/runs/showcase/curated/paper_v1_figureB_time_to_collapse_gain.png}
+  \includegraphics[width=0.9\linewidth]{figures/time_to_collapse_gain.png}
   \caption{Time-to-collapse gain under governance.}
   \label{fig:time_gain}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\linewidth]{../../results/runs/showcase/curated/paper_v1_figureC_medium_survival_trajectories.png}
+  \includegraphics[width=0.9\linewidth]{figures/medium_survival_trajectories.png}
   \caption{Per-regime survival trajectories in medium tier.}
   \label{fig:survival_traj}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\linewidth]{../../results/runs/showcase/curated/paper_v1_figureD_injector_comparison.png}
-  \caption{Injector comparison under matched settings.}
-  \label{fig:injector_comp}
+  \includegraphics[width=0.95\linewidth]{figures/mechanism_proxies_medium.png}
+  \caption{Medium-tier mechanism proxies with numeric labels. Left: mean high-harvest fraction by governance condition and injector. Right: mean held-out stock by governance condition and injector.}
+  \label{fig:mechanism_proxies}
 \end{figure}
