@@ -1,8 +1,11 @@
 import argparse
 import copy
+import json
 import math
 import os
 import re
+import subprocess
+from datetime import datetime, timezone
 
 import numpy as np
 import pandas as pd
@@ -62,6 +65,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--sanction-base-fine-rate", type=float, default=2.0)
     parser.add_argument("--sanction-fine-growth", type=float, default=0.8)
     parser.add_argument("--output-prefix", default="results/runs/ablation/governance_ablation")
+    parser.add_argument("--experiment-tag", default="")
+    parser.add_argument("--manifest-out", default=None)
     parser.add_argument("--no-progress", action="store_true")
     return parser.parse_args()
 
@@ -85,6 +90,16 @@ def _ci95(values: list[float]) -> tuple[float, float, float]:
     se = float(arr.std(ddof=1) / math.sqrt(arr.size))
     delta = 1.96 * se
     return mean, mean - delta, mean + delta
+
+
+def _safe_git_hash() -> str:
+    try:
+        return (
+            subprocess.check_output(["git", "rev-parse", "HEAD"], text=True)
+            .strip()
+        )
+    except Exception:
+        return "unknown"
 
 
 def _regime_collapse_columns(df: pd.DataFrame) -> list[str]:
@@ -187,6 +202,52 @@ def _summary_from_generation_df(condition: str, run_id: int, generation_df: pd.D
     return row
 
 
+def _origin_fraction(strategy_df: pd.DataFrame, origin: str) -> float:
+    if strategy_df.empty:
+        return 0.0
+    return float((strategy_df["origin"] == origin).mean())
+
+
+def _build_common_row_meta(
+    args: argparse.Namespace,
+    benchmark_pack_name: str,
+    llm_provider: str,
+    llm_model: str,
+) -> dict:
+    return {
+        "experiment_tag": args.experiment_tag,
+        "injector_mode_requested": args.injector_mode,
+        "llm_provider": llm_provider,
+        "llm_model": llm_model,
+        "benchmark_pack": benchmark_pack_name,
+        "generations": int(args.generations),
+        "population_size": int(args.population_size),
+        "seeds_per_generation": int(args.seeds_per_generation),
+        "test_seeds_per_generation": int(
+            args.test_seeds_per_generation
+            if args.test_seeds_per_generation is not None
+            else args.seeds_per_generation
+        ),
+        "replacement_fraction": float(args.replacement_fraction),
+        "adversarial_pressure": float(args.adversarial_pressure),
+        "collapse_penalty": float(args.collapse_penalty),
+        "train_regen_rate": (
+            float(args.train_regen_rate) if args.train_regen_rate is not None else np.nan
+        ),
+        "train_obs_noise_std": (
+            float(args.train_obs_noise_std) if args.train_obs_noise_std is not None else np.nan
+        ),
+        "test_regen_rate": (
+            float(args.test_regen_rate) if args.test_regen_rate is not None else np.nan
+        ),
+        "test_obs_noise_std": (
+            float(args.test_obs_noise_std) if args.test_obs_noise_std is not None else np.nan
+        ),
+        "run_seed_stride": int(args.run_seed_stride),
+        "n_runs_planned": int(args.n_runs),
+    }
+
+
 def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
     metric_keys = [
         "train_collapse_mean",
@@ -199,6 +260,8 @@ def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
         "time_to_collapse",
         "first_generation_test_collapse_ge_0_8",
         "per_regime_survival_over_generations_mean",
+        "llm_json_fraction",
+        "llm_fallback_fraction",
     ]
     metric_keys.extend(sorted([c for c in per_run_df.columns if c.startswith("per_regime_survival_over_generations__")]))
     rows = []
@@ -210,6 +273,11 @@ def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
             row[f"{key}_ci95_low"] = round(lo, 4)
             row[f"{key}_ci95_high"] = round(hi, 4)
         row["test_regime_count"] = int(cdf["test_regime_count"].iloc[0])
+        row["experiment_tag"] = str(cdf["experiment_tag"].iloc[0])
+        row["injector_mode_requested"] = str(cdf["injector_mode_requested"].iloc[0])
+        row["llm_provider"] = str(cdf["llm_provider"].iloc[0])
+        row["llm_model"] = str(cdf["llm_model"].iloc[0])
+        row["benchmark_pack"] = str(cdf["benchmark_pack"].iloc[0])
         rows.append(row)
     out = pd.DataFrame(rows)
     if not out.empty:
@@ -245,6 +313,42 @@ def _build_survival_curves(generation_history_df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows).sort_values(["condition", "regime", "generation"]).reset_index(drop=True)
 
 
+def _write_manifest(
+    path: str,
+    args: argparse.Namespace,
+    test_regimes: list[dict] | None,
+    outputs: dict[str, str],
+) -> None:
+    out_dir = os.path.dirname(path)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
+    payload = {
+        "script": "experiments/run_governance_ablation.py",
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "git_commit": _safe_git_hash(),
+        "experiment_tag": args.experiment_tag,
+        "output_prefix": args.output_prefix,
+        "outputs": outputs,
+        "injector": {
+            "mode": args.injector_mode,
+            "provider": args.llm_provider if args.injector_mode == "llm_json" else "none",
+            "model": args.llm_model if args.injector_mode == "llm_json" else "",
+            "replay_file": args.llm_policy_replay_file or "",
+        },
+        "benchmark": {
+            "pack": args.benchmark_pack or "",
+            "pack_file": args.benchmark_pack_file or "",
+            "pack_file_name": args.benchmark_pack_file_name or "",
+            "resolved_regime_count": len(test_regimes or []),
+            "resolved_regime_names": [str(r.get("name", "")) for r in (test_regimes or [])],
+        },
+        "params": vars(args),
+    }
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, sort_keys=True)
+        f.write("\n")
+
+
 def main() -> None:
     args = parse_args()
     base_cfg = load_config(args.config)
@@ -268,6 +372,19 @@ def main() -> None:
         )
     elif args.benchmark_pack:
         test_regimes = get_benchmark_pack(args.benchmark_pack)
+    benchmark_pack_name = (
+        args.benchmark_pack
+        if args.benchmark_pack
+        else (args.benchmark_pack_file_name or "custom_pack")
+    )
+    llm_provider = args.llm_provider if args.injector_mode == "llm_json" else "none"
+    llm_model = args.llm_model if args.injector_mode == "llm_json" else ""
+    common_row_meta = _build_common_row_meta(
+        args=args,
+        benchmark_pack_name=benchmark_pack_name,
+        llm_provider=llm_provider,
+        llm_model=llm_model,
+    )
 
     output_dir = os.path.dirname(args.output_prefix)
     if output_dir:
@@ -345,12 +462,28 @@ def main() -> None:
 
                 generation_path = f"{args.output_prefix}_{name}_run{run_id:02d}_generations.csv"
                 strategy_path = f"{args.output_prefix}_{name}_run{run_id:02d}_strategies.csv"
+                generation_df["experiment_tag"] = args.experiment_tag
+                strategy_df["experiment_tag"] = args.experiment_tag
+                generation_df["injector_mode_requested"] = args.injector_mode
+                strategy_df["injector_mode_requested"] = args.injector_mode
+                generation_df["llm_provider"] = llm_provider
+                strategy_df["llm_provider"] = llm_provider
+                generation_df["llm_model"] = llm_model
+                strategy_df["llm_model"] = llm_model
+                generation_df["benchmark_pack"] = benchmark_pack_name
+                strategy_df["benchmark_pack"] = benchmark_pack_name
                 generation_df.to_csv(generation_path, index=False)
                 strategy_df.to_csv(strategy_path, index=False)
                 generation_histories.append(
                     generation_df.assign(condition=name, run_id=run_id)
                 )
-                per_run_rows.append(_summary_from_generation_df(name, run_id, generation_df))
+                summary_row = _summary_from_generation_df(name, run_id, generation_df)
+                summary_row["llm_json_fraction"] = _origin_fraction(strategy_df, "llm_json")
+                summary_row["llm_fallback_fraction"] = _origin_fraction(
+                    strategy_df, "llm_fallback_mutation"
+                )
+                summary_row.update(common_row_meta)
+                per_run_rows.append(summary_row)
     finally:
         if progress_bar is not None:
             progress_bar.close()
@@ -375,6 +508,20 @@ def main() -> None:
     print(f"Saved: {table_csv}")
     print(f"Saved: {table_md}")
     print(f"Saved: {survival_curves_csv}")
+    if args.manifest_out:
+        outputs = {
+            "runs_csv": runs_csv,
+            "table_csv": table_csv,
+            "table_md": table_md,
+            "survival_curves_csv": survival_curves_csv,
+        }
+        _write_manifest(
+            path=args.manifest_out,
+            args=args,
+            test_regimes=test_regimes,
+            outputs=outputs,
+        )
+        print(f"Saved: {args.manifest_out}")
     if test_regimes:
         print("Benchmark regimes:", ", ".join([r["name"] for r in test_regimes]))
     print(table_df.to_string(index=False))

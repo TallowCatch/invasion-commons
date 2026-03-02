@@ -55,6 +55,7 @@ def _classify_ablation(name: str) -> str:
     if _is_scratch(name) or "step3_smoke" in lower:
         return "scratch"
     curated_prefixes = (
+        "paper_v1_",
         "governance_match_step4_",
         "governance_ablation_highpower_combined_summary",
         "governance_ablation_highpower_heldout_v1_table",
@@ -74,6 +75,8 @@ def _classify_showcase(name: str) -> str:
         "invasion_none_vs_monitoring_sanctions.gif",
         "showcase_report.md",
     }
+    if lower.startswith("paper_v1_"):
+        return "curated"
     if lower in curated_names:
         return "curated"
     if _is_scratch(name):

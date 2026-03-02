@@ -1,5 +1,8 @@
 import argparse
+import json
 import os
+import subprocess
+from datetime import datetime, timezone
 
 from fishery_sim.benchmarks import get_benchmark_pack, load_benchmark_pack_file
 from fishery_sim.config import load_config
@@ -37,6 +40,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--llm-timeout-s", type=float, default=45.0)
     parser.add_argument("--llm-temperature", type=float, default=0.8)
     parser.add_argument("--output-prefix", default="results/runs/invasion/invasion")
+    parser.add_argument("--experiment-tag", default="")
+    parser.add_argument("--manifest-out", default=None)
     parser.add_argument("--no-progress", action="store_true")
 
     # Regime split controls.
@@ -55,6 +60,56 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--base-fine-rate", type=float, default=None)
     parser.add_argument("--fine-growth", type=float, default=None)
     return parser.parse_args()
+
+
+def _safe_git_hash() -> str:
+    try:
+        return (
+            subprocess.check_output(["git", "rev-parse", "HEAD"], text=True)
+            .strip()
+        )
+    except Exception:
+        return "unknown"
+
+
+def _write_manifest(
+    path: str,
+    args: argparse.Namespace,
+    generation_path: str,
+    strategy_path: str,
+    test_regimes: list[dict] | None,
+) -> None:
+    out_dir = os.path.dirname(path)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
+    payload = {
+        "script": "experiments/run_invasion.py",
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "git_commit": _safe_git_hash(),
+        "experiment_tag": args.experiment_tag,
+        "output_prefix": args.output_prefix,
+        "outputs": {
+            "generations_csv": generation_path,
+            "strategies_csv": strategy_path,
+        },
+        "injector": {
+            "mode": args.injector_mode,
+            "provider": args.llm_provider if args.injector_mode == "llm_json" else "none",
+            "model": args.llm_model if args.injector_mode == "llm_json" else "",
+            "replay_file": args.llm_policy_replay_file or "",
+        },
+        "benchmark": {
+            "pack": args.benchmark_pack or "",
+            "pack_file": args.benchmark_pack_file or "",
+            "pack_file_name": args.benchmark_pack_file_name or "",
+            "resolved_regime_count": len(test_regimes or []),
+            "resolved_regime_names": [str(r.get("name", "")) for r in (test_regimes or [])],
+        },
+        "params": vars(args),
+    }
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, sort_keys=True)
+        f.write("\n")
 
 
 def main() -> None:
@@ -164,13 +219,35 @@ def main() -> None:
 
     generation_path = f"{args.output_prefix}_generations.csv"
     strategy_path = f"{args.output_prefix}_strategies.csv"
+    generation_df["experiment_tag"] = args.experiment_tag
+    strategy_df["experiment_tag"] = args.experiment_tag
+    generation_df["injector_mode_requested"] = args.injector_mode
+    strategy_df["injector_mode_requested"] = args.injector_mode
+    provider = args.llm_provider if args.injector_mode == "llm_json" else "none"
+    model = args.llm_model if args.injector_mode == "llm_json" else ""
+    generation_df["llm_provider"] = provider
+    generation_df["llm_model"] = model
+    strategy_df["llm_provider"] = provider
+    strategy_df["llm_model"] = model
+    generation_df["benchmark_pack"] = args.benchmark_pack or ""
+    strategy_df["benchmark_pack"] = args.benchmark_pack or ""
     generation_df.to_csv(generation_path, index=False)
     strategy_df.to_csv(strategy_path, index=False)
+    if args.manifest_out:
+        _write_manifest(
+            path=args.manifest_out,
+            args=args,
+            generation_path=generation_path,
+            strategy_path=strategy_path,
+            test_regimes=test_regimes,
+        )
 
     first = generation_df.iloc[0]
     last = generation_df.iloc[-1]
     print(f"Saved: {generation_path}")
     print(f"Saved: {strategy_path}")
+    if args.manifest_out:
+        print(f"Saved: {args.manifest_out}")
     print(
         "train collapse_rate: "
         f"{first['train_collapse_rate']:.3f} -> {last['train_collapse_rate']:.3f} | "

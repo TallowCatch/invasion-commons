@@ -34,7 +34,9 @@ The project is intentionally simple:
 - `experiments/run_visual_governance_pair.py`: one-command matched-seed visual pipeline for slide-ready governance GIFs
 - `experiments/organize_results.py`: buckets results into `curated`, `exploratory`, and `scratch` under each run type
 - `experiments/summarize_tiered_ablation.py`: summarizes tiered (`easy/medium/hard`) governance tables into one report
+- `experiments/summarize_paper_v1.py`: matched-matrix paper evidence pack (deltas, CIs, gate checks, figures, methods/results markdown)
 - `notebooks/02_invasion_benchmark_pack_and_ci.ipynb`: phase-2 reproducibility and reporting notebook
+- `notebooks/04_paper_v1_matched_matrix.ipynb`: paper_v1 reproducibility notebook for matched matrix + CI/gate outputs
 
 ## Quick Start
 Activate environment first:
@@ -165,6 +167,14 @@ python -m experiments.run_governance_ablation \
   --output-prefix results/runs/ablation/governance_ablation
 ```
 
+Record run lineage metadata for any invasion/ablation run:
+
+```bash
+# Works on both run scripts:
+#   --experiment-tag paper_v1
+#   --manifest-out results/runs/showcase/curated/paper_v1_manifest.json
+```
+
 Run full-capacity tiered mutation ablations (`easy`, `medium`, `hard`):
 
 ```bash
@@ -266,6 +276,87 @@ python -m experiments.summarize_governance_injector_match \
   --mutation-table results/runs/ablation/governance_match_step4_mutation_table.csv \
   --llm-table results/runs/ablation/governance_match_step4_ollama_live_table.csv \
   --output-prefix results/runs/ablation/governance_match_step4_injector_split
+```
+
+Run the paper_v1 matched matrix (easy/medium, mutation/live LLM):
+
+```bash
+python -m experiments.run_governance_ablation \
+  --benchmark-pack easy_v1 \
+  --n-runs 3 \
+  --generations 15 \
+  --seeds-per-generation 32 \
+  --test-seeds-per-generation 32 \
+  --replacement-fraction 0.2 \
+  --adversarial-pressure 0.3 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --run-seed-stride 1000 \
+  --injector-mode mutation \
+  --experiment-tag paper_v1 \
+  --manifest-out results/runs/showcase/curated/paper_v1_mutation_easy_manifest.json \
+  --output-prefix results/runs/ablation/paper_v1_mutation_easy_v1
+
+python -m experiments.run_governance_ablation \
+  --benchmark-pack medium_v1 \
+  --n-runs 3 \
+  --generations 15 \
+  --seeds-per-generation 32 \
+  --test-seeds-per-generation 32 \
+  --replacement-fraction 0.2 \
+  --adversarial-pressure 0.3 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --run-seed-stride 1000 \
+  --injector-mode mutation \
+  --experiment-tag paper_v1 \
+  --manifest-out results/runs/showcase/curated/paper_v1_mutation_medium_manifest.json \
+  --output-prefix results/runs/ablation/paper_v1_mutation_medium_v1
+
+python -m experiments.run_governance_ablation \
+  --benchmark-pack easy_v1 \
+  --n-runs 3 \
+  --generations 15 \
+  --seeds-per-generation 32 \
+  --test-seeds-per-generation 32 \
+  --replacement-fraction 0.2 \
+  --adversarial-pressure 0.3 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --run-seed-stride 1000 \
+  --injector-mode llm_json \
+  --llm-provider ollama \
+  --llm-model qwen2.5:3b-instruct \
+  --experiment-tag paper_v1 \
+  --manifest-out results/runs/showcase/curated/paper_v1_llm_easy_manifest.json \
+  --output-prefix results/runs/ablation/paper_v1_llm_easy_v1
+
+python -m experiments.run_governance_ablation \
+  --benchmark-pack medium_v1 \
+  --n-runs 3 \
+  --generations 15 \
+  --seeds-per-generation 32 \
+  --test-seeds-per-generation 32 \
+  --replacement-fraction 0.2 \
+  --adversarial-pressure 0.3 \
+  --train-regen-rate 2.0 \
+  --train-obs-noise-std 6 \
+  --run-seed-stride 1000 \
+  --injector-mode llm_json \
+  --llm-provider ollama \
+  --llm-model qwen2.5:3b-instruct \
+  --experiment-tag paper_v1 \
+  --manifest-out results/runs/showcase/curated/paper_v1_llm_medium_manifest.json \
+  --output-prefix results/runs/ablation/paper_v1_llm_medium_v1
+```
+
+Summarize paper_v1 outputs into figures, tables, gate checks, and meeting-ready markdown:
+
+```bash
+python -m experiments.summarize_paper_v1 \
+  --ablation-dir results/runs/ablation \
+  --showcase-dir results/runs/showcase \
+  --experiment-tag paper_v1
 ```
 
 Organize results after experiments (recommended):
