@@ -1,76 +1,76 @@
 \section{Results}
 
-Under matched settings with five paired high-power runs, monitoring with sanctions reduced held-out collapse relative to none for both injector types. For mutation, collapse reduction was $0.109896$ with 95\% CI $[0.031042, 0.189583]$. For live JSON-based LLM injection, collapse reduction was $0.083542$ with 95\% CI $[0.015417, 0.150938]$. Both confidence-interval lower bounds are positive, supporting the medium-tier robustness claim for governance under invasion pressure.
+\subsection{Study 1: central governance signals in Fishery Commons}
 
-Monitoring with sanctions also improved supporting robustness indicators relative to none. Mean held-out stock increased by $23.352178$ for mutation with 95\% CI $[15.873344, 31.697602]$, and by $22.402775$ for live JSON-based LLM injection with 95\% CI $[18.453585, 27.746404]$. Per-regime survival over generations improved by $0.109896$ for mutation with 95\% CI $[0.031042, 0.189583]$, and by $0.083542$ for live JSON-based LLM injection with 95\% CI $[0.015417, 0.151667]$. Time to collapse increased by $1.2$ generations for mutation with 95\% CI $[0.4, 2.2]$, and by $1.8$ generations for live JSON-based LLM injection with 95\% CI $[1.0, 3.0]$.
+The matched Fishery Commons baseline shows that even a minimal central intervention survives repeated injection pressure. Under five paired high-power runs in medium\_v1, monitoring with sanctions reduces held-out collapse relative to no governance for both injector types. For mutation, collapse reduction is \(0.1099\) with 95\% CI \([0.0310, 0.1896]\). For live JSON-based LLM injection, collapse reduction is \(0.0835\) with 95\% CI \([0.0154, 0.1509]\). Mean held-out stock also rises substantially, by \(23.35\) for mutation and \(22.40\) for live LLM injection. These matched results establish that the invasion-stability protocol is not an artifact of one injector family and that a lightweight central signal already improves robustness.
 
-To contextualize magnitude, baseline medium-tier collapse under no governance is high: \(0.9068\) for mutation and \(0.9267\) for live JSON-based LLM injection. The observed improvements correspond to relative collapse reductions of \(11.93\%\) and \(9.26\%\), respectively. Baseline time-to-collapse is \(2.4\) generations for both injectors, so governance-induced delays of \(1.2\) and \(1.8\) generations correspond to relative increases of \(45.83\%\) and \(70.00\%\), respectively.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.88\linewidth]{figures/governance_effect_ci.png}
+  \caption{Matched Fishery Commons baseline. Monitoring with sanctions reduces held-out collapse relative to no governance for both mutation and live LLM injection. Error bars show 95\% confidence intervals.}
+  \label{fig:study1_baseline}
+\end{figure}
 
-From the frozen gate file, the cycle-level criteria evaluate as follows: the primary medium reduction gate is PASS, the strong confidence-interval lower-bound gate is PASS, and the medium saturation check is FALSE.
-
-Easy-tier runs used three paired runs and show wider uncertainty, especially for live JSON-based LLM injection. For collapse reduction, mutation remains positive at $0.170139$ with 95\% CI $[0.068750, 0.279167]$, while live JSON-based LLM injection crosses zero at $0.163542$ with 95\% CI $[-0.061458, 0.411979]$. This is consistent with treating medium-tier high-power evidence as the decision-critical result.
+The broader top-down sweep in medium\_v1 sharpens the central-governance question. Across balanced and adversarial-heavy partner mixes, pressure levels 0.3 and 0.5, and three non-LLM injector families, \texttt{adaptive\_quota} is the most frequent winner in every injector block. It wins all four scenarios for mutation, all four for the adversarial heuristic injector, and all four for search over mutations. This happens because \texttt{adaptive\_quota} and \texttt{temporary\_closure} tie on collapse reduction in most cells, but adaptive quotas usually retain more welfare outside the most hostile partner mixes.
 
 \begin{table}[H]
   \centering
-  \caption{Collapse reduction from none to monitoring with sanctions by tier and injector. Positive values indicate lower collapse under governance.}
-  \begin{tabular}{lllll}
+  \caption{Study~1b top-down signal summary in medium\_v1. Collapse reductions are relative to no governance; welfare difference is \texttt{adaptive\_quota} minus \texttt{temporary\_closure}.}
+  \label{tab:study1b_topdown}
+  \small
+  \begin{tabular}{lcccc}
     \toprule
-    Tier & Injector & $n\_pairs$ & Mean reduction & 95\% CI \\
+    Injector & Sanctions & Adaptive & Closure & Adaptive - closure welfare \\
     \midrule
-    easy\_v1 & mutation & 3 & 0.170139 & [0.068750, 0.279167] \\
-    easy\_v1 & Live JSON LLM & 3 & 0.163542 & [-0.061458, 0.411979] \\
-    medium\_v1 & mutation & 5 & 0.109896 & [0.031042, 0.189583] \\
-    medium\_v1 & Live JSON LLM & 5 & 0.083542 & [0.015417, 0.150938] \\
+    Mutation & 0.3737 & 0.9167 & 0.9167 & 2408.81 \\
+    Adversarial heuristic & 0.0208 & 0.9167 & 0.9167 & 2211.61 \\
+    Search over mutations & 0.2617 & 0.9167 & 0.9167 & 2723.02 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Table~\ref{tab:context_magnitude} summarizes the magnitude context in medium-tier runs.
+The nuance is important. In balanced partner mixes, adaptive quotas dominate closures on welfare by large margins: \(4792.55\) for mutation, \(5202.70\) for the adversarial heuristic injector, and \(5367.27\) for search over mutations at pressure 0.3. In adversarial-heavy partner mixes, that advantage shrinks or reverses: the same adaptive-minus-closure welfare difference is \(-215.62\), \(-779.48\), and \(-71.33\) at pressure 0.3 for the three injectors. So the correct interpretation is not that temporary closures fail. It is that adaptive quotas are the strongest overall signal, while closures remain a serious hostile-population fallback when ecological protection is prioritized over welfare retention.
+
+Mechanism logging explains why monitoring with sanctions is weaker than the more forceful top-down alternatives. Mean quota-clipped harvest under monitoring with sanctions is \(8.53\) for mutation, \(18.32\) for the adversarial heuristic injector, and \(9.61\) for search over mutations, while mean repeat-offender rates remain \(0.3032\), \(0.5568\), and \(0.3458\). Monitoring with sanctions therefore reduces harm without fully suppressing aggressive extraction, whereas adaptive quotas and temporary closures push collapse to zero in nearly every Study~1b cell.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.96\linewidth]{figures/study1b_topdown_summary.png}
+  \caption{Study~1b summary. Left: mean held-out collapse reduction from monitoring with sanctions relative to no governance. Right: mean welfare advantage of adaptive quotas over temporary closures. Adaptive quotas dominate in balanced settings but lose some advantage in adversarial-heavy mixes.}
+  \label{fig:study1b_topdown}
+\end{figure}
+
+\subsection{Study 2: governance architecture in Harvest Commons}
+
+Study~2 shifts from signal design to governance architecture. Across the full Harvest Commons matrix of three tiers, three social mixes, four governance conditions, and 12 runs per cell, \texttt{hybrid} is the best condition in \(7/9\) tier-by-mix cells. \texttt{top\_down\_only} wins one cell and \texttt{bottom\_up\_only} wins one cell. Averaged over the full matrix, the paired difference \(\texttt{hybrid} - \texttt{top\_down\_only}\) is \(+0.1954\) for patch health and \(-0.2431\) for neighborhood overharvest, but \(-0.3748\) for welfare. The high-level pattern is therefore consistent: hybrid governance usually controls local ecological damage better than central control alone, but often does so by accepting some welfare cost.
 
 \begin{table}[H]
   \centering
-  \caption{Medium-tier magnitude context for monitoring with sanctions relative to none.}
-  \label{tab:context_magnitude}
-  \begin{tabular}{lrrrr}
+  \caption{Study~2 Harvest Commons summary from the full matrix. Positive deltas mean \texttt{hybrid} exceeds \texttt{top\_down\_only}; negative values are improvements for lower-is-better metrics such as neighborhood overharvest.}
+  \label{tab:study2_summary}
+  \small
+  \begin{tabular}{lr}
     \toprule
-    Injector & Baseline collapse & Abs. reduction & Rel. reduction & Rel. TTC gain \\
+    Summary quantity & Value \\
     \midrule
-    Mutation & 0.9068 & 0.1099 & 11.93\% & 45.83\% \\
-    Live JSON LLM & 0.9267 & 0.0835 & 9.26\% & 70.00\% \\
+    Hybrid best-condition cells & 7 / 9 \\
+    Top-down-only best-condition cells & 1 / 9 \\
+    Bottom-up-only best-condition cells & 1 / 9 \\
+    Mean patch-health delta & +0.1954 \\
+    Mean welfare delta & -0.3748 \\
+    Mean local-aggression delta & -0.0037 \\
+    Mean neighborhood-overharvest delta & -0.2431 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Mechanism proxies suggest that governance acts by suppressing aggressive extraction pressure while improving ecological state. In medium-tier runs, the mean high-harvest fraction drops from \(0.874\) to \(0.790\) for mutation and from \(0.864\) to \(0.781\) for live JSON-based LLM injection when moving from none to monitoring with sanctions. Over the same comparison, mean held-out stock rises from \(28.4\) to \(51.7\) for mutation and from \(25.7\) to \(48.1\) for live JSON-based LLM injection.
-
-Using the composite effect-size score across collapse reduction, stock gain, and survival gain, live JSON-based LLM injection obtains a score of \(1.805738\) and mutation obtains a score of \(1.490345\) in the medium tier. To test whether this ranking is an artifact of equal weighting, we perform a random-weight sensitivity analysis over the same three components. Across 200{,}000 random weight draws, the live JSON-based LLM score ranks first in \(89.99\%\) of cases; equivalently, it ranks first whenever stock-effect weight exceeds approximately \(0.0904\).
-
-Figures~\ref{fig:gov_effect}--\ref{fig:mechanism_proxies} visualize governance effects, time-to-collapse improvements, regime-level survival dynamics, and mechanism proxies.
+The paired bootstrap intervals show where that trade-off is strongest. In \texttt{medium\_h1} with \texttt{adversarial\_heavy} social mix, the patch-health delta is \(+0.0460\) with 95\% CI \([0.0250, 0.0650]\), while the welfare delta is \(-0.7439\) with 95\% CI \([-0.9683, -0.5662]\). In \texttt{hard\_h1} with \texttt{adversarial\_heavy}, the corresponding deltas are \(+0.0677\) with 95\% CI \([0.0325, 0.1025]\) and \(-0.3722\) with 95\% CI \([-0.7746, -0.0330]\). By contrast, \texttt{hard\_h1} with \texttt{mixed\_pressure} is closer to a balanced trade-off: patch health improves by \(+0.0552\) with 95\% CI \([0.0070, 0.1016]\), while the welfare interval \([{-}0.0121, 0.3617]\) overlaps zero. This is the key Study~2 result: hybrid governance is not universally better, but it is consistently better on local ecological control and only sometimes better on welfare.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\linewidth]{figures/governance_effect_ci.png}
-  \caption{Governance effect by tier/injector with confidence intervals.}
-  \label{fig:gov_effect}
+  \includegraphics[width=0.96\linewidth]{figures/harvest_matrix_v2_full12_ci_figure.png}
+  \caption{Study~2 paired \texttt{hybrid} minus \texttt{top\_down\_only} deltas in Harvest Commons with 95\% bootstrap confidence intervals. Hybrid governance tends to improve patch health and reduce neighborhood overharvest, but its welfare effect depends strongly on tier and social mix.}
+  \label{fig:study2_harvest}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.9\linewidth]{figures/time_to_collapse_gain.png}
-  \caption{Time-to-collapse gain under governance.}
-  \label{fig:time_gain}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.9\linewidth]{figures/medium_survival_trajectories.png}
-  \caption{Per-regime survival trajectories in medium tier.}
-  \label{fig:survival_traj}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.95\linewidth]{figures/mechanism_proxies_medium.png}
-  \caption{Medium-tier mechanism proxies with numeric labels. Left: mean high-harvest fraction by governance condition and injector. Right: mean held-out stock by governance condition and injector.}
-  \label{fig:mechanism_proxies}
-\end{figure}
+Together, the two studies give a layered result. In the controlled fishery setting, central governance signals can be ranked and adaptive quotas emerge as the strongest overall top-down signal under invasion pressure. In the second substrate, once governance is allowed to become architectural rather than only signal-level, hybrid governance often produces the best local ecological control, but with a welfare trade-off that depends on social composition and task difficulty.

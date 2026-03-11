@@ -78,7 +78,12 @@ def _classify_showcase(name: str) -> str:
         "invasion_none_vs_monitoring_sanctions.gif",
         "showcase_report.md",
     }
-    if lower.startswith("paper_v1_") or lower.startswith("study1b_"):
+    if (
+        lower.startswith("paper_v1_")
+        or lower.startswith("study1b_")
+        or lower.startswith("harvest_commons_")
+        or lower.startswith("harvest_matrix_")
+    ):
         return "curated"
     if lower in curated_names:
         return "curated"
@@ -103,6 +108,15 @@ def _classify_harvest(name: str) -> str:
     return "exploratory"
 
 
+def _classify_harvest_invasion(name: str) -> str:
+    lower = name.lower()
+    if _is_scratch(name):
+        return "scratch"
+    if lower.startswith("harvest_invasion_") or lower.startswith("harvest_matrix_"):
+        return "curated"
+    return "exploratory"
+
+
 def _classify_bucket(run_type: str, name: str) -> str:
     if run_type == "invasion":
         return _classify_invasion(name)
@@ -114,6 +128,8 @@ def _classify_bucket(run_type: str, name: str) -> str:
         return _classify_baselines(name)
     if run_type in {"orchard", "harvest"}:
         return _classify_harvest(name)
+    if run_type == "harvest_invasion":
+        return _classify_harvest_invasion(name)
     return "exploratory"
 
 
@@ -139,7 +155,7 @@ def _ensure_layout(results_dir: Path, runs_dir: Path, archive_tag: str) -> None:
         results_dir / "archive" / archive_tag,
         results_dir / "archive" / "runtime_cache",
     ]
-    for run_type in ("invasion", "ablation", "showcase", "baselines", "harvest", "orchard"):
+    for run_type in ("invasion", "ablation", "showcase", "baselines", "harvest", "harvest_invasion", "orchard"):
         for bucket in ("curated", "exploratory", "scratch"):
             base_dirs.append(runs_dir / run_type / bucket)
     for d in base_dirs:
@@ -213,7 +229,7 @@ def main() -> None:
     moved = 0
     moved += _clean_runtime_noise(results_dir=results_dir, apply=args.apply)
     moved += _move_legacy_top_level(results_dir=results_dir, archive_dir=archive_dir, apply=args.apply)
-    for run_type in ("invasion", "ablation", "showcase", "baselines", "harvest", "orchard"):
+    for run_type in ("invasion", "ablation", "showcase", "baselines", "harvest", "harvest_invasion", "orchard"):
         moved += _organize_run_type(runs_dir=runs_dir, run_type=run_type, apply=args.apply)
 
     print(

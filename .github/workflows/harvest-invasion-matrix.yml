@@ -1,0 +1,217 @@
+name: Harvest Invasion Matrix
+
+on:
+  push:
+    branches:
+      - codex/harvest-remote-sweeps
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: "Which Harvest invasion sweep to run"
+        required: true
+        type: choice
+        options:
+          - stage_b_pilot
+          - stage_c_highpower
+      python_version:
+        description: "Python version"
+        required: false
+        default: "3.11"
+        type: string
+
+jobs:
+  define-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+      run_name: ${{ steps.build.outputs.run_name }}
+      summary_prefix: ${{ steps.build.outputs.summary_prefix }}
+      ci_plot_filter: ${{ steps.build.outputs.ci_plot_filter }}
+    steps:
+      - id: build
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import itertools
+          import json
+          import os
+
+          stage = os.environ["STAGE"]
+          if stage == "stage_b_pilot":
+              tiers = ["easy_h1", "medium_h1", "hard_h1"]
+              partner_mixes = ["cooperative_heavy", "balanced", "adversarial_heavy"]
+              conditions = ["none", "top_down_only", "bottom_up_only", "hybrid"]
+              injector_modes = ["random", "mutation", "adversarial_heuristic"]
+              pressures = [0.3]
+              common = {
+                  "n_runs": 3,
+                  "generations": 12,
+                  "population_size": 6,
+                  "seeds_per_generation": 24,
+                  "test_seeds_per_generation": 24,
+                  "replacement_fraction": 0.2,
+              }
+              ci_plot_filter = ""
+              run_name = "harvest_invasion_stageB_pilot_gh"
+          elif stage == "stage_c_highpower":
+              tiers = ["medium_h1", "hard_h1"]
+              partner_mixes = ["balanced", "adversarial_heavy"]
+              conditions = ["top_down_only", "hybrid"]
+              injector_modes = ["mutation", "adversarial_heuristic"]
+              pressures = [0.3, 0.5]
+              common = {
+                  "n_runs": 8,
+                  "generations": 15,
+                  "population_size": 6,
+                  "seeds_per_generation": 32,
+                  "test_seeds_per_generation": 32,
+                  "replacement_fraction": 0.2,
+              }
+              ci_plot_filter = "--tiers medium_h1,hard_h1 --partner-mixes balanced,adversarial_heavy --injector-modes mutation,adversarial_heuristic --pressures 0.3,0.5"
+              run_name = "harvest_invasion_stageC_highpower_gh"
+          else:
+              raise ValueError(f"Unknown stage: {stage}")
+
+          include = []
+          for tier, partner_mix, condition, injector_mode, pressure in itertools.product(
+              tiers, partner_mixes, conditions, injector_modes, pressures
+          ):
+              slug = f"{tier}__{partner_mix}__{condition}__{injector_mode}__p{pressure:.1f}".replace(".", "p")
+              include.append(
+                  {
+                      "tier": tier,
+                      "partner_mix": partner_mix,
+                      "condition": condition,
+                      "injector_mode": injector_mode,
+                      "pressure": pressure,
+                      "slug": slug,
+                      **common,
+                  }
+              )
+
+          matrix = json.dumps({"include": include})
+          summary_prefix = f"results/runs/showcase/curated/{run_name}"
+          print(f"matrix={matrix}")
+          print(f"run_name={run_name}")
+          print(f"summary_prefix={summary_prefix}")
+          print(f"ci_plot_filter={ci_plot_filter}")
+          PY
+        env:
+          STAGE: ${{ github.event_name == 'push' && 'stage_b_pilot' || inputs.stage }}
+
+  run-shards:
+    needs: define-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.define-matrix.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python_version }}
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+
+      - uses: actions/setup-python@v5
+        if: ${{ github.event_name == 'push' }}
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pandas matplotlib tqdm
+
+      - name: Run shard
+        run: |
+          python -m experiments.run_harvest_invasion_matrix \
+            --tiers "${{ matrix.tier }}" \
+            --partner-mixes "${{ matrix.partner_mix }}" \
+            --conditions "${{ matrix.condition }}" \
+            --injector-modes "${{ matrix.injector_mode }}" \
+            --adversarial-pressures "${{ matrix.pressure }}" \
+            --n-runs "${{ matrix.n_runs }}" \
+            --generations "${{ matrix.generations }}" \
+            --population-size "${{ matrix.population_size }}" \
+            --seeds-per-generation "${{ matrix.seeds_per_generation }}" \
+            --test-seeds-per-generation "${{ matrix.test_seeds_per_generation }}" \
+            --replacement-fraction "${{ matrix.replacement_fraction }}" \
+            --max-workers 1 \
+            --output-prefix "results/runs/harvest_invasion/gh/${{ needs.define-matrix.outputs.run_name }}/${{ matrix.slug }}" \
+            --experiment-tag "${{ needs.define-matrix.outputs.run_name }}"
+
+      - name: Upload shard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: harvest-invasion-${{ matrix.slug }}
+          path: |
+            results/runs/harvest_invasion/gh/${{ needs.define-matrix.outputs.run_name }}/${{ matrix.slug }}_runs.csv
+            results/runs/harvest_invasion/gh/${{ needs.define-matrix.outputs.run_name }}/${{ matrix.slug }}_generation_history.csv
+            results/runs/harvest_invasion/gh/${{ needs.define-matrix.outputs.run_name }}/${{ matrix.slug }}_strategy_history.csv
+
+  aggregate:
+    needs: [define-matrix, run-shards]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        with:
+          python-version: ${{ inputs.python_version }}
+
+      - uses: actions/setup-python@v5
+        if: ${{ github.event_name == 'push' }}
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pandas matplotlib tqdm
+
+      - name: Download shard artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: harvest-invasion-*
+          path: downloaded
+          merge-multiple: false
+
+      - name: Merge shard CSVs
+        run: |
+          python -m experiments.merge_harvest_invasion_outputs \
+            --input-dir downloaded \
+            --output-prefix "results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}"
+
+      - name: Summarize merged outputs
+        run: |
+          python -m experiments.summarize_harvest_invasion \
+            --runs-csv "results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_runs.csv" \
+            --output-prefix "${{ needs.define-matrix.outputs.summary_prefix }}"
+
+      - name: Plot merged outputs
+        env:
+          MPLCONFIGDIR: /tmp/mpl
+          XDG_CACHE_HOME: /tmp
+        run: |
+          python -m experiments.plot_harvest_invasion \
+            --ci-csv "${{ needs.define-matrix.outputs.summary_prefix }}_ci.csv" \
+            --output-prefix "${{ needs.define-matrix.outputs.summary_prefix }}" \
+            ${{ needs.define-matrix.outputs.ci_plot_filter }}
+
+      - name: Upload merged artifact bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.define-matrix.outputs.run_name }}-bundle
+          path: |
+            results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_runs.csv
+            results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_generation_history.csv
+            results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_strategy_history.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_table.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_ranking.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_delta.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_ci.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_summary.md
+            ${{ needs.define-matrix.outputs.summary_prefix }}_main.png
+            ${{ needs.define-matrix.outputs.summary_prefix }}_mechanisms.png

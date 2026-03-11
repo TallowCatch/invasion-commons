@@ -134,6 +134,24 @@ python -m experiments.summarize_injector_comparison \
   --output-prefix results/runs/invasion/invasion_step4_match_comparison
 ```
 
+## Remote Harvest Invasion Sweeps
+Large Harvest invasion matrices are CPU-heavy. The repo now includes a GitHub Actions workflow that shards Stage B and Stage C across hosted runners:
+
+- workflow: `.github/workflows/harvest-invasion-matrix.yml`
+- stages:
+  - `stage_b_pilot`
+  - `stage_c_highpower`
+
+Trigger from the GitHub Actions UI with `workflow_dispatch`. Each shard uploads its CSVs, then the workflow merges them and produces the same summary artifacts you use locally:
+
+- merged runs: `results/runs/harvest_invasion/curated/<run_name>_runs.csv`
+- merged histories: `..._generation_history.csv`, `..._strategy_history.csv`
+- showcase summary: `results/runs/showcase/curated/<run_name>_summary.md`
+- paired CI figure: `..._main.png`
+- mechanism figure: `..._mechanisms.png`
+
+The free path that makes sense for this workload is a **public repo on GitHub Actions**. If the repo stays private, your free minutes are much more limited.
+
 Run LLM JSON policy injection using replay file (offline deterministic):
 
 ```bash

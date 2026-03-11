@@ -3,11 +3,12 @@ import copy
 import os
 
 import pandas as pd
+from tqdm.auto import tqdm
 
+from fishery_sim.harvest_benchmarks import make_harvest_cfg_for_tier
 from fishery_sim.harvest import BaseHarvestAgent
 from fishery_sim.harvest import CreditSharingHarvestAgent
 from fishery_sim.harvest import GovernmentAgent
-from fishery_sim.harvest import HarvestCommonsConfig
 from fishery_sim.harvest import ReciprocalHarvestAgent
 from fishery_sim.harvest import SelfInterestedHarvestAgent
 from fishery_sim.harvest import run_harvest_episode
@@ -19,13 +20,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-prefix", default="results/runs/harvest/harvest_commons_study")
     parser.add_argument("--seed-start", type=int, default=0)
     parser.add_argument("--n-agents", type=int, default=6)
+    parser.add_argument("--tiers", default="medium_h1")
     parser.add_argument("--social-mixes", default="cooperative_heavy,mixed_pressure")
+    parser.add_argument("--conditions", default="none,top_down_only,bottom_up_only,hybrid")
     parser.add_argument("--government-trigger", type=float, default=16.0)
     parser.add_argument("--strict-cap-frac", type=float, default=0.18)
     parser.add_argument("--relaxed-cap-frac", type=float, default=0.35)
     parser.add_argument("--soft-trigger", type=float, default=18.0)
     parser.add_argument("--deterioration-threshold", type=float, default=0.35)
     parser.add_argument("--activation-warmup", type=int, default=3)
+    parser.add_argument("--aggressive-request-threshold", type=float, default=0.75)
+    parser.add_argument("--aggressive-agent-fraction-trigger", type=float, default=0.34)
+    parser.add_argument("--local-neighborhood-trigger", type=float, default=0.67)
+    parser.add_argument("--no-progress", action="store_true")
     return parser.parse_args()
 
 
@@ -69,12 +76,12 @@ def _agents_for_social_mix(social_mix: str, n_agents: int) -> list[BaseHarvestAg
 def _condition_setup(
     condition: str,
     social_mix: str,
+    tier: str,
     n_agents: int,
     governor_params: dict[str, float | int],
-) -> tuple[list[BaseHarvestAgent], GovernmentAgent | None, HarvestCommonsConfig]:
+) -> tuple[list[BaseHarvestAgent], GovernmentAgent | None, object]:
     agents = _agents_for_social_mix(social_mix, n_agents=n_agents)
-    cfg = HarvestCommonsConfig(n_agents=n_agents)
-    governor = GovernmentAgent(**governor_params)
+    cfg = make_harvest_cfg_for_tier(tier, n_agents=n_agents)
 
     if condition == "none":
         cfg.communication_enabled = False
@@ -83,59 +90,84 @@ def _condition_setup(
     if condition == "top_down_only":
         cfg.communication_enabled = False
         cfg.side_payments_enabled = False
+        governor = GovernmentAgent(**governor_params, enforcement_scope="global")
         return agents, governor, cfg
     if condition == "bottom_up_only":
         return agents, None, cfg
     if condition == "hybrid":
+        governor = GovernmentAgent(
+            **governor_params,
+            enforcement_scope="local",
+            expand_target_neighbors=True,
+        )
         return agents, governor, cfg
     raise ValueError(f"Unknown condition: {condition}")
 
 
 def main() -> None:
     args = parse_args()
-    conditions = ["none", "top_down_only", "bottom_up_only", "hybrid"]
+    tiers = _parse_csv_arg(args.tiers)
+    conditions = _parse_csv_arg(args.conditions)
     social_mixes = _parse_csv_arg(args.social_mixes)
     rows = []
 
-    for social_mix in social_mixes:
-        governor_params = {
-            "trigger": args.government_trigger,
-            "strict_cap_frac": args.strict_cap_frac,
-            "relaxed_cap_frac": args.relaxed_cap_frac,
-            "soft_trigger": args.soft_trigger,
-            "deterioration_threshold": args.deterioration_threshold,
-            "activation_warmup": args.activation_warmup,
-        }
-        for condition in conditions:
-            for run_id in range(args.n_runs):
-                agents, condition_governor, cfg = _condition_setup(
-                    condition=condition,
-                    social_mix=social_mix,
-                    n_agents=args.n_agents,
-                    governor_params=governor_params,
-                )
-                cfg = copy.deepcopy(cfg)
-                cfg.seed = args.seed_start + run_id
-                out = run_harvest_episode(cfg, agents, governor=condition_governor)
-                rows.append(
-                    {
-                        "social_mix": social_mix,
-                        "condition": condition,
-                        "run_id": run_id,
-                        "mean_patch_health": out["mean_patch_health"],
-                        "final_patch_health": out["final_patch_health"],
-                        "total_welfare": out["total_welfare"],
-                        "mean_welfare": out["mean_welfare"],
-                        "payoff_gini": out["payoff_gini"],
-                        "total_credit_transferred": out["total_credit_transferred"],
-                        "mean_credit_transferred": out["mean_credit_transferred"],
-                        "mean_government_cap": out["mean_government_cap"],
-                    }
-                )
+    governor_params = {
+        "trigger": args.government_trigger,
+        "strict_cap_frac": args.strict_cap_frac,
+        "relaxed_cap_frac": args.relaxed_cap_frac,
+        "soft_trigger": args.soft_trigger,
+        "deterioration_threshold": args.deterioration_threshold,
+        "activation_warmup": args.activation_warmup,
+        "aggressive_request_threshold": args.aggressive_request_threshold,
+        "aggressive_agent_fraction_trigger": args.aggressive_agent_fraction_trigger,
+        "local_neighborhood_trigger": args.local_neighborhood_trigger,
+    }
+    job_specs = [
+        (tier, social_mix, condition, run_id)
+        for tier in tiers
+        for social_mix in social_mixes
+        for condition in conditions
+        for run_id in range(args.n_runs)
+    ]
+    iterator = job_specs if args.no_progress else tqdm(job_specs, desc="Harvest matrix")
+    for tier, social_mix, condition, run_id in iterator:
+        agents, condition_governor, cfg = _condition_setup(
+            condition=condition,
+            social_mix=social_mix,
+            tier=tier,
+            n_agents=args.n_agents,
+            governor_params=governor_params,
+        )
+        cfg = copy.deepcopy(cfg)
+        cfg.seed = args.seed_start + run_id
+        out = run_harvest_episode(cfg, agents, governor=condition_governor)
+        rows.append(
+            {
+                "tier": tier,
+                "social_mix": social_mix,
+                "condition": condition,
+                "run_id": run_id,
+                "mean_patch_health": out["mean_patch_health"],
+                "final_patch_health": out["final_patch_health"],
+                "total_welfare": out["total_welfare"],
+                "mean_welfare": out["mean_welfare"],
+                "payoff_gini": out["payoff_gini"],
+                "total_credit_transferred": out["total_credit_transferred"],
+                "mean_credit_transferred": out["mean_credit_transferred"],
+                "mean_government_cap": out["mean_government_cap"],
+                "mean_aggressive_request_fraction": out["mean_aggressive_request_fraction"],
+                "mean_max_local_aggression": out["mean_max_local_aggression"],
+                "mean_capped_action_fraction": out["mean_capped_action_fraction"],
+                "mean_prevented_harvest": out["mean_prevented_harvest"],
+                "mean_neighborhood_overharvest": out["mean_neighborhood_overharvest"],
+                "mean_targeted_agent_fraction": out["mean_targeted_agent_fraction"],
+                "mean_patch_variance": out["mean_patch_variance"],
+            }
+        )
 
     df = pd.DataFrame(rows)
     summary = (
-        df.groupby(["social_mix", "condition"], sort=False)
+        df.groupby(["tier", "social_mix", "condition"], sort=False)
         .agg(
             mean_patch_health_mean=("mean_patch_health", "mean"),
             final_patch_health_mean=("final_patch_health", "mean"),
@@ -143,6 +175,13 @@ def main() -> None:
             payoff_gini_mean=("payoff_gini", "mean"),
             total_credit_transferred_mean=("total_credit_transferred", "mean"),
             mean_government_cap_mean=("mean_government_cap", "mean"),
+            mean_aggressive_request_fraction_mean=("mean_aggressive_request_fraction", "mean"),
+            mean_max_local_aggression_mean=("mean_max_local_aggression", "mean"),
+            mean_capped_action_fraction_mean=("mean_capped_action_fraction", "mean"),
+            mean_prevented_harvest_mean=("mean_prevented_harvest", "mean"),
+            mean_neighborhood_overharvest_mean=("mean_neighborhood_overharvest", "mean"),
+            mean_targeted_agent_fraction_mean=("mean_targeted_agent_fraction", "mean"),
+            mean_patch_variance_mean=("mean_patch_variance", "mean"),
             n_runs=("run_id", "count"),
         )
         .reset_index()

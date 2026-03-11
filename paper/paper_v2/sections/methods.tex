@@ -1,16 +1,16 @@
 \section{Methods}
 
-The substrate is a minimal renewable fishery commons with a shared stock, per-agent harvest actions, regeneration, and collapse dynamics. Governance mechanisms modify strategic pressure through monitoring and sanctions rather than only post-hoc accounting, so institutional choices can causally affect ecological outcomes.
+Both studies use the same core invasion protocol. A population of strategies is evaluated over generations, weaker strategies are removed, and new strategies are injected through a specified generator. Selection is performed in train conditions and reported robustness is measured in held-out test conditions. This separates adaptation pressure from generalization assessment and makes governance comparisons about out-of-distribution stability rather than only in-sample performance.
 
-Each run is evaluated under three governance settings: none, monitoring, and monitoring with sanctions. Primary contrasts are reported as the difference between monitoring with sanctions and none. For collapse readability, we also report the same comparison as ``collapse reduction,'' where positive values indicate lower collapse under governance.
+\subsection{Study 1: Fishery Commons and central governance signals}
 
-Two injector sources are matched. The first is mutation, a non-LLM strategy variation baseline. The second is live JSON-based LLM injection, where strategies are generated online by the Ollama model \texttt{qwen2.5:3b-instruct} and adapted into executable policy specifications.
+The first study uses a minimal renewable fishery commons with a shared stock, per-agent harvest actions, regeneration, and collapse dynamics. Agents follow interpretable threshold strategies, and governance changes extraction pressure directly through monitoring, quota clipping, sanctions, adaptive quotas, or temporary closures. The environment logs requested harvest, realized harvest, quota-clipped harvest, repeat-offender rate, closure activity, and stock-recovery lag so that governance can be analyzed mechanistically rather than only through final collapse outcomes.
 
-The core matrix spans the easy\_v1 and medium\_v1 tiers and both injector types, with shared settings. Easy-tier cells use three paired runs and medium-tier high-power cells use five paired runs.
+Study~1 has two layers. The first is a matched baseline that compares \texttt{none}, \texttt{monitoring}, and \texttt{monitoring\_sanctions} across two injector types: mutation and live JSON-based LLM injection via Ollama using \texttt{qwen2.5:3b-instruct}. This baseline is run on the easy\_v1 and medium\_v1 tiers. The second layer is a broader top-down sweep, restricted to medium\_v1, that compares \texttt{none}, \texttt{monitoring\_sanctions}, \texttt{adaptive\_quota}, and \texttt{temporary\_closure} under three non-LLM injector families: mutation, an adversarial heuristic injector, and search over mutations. The sweep also varies partner composition (\texttt{balanced} and \texttt{adversarial\_heavy}) and adversarial pressure (0.3 and 0.5). This second layer is what identifies which central governance signals remain effective once the setting becomes more hostile.
 
 \begin{table}[H]
   \centering
-  \caption{Shared run settings for matched comparisons.}
+  \caption{Shared run settings for the matched Fishery Commons baseline.}
   \begin{tabular}{ll}
     \toprule
     Setting & Value \\
@@ -26,11 +26,16 @@ The core matrix spans the easy\_v1 and medium\_v1 tiers and both injector types,
   \end{tabular}
 \end{table}
 
-Selection and replacement are performed in train conditions, while governance robustness is evaluated on held-out regime packs each generation. This separates adaptation pressure from generalization assessment.
+\subsection{Study 2: Harvest Commons and governance architecture}
 
-The primary outcome is held-out collapse reduction. Secondary outcomes are held-out mean stock, time-to-collapse, and per-regime survival fraction over generations. A composite governance score averages paired effect sizes for collapse reduction, stock gain, and survival gain.
+The second study introduces Harvest Commons, a second renewable commons substrate built around local patches rather than a single global stock. Agents remain self-interested, but the substrate adds local communication, limited credit transfers, and targeted intervention through a government agent. The purpose is not to repeat the same top-down question in another skin. The purpose is to ask what changes when governance is treated as an architecture choice.
 
-Analysis is run-level and confidence intervals are estimated with a bootstrap mean procedure using 5{,}000 resamples and percentile bounds at 2.5 and 97.5. Gate logic is evaluated from frozen summary artifacts to prevent post-hoc threshold drift.
-Formal invasion dynamics, the definition of collapse-robustness, and the saturation identifiability condition are given in Section~\ref{sec:theory}. In the empirical pipeline, we estimate these quantities at run level and report bootstrap confidence intervals.
+Study~2 compares four governance conditions: \texttt{none}, \texttt{top\_down\_only}, \texttt{bottom\_up\_only}, and \texttt{hybrid}. Top-down-only uses targeted caps from the government agent. Bottom-up-only uses local communication and side-payments without central intervention. Hybrid combines the two. The matrix spans three tier presets (\texttt{easy\_h1}, \texttt{medium\_h1}, and \texttt{hard\_h1}) and three social mixes (\texttt{cooperative\_heavy}, \texttt{mixed\_pressure}, and \texttt{adversarial\_heavy}) with 12 runs per cell. In addition to patch health and welfare, the study reports local mechanism metrics including local aggression and neighborhood overharvest. These are needed because a governance architecture can change \emph{where} exploitation happens, not only the global average outcome.
 
-Methods and run metadata are version-frozen for reproducibility, including configuration manifests, gate outcomes, and the summary tables used to generate the reported statistics.
+\subsection{Statistical reporting}
+
+The primary Study~1 matched-baseline outcome is held-out collapse reduction, reported as the difference between no governance and monitoring with sanctions. Supporting metrics are held-out stock, time-to-collapse, and per-regime survival. Confidence intervals for the matched baseline are run-level bootstrap intervals with 5{,}000 resamples. The broader Study~1 signal sweep uses the same run summaries but is interpreted as a ranking study: adaptive quota, temporary closure, and monitoring with sanctions are compared on collapse first and welfare second.
+
+The primary Study~2 comparison is the paired difference \(\texttt{hybrid} - \texttt{top\_down\_only}\) at matched run identifiers within each tier and social-mix cell. This comparison isolates whether local communication and credit-sharing add anything once central intervention is already present. Confidence intervals are again estimated by bootstrap over paired deltas.
+
+Formal invasion dynamics, the definition of collapse robustness, and the saturation identifiability condition are given in Section~\ref{sec:theory}. In the empirical pipeline, these quantities are estimated from run-level summaries and frozen result artifacts to avoid post-hoc threshold drift.
