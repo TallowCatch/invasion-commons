@@ -29,9 +29,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seeds-per-generation", type=int, default=64)
     parser.add_argument("--replacement-fraction", type=float, default=0.3)
     parser.add_argument("--adversarial-pressure", type=float, default=0.7)
+    parser.add_argument(
+        "--partner-mix",
+        choices=["cooperative_heavy", "balanced", "adversarial_heavy"],
+        default="balanced",
+    )
     parser.add_argument("--collapse-penalty", type=float, default=50.0)
     parser.add_argument("--rng-seed", type=int, default=0)
-    parser.add_argument("--injector-mode", choices=["mutation", "llm_json"], default="mutation")
+    parser.add_argument(
+        "--injector-mode",
+        choices=["mutation", "random", "adversarial_heuristic", "search_mutation", "llm_json"],
+        default="mutation",
+    )
     parser.add_argument("--llm-policy-replay-file", default=None)
     parser.add_argument("--llm-provider", choices=["openai", "ollama"], default="ollama")
     parser.add_argument("--llm-model", default="qwen2.5:3b-instruct")
@@ -59,6 +68,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--quota-fraction", type=float, default=None)
     parser.add_argument("--base-fine-rate", type=float, default=None)
     parser.add_argument("--fine-growth", type=float, default=None)
+    parser.add_argument("--governance-variant", choices=["static", "adaptive_quota", "temporary_closure"], default=None)
+    parser.add_argument("--adaptive-quota-min-scale", type=float, default=None)
+    parser.add_argument("--adaptive-quota-sensitivity", type=float, default=None)
+    parser.add_argument("--temporary-closure-trigger", type=float, default=None)
+    parser.add_argument("--temporary-closure-quota-fraction", type=float, default=None)
     return parser.parse_args()
 
 
@@ -124,6 +138,16 @@ def main() -> None:
         cfg.base_fine_rate = args.base_fine_rate
     if args.fine_growth is not None:
         cfg.fine_growth = args.fine_growth
+    if args.governance_variant is not None:
+        cfg.governance_variant = args.governance_variant
+    if args.adaptive_quota_min_scale is not None:
+        cfg.adaptive_quota_min_scale = args.adaptive_quota_min_scale
+    if args.adaptive_quota_sensitivity is not None:
+        cfg.adaptive_quota_sensitivity = args.adaptive_quota_sensitivity
+    if args.temporary_closure_trigger is not None:
+        cfg.temporary_closure_trigger = args.temporary_closure_trigger
+    if args.temporary_closure_quota_fraction is not None:
+        cfg.temporary_closure_quota_fraction = args.temporary_closure_quota_fraction
 
     llm_client = None
     if args.llm_policy_replay_file:
@@ -210,6 +234,7 @@ def main() -> None:
             train_overrides=train_overrides,
             test_overrides=test_overrides,
             test_regimes=test_regimes,
+            partner_mix_preset=args.partner_mix,
             injector=injector,
             progress_callback=progress_callback,
         )
@@ -231,6 +256,10 @@ def main() -> None:
     strategy_df["llm_model"] = model
     generation_df["benchmark_pack"] = args.benchmark_pack or ""
     strategy_df["benchmark_pack"] = args.benchmark_pack or ""
+    generation_df["partner_mix"] = args.partner_mix
+    strategy_df["partner_mix"] = args.partner_mix
+    generation_df["governance_variant"] = cfg.governance_variant
+    strategy_df["governance_variant"] = cfg.governance_variant
     generation_df.to_csv(generation_path, index=False)
     strategy_df.to_csv(strategy_path, index=False)
     if args.manifest_out:

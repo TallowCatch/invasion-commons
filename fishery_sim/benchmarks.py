@@ -157,6 +157,16 @@ DEFAULT_BENCHMARK_PACKS: dict[str, list[dict[str, Any]]] = {
     ],
 }
 
+DEFAULT_PARTNER_MIX_PRESETS: dict[str, dict[str, float]] = {
+    "cooperative_heavy": {"cooperative_seed": 0.6, "random_init": 0.3, "adversarial_seed": 0.1},
+    "balanced": {"cooperative_seed": 0.34, "random_init": 0.33, "adversarial_seed": 0.33},
+    "adversarial_heavy": {"cooperative_seed": 0.1, "random_init": 0.3, "adversarial_seed": 0.6},
+}
+
+DEFAULT_PRESSURE_LEVELS: dict[str, list[float]] = {
+    "study1b": [0.1, 0.3, 0.5, 0.7],
+}
+
 
 def get_benchmark_pack(name: str) -> list[dict[str, Any]]:
     if name not in DEFAULT_BENCHMARK_PACKS:
@@ -203,3 +213,15 @@ def load_benchmark_pack_file(path: str, pack_name: str | None = None) -> list[di
         validated.append({"name": name, "overrides": dict(overrides)})
 
     return validated
+
+
+def get_partner_mix_preset(name: str) -> dict[str, float]:
+    if name not in DEFAULT_PARTNER_MIX_PRESETS:
+        raise ValueError(f"Unknown partner mix preset '{name}'.")
+    return deepcopy(DEFAULT_PARTNER_MIX_PRESETS[name])
+
+
+def get_pressure_levels(name: str) -> list[float]:
+    if name not in DEFAULT_PRESSURE_LEVELS:
+        raise ValueError(f"Unknown pressure-level set '{name}'.")
+    return deepcopy(DEFAULT_PRESSURE_LEVELS[name])

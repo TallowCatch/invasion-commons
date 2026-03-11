@@ -58,6 +58,7 @@ def _classify_ablation(name: str) -> str:
         return "scratch"
     curated_prefixes = (
         "paper_v1_",
+        "study1b",
         "governance_match_step4_",
         "governance_ablation_highpower_combined_summary",
         "governance_ablation_highpower_heldout_v1_table",
@@ -77,7 +78,7 @@ def _classify_showcase(name: str) -> str:
         "invasion_none_vs_monitoring_sanctions.gif",
         "showcase_report.md",
     }
-    if lower.startswith("paper_v1_"):
+    if lower.startswith("paper_v1_") or lower.startswith("study1b_"):
         return "curated"
     if lower in curated_names:
         return "curated"
@@ -93,6 +94,15 @@ def _classify_baselines(name: str) -> str:
     return "curated"
 
 
+def _classify_harvest(name: str) -> str:
+    lower = name.lower()
+    if _is_scratch(name):
+        return "scratch"
+    if lower.startswith("harvest_") or lower.startswith("orchard_"):
+        return "curated"
+    return "exploratory"
+
+
 def _classify_bucket(run_type: str, name: str) -> str:
     if run_type == "invasion":
         return _classify_invasion(name)
@@ -102,6 +112,8 @@ def _classify_bucket(run_type: str, name: str) -> str:
         return _classify_showcase(name)
     if run_type == "baselines":
         return _classify_baselines(name)
+    if run_type in {"orchard", "harvest"}:
+        return _classify_harvest(name)
     return "exploratory"
 
 
@@ -127,7 +139,7 @@ def _ensure_layout(results_dir: Path, runs_dir: Path, archive_tag: str) -> None:
         results_dir / "archive" / archive_tag,
         results_dir / "archive" / "runtime_cache",
     ]
-    for run_type in ("invasion", "ablation", "showcase", "baselines"):
+    for run_type in ("invasion", "ablation", "showcase", "baselines", "harvest", "orchard"):
         for bucket in ("curated", "exploratory", "scratch"):
             base_dirs.append(runs_dir / run_type / bucket)
     for d in base_dirs:
@@ -201,7 +213,7 @@ def main() -> None:
     moved = 0
     moved += _clean_runtime_noise(results_dir=results_dir, apply=args.apply)
     moved += _move_legacy_top_level(results_dir=results_dir, archive_dir=archive_dir, apply=args.apply)
-    for run_type in ("invasion", "ablation", "showcase", "baselines"):
+    for run_type in ("invasion", "ablation", "showcase", "baselines", "harvest", "orchard"):
         moved += _organize_run_type(runs_dir=runs_dir, run_type=run_type, apply=args.apply)
 
     print(

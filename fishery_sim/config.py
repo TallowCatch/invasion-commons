@@ -25,12 +25,17 @@ class FisheryConfig:
     quota_fraction: float = 0.0        # per-agent quota = quota_fraction * stock
     base_fine_rate: float = 1.0        # fine per unit of quota violation
     fine_growth: float = 0.5           # repeated violations increase fines
+    governance_variant: str = "static"
+    adaptive_quota_min_scale: float = 0.4
+    adaptive_quota_sensitivity: float = 0.8
+    temporary_closure_trigger: float = 15.0
+    temporary_closure_quota_fraction: float = 0.01
 
     # Randomness
     seed: int = 0
 
 
 def load_config(path: str) -> FisheryConfig:
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         d: Dict[str, Any] = yaml.safe_load(f) or {}
     return FisheryConfig(**d)

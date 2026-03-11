@@ -36,6 +36,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--test-seeds-per-generation", type=int, default=None)
     parser.add_argument("--replacement-fraction", type=float, default=0.3)
     parser.add_argument("--adversarial-pressure", type=float, default=0.7)
+    parser.add_argument(
+        "--partner-mix",
+        choices=["cooperative_heavy", "balanced", "adversarial_heavy"],
+        default="balanced",
+    )
     parser.add_argument("--collapse-penalty", type=float, default=50.0)
 
     parser.add_argument("--n-runs", type=int, default=5)
@@ -43,7 +48,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cfg-seed-start", type=int, default=0)
     parser.add_argument("--run-seed-stride", type=int, default=10_000)
 
-    parser.add_argument("--injector-mode", choices=["mutation", "llm_json"], default="mutation")
+    parser.add_argument(
+        "--injector-mode",
+        choices=["mutation", "random", "adversarial_heuristic", "search_mutation", "llm_json"],
+        default="mutation",
+    )
     parser.add_argument("--llm-policy-replay-file", default=None)
     parser.add_argument("--llm-provider", choices=["openai", "ollama"], default="ollama")
     parser.add_argument("--llm-model", default="qwen2.5:3b-instruct")
@@ -64,6 +73,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--quota-fraction", type=float, default=0.07)
     parser.add_argument("--sanction-base-fine-rate", type=float, default=2.0)
     parser.add_argument("--sanction-fine-growth", type=float, default=0.8)
+    parser.add_argument("--condition-set", choices=["paper_v1", "study1b"], default="paper_v1")
+    parser.add_argument("--adaptive-quota-min-scale", type=float, default=0.35)
+    parser.add_argument("--adaptive-quota-sensitivity", type=float, default=0.9)
+    parser.add_argument("--temporary-closure-trigger", type=float, default=15.0)
+    parser.add_argument("--temporary-closure-quota-fraction", type=float, default=0.01)
     parser.add_argument("--output-prefix", default="results/runs/ablation/governance_ablation")
     parser.add_argument("--experiment-tag", default="")
     parser.add_argument("--manifest-out", default=None)
@@ -172,6 +186,14 @@ def _summary_from_generation_df(condition: str, run_id: int, generation_df: pd.D
         "test_mean_stock_mean": float(generation_df["test_mean_stock"].mean()),
         "test_mean_welfare_mean": float(generation_df["test_mean_welfare"].mean()),
         "test_generations_collapse_le_0_5": float((generation_df["test_collapse_rate"] <= 0.5).sum()),
+        "test_mean_requested_harvest": float(generation_df["test_mean_requested_harvest"].mean()),
+        "test_mean_realized_harvest": float(generation_df["test_mean_realized_harvest"].mean()),
+        "test_mean_audit_rate": float(generation_df["test_mean_audit_rate"].mean()),
+        "test_mean_quota": float(generation_df["test_mean_quota"].mean()),
+        "test_mean_quota_clipped_total": float(generation_df["test_mean_quota_clipped_total"].mean()),
+        "test_mean_repeat_offender_rate": float(generation_df["test_mean_repeat_offender_rate"].mean()),
+        "test_closure_active_fraction": float(generation_df["test_closure_active_fraction"].mean()),
+        "test_mean_stock_recovery_lag": float(generation_df["test_mean_stock_recovery_lag"].mean()),
         # Robustness metrics requested for stability analysis.
         "time_to_collapse": _first_generation_at_or_above(
             generation_df=generation_df,
@@ -230,6 +252,7 @@ def _build_common_row_meta(
         ),
         "replacement_fraction": float(args.replacement_fraction),
         "adversarial_pressure": float(args.adversarial_pressure),
+        "partner_mix": args.partner_mix,
         "collapse_penalty": float(args.collapse_penalty),
         "train_regen_rate": (
             float(args.train_regen_rate) if args.train_regen_rate is not None else np.nan
@@ -262,6 +285,14 @@ def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
         "per_regime_survival_over_generations_mean",
         "llm_json_fraction",
         "llm_fallback_fraction",
+        "test_mean_requested_harvest",
+        "test_mean_realized_harvest",
+        "test_mean_audit_rate",
+        "test_mean_quota",
+        "test_mean_quota_clipped_total",
+        "test_mean_repeat_offender_rate",
+        "test_closure_active_fraction",
+        "test_mean_stock_recovery_lag",
     ]
     metric_keys.extend(sorted([c for c in per_run_df.columns if c.startswith("per_regime_survival_over_generations__")]))
     rows = []
@@ -396,20 +427,38 @@ def main() -> None:
             "quota_fraction": 0.0,
             "base_fine_rate": 0.0,
             "fine_growth": 0.0,
+            "governance_variant": "static",
         },
         "monitoring": {
             "monitoring_prob": args.monitoring_prob,
             "quota_fraction": args.quota_fraction,
             "base_fine_rate": 0.0,
             "fine_growth": 0.0,
+            "governance_variant": "static",
         },
         "monitoring_sanctions": {
             "monitoring_prob": args.monitoring_prob,
             "quota_fraction": args.quota_fraction,
             "base_fine_rate": args.sanction_base_fine_rate,
             "fine_growth": args.sanction_fine_growth,
+            "governance_variant": "static",
         },
     }
+    if args.condition_set == "study1b":
+        conditions["adaptive_quota"] = {
+            "monitoring_prob": args.monitoring_prob,
+            "quota_fraction": args.quota_fraction,
+            "base_fine_rate": args.sanction_base_fine_rate,
+            "fine_growth": args.sanction_fine_growth,
+            "governance_variant": "adaptive_quota",
+        }
+        conditions["temporary_closure"] = {
+            "monitoring_prob": 1.0,
+            "quota_fraction": max(args.quota_fraction, args.temporary_closure_quota_fraction),
+            "base_fine_rate": args.sanction_base_fine_rate,
+            "fine_growth": args.sanction_fine_growth,
+            "governance_variant": "temporary_closure",
+        }
 
     per_run_rows = []
     generation_histories: list[pd.DataFrame] = []
@@ -440,6 +489,11 @@ def main() -> None:
                 cfg.quota_fraction = knobs["quota_fraction"]
                 cfg.base_fine_rate = knobs["base_fine_rate"]
                 cfg.fine_growth = knobs["fine_growth"]
+                cfg.governance_variant = knobs["governance_variant"]
+                cfg.adaptive_quota_min_scale = args.adaptive_quota_min_scale
+                cfg.adaptive_quota_sensitivity = args.adaptive_quota_sensitivity
+                cfg.temporary_closure_trigger = args.temporary_closure_trigger
+                cfg.temporary_closure_quota_fraction = args.temporary_closure_quota_fraction
                 cfg.seed = args.cfg_seed_start + run_id * args.run_seed_stride
 
                 run_rng_seed = args.rng_seed_start + run_id * args.run_seed_stride
@@ -456,6 +510,7 @@ def main() -> None:
                     train_overrides=train_overrides,
                     test_overrides=test_overrides,
                     test_regimes=test_regimes,
+                    partner_mix_preset=args.partner_mix,
                     injector=injector,
                     progress_callback=_progress if use_progress else None,
                 )
@@ -472,6 +527,10 @@ def main() -> None:
                 strategy_df["llm_model"] = llm_model
                 generation_df["benchmark_pack"] = benchmark_pack_name
                 strategy_df["benchmark_pack"] = benchmark_pack_name
+                generation_df["partner_mix"] = args.partner_mix
+                strategy_df["partner_mix"] = args.partner_mix
+                generation_df["governance_variant"] = cfg.governance_variant
+                strategy_df["governance_variant"] = cfg.governance_variant
                 generation_df.to_csv(generation_path, index=False)
                 strategy_df.to_csv(strategy_path, index=False)
                 generation_histories.append(

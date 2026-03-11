@@ -103,14 +103,34 @@ def policy_json_to_strategy_spec(policy: PolicyJSON, strategy_id: str, origin: s
 
 
 def random_strategy(strategy_id: str, stock_max: float, rng: np.random.Generator) -> StrategySpec:
-    low_stock_threshold = float(rng.uniform(0.05, 0.4) * stock_max)
-    high_stock_threshold = float(rng.uniform(0.45, 0.95) * stock_max)
+    return _sample_strategy(
+        strategy_id=strategy_id,
+        stock_max=stock_max,
+        rng=rng,
+        threshold_ranges=((0.05, 0.4), (0.45, 0.95)),
+        harvest_ranges=((0.02, 0.25), (0.1, 0.7), (0.25, 1.0)),
+        origin="random_init",
+        rationale="random seed strategy",
+    )
+
+
+def _sample_strategy(
+    strategy_id: str,
+    stock_max: float,
+    rng: np.random.Generator,
+    threshold_ranges: tuple[tuple[float, float], tuple[float, float]],
+    harvest_ranges: tuple[tuple[float, float], tuple[float, float], tuple[float, float]],
+    origin: str,
+    rationale: str,
+) -> StrategySpec:
+    low_stock_threshold = float(rng.uniform(*threshold_ranges[0]) * stock_max)
+    high_stock_threshold = float(rng.uniform(*threshold_ranges[1]) * stock_max)
     if high_stock_threshold <= low_stock_threshold:
         high_stock_threshold = min(stock_max, low_stock_threshold + 5.0)
 
-    low_harvest_frac = float(rng.uniform(0.02, 0.25))
-    mid_harvest_frac = float(rng.uniform(0.1, 0.7))
-    high_harvest_frac = float(rng.uniform(0.25, 1.0))
+    low_harvest_frac = float(rng.uniform(*harvest_ranges[0]))
+    mid_harvest_frac = float(rng.uniform(*harvest_ranges[1]))
+    high_harvest_frac = float(rng.uniform(*harvest_ranges[2]))
 
     return StrategySpec(
         strategy_id=strategy_id,
@@ -119,9 +139,73 @@ def random_strategy(strategy_id: str, stock_max: float, rng: np.random.Generator
         low_harvest_frac=low_harvest_frac,
         mid_harvest_frac=mid_harvest_frac,
         high_harvest_frac=high_harvest_frac,
-        origin="random_init",
-        rationale="random seed strategy",
+        origin=origin,
+        rationale=rationale,
     )
+
+
+def cooperative_strategy(strategy_id: str, stock_max: float, rng: np.random.Generator) -> StrategySpec:
+    return _sample_strategy(
+        strategy_id=strategy_id,
+        stock_max=stock_max,
+        rng=rng,
+        threshold_ranges=((0.18, 0.45), (0.60, 0.95)),
+        harvest_ranges=((0.01, 0.10), (0.08, 0.28), (0.20, 0.50)),
+        origin="cooperative_seed",
+        rationale="cooperative-heavy seed strategy",
+    )
+
+
+def adversarial_strategy(strategy_id: str, stock_max: float, rng: np.random.Generator) -> StrategySpec:
+    return _sample_strategy(
+        strategy_id=strategy_id,
+        stock_max=stock_max,
+        rng=rng,
+        threshold_ranges=((0.01, 0.18), (0.18, 0.55)),
+        harvest_ranges=((0.12, 0.45), (0.45, 0.85), (0.75, 1.0)),
+        origin="adversarial_seed",
+        rationale="aggressive seed strategy",
+    )
+
+
+def build_initial_population(
+    population_size: int,
+    stock_max: float,
+    rng: np.random.Generator,
+    partner_mix_preset: str,
+) -> list[StrategySpec]:
+    mix = partner_mix_preset.strip().lower()
+    presets = {
+        "cooperative_heavy": (0.6, 0.3, 0.1),
+        "balanced": (0.34, 0.33, 0.33),
+        "adversarial_heavy": (0.1, 0.3, 0.6),
+    }
+    if mix not in presets:
+        raise ValueError(f"Unknown partner_mix_preset: {partner_mix_preset}")
+
+    coop_frac, neutral_frac, adv_frac = presets[mix]
+    counts = [
+        int(round(population_size * coop_frac)),
+        int(round(population_size * neutral_frac)),
+        int(round(population_size * adv_frac)),
+    ]
+    while sum(counts) < population_size:
+        counts[np.argmin(counts)] += 1
+    while sum(counts) > population_size:
+        counts[np.argmax(counts)] -= 1
+
+    population: list[StrategySpec] = []
+    for i in range(counts[0]):
+        population.append(cooperative_strategy(f"g0_s{len(population)}", stock_max=stock_max, rng=rng))
+    for _ in range(counts[1]):
+        population.append(random_strategy(f"g0_s{len(population)}", stock_max=stock_max, rng=rng))
+    for _ in range(counts[2]):
+        population.append(adversarial_strategy(f"g0_s{len(population)}", stock_max=stock_max, rng=rng))
+
+    rng.shuffle(population)
+    for i, spec in enumerate(population):
+        spec.strategy_id = f"g0_s{i}"
+    return population
 
 
 def mutate_strategy(
@@ -194,6 +278,104 @@ class MutationStrategyInjector:
             rng=rng,
             adversarial_pressure=adversarial_pressure,
         )
+
+
+class RandomStrategyInjector:
+    def inject(
+        self,
+        parent: StrategySpec,
+        parent_fitness: float,
+        strategy_id: str,
+        stock_max: float,
+        rng: np.random.Generator,
+        adversarial_pressure: float,
+    ) -> StrategySpec:
+        del parent, parent_fitness, adversarial_pressure
+        child = random_strategy(strategy_id=strategy_id, stock_max=stock_max, rng=rng)
+        child.origin = "random_injector"
+        child.rationale = "uninformed random child"
+        return child
+
+
+class AdversarialHeuristicStrategyInjector:
+    def inject(
+        self,
+        parent: StrategySpec,
+        parent_fitness: float,
+        strategy_id: str,
+        stock_max: float,
+        rng: np.random.Generator,
+        adversarial_pressure: float,
+    ) -> StrategySpec:
+        del parent, parent_fitness, adversarial_pressure
+        child = adversarial_strategy(strategy_id=strategy_id, stock_max=stock_max, rng=rng)
+        child.origin = "adversarial_heuristic"
+        child.rationale = "heuristic invader biased to high extraction"
+        return child
+
+
+class SearchMutationStrategyInjector:
+    def __init__(self, n_candidates: int = 6, eval_horizon: int = 40):
+        self.n_candidates = max(2, int(n_candidates))
+        self.eval_horizon = max(5, int(eval_horizon))
+        self._context_cfg: FisheryConfig | None = None
+        self._context_population: list[StrategySpec] = []
+        self._context_seed: int = 0
+
+    def prepare_generation(
+        self,
+        base_cfg: FisheryConfig,
+        parent_pool: list[StrategySpec],
+        generation: int,
+        rng: np.random.Generator,
+    ) -> None:
+        del rng
+        self._context_cfg = copy.deepcopy(base_cfg)
+        self._context_cfg.horizon = min(self._context_cfg.horizon, self.eval_horizon)
+        self._context_population = [copy.deepcopy(spec) for spec in parent_pool]
+        self._context_seed = int(base_cfg.seed + 1_000_000 + generation)
+
+    def inject(
+        self,
+        parent: StrategySpec,
+        parent_fitness: float,
+        strategy_id: str,
+        stock_max: float,
+        rng: np.random.Generator,
+        adversarial_pressure: float,
+    ) -> StrategySpec:
+        del parent_fitness
+        candidates = [
+            mutate_strategy(
+                parent=parent,
+                strategy_id=f"{strategy_id}_cand{i}",
+                stock_max=stock_max,
+                rng=rng,
+                adversarial_pressure=adversarial_pressure,
+            )
+            for i in range(self.n_candidates)
+        ]
+        if not self._context_population or self._context_cfg is None:
+            best = max(candidates, key=lambda spec: spec.high_harvest_frac + 0.5 * spec.mid_harvest_frac)
+        else:
+            best = max(candidates, key=self._attack_score)
+        best.strategy_id = strategy_id
+        best.origin = "search_mutation"
+        best.rationale = f"search-over-mutations from {parent.strategy_id}"
+        return best
+
+    def _attack_score(self, candidate: StrategySpec) -> float:
+        assert self._context_cfg is not None
+        cfg = copy.deepcopy(self._context_cfg)
+        partners = [copy.deepcopy(spec) for spec in self._context_population]
+        if partners:
+            partners = partners[: max(1, cfg.n_agents - 1)]
+        population = [candidate] + partners
+        cfg.seed = self._context_seed
+        cfg.n_agents = len(population)
+        agents: list[BaseAgent] = [spec.to_agent(cfg.max_harvest_per_agent) for spec in population]
+        out = run_episode(cfg, agents)
+        return float(out["payoffs"][0])
 
 
 class LLMJSONStrategyInjector:
@@ -286,6 +468,12 @@ def make_strategy_injector(
     mode = injector_mode.strip().lower()
     if mode == "mutation":
         return MutationStrategyInjector()
+    if mode == "random":
+        return RandomStrategyInjector()
+    if mode == "adversarial_heuristic":
+        return AdversarialHeuristicStrategyInjector()
+    if mode == "search_mutation":
+        return SearchMutationStrategyInjector()
     if mode == "llm_json":
         return LLMJSONStrategyInjector(llm_client=llm_client)
     raise ValueError(f"Unknown injector_mode: {injector_mode}")
@@ -340,6 +528,14 @@ def _summarize_episode_df(episode_df: pd.DataFrame, prefix: str) -> dict[str, fl
         f"{prefix}_mean_payoff_gini": float(episode_df["payoff_gini"].mean()),
         f"{prefix}_mean_sanction_total": float(episode_df["sanction_total"].mean()),
         f"{prefix}_mean_violation_events": float(episode_df["violation_events"].mean()),
+        f"{prefix}_mean_requested_harvest": float(episode_df["mean_requested_harvest"].mean()),
+        f"{prefix}_mean_realized_harvest": float(episode_df["mean_realized_harvest"].mean()),
+        f"{prefix}_mean_audit_rate": float(episode_df["mean_audit_rate"].mean()),
+        f"{prefix}_mean_quota": float(episode_df["mean_quota"].mean()),
+        f"{prefix}_mean_quota_clipped_total": float(episode_df["mean_quota_clipped_total"].mean()),
+        f"{prefix}_mean_repeat_offender_rate": float(episode_df["mean_repeat_offender_rate"].mean()),
+        f"{prefix}_closure_active_fraction": float(episode_df["closure_active_fraction"].mean()),
+        f"{prefix}_mean_stock_recovery_lag": float(episode_df["mean_stock_recovery_lag"].mean()),
     }
 
 
@@ -404,6 +600,14 @@ def evaluate_population(
                 "payoff_gini": payoff_gini,
                 "sanction_total": out["sanction_total"],
                 "violation_events": out["violation_events"],
+                "mean_requested_harvest": out["mean_requested_harvest"],
+                "mean_realized_harvest": out["mean_realized_harvest"],
+                "mean_audit_rate": out["mean_audit_rate"],
+                "mean_quota": out["mean_quota"],
+                "mean_quota_clipped_total": out["mean_quota_clipped_total"],
+                "mean_repeat_offender_rate": out["mean_repeat_offender_rate"],
+                "closure_active_fraction": out["closure_active_fraction"],
+                "mean_stock_recovery_lag": out["mean_stock_recovery_lag"],
             }
         )
 
@@ -441,6 +645,7 @@ def run_evolutionary_invasion(
     train_overrides: dict[str, float] | None = None,
     test_overrides: dict[str, float] | None = None,
     test_regimes: list[dict[str, dict[str, float]]] | None = None,
+    partner_mix_preset: str = "balanced",
     injector: StrategyInjector | None = None,
     progress_callback: Callable[[int, int], None] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -465,10 +670,12 @@ def run_evolutionary_invasion(
     test_seed_count = int(test_seeds_per_generation or seeds_per_generation)
     strategy_injector = injector if injector is not None else MutationStrategyInjector()
 
-    population = [
-        random_strategy(f"g0_s{i}", stock_max=base_cfg.stock_max, rng=rng)
-        for i in range(population_size)
-    ]
+    population = build_initial_population(
+        population_size=population_size,
+        stock_max=base_cfg.stock_max,
+        rng=rng,
+        partner_mix_preset=partner_mix_preset,
+    )
 
     generation_rows: list[dict] = []
     strategy_rows: list[dict] = []
@@ -520,6 +727,8 @@ def run_evolutionary_invasion(
             "best_fitness": float(train_score_df["fitness"].iloc[0]),
             "worst_fitness": float(train_score_df["fitness"].iloc[-1]),
             "injector_mode": type(strategy_injector).__name__,
+            "partner_mix_preset": partner_mix_preset,
+            "adversarial_pressure": float(adversarial_pressure),
         }
         row.update(_summarize_episode_df(train_episode_df, prefix="train"))
         row.update(_summarize_episode_df(test_episode_df, prefix="test"))
@@ -548,6 +757,15 @@ def run_evolutionary_invasion(
         survivor_map = {spec.strategy_id: spec for spec in population}
         parent_pool = [survivor_map[sid] for sid in survivors]
         parent_pool_top = parent_pool[: max(2, len(parent_pool) // 2)]
+
+        prepare_generation = getattr(strategy_injector, "prepare_generation", None)
+        if callable(prepare_generation):
+            prepare_generation(
+                base_cfg=train_cfg,
+                parent_pool=parent_pool,
+                generation=generation,
+                rng=rng,
+            )
 
         injected: list[StrategySpec] = []
         for i in range(replace_count):

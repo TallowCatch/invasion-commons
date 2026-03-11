@@ -7,4 +7,6 @@ __all__ = [
     "evolution",
     "llm_adapter",
     "benchmarks",
+    "harvest",
+    "orchard",
 ]

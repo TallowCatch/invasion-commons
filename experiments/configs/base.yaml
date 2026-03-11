@@ -16,5 +16,10 @@ monitoring_prob: 0.0
 quota_fraction: 0.0
 base_fine_rate: 1.0
 fine_growth: 0.5
+governance_variant: static
+adaptive_quota_min_scale: 0.4
+adaptive_quota_sensitivity: 0.8
+temporary_closure_trigger: 15.0
+temporary_closure_quota_fraction: 0.01
 
 seed: 0
