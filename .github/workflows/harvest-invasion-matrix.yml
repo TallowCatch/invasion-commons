@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - codex/harvest-remote-sweeps
+      - codex/harvest-remote-stagec
   workflow_dispatch:
     inputs:
       stage:
@@ -97,7 +98,7 @@ jobs:
           print(f"ci_plot_filter={ci_plot_filter}")
           PY
         env:
-          STAGE: ${{ github.event_name == 'push' && 'stage_b_pilot' || inputs.stage }}
+          STAGE: ${{ github.event_name == 'workflow_dispatch' && inputs.stage || (github.ref_name == 'codex/harvest-remote-stagec' && 'stage_c_highpower' || 'stage_b_pilot') }}
 
   run-shards:
     needs: define-matrix
