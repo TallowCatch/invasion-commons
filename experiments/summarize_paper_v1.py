@@ -435,6 +435,11 @@ def _fig_a_governance_effect(within_df: pd.DataFrame, out_path: Path) -> None:
     x = np.arange(len(tiers))
     width = 0.35 if len(injectors) == 2 else 0.25
     fig, ax = plt.subplots(figsize=(9, 5))
+    injector_labels = {
+        "mutation": "Mutation",
+        "llm_json": "Live LLM",
+        "ollama_live": "Live LLM",
+    }
     for i, inj in enumerate(injectors):
         sub = focus[focus["injector"] == inj].set_index("tier")
         means = [float(sub.loc[t, "mean"]) if t in sub.index else math.nan for t in tiers]
@@ -448,14 +453,14 @@ def _fig_a_governance_effect(within_df: pd.DataFrame, out_path: Path) -> None:
             width=width,
             yerr=np.vstack([err_lo, err_hi]),
             capsize=4,
-            label=inj,
+            label=injector_labels.get(inj, inj.replace("_", " ").title()),
             alpha=0.9,
         )
     ax.axhline(0.0, color="black", linewidth=1)
     ax.set_xticks(x)
-    ax.set_xticklabels(tiers)
-    ax.set_ylabel("Collapse Reduction (none - monitoring+sanctions)")
-    ax.set_title("Figure A: Governance Effect by Tier/Injector")
+    ax.set_xticklabels([tier.replace("_v1", "").title() for tier in tiers])
+    ax.set_ylabel("Collapse reduction from monitoring with sanctions")
+    ax.set_title("Fishery Commons matched baseline")
     ax.legend()
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)

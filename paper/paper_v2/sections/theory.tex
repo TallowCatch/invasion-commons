@@ -1,6 +1,6 @@
 \section{Formal Invasion-Stability Model}\label{sec:theory}
 
-This section formalizes the invasion process evaluated in the experiments. Let \(\mathcal{S}_t\) denote the strategy pool at generation \(t\), with population distribution \(p_t\in\Delta(\mathcal{S}_t)\). Let \(g\in\mathcal{G}\) denote governance condition, and let \(r\sim R_{\text{train}}\) or \(r\sim R_{\text{test}}\) denote train or held-out regime draws. In Study~1, \(g\) indexes central signals such as monitoring with sanctions, adaptive quotas, and temporary closures. In Study~2, \(g\) indexes governance architectures such as top-down-only, bottom-up-only, and hybrid control.
+This section formalizes the invasion process evaluated in the experiments. Let \(\mathcal{S}_t\) denote the strategy pool at generation \(t\), with population distribution \(p_t\in\Delta(\mathcal{S}_t)\). Let \(g\in\mathcal{G}\) denote governance condition, and let \(r\sim R_{\text{train}}\) or \(r\sim R_{\text{test}}\) denote train or held-out regime draws. In the first, Fishery Commons study, \(g\) indexes central signals such as monitoring with sanctions, adaptive quotas, and temporary closures. In the second, Harvest Commons study, \(g\) indexes governance architectures such as top-down-only, bottom-up-only, and hybrid control.
 
 For strategy \(s\in\mathcal{S}_t\), define train-regime fitness as
 \[
@@ -35,6 +35,6 @@ C\!\left(p_t^{g,i},g,r\right)=1\quad \forall t\in\{1,\dots,T\},\ \forall r\sim R
 then collapse-based governance ranking is non-identifiable because
 \(\mathcal{R}^{\text{collapse}}_{g,i}(T)=0\) for all \(g\).
 
-\textit{Sketch.} Substituting \(C=1\) into the definition of \(\mathcal{R}^{\text{collapse}}_{g,i}(T)\) yields zero difference at every time and regime, so all governance conditions tie under collapse-based scoring.
+Substituting \(C=1\) into the definition of \(\mathcal{R}^{\text{collapse}}_{g,i}(T)\) yields zero difference at every time and regime, so all governance conditions tie under collapse-based scoring.
 
 This proposition explains why hard-tier saturation is treated as stress confirmation rather than mechanism-separation evidence.

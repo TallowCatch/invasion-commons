@@ -106,19 +106,19 @@ def main() -> None:
         axes[0],
         collapse_frame,
         "collapse_reduction",
-        "Monitoring + sanctions vs none",
+        "Collapse reduction from monitoring and sanctions",
         "Mean held-out collapse reduction",
     )
     plot_grouped_bars(
         axes[1],
         welfare_frame,
         "adaptive_minus_closure_welfare",
-        "Adaptive quota vs temporary closure",
+        "Welfare gain from adaptive quotas",
         "Mean welfare difference",
     )
     axes[1].axhline(0.0, color="black", linewidth=1.0, alpha=0.6)
     axes[0].legend(loc="upper left", fontsize=8)
-    fig.suptitle("Study 1: Top-down governance comparisons in Fishery Commons", fontsize=14)
+    fig.suptitle("First study: Fishery Commons top-down governance", fontsize=14)
     fig.tight_layout()
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.output, dpi=220, bbox_inches="tight")
