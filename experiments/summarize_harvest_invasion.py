@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -182,6 +183,8 @@ def _build_paired_ci_df(delta_df: pd.DataFrame, n_samples: int, seed: int) -> pd
 def main() -> None:
     args = parse_args()
     per_run_df = pd.read_csv(args.runs_csv)
+    output_prefix = Path(args.output_prefix)
+    output_prefix.parent.mkdir(parents=True, exist_ok=True)
     table_df = _aggregate_with_ci(per_run_df)
     ranking_df = _build_ranking_table(table_df)
     delta_df = _build_paired_delta_df(per_run_df)
@@ -221,11 +224,11 @@ def main() -> None:
         "",
     ])
 
-    table_csv = f"{args.output_prefix}_table.csv"
-    ranking_csv = f"{args.output_prefix}_ranking.csv"
-    delta_csv = f"{args.output_prefix}_delta.csv"
-    ci_csv = f"{args.output_prefix}_ci.csv"
-    summary_md = f"{args.output_prefix}_summary.md"
+    table_csv = str(output_prefix.with_name(output_prefix.name + "_table.csv"))
+    ranking_csv = str(output_prefix.with_name(output_prefix.name + "_ranking.csv"))
+    delta_csv = str(output_prefix.with_name(output_prefix.name + "_delta.csv"))
+    ci_csv = str(output_prefix.with_name(output_prefix.name + "_ci.csv"))
+    summary_md = str(output_prefix.with_name(output_prefix.name + "_summary.md"))
 
     table_df.to_csv(table_csv, index=False)
     ranking_df.to_csv(ranking_csv, index=False)
