@@ -50,6 +50,11 @@ class PPOTrainConfig:
     eval_every: int = 25_000
     train_eval_episodes: int = 16
     max_grad_norm: float = 0.5
+    collapse_penalty: float = 500.0
+    curriculum_regen_jitter: float = 0.6
+    curriculum_obs_noise_jitter: float = 10.0
+    curriculum_stock_init_jitter: float = 20.0
+    curriculum_eval_episodes: int = 8
 
 
 @dataclass
@@ -61,6 +66,38 @@ class _EpisodeRollout:
     rewards: np.ndarray
     dones: np.ndarray
     metrics: dict[str, float | int | bool]
+
+
+def build_train_curriculum_pack(
+    cfg: FisheryConfig,
+    train_cfg: PPOTrainConfig,
+) -> list[dict[str, Any]]:
+    low_regen = max(0.1, float(cfg.regen_rate) - float(train_cfg.curriculum_regen_jitter))
+    high_noise = max(0.0, float(cfg.obs_noise_std) + float(train_cfg.curriculum_obs_noise_jitter))
+    scarce_start = float(
+        np.clip(
+            float(cfg.stock_init) - float(train_cfg.curriculum_stock_init_jitter),
+            max(float(cfg.collapse_threshold) + 5.0, 1.0),
+            float(cfg.stock_max),
+        )
+    )
+    return [
+        {"name": "default", "overrides": {}},
+        {"name": "low_regen", "overrides": {"regen_rate": low_regen}},
+        {"name": "high_noise", "overrides": {"obs_noise_std": high_noise}},
+        {
+            "name": "scarce_start",
+            "overrides": {"stock_init": scarce_start},
+        },
+        {
+            "name": "combined_stress",
+            "overrides": {
+                "regen_rate": low_regen,
+                "obs_noise_std": high_noise,
+                "stock_init": scarce_start,
+            },
+        },
+    ]
 
 
 class FisheryPPOPolicy(nn.Module):
@@ -239,6 +276,32 @@ def make_fishery_env(
     )
 
 
+def _sample_training_cfg(
+    base_cfg: FisheryConfig,
+    train_cfg: PPOTrainConfig,
+    *,
+    rng: np.random.Generator,
+    seed: int,
+) -> FisheryConfig:
+    cfg = copy.deepcopy(base_cfg)
+    cfg.seed = int(seed)
+
+    if train_cfg.curriculum_regen_jitter > 0.0:
+        low = max(0.1, float(base_cfg.regen_rate) - float(train_cfg.curriculum_regen_jitter))
+        cfg.regen_rate = float(rng.uniform(low, float(base_cfg.regen_rate)))
+    if train_cfg.curriculum_obs_noise_jitter > 0.0:
+        high = max(0.0, float(base_cfg.obs_noise_std) + float(train_cfg.curriculum_obs_noise_jitter))
+        cfg.obs_noise_std = float(rng.uniform(float(base_cfg.obs_noise_std), high))
+    if train_cfg.curriculum_stock_init_jitter > 0.0:
+        low = max(
+            float(base_cfg.collapse_threshold) + 5.0,
+            float(base_cfg.stock_init) - float(train_cfg.curriculum_stock_init_jitter),
+        )
+        high = min(float(base_cfg.stock_max), float(base_cfg.stock_init))
+        cfg.stock_init = float(rng.uniform(low, max(low, high)))
+    return cfg
+
+
 def save_rl_checkpoint(
     path: str,
     policy: FisheryPPOPolicy,
@@ -307,15 +370,18 @@ def train_self_play_policy(
     total_timesteps = 0
     update_idx = 0
     next_eval = min(train_cfg.eval_every, train_cfg.total_timesteps)
-    best_score = (-float("inf"), -float("inf"))
+    best_score = (-float("inf"), -float("inf"), -float("inf"))
     best_state = copy.deepcopy(policy.state_dict())
     history_rows: list[dict[str, float | int]] = []
+    curriculum_pack = build_train_curriculum_pack(cfg=cfg, train_cfg=train_cfg)
+    curriculum_eval_episodes = max(1, int(train_cfg.curriculum_eval_episodes))
 
     while total_timesteps < train_cfg.total_timesteps:
         rollout = _collect_rollout_batch(
             cfg=cfg,
             policy=policy,
             action_bins=action_bins,
+            train_cfg=train_cfg,
             rollout_steps=min(train_cfg.rollout_steps, train_cfg.total_timesteps - total_timesteps),
             gamma=train_cfg.gamma,
             gae_lambda=train_cfg.gae_lambda,
@@ -354,9 +420,22 @@ def train_self_play_policy(
                 device=device,
             )
             row.update(eval_summary)
+            _, curriculum_summary = evaluate_self_play_policy(
+                cfg=cfg,
+                policy=policy,
+                action_bins=action_bins,
+                n_eval_episodes=curriculum_eval_episodes,
+                seed=run_seed + 80_000 + update_idx * 17,
+                benchmark_pack=curriculum_pack,
+                deterministic=True,
+                prefix="curriculum",
+                device=device,
+            )
+            row.update(curriculum_summary)
             candidate = (
-                -float(eval_summary["train_collapse_mean"]),
-                float(eval_summary["train_mean_welfare_mean"]),
+                -float(curriculum_summary["curriculum_collapse_mean"]),
+                float(curriculum_summary["curriculum_mean_stock_mean"]),
+                float(curriculum_summary["curriculum_mean_welfare_mean"]),
             )
             if candidate > best_score:
                 best_score = candidate
@@ -501,6 +580,7 @@ def _collect_rollout_batch(
     policy: FisheryPPOPolicy,
     action_bins: np.ndarray,
     *,
+    train_cfg: PPOTrainConfig,
     rollout_steps: int,
     gamma: float,
     gae_lambda: float,
@@ -510,11 +590,13 @@ def _collect_rollout_batch(
     episodes: list[_EpisodeRollout] = []
     total_steps = 0
     episode_seed = int(seed)
+    curriculum_rng = np.random.default_rng(int(seed))
     while total_steps < rollout_steps:
         episode = _run_training_episode(
-            cfg=cfg,
+            cfg=_sample_training_cfg(cfg, train_cfg, rng=curriculum_rng, seed=episode_seed),
             policy=policy,
             action_bins=action_bins,
+            train_cfg=train_cfg,
             seed=episode_seed,
             device=device,
         )
@@ -573,6 +655,7 @@ def _run_training_episode(
     policy: FisheryPPOPolicy,
     action_bins: np.ndarray,
     *,
+    train_cfg: PPOTrainConfig,
     seed: int,
     device: str,
 ) -> _EpisodeRollout:
@@ -615,12 +698,15 @@ def _run_training_episode(
         action_idx = actions.detach().cpu().numpy().astype(np.int64)
         harvests = action_bins[action_idx]
         step = env.step(harvests)
+        rewards = np.asarray(step.payoffs, dtype=np.float32)
+        if step.collapsed and float(train_cfg.collapse_penalty) > 0.0:
+            rewards = rewards - float(train_cfg.collapse_penalty)
 
         obs_rows.append(obs_batch)
         action_rows.append(action_idx.astype(np.int64))
         logprob_rows.append(logprobs.detach().cpu().numpy().astype(np.float32))
         value_rows.append(values.detach().cpu().numpy().astype(np.float32))
-        reward_rows.append(np.asarray(step.payoffs, dtype=np.float32))
+        reward_rows.append(rewards)
         done_flag = bool(step.collapsed or t == local_cfg.horizon - 1)
         done_rows.append(np.full(local_cfg.n_agents, 1.0 if done_flag else 0.0, dtype=np.float32))
 

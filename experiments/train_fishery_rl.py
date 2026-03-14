@@ -38,6 +38,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--action-bins", type=int, default=11)
     parser.add_argument("--eval-every", type=int, default=25_000)
     parser.add_argument("--train-eval-episodes", type=int, default=16)
+    parser.add_argument("--collapse-penalty", type=float, default=500.0)
+    parser.add_argument("--curriculum-regen-jitter", type=float, default=0.6)
+    parser.add_argument("--curriculum-obs-noise-jitter", type=float, default=10.0)
+    parser.add_argument("--curriculum-stock-init-jitter", type=float, default=20.0)
+    parser.add_argument("--curriculum-eval-episodes", type=int, default=8)
     parser.add_argument("--device", default="auto")
     parser.add_argument("--output-prefix", default="results/runs/rl_fishery/fishery_rl")
     parser.add_argument("--experiment-tag", default="fishery_rl")
@@ -102,6 +107,11 @@ def main() -> None:
         action_bins=int(args.action_bins),
         eval_every=int(args.eval_every),
         train_eval_episodes=int(args.train_eval_episodes),
+        collapse_penalty=float(args.collapse_penalty),
+        curriculum_regen_jitter=float(args.curriculum_regen_jitter),
+        curriculum_obs_noise_jitter=float(args.curriculum_obs_noise_jitter),
+        curriculum_stock_init_jitter=float(args.curriculum_stock_init_jitter),
+        curriculum_eval_episodes=int(args.curriculum_eval_episodes),
     )
 
     output_dir = os.path.dirname(args.output_prefix)
