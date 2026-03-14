@@ -26,6 +26,8 @@ SUMMARY_METRICS = [
     "first_generation_test_failure_ge_0_8",
     "per_regime_health_survival_over_generations_mean",
     "population_diversity_mean",
+    "llm_json_fraction",
+    "llm_fallback_fraction",
 ]
 
 PAIR_METRICS = [
@@ -77,7 +79,7 @@ def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
     group_cols = ["tier", "partner_mix", "injector_mode_requested", "adversarial_pressure", "condition"]
     rows = []
     regime_cols = sorted([c for c in per_run_df.columns if c.startswith("per_regime_health_survival_over_generations__")])
-    metric_keys = SUMMARY_METRICS + regime_cols
+    metric_keys = [key for key in SUMMARY_METRICS if key in per_run_df.columns] + regime_cols
     for keys, gdf in per_run_df.groupby(group_cols, sort=True):
         row = {
             "tier": keys[0],
@@ -86,6 +88,8 @@ def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
             "adversarial_pressure": keys[3],
             "condition": keys[4],
             "n_runs": int(len(gdf)),
+            "llm_provider": str(gdf["llm_provider"].iloc[0]) if "llm_provider" in gdf.columns else "none",
+            "llm_model": str(gdf["llm_model"].iloc[0]) if "llm_model" in gdf.columns else "",
         }
         for key in metric_keys:
             mean, lo, hi = _ci95(gdf[key].tolist())
@@ -100,6 +104,31 @@ def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
             ascending=[True, True, True, True, True, False, False],
         ).reset_index(drop=True)
     return out
+
+
+def _build_integrity_df(per_run_df: pd.DataFrame) -> pd.DataFrame:
+    if "llm_json_fraction" not in per_run_df.columns:
+        return pd.DataFrame()
+    llm_df = per_run_df[per_run_df["injector_mode_requested"] == "llm_json"].copy()
+    if llm_df.empty:
+        return pd.DataFrame()
+    rows = []
+    group_cols = ["tier", "partner_mix", "adversarial_pressure", "condition"]
+    for keys, gdf in llm_df.groupby(group_cols, sort=True):
+        rows.append(
+            {
+                "tier": keys[0],
+                "partner_mix": keys[1],
+                "adversarial_pressure": keys[2],
+                "condition": keys[3],
+                "n_runs": int(len(gdf)),
+                "llm_provider": str(gdf["llm_provider"].iloc[0]) if "llm_provider" in gdf.columns else "none",
+                "llm_model": str(gdf["llm_model"].iloc[0]) if "llm_model" in gdf.columns else "",
+                "llm_json_fraction_mean": round(float(gdf["llm_json_fraction"].mean()), 6),
+                "llm_fallback_fraction_mean": round(float(gdf["llm_fallback_fraction"].mean()), 6),
+            }
+        )
+    return pd.DataFrame(rows)
 
 
 def _build_ranking_table(table_df: pd.DataFrame) -> pd.DataFrame:
@@ -189,6 +218,7 @@ def main() -> None:
     ranking_df = _build_ranking_table(table_df)
     delta_df = _build_paired_delta_df(per_run_df)
     ci_df = _build_paired_ci_df(delta_df, n_samples=args.bootstrap_samples, seed=args.bootstrap_seed)
+    integrity_df = _build_integrity_df(per_run_df)
 
     best_counts = pd.Series(dtype=int)
     if not ranking_df.empty:
@@ -216,6 +246,15 @@ def main() -> None:
                 f"- Mean neighborhood-overharvest delta: `{delta_df['hybrid_minus_top__test_mean_neighborhood_overharvest_mean'].mean():.4f}`",
             ]
         )
+    if not integrity_df.empty:
+        lines.extend(
+            [
+                "",
+                "## LLM integrity",
+                "",
+                _markdown_table(integrity_df.head(24)),
+            ]
+        )
     lines.extend([
         "",
         "## Table preview",
@@ -228,12 +267,14 @@ def main() -> None:
     ranking_csv = str(output_prefix.with_name(output_prefix.name + "_ranking.csv"))
     delta_csv = str(output_prefix.with_name(output_prefix.name + "_delta.csv"))
     ci_csv = str(output_prefix.with_name(output_prefix.name + "_ci.csv"))
+    integrity_csv = str(output_prefix.with_name(output_prefix.name + "_integrity.csv"))
     summary_md = str(output_prefix.with_name(output_prefix.name + "_summary.md"))
 
     table_df.to_csv(table_csv, index=False)
     ranking_df.to_csv(ranking_csv, index=False)
     delta_df.to_csv(delta_csv, index=False)
     ci_df.to_csv(ci_csv, index=False)
+    integrity_df.to_csv(integrity_csv, index=False)
     with open(summary_md, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
         f.write("\n")

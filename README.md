@@ -1,4 +1,4 @@
-# fishery-gov-sim
+# invasion-commons
 
 Minimal sequential fishery commons simulator for studying cooperation stability.
 

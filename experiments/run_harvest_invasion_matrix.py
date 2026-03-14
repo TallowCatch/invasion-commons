@@ -8,6 +8,11 @@ import pandas as pd
 
 from fishery_sim.harvest_benchmarks import get_harvest_regime_pack, make_harvest_cfg_for_tier
 from fishery_sim.harvest_evolution import make_harvest_strategy_injector, run_harvest_invasion
+from fishery_sim.llm_adapter import (
+    FileReplayPolicyLLMClient,
+    OllamaPolicyLLMClient,
+    OpenAIResponsesPolicyLLMClient,
+)
 
 try:
     from tqdm.auto import tqdm
@@ -35,6 +40,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-prefix", default="results/runs/harvest_invasion/harvest_invasion_matrix")
     parser.add_argument("--experiment-tag", default="harvest_invasion")
     parser.add_argument("--no-progress", action="store_true")
+    parser.add_argument("--llm-policy-replay-file", default=None)
+    parser.add_argument("--llm-provider", choices=["openai", "ollama"], default="ollama")
+    parser.add_argument("--llm-model", default="qwen2.5:3b-instruct")
+    parser.add_argument("--llm-base-url", default=None)
+    parser.add_argument("--llm-api-key-env", default="OPENAI_API_KEY")
+    parser.add_argument("--llm-timeout-s", type=float, default=120.0)
+    parser.add_argument("--llm-temperature", type=float, default=0.8)
 
     parser.add_argument("--government-trigger", type=float, default=16.0)
     parser.add_argument("--strict-cap-frac", type=float, default=0.18)
@@ -126,6 +138,33 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
     pressure = float(job["pressure"])
     run_id = int(job["run_id"])
     args = job["args"]
+    llm_client = None
+    if args["llm_policy_replay_file"]:
+        llm_client = FileReplayPolicyLLMClient(path=str(args["llm_policy_replay_file"]))
+    elif injector_mode == "llm_json":
+        if args["llm_provider"] == "ollama":
+            llm_client = OllamaPolicyLLMClient(
+                model=str(args["llm_model"]),
+                base_url=args["llm_base_url"],
+                timeout_s=float(args["llm_timeout_s"]),
+                temperature=float(args["llm_temperature"]),
+            )
+        elif args["llm_provider"] == "openai":
+            api_key = os.environ.get(str(args["llm_api_key_env"]))
+            if not api_key:
+                raise ValueError(
+                    f"{args['llm_api_key_env']} is required for OpenAI injection. "
+                    "Set the env var or switch to --llm-provider ollama / replay file."
+                )
+            llm_client = OpenAIResponsesPolicyLLMClient(
+                model=str(args["llm_model"]),
+                api_key=api_key,
+                base_url=args["llm_base_url"],
+                timeout_s=float(args["llm_timeout_s"]),
+                temperature=float(args["llm_temperature"]),
+            )
+        else:
+            raise ValueError(f"Unsupported llm provider: {args['llm_provider']}")
 
     cfg = make_harvest_cfg_for_tier(
         tier,
@@ -143,7 +182,7 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
         adversarial_pressure=pressure,
         rng_seed=int(args["rng_seed_start"]) + run_id * int(args["run_seed_stride"]),
         partner_mix_preset=partner_mix,
-        injector=make_harvest_strategy_injector(injector_mode),
+        injector=make_harvest_strategy_injector(injector_mode, llm_client=llm_client),
         test_regimes=get_harvest_regime_pack(tier),
         government_params=dict(args["government_params"]),
         progress_callback=None,
@@ -156,6 +195,8 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
         adversarial_pressure=pressure,
         run_id=run_id,
         experiment_tag=str(args["experiment_tag"]),
+        llm_provider=str(args["llm_provider"] if injector_mode == "llm_json" else "none"),
+        llm_model=str(args["llm_model"] if injector_mode == "llm_json" else ""),
     )
     strategy_df = strategy_df.assign(
         tier=tier,
@@ -165,6 +206,8 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
         adversarial_pressure=pressure,
         run_id=run_id,
         experiment_tag=str(args["experiment_tag"]),
+        llm_provider=str(args["llm_provider"] if injector_mode == "llm_json" else "none"),
+        llm_model=str(args["llm_model"] if injector_mode == "llm_json" else ""),
     )
     summary_row = _summary_from_generation_df(condition, injector_mode, run_id, generation_df)
     summary_row.update(
@@ -178,6 +221,10 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
             "test_seeds_per_generation": int(args["test_seeds_per_generation"]),
             "replacement_fraction": float(args["replacement_fraction"]),
             "experiment_tag": str(args["experiment_tag"]),
+            "llm_provider": str(args["llm_provider"] if injector_mode == "llm_json" else "none"),
+            "llm_model": str(args["llm_model"] if injector_mode == "llm_json" else ""),
+            "llm_json_fraction": float((strategy_df["origin"] == "llm_json").mean()),
+            "llm_fallback_fraction": float((strategy_df["origin"] == "llm_fallback_mutation").mean()),
         }
     )
     return summary_row, generation_df, strategy_df
@@ -250,6 +297,13 @@ def main() -> None:
                 "run_seed_stride": args.run_seed_stride,
                 "government_params": government_params,
                 "experiment_tag": args.experiment_tag,
+                "llm_policy_replay_file": args.llm_policy_replay_file,
+                "llm_provider": args.llm_provider,
+                "llm_model": args.llm_model,
+                "llm_base_url": args.llm_base_url,
+                "llm_api_key_env": args.llm_api_key_env,
+                "llm_timeout_s": args.llm_timeout_s,
+                "llm_temperature": args.llm_temperature,
             },
         }
         for tier in tiers

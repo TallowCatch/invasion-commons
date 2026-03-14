@@ -7,6 +7,11 @@ from datetime import datetime, timezone
 from fishery_sim.harvest_benchmarks import get_harvest_regime_pack, make_harvest_cfg_for_tier
 from fishery_sim.harvest_evolution import make_harvest_strategy_injector
 from fishery_sim.harvest_evolution import run_harvest_invasion
+from fishery_sim.llm_adapter import (
+    FileReplayPolicyLLMClient,
+    OllamaPolicyLLMClient,
+    OpenAIResponsesPolicyLLMClient,
+)
 
 try:
     from tqdm.auto import tqdm
@@ -26,7 +31,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--adversarial-pressure", type=float, default=0.3)
     parser.add_argument("--partner-mix", choices=["cooperative_heavy", "balanced", "adversarial_heavy"], default="balanced")
     parser.add_argument("--rng-seed", type=int, default=0)
-    parser.add_argument("--injector-mode", choices=["random", "mutation", "adversarial_heuristic"], default="mutation")
+    parser.add_argument("--injector-mode", choices=["random", "mutation", "adversarial_heuristic", "search_mutation", "llm_json"], default="mutation")
+    parser.add_argument("--llm-policy-replay-file", default=None)
+    parser.add_argument("--llm-provider", choices=["openai", "ollama"], default="ollama")
+    parser.add_argument("--llm-model", default="qwen2.5:3b-instruct")
+    parser.add_argument("--llm-base-url", default=None)
+    parser.add_argument("--llm-api-key-env", default="OPENAI_API_KEY")
+    parser.add_argument("--llm-timeout-s", type=float, default=120.0)
+    parser.add_argument("--llm-temperature", type=float, default=0.8)
     parser.add_argument("--output-prefix", default="results/runs/harvest_invasion/harvest_invasion")
     parser.add_argument("--experiment-tag", default="harvest_invasion")
     parser.add_argument("--manifest-out", default=None)
@@ -71,6 +83,12 @@ def _write_manifest(path: str, args: argparse.Namespace, generation_path: str, s
             "resolved_regime_count": len(test_regimes),
             "resolved_regime_names": [reg["name"] for reg in test_regimes],
         },
+        "injector": {
+            "mode": args.injector_mode,
+            "provider": args.llm_provider if args.injector_mode == "llm_json" else "none",
+            "model": args.llm_model if args.injector_mode == "llm_json" else "",
+            "replay_file": args.llm_policy_replay_file or "",
+        },
     }
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, sort_keys=True)
@@ -80,7 +98,34 @@ def _write_manifest(path: str, args: argparse.Namespace, generation_path: str, s
 def main() -> None:
     args = parse_args()
     cfg = make_harvest_cfg_for_tier(args.tier, n_agents=args.population_size)
-    injector = make_harvest_strategy_injector(args.injector_mode)
+    llm_client = None
+    if args.llm_policy_replay_file:
+        llm_client = FileReplayPolicyLLMClient(path=args.llm_policy_replay_file)
+    elif args.injector_mode == "llm_json":
+        if args.llm_provider == "ollama":
+            llm_client = OllamaPolicyLLMClient(
+                model=args.llm_model,
+                base_url=args.llm_base_url,
+                timeout_s=args.llm_timeout_s,
+                temperature=args.llm_temperature,
+            )
+        elif args.llm_provider == "openai":
+            api_key = os.environ.get(args.llm_api_key_env)
+            if not api_key:
+                raise ValueError(
+                    f"{args.llm_api_key_env} is required for OpenAI injection. "
+                    "Set the env var or switch to --llm-provider ollama / replay file."
+                )
+            llm_client = OpenAIResponsesPolicyLLMClient(
+                model=args.llm_model,
+                api_key=api_key,
+                base_url=args.llm_base_url,
+                timeout_s=args.llm_timeout_s,
+                temperature=args.llm_temperature,
+            )
+        else:
+            raise ValueError(f"Unsupported llm provider: {args.llm_provider}")
+    injector = make_harvest_strategy_injector(args.injector_mode, llm_client=llm_client)
     test_regimes = get_harvest_regime_pack(args.tier)
     government_params = {
         "trigger": args.government_trigger,
@@ -149,6 +194,10 @@ def main() -> None:
     strategy_df["partner_mix"] = args.partner_mix
     generation_df["injector_mode_requested"] = args.injector_mode
     strategy_df["injector_mode_requested"] = args.injector_mode
+    generation_df["llm_provider"] = args.llm_provider if args.injector_mode == "llm_json" else "none"
+    strategy_df["llm_provider"] = args.llm_provider if args.injector_mode == "llm_json" else "none"
+    generation_df["llm_model"] = args.llm_model if args.injector_mode == "llm_json" else ""
+    strategy_df["llm_model"] = args.llm_model if args.injector_mode == "llm_json" else ""
 
     generation_path = f"{args.output_prefix}_generations.csv"
     strategy_path = f"{args.output_prefix}_strategies.csv"
@@ -160,6 +209,9 @@ def main() -> None:
     if args.manifest_out:
         _write_manifest(args.manifest_out, args, generation_path, strategy_path, test_regimes)
         print(f"Saved: {args.manifest_out}")
+    if args.injector_mode == "llm_json" and not strategy_df.empty:
+        print(f"llm_json_fraction: {float((strategy_df['origin'] == 'llm_json').mean()):.4f}")
+        print(f"llm_fallback_fraction: {float((strategy_df['origin'] == 'llm_fallback_mutation').mean()):.4f}")
 
 
 if __name__ == "__main__":

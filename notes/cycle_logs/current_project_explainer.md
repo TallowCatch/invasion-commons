@@ -107,9 +107,9 @@ In Harvest Commons this includes architecture choices such as:
 
 ## What the first study does now
 The first study lives mostly in:
-- [fishery_sim/evolution.py](/Users/ameerfiras/fishery-gov-sim/fishery-gov-sim/fishery_sim/evolution.py)
-- [fishery_sim/env.py](/Users/ameerfiras/fishery-gov-sim/fishery-gov-sim/fishery_sim/env.py)
-- [experiments/run_study1b.py](/Users/ameerfiras/fishery-gov-sim/fishery-gov-sim/experiments/run_study1b.py)
+- [fishery_sim/evolution.py](/Users/ameerfiras/invasion-commons/invasion-commons/fishery_sim/evolution.py)
+- [fishery_sim/env.py](/Users/ameerfiras/invasion-commons/invasion-commons/fishery_sim/env.py)
+- [experiments/run_study1b.py](/Users/ameerfiras/invasion-commons/invasion-commons/experiments/run_study1b.py)
 
 It now has two layers.
 
@@ -146,11 +146,11 @@ That is the part that gives the stronger result:
 
 ## What the second study does now
 The second study now lives mainly in:
-- [fishery_sim/harvest.py](/Users/ameerfiras/fishery-gov-sim/fishery-gov-sim/fishery_sim/harvest.py)
-- [fishery_sim/harvest_benchmarks.py](/Users/ameerfiras/fishery-gov-sim/fishery-gov-sim/fishery_sim/harvest_benchmarks.py)
-- [fishery_sim/harvest_evolution.py](/Users/ameerfiras/fishery-gov-sim/fishery-gov-sim/fishery_sim/harvest_evolution.py)
-- [experiments/run_harvest_invasion.py](/Users/ameerfiras/fishery-gov-sim/fishery-gov-sim/experiments/run_harvest_invasion.py)
-- [experiments/run_harvest_invasion_matrix.py](/Users/ameerfiras/fishery-gov-sim/fishery-gov-sim/experiments/run_harvest_invasion_matrix.py)
+- [fishery_sim/harvest.py](/Users/ameerfiras/invasion-commons/invasion-commons/fishery_sim/harvest.py)
+- [fishery_sim/harvest_benchmarks.py](/Users/ameerfiras/invasion-commons/invasion-commons/fishery_sim/harvest_benchmarks.py)
+- [fishery_sim/harvest_evolution.py](/Users/ameerfiras/invasion-commons/invasion-commons/fishery_sim/harvest_evolution.py)
+- [experiments/run_harvest_invasion.py](/Users/ameerfiras/invasion-commons/invasion-commons/experiments/run_harvest_invasion.py)
+- [experiments/run_harvest_invasion_matrix.py](/Users/ameerfiras/invasion-commons/invasion-commons/experiments/run_harvest_invasion_matrix.py)
 
 This is the important correction: the second study is no longer just a fixed set of hand-written agent types. It now has the same population-turnover idea as the first study.
 
@@ -207,8 +207,8 @@ That makes the second study fit the main paper much better.
 The Harvest invasion matrix was large enough that local runs were taking too long and tying up the machine.
 
 So the repo now includes:
-- [.github/workflows/harvest-invasion-matrix.yml](/Users/ameerfiras/fishery-gov-sim/fishery-gov-sim/.github/workflows/harvest-invasion-matrix.yml)
-- [experiments/merge_harvest_invasion_outputs.py](/Users/ameerfiras/fishery-gov-sim/fishery-gov-sim/experiments/merge_harvest_invasion_outputs.py)
+- [.github/workflows/harvest-invasion-matrix.yml](/Users/ameerfiras/invasion-commons/invasion-commons/.github/workflows/harvest-invasion-matrix.yml)
+- [experiments/merge_harvest_invasion_outputs.py](/Users/ameerfiras/invasion-commons/invasion-commons/experiments/merge_harvest_invasion_outputs.py)
 
 That workflow shards the Harvest matrix across GitHub Actions jobs, merges the CSV outputs, and lets you pull the bundled artifacts back into the repo.
 
@@ -238,7 +238,7 @@ That is an important point: the second study is not saying hybrid governance is 
 
 ## What the paper now says
 The paper in:
-- [paper/paper_v2/main.pdf](/Users/ameerfiras/fishery-gov-sim/fishery-gov-sim/paper/paper_v2/main.pdf)
+- [paper/paper_v2/main.pdf](/Users/ameerfiras/invasion-commons/invasion-commons/paper/paper_v2/main.pdf)
 
 now has this structure:
 1. Introduction and framing of governance under adversarial strategy injection.

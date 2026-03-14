@@ -22,6 +22,13 @@ MECH_METRICS = [
     ("hybrid_minus_top__test_mean_credit_transferred_mean", "Hybrid - top-down credit transferred", "#8ab17d"),
 ]
 
+COMPACT_METRICS = [
+    ("hybrid_minus_top__test_mean_patch_health_mean", "Patch health", "#2a9d8f"),
+    ("hybrid_minus_top__test_mean_welfare_mean", "Welfare", "#457b9d"),
+    ("hybrid_minus_top__test_mean_max_local_aggression_mean", "Local aggression", "#d1495b"),
+    ("hybrid_minus_top__test_mean_neighborhood_overharvest_mean", "Neighborhood overharvest", "#e76f51"),
+]
+
 TIER_LABELS = {"easy_h1": "Easy", "medium_h1": "Medium", "hard_h1": "Hard"}
 MIX_LABELS = {"cooperative_heavy": "Coop", "balanced": "Bal", "adversarial_heavy": "Adv"}
 INJECTOR_LABELS = {"random": "Rnd", "mutation": "Mut", "adversarial_heuristic": "AdvH"}
@@ -119,6 +126,12 @@ def main() -> None:
         MECH_METRICS,
         "Harvest invasion: mechanism deltas",
         prefix.with_name(prefix.name + "_mechanisms.png"),
+    )
+    _plot_grid(
+        df,
+        COMPACT_METRICS,
+        "Harvest invasion: compact outcome and mechanism view",
+        prefix.with_name(prefix.name + "_compact.png"),
     )
 
 

@@ -18,12 +18,13 @@ from fishery_sim.harvest_evolution import evaluate_harvest_population
 from fishery_sim.harvest_evolution import make_harvest_strategy_injector
 from fishery_sim.harvest_evolution import mutate_harvest_strategy
 from fishery_sim.harvest_evolution import run_harvest_invasion
+from fishery_sim.llm_adapter import FileReplayPolicyLLMClient
 
 
-def test_harvest_invasion_is_deterministic_for_random_and_mutation() -> None:
+def test_harvest_invasion_is_deterministic_for_random_mutation_and_search() -> None:
     cfg = make_harvest_cfg_for_tier("medium_h1", n_agents=6, seed=7)
     regimes = get_harvest_regime_pack("medium_h1")[:2]
-    for mode in ("random", "mutation"):
+    for mode in ("random", "mutation", "search_mutation"):
         injector = make_harvest_strategy_injector(mode)
         gen_a, strat_a = run_harvest_invasion(
             base_cfg=copy.deepcopy(cfg),
@@ -56,6 +57,80 @@ def test_harvest_invasion_is_deterministic_for_random_and_mutation() -> None:
         )
         assert gen_a.equals(gen_b)
         assert strat_a.equals(strat_b)
+
+
+def test_harvest_llm_replay_is_deterministic(tmp_path: Path) -> None:
+    cfg = make_harvest_cfg_for_tier("medium_h1", n_agents=6, seed=7)
+    regimes = get_harvest_regime_pack("medium_h1")[:2]
+    replay_path = tmp_path / "harvest_llm_replay.jsonl"
+    replay_path.write_text(
+        "\n".join(
+            [
+                '{"rationale":"careful local trader","low_patch_threshold":5.0,"high_patch_threshold":12.0,"low_harvest_frac":0.10,"mid_harvest_frac":0.35,"high_harvest_frac":0.65,"restraint_low":0.70,"restraint_high":0.35,"credit_request_low":0.25,"credit_request_high":0.05,"credit_offer_threshold":10.0,"credit_offer_amount":0.25,"neighbor_reciprocity_weight":0.55,"credit_response_weight":0.50,"cap_compliance_margin":0.02}',
+                '{"rationale":"more aggressive contender","low_patch_threshold":4.0,"high_patch_threshold":11.0,"low_harvest_frac":0.18,"mid_harvest_frac":0.45,"high_harvest_frac":0.82,"restraint_low":0.35,"restraint_high":0.18,"credit_request_low":0.12,"credit_request_high":0.02,"credit_offer_threshold":8.0,"credit_offer_amount":0.08,"neighbor_reciprocity_weight":0.20,"credit_response_weight":0.18,"cap_compliance_margin":0.06}',
+            ]
+        ),
+        encoding="utf-8",
+    )
+    injector_a = make_harvest_strategy_injector("llm_json", llm_client=FileReplayPolicyLLMClient(str(replay_path)))
+    gen_a, strat_a = run_harvest_invasion(
+        base_cfg=copy.deepcopy(cfg),
+        condition="hybrid",
+        generations=3,
+        population_size=6,
+        seeds_per_generation=3,
+        test_seeds_per_generation=3,
+        replacement_fraction=0.2,
+        adversarial_pressure=0.3,
+        rng_seed=17,
+        partner_mix_preset="balanced",
+        injector=injector_a,
+        test_regimes=regimes,
+    )
+    injector_b = make_harvest_strategy_injector("llm_json", llm_client=FileReplayPolicyLLMClient(str(replay_path)))
+    gen_b, strat_b = run_harvest_invasion(
+        base_cfg=copy.deepcopy(cfg),
+        condition="hybrid",
+        generations=3,
+        population_size=6,
+        seeds_per_generation=3,
+        test_seeds_per_generation=3,
+        replacement_fraction=0.2,
+        adversarial_pressure=0.3,
+        rng_seed=17,
+        partner_mix_preset="balanced",
+        injector=injector_b,
+        test_regimes=regimes,
+    )
+    assert gen_a.equals(gen_b)
+    assert strat_a.equals(strat_b)
+    assert "llm_json_fraction" in gen_a.columns
+    assert float((strat_a["origin"] == "llm_json").mean()) > 0.0
+
+
+def test_harvest_llm_invalid_json_falls_back_to_mutation(tmp_path: Path) -> None:
+    cfg = make_harvest_cfg_for_tier("medium_h1", n_agents=6, seed=4)
+    replay_path = tmp_path / "bad_harvest_llm.json"
+    replay_path.write_text(
+        '{"rationale":"broken","low_patch_threshold":3.0,"high_harvest_frac":0.9}',
+        encoding="utf-8",
+    )
+    generation_df, strategy_df = run_harvest_invasion(
+        base_cfg=copy.deepcopy(cfg),
+        condition="top_down_only",
+        generations=2,
+        population_size=6,
+        seeds_per_generation=3,
+        test_seeds_per_generation=3,
+        replacement_fraction=0.2,
+        adversarial_pressure=0.3,
+        rng_seed=21,
+        partner_mix_preset="balanced",
+        injector=make_harvest_strategy_injector("llm_json", llm_client=FileReplayPolicyLLMClient(str(replay_path))),
+        test_regimes=get_harvest_regime_pack("medium_h1")[:1],
+    )
+    assert float((strategy_df["origin"] == "llm_fallback_mutation").mean()) > 0.0
+    assert float(generation_df["llm_fallback_fraction"].max()) > 0.0
 
 
 def test_harvest_invasion_condition_gating_controls_caps_and_credits() -> None:

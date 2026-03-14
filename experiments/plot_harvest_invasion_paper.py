@@ -107,13 +107,13 @@ def main() -> None:
     _plot(
         aggregated,
         METRIC_SPECS[:2],
-        "Second study: Harvest Commons invasion outcomes",
+        "Harvest Commons: search-over-mutations outcomes",
         prefix.with_name(prefix.name + "_outcomes.png"),
     )
     _plot(
         aggregated,
         METRIC_SPECS[2:],
-        "Second study: Harvest Commons mechanism shifts",
+        "Harvest Commons: search-over-mutations mechanism shifts",
         prefix.with_name(prefix.name + "_mechanisms.png"),
     )
 

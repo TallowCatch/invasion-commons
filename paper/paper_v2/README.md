@@ -23,7 +23,7 @@ TEXMFVAR=/tmp/texmf-var pdflatex -interaction=nonstopmode -halt-on-error main.te
 Regenerate paper_v2 contextual/mechanism artifacts used in the manuscript:
 
 ```bash
-cd /Users/ameerfiras/fishery-gov-sim/fishery-gov-sim
+cd /Users/ameerfiras/invasion-commons/invasion-commons
 python -m experiments.generate_paper_v2_artifacts
 ```
 
