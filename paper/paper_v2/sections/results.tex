@@ -98,6 +98,24 @@ The medium tier is more mixed, but still directionally consistent. In the advers
 
 These mechanism metrics explain why the failure metric is uninformative in the Harvest Commons study. Across all 8 high-power rows, the paired garden-failure delta is exactly zero, so governance separation happens before outright garden failure. Hybrid governance matters because it shifts local behavior: averaged over the full Stage C matrix, local aggression falls by \(0.0037\) and neighborhood overharvest falls by \(0.0646\) relative to top-down-only control. The stronger result is therefore behavioral and ecological rather than catastrophic.
 
+A narrow learned-policy validation points in the same direction. Under five PPO self-play training runs on the held-out `medium\_h1` pack, hybrid raises mean patch health from \(15.5673\) under top-down-only control to \(15.8064\), lowers mean max local aggression from \(0.6\) to \(0.4\), and lowers mean neighborhood overharvest from \(9.0\) to \(7.65\). Mean welfare falls only slightly, from \(16.3757\) to \(16.2898\). Because garden failure is again saturated at zero in this medium-tier RL setting, the learned-policy check is informative only on the same local mechanism margins that matter in the invasion matrix. It should therefore be read as supporting evidence for the architecture ranking, not as a substitute for the stronger search-over-mutations result.
+
+\begin{table}[H]
+  \centering
+  \captionsetup{font=small}
+  \caption{Harvest Commons PPO validation in `medium\_h1`. Lower is better for local aggression and neighborhood overharvest. This is supporting evidence only; the main Study 2 claim remains anchored in the high-power search-over-mutations matrix.}
+  \label{tab:study2_rl}
+  \small
+  \begin{tabular}{lrrrr}
+    \toprule
+    Governance & Patch health & Welfare & Max local aggression & Neighborhood overharvest \\
+    \midrule
+    Top-down only & 15.5673 & 16.3757 & 0.6 & 9.0 \\
+    Hybrid & 15.8064 & 16.2898 & 0.4 & 7.65 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 Together, the two studies now give a layered invasion result. In the controlled fishery setting, central governance signals can be ranked and adaptive quotas emerge as the strongest overall top-down signal under invasion pressure. In the second substrate, once governance is allowed to become architectural rather than only signal-level, hybrid governance still produces better local ecological control than top-down-only control even under a stronger search-based invader, though the welfare effect depends on both social composition and task difficulty.
 
 \begin{figure}[H]

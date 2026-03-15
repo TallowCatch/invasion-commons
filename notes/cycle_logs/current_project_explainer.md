@@ -7,6 +7,7 @@
 - Built an initial orchard-style second substrate, then reframed it as Harvest Commons because that fit the sequential-commons benchmark story better.
 - Ran early fixed-composition Harvest comparisons to see whether top-down, bottom-up, and hybrid governance could separate at all.
 - Realized that Harvest needed the same invasion logic as Fishery Commons, so upgraded it to a proper population-turnover study with injectors, held-out regimes, and high-power sweeps.
+- Added a narrow learned-policy PPO validation in Harvest Commons and found that hybrid still improves local ecological control relative to top-down-only control in `medium_h1`, with only a small welfare cost.
 - Added remote GitHub Actions workflows so the heavy Harvest invasion matrix could run off the laptop, then pulled the merged artifacts back into `results/`.
 - Updated the paper so Fishery Commons is the first study, Harvest Commons is the second study, and the old fixed-composition Harvest work is treated as pilot evidence rather than the main result.
 
@@ -165,7 +166,7 @@ The second study now lives mainly in:
 - [experiments/run_harvest_invasion.py](/Users/ameerfiras/invasion-commons/invasion-commons/experiments/run_harvest_invasion.py)
 - [experiments/run_harvest_invasion_matrix.py](/Users/ameerfiras/invasion-commons/invasion-commons/experiments/run_harvest_invasion_matrix.py)
 
-This is the important correction: the second study is no longer just a fixed set of hand-written agent types. It now has the same population-turnover idea as the first study.
+This is the important correction: the second study is no longer just a fixed set of hand-written agent types. It now has the same population-turnover idea as the first study, and it now also has a narrow learned-policy validation layer.
 
 That means Harvest Commons now has:
 1. a strategy population,
@@ -247,6 +248,7 @@ High-power result:
 - hybrid governance wins most Stage C decision-critical cells,
 - it usually improves patch health and reduces neighborhood overharvest relative to top-down-only control,
 - the welfare effect is mixed and depends on social mix and task difficulty.
+- a medium-tier PPO validation also points in the same direction, with `hybrid` improving patch health and reducing aggression and neighborhood overharvest relative to `top_down_only`, though with a small welfare cost.
 
 That is an important point: the second study is not saying hybrid governance is always best on every metric. It is saying that under real invasion pressure, hybrid governance usually buys better local ecological control, but not always at zero cost.
 
@@ -273,7 +275,8 @@ You can safely claim:
 - Fishery Commons identifies which top-down signals work best,
 - the leading Fishery signal is not only a threshold-strategy artifact because the learned-policy validation also favors adaptive quotas,
 - Harvest Commons now uses the same invasion logic and shows that governance architecture matters,
-- hybrid governance often improves local ecological control in the second substrate.
+- hybrid governance often improves local ecological control in the second substrate,
+- and that direction is supported not only by the main invasion matrix but also by a narrower medium-tier Harvest PPO validation.
 
 You should avoid claiming:
 - that hybrid governance universally dominates,
