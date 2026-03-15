@@ -34,6 +34,13 @@ cd /Users/ameerfiras/invasion-commons/invasion-commons
 python -m experiments.plot_fishery_rl_paper
 ```
 
+Regenerate the polished Fishery baseline forest plot and Harvest tradeoff scatter used in the manuscript:
+
+```bash
+cd /Users/ameerfiras/invasion-commons/invasion-commons
+python -m experiments.plot_paper_v2_polish_figures
+```
+
 ## Canonical evidence sources
 - `results/runs/showcase/curated/paper_v1_main_results.md`
 - `results/runs/showcase/curated/paper_v1_methods.md`
