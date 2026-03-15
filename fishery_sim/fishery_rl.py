@@ -55,6 +55,10 @@ class PPOTrainConfig:
     curriculum_obs_noise_jitter: float = 10.0
     curriculum_stock_init_jitter: float = 20.0
     curriculum_eval_episodes: int = 8
+    stock_health_reward_weight: float = 0.0
+    low_stock_penalty_weight: float = 0.0
+    low_stock_penalty_fraction: float = 0.35
+    reward_mode: str = "payoff"
 
 
 @dataclass
@@ -698,9 +702,7 @@ def _run_training_episode(
         action_idx = actions.detach().cpu().numpy().astype(np.int64)
         harvests = action_bins[action_idx]
         step = env.step(harvests)
-        rewards = np.asarray(step.payoffs, dtype=np.float32)
-        if step.collapsed and float(train_cfg.collapse_penalty) > 0.0:
-            rewards = rewards - float(train_cfg.collapse_penalty)
+        rewards = _build_training_rewards(step=step, train_cfg=train_cfg, cfg=local_cfg)
 
         obs_rows.append(obs_batch)
         action_rows.append(action_idx.astype(np.int64))
@@ -761,6 +763,34 @@ def _run_training_episode(
         dones=np.asarray(done_rows, dtype=np.float32),
         metrics=metrics,
     )
+
+
+def _build_training_rewards(
+    *,
+    step: Any,
+    train_cfg: PPOTrainConfig,
+    cfg: FisheryConfig,
+) -> np.ndarray:
+    reward_mode = str(train_cfg.reward_mode).strip().lower()
+    if reward_mode == "payoff":
+        rewards = np.asarray(step.payoffs, dtype=np.float32)
+    elif reward_mode == "net_utility":
+        fines = np.asarray(step.fines if step.fines is not None else np.zeros_like(step.harvests), dtype=np.float32)
+        rewards = np.asarray(step.harvests, dtype=np.float32) - fines
+    else:
+        raise ValueError(f"Unknown PPO reward_mode: {train_cfg.reward_mode}")
+
+    if step.collapsed and float(train_cfg.collapse_penalty) > 0.0:
+        rewards = rewards - float(train_cfg.collapse_penalty)
+
+    stock_ratio = float(np.clip(step.stock / max(cfg.stock_max, 1e-9), 0.0, 1.0))
+    if float(train_cfg.stock_health_reward_weight) != 0.0:
+        rewards = rewards + float(train_cfg.stock_health_reward_weight) * stock_ratio
+    if float(train_cfg.low_stock_penalty_weight) != 0.0:
+        target_ratio = float(np.clip(train_cfg.low_stock_penalty_fraction, 0.0, 1.0))
+        stock_deficit = max(0.0, target_ratio - stock_ratio)
+        rewards = rewards - float(train_cfg.low_stock_penalty_weight) * stock_deficit
+    return rewards.astype(np.float32)
 
 
 def _gae_from_episode(

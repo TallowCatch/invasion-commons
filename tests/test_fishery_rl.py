@@ -4,13 +4,16 @@ from pathlib import Path
 
 os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
 
+import numpy as np
 import torch
 
 from fishery_sim.benchmarks import get_benchmark_pack
 from fishery_sim.config import FisheryConfig
+from fishery_sim.env import StepResult
 from fishery_sim.fishery_rl import PPOTrainConfig
 from fishery_sim.fishery_rl import FisheryPPOPolicy
 from fishery_sim.fishery_rl import TorchPolicyFisheryAgent
+from fishery_sim.fishery_rl import _build_training_rewards
 from fishery_sim.fishery_rl import apply_rl_condition
 from fishery_sim.fishery_rl import build_action_bins
 from fishery_sim.fishery_rl import build_rl_observation
@@ -147,3 +150,25 @@ def test_train_self_play_policy_smoke_and_checkpoint_reload(tmp_path: Path) -> N
     assert summary_a == summary_b
     assert "test_mean_stock_mean" in summary_a
     assert "per_regime_survival_over_generations_mean" in summary_a
+
+
+def test_build_training_rewards_net_utility_penalizes_fines_and_low_stock() -> None:
+    cfg = FisheryConfig(stock_max=200.0)
+    train_cfg = PPOTrainConfig(
+        reward_mode="net_utility",
+        collapse_penalty=50.0,
+        stock_health_reward_weight=2.0,
+        low_stock_penalty_weight=8.0,
+        low_stock_penalty_fraction=0.4,
+    )
+    step = StepResult(
+        stock=40.0,
+        harvests=torch.tensor([5.0, 5.0]).numpy(),
+        payoffs=torch.tensor([0.0, 2.0]).numpy(),
+        collapsed=False,
+        below_threshold_count=0,
+        fines=torch.tensor([7.0, 3.0]).numpy(),
+    )
+    rewards = _build_training_rewards(step=step, train_cfg=train_cfg, cfg=cfg)
+    # Base net utility is [-2, 2]; stock shaping adds 0.4 and low-stock penalty subtracts 1.6.
+    assert np.allclose(rewards, np.asarray([-3.2, 0.8], dtype=np.float32))

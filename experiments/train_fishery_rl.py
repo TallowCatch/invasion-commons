@@ -43,6 +43,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--curriculum-obs-noise-jitter", type=float, default=10.0)
     parser.add_argument("--curriculum-stock-init-jitter", type=float, default=20.0)
     parser.add_argument("--curriculum-eval-episodes", type=int, default=8)
+    parser.add_argument("--stock-health-reward-weight", type=float, default=0.0)
+    parser.add_argument("--low-stock-penalty-weight", type=float, default=0.0)
+    parser.add_argument("--low-stock-penalty-fraction", type=float, default=0.35)
+    parser.add_argument("--reward-mode", choices=["payoff", "net_utility"], default="payoff")
     parser.add_argument("--device", default="auto")
     parser.add_argument("--output-prefix", default="results/runs/rl_fishery/fishery_rl")
     parser.add_argument("--experiment-tag", default="fishery_rl")
@@ -112,6 +116,10 @@ def main() -> None:
         curriculum_obs_noise_jitter=float(args.curriculum_obs_noise_jitter),
         curriculum_stock_init_jitter=float(args.curriculum_stock_init_jitter),
         curriculum_eval_episodes=int(args.curriculum_eval_episodes),
+        stock_health_reward_weight=float(args.stock_health_reward_weight),
+        low_stock_penalty_weight=float(args.low_stock_penalty_weight),
+        low_stock_penalty_fraction=float(args.low_stock_penalty_fraction),
+        reward_mode=str(args.reward_mode),
     )
 
     output_dir = os.path.dirname(args.output_prefix)
