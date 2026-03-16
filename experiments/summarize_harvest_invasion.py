@@ -28,6 +28,10 @@ SUMMARY_METRICS = [
     "population_diversity_mean",
     "llm_json_fraction",
     "llm_fallback_fraction",
+    "direct_json_fraction",
+    "repaired_json_fraction",
+    "effective_llm_fraction",
+    "unrepaired_fallback_fraction",
 ]
 
 PAIR_METRICS = [
@@ -79,7 +83,8 @@ def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
     group_cols = ["tier", "partner_mix", "injector_mode_requested", "adversarial_pressure", "condition"]
     rows = []
     regime_cols = sorted([c for c in per_run_df.columns if c.startswith("per_regime_health_survival_over_generations__")])
-    metric_keys = [key for key in SUMMARY_METRICS if key in per_run_df.columns] + regime_cols
+    parse_error_cols = sorted([c for c in per_run_df.columns if c.startswith("llm_parse_error_count__")])
+    metric_keys = [key for key in SUMMARY_METRICS if key in per_run_df.columns] + regime_cols + parse_error_cols
     for keys, gdf in per_run_df.groupby(group_cols, sort=True):
         row = {
             "tier": keys[0],
@@ -114,20 +119,45 @@ def _build_integrity_df(per_run_df: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame()
     rows = []
     group_cols = ["tier", "partner_mix", "adversarial_pressure", "condition"]
+    parse_error_cols = sorted([c for c in llm_df.columns if c.startswith("llm_parse_error_count__")])
+
+    def _mean_or_zero(gdf: pd.DataFrame, column: str) -> float:
+        if column not in gdf.columns:
+            return 0.0
+        return float(gdf[column].mean())
+
     for keys, gdf in llm_df.groupby(group_cols, sort=True):
-        rows.append(
-            {
-                "tier": keys[0],
-                "partner_mix": keys[1],
-                "adversarial_pressure": keys[2],
-                "condition": keys[3],
-                "n_runs": int(len(gdf)),
-                "llm_provider": str(gdf["llm_provider"].iloc[0]) if "llm_provider" in gdf.columns else "none",
-                "llm_model": str(gdf["llm_model"].iloc[0]) if "llm_model" in gdf.columns else "",
-                "llm_json_fraction_mean": round(float(gdf["llm_json_fraction"].mean()), 6),
-                "llm_fallback_fraction_mean": round(float(gdf["llm_fallback_fraction"].mean()), 6),
-            }
+        effective_llm_fraction_mean = round(
+            _mean_or_zero(gdf, "effective_llm_fraction") if "effective_llm_fraction" in gdf.columns else float(gdf["llm_json_fraction"].mean()),
+            6,
         )
+        unrepaired_fallback_fraction_mean = round(
+            _mean_or_zero(gdf, "unrepaired_fallback_fraction")
+            if "unrepaired_fallback_fraction" in gdf.columns
+            else float(gdf["llm_fallback_fraction"].mean()),
+            6,
+        )
+        row = {
+            "tier": keys[0],
+            "partner_mix": keys[1],
+            "adversarial_pressure": keys[2],
+            "condition": keys[3],
+            "n_runs": int(len(gdf)),
+            "llm_provider": str(gdf["llm_provider"].iloc[0]) if "llm_provider" in gdf.columns else "none",
+            "llm_model": str(gdf["llm_model"].iloc[0]) if "llm_model" in gdf.columns else "",
+            "llm_json_fraction_mean": round(float(gdf["llm_json_fraction"].mean()), 6),
+            "llm_fallback_fraction_mean": round(float(gdf["llm_fallback_fraction"].mean()), 6),
+            "direct_json_fraction_mean": round(_mean_or_zero(gdf, "direct_json_fraction"), 6),
+            "repaired_json_fraction_mean": round(_mean_or_zero(gdf, "repaired_json_fraction"), 6),
+            "effective_llm_fraction_mean": effective_llm_fraction_mean,
+            "unrepaired_fallback_fraction_mean": unrepaired_fallback_fraction_mean,
+            "effective_llm_gate_pass": effective_llm_fraction_mean >= 0.90,
+            "fallback_gate_pass": unrepaired_fallback_fraction_mean <= 0.05,
+        }
+        row["usable_for_evidence"] = bool(row["effective_llm_gate_pass"] and row["fallback_gate_pass"])
+        for col in parse_error_cols:
+            row[f"{col}_mean"] = round(float(gdf[col].mean()), 6)
+        rows.append(row)
     return pd.DataFrame(rows)
 
 
@@ -247,10 +277,15 @@ def main() -> None:
             ]
         )
     if not integrity_df.empty:
+        usable_count = int(integrity_df["usable_for_evidence"].sum())
         lines.extend(
             [
                 "",
                 "## LLM integrity",
+                "",
+                f"- Usable cells: `{usable_count} / {len(integrity_df)}`",
+                f"- Mean effective LLM fraction: `{integrity_df['effective_llm_fraction_mean'].mean():.4f}`",
+                f"- Mean unrepaired fallback fraction: `{integrity_df['unrepaired_fallback_fraction_mean'].mean():.4f}`",
                 "",
                 _markdown_table(integrity_df.head(24)),
             ]

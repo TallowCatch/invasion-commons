@@ -38,7 +38,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--llm-base-url", default=None)
     parser.add_argument("--llm-api-key-env", default="OPENAI_API_KEY")
     parser.add_argument("--llm-timeout-s", type=float, default=120.0)
-    parser.add_argument("--llm-temperature", type=float, default=0.8)
+    parser.add_argument("--llm-temperature", type=float, default=0.2)
     parser.add_argument("--output-prefix", default="results/runs/harvest_invasion/harvest_invasion")
     parser.add_argument("--experiment-tag", default="harvest_invasion")
     parser.add_argument("--manifest-out", default=None)
@@ -212,6 +212,12 @@ def main() -> None:
     if args.injector_mode == "llm_json" and not strategy_df.empty:
         print(f"llm_json_fraction: {float((strategy_df['origin'] == 'llm_json').mean()):.4f}")
         print(f"llm_fallback_fraction: {float((strategy_df['origin'] == 'llm_fallback_mutation').mean()):.4f}")
+        if "repaired_json_fraction" in generation_df.columns:
+            print(f"repaired_json_fraction: {float(generation_df['repaired_json_fraction'].mean()):.4f}")
+        if "effective_llm_fraction" in generation_df.columns:
+            print(f"effective_llm_fraction: {float(generation_df['effective_llm_fraction'].mean()):.4f}")
+        if "unrepaired_fallback_fraction" in generation_df.columns:
+            print(f"unrepaired_fallback_fraction: {float(generation_df['unrepaired_fallback_fraction'].mean()):.4f}")
 
 
 if __name__ == "__main__":

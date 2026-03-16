@@ -11,8 +11,14 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--stage",
-        choices=["stage_b_llm", "stage_c_llm"],
-        default="stage_b_llm",
+        choices=[
+            "stage_a_llm_reliability",
+            "stage_b_llm",
+            "stage_b_llm_narrow",
+            "stage_c_llm",
+            "stage_c_llm_narrow",
+        ],
+        default="stage_b_llm_narrow",
         help="Preset sweep to execute.",
     )
     parser.add_argument(
@@ -30,7 +36,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--llm-base-url", default=None)
     parser.add_argument("--llm-api-key-env", default="OPENAI_API_KEY")
     parser.add_argument("--llm-timeout-s", type=float, default=120.0)
-    parser.add_argument("--llm-temperature", type=float, default=0.8)
+    parser.add_argument("--llm-temperature", type=float, default=0.2)
     parser.add_argument("--resume", action="store_true", default=True)
     parser.add_argument("--no-resume", dest="resume", action="store_false")
     parser.add_argument("--skip-merge", action="store_true")
@@ -40,6 +46,40 @@ def parse_args() -> argparse.Namespace:
 
 
 def stage_config(stage: str) -> dict:
+    if stage == "stage_a_llm_reliability":
+        return {
+            "explicit_cells": [
+                {
+                    "tier": "medium_h1",
+                    "partner_mix": "balanced",
+                    "condition": "top_down_only",
+                    "injector_mode": "llm_json",
+                    "pressure": "0.3",
+                },
+                {
+                    "tier": "medium_h1",
+                    "partner_mix": "balanced",
+                    "condition": "hybrid",
+                    "injector_mode": "llm_json",
+                    "pressure": "0.3",
+                },
+                {
+                    "tier": "medium_h1",
+                    "partner_mix": "adversarial_heavy",
+                    "condition": "hybrid",
+                    "injector_mode": "llm_json",
+                    "pressure": "0.3",
+                },
+            ],
+            "n_runs": "1",
+            "generations": "4",
+            "population_size": "6",
+            "seeds_per_generation": "8",
+            "test_seeds_per_generation": "8",
+            "replacement_fraction": "0.2",
+            "run_name": "harvest_invasion_llm_stageA_reliability",
+            "experiment_tag": "harvest_invasion_llm_stageA_reliability",
+        }
     if stage == "stage_b_llm":
         return {
             "tiers": ["medium_h1", "hard_h1"],
@@ -55,6 +95,22 @@ def stage_config(stage: str) -> dict:
             "replacement_fraction": "0.2",
             "run_name": "harvest_invasion_llm_stageB_local",
             "experiment_tag": "harvest_invasion_llm_stageB_local",
+        }
+    if stage == "stage_b_llm_narrow":
+        return {
+            "tiers": ["medium_h1", "hard_h1"],
+            "partner_mixes": ["balanced", "adversarial_heavy"],
+            "conditions": ["top_down_only", "hybrid"],
+            "injector_modes": ["mutation", "llm_json"],
+            "pressures": ["0.3"],
+            "n_runs": "3",
+            "generations": "12",
+            "population_size": "6",
+            "seeds_per_generation": "24",
+            "test_seeds_per_generation": "24",
+            "replacement_fraction": "0.2",
+            "run_name": "harvest_invasion_llm_stageB_narrow",
+            "experiment_tag": "harvest_invasion_llm_stageB_narrow",
         }
     if stage == "stage_c_llm":
         return {
@@ -72,6 +128,22 @@ def stage_config(stage: str) -> dict:
             "run_name": "harvest_invasion_llm_stageC_local",
             "experiment_tag": "harvest_invasion_llm_stageC_local",
         }
+    if stage == "stage_c_llm_narrow":
+        return {
+            "tiers": ["medium_h1", "hard_h1"],
+            "partner_mixes": ["balanced", "adversarial_heavy"],
+            "conditions": ["top_down_only", "hybrid"],
+            "injector_modes": ["llm_json"],
+            "pressures": ["0.3"],
+            "n_runs": "5",
+            "generations": "15",
+            "population_size": "6",
+            "seeds_per_generation": "32",
+            "test_seeds_per_generation": "32",
+            "replacement_fraction": "0.2",
+            "run_name": "harvest_invasion_llm_stageC_narrow",
+            "experiment_tag": "harvest_invasion_llm_stageC_narrow",
+        }
     raise ValueError(f"Unknown stage: {stage}")
 
 
@@ -83,6 +155,27 @@ def run_cmd(cmd: list[str], env: dict[str, str] | None = None) -> None:
     proc = subprocess.run(cmd, env=env, check=False)
     if proc.returncode != 0:
         raise subprocess.CalledProcessError(proc.returncode, cmd)
+
+
+def _stage_cells(cfg: dict) -> list[dict[str, str]]:
+    if "explicit_cells" in cfg:
+        return [dict(cell) for cell in cfg["explicit_cells"]]
+    cells: list[dict[str, str]] = []
+    for tier in cfg["tiers"]:
+        for partner_mix in cfg["partner_mixes"]:
+            for condition in cfg["conditions"]:
+                for injector_mode in cfg["injector_modes"]:
+                    for pressure in cfg["pressures"]:
+                        cells.append(
+                            {
+                                "tier": tier,
+                                "partner_mix": partner_mix,
+                                "condition": condition,
+                                "injector_mode": injector_mode,
+                                "pressure": pressure,
+                            }
+                        )
+    return cells
 
 
 def main() -> None:
@@ -98,67 +191,67 @@ def main() -> None:
     summary_prefix = Path(f"results/runs/showcase/curated/{cfg['run_name']}")
     summary_prefix.parent.mkdir(parents=True, exist_ok=True)
 
+    cells = _stage_cells(cfg)
     jobs: list[tuple[str, list[str]]] = []
-    for tier in cfg["tiers"]:
-        for partner_mix in cfg["partner_mixes"]:
-            for condition in cfg["conditions"]:
-                for injector_mode in cfg["injector_modes"]:
-                    for pressure in cfg["pressures"]:
-                        slug = shard_slug(tier, partner_mix, condition, injector_mode, pressure)
-                        shard_prefix = shard_dir / slug
-                        runs_csv = shard_prefix.with_name(shard_prefix.name + "_runs.csv")
-                        if args.resume and runs_csv.exists():
-                            continue
-                        cmd = [
-                            sys.executable,
-                            "-m",
-                            "experiments.run_harvest_invasion_matrix",
-                            "--tiers",
-                            tier,
-                            "--partner-mixes",
-                            partner_mix,
-                            "--conditions",
-                            condition,
-                            "--injector-modes",
-                            injector_mode,
-                            "--adversarial-pressures",
-                            pressure,
-                            "--n-runs",
-                            cfg["n_runs"],
-                            "--generations",
-                            cfg["generations"],
-                            "--population-size",
-                            cfg["population_size"],
-                            "--seeds-per-generation",
-                            cfg["seeds_per_generation"],
-                            "--test-seeds-per-generation",
-                            cfg["test_seeds_per_generation"],
-                            "--replacement-fraction",
-                            cfg["replacement_fraction"],
-                            "--max-workers",
-                            "1",
-                            "--output-prefix",
-                            str(shard_prefix),
-                            "--experiment-tag",
-                            cfg["experiment_tag"],
-                            "--llm-provider",
-                            args.llm_provider,
-                            "--llm-model",
-                            args.llm_model,
-                            "--llm-api-key-env",
-                            args.llm_api_key_env,
-                            "--llm-timeout-s",
-                            str(args.llm_timeout_s),
-                            "--llm-temperature",
-                            str(args.llm_temperature),
-                        ]
-                        if args.llm_base_url:
-                            cmd.extend(["--llm-base-url", args.llm_base_url])
-                        jobs.append((slug, cmd))
+    for cell in cells:
+        tier = cell["tier"]
+        partner_mix = cell["partner_mix"]
+        condition = cell["condition"]
+        injector_mode = cell["injector_mode"]
+        pressure = cell["pressure"]
+        slug = shard_slug(tier, partner_mix, condition, injector_mode, pressure)
+        shard_prefix = shard_dir / slug
+        runs_csv = shard_prefix.with_name(shard_prefix.name + "_runs.csv")
+        if args.resume and runs_csv.exists():
+            continue
+        cmd = [
+            sys.executable,
+            "-m",
+            "experiments.run_harvest_invasion_matrix",
+            "--tiers",
+            tier,
+            "--partner-mixes",
+            partner_mix,
+            "--conditions",
+            condition,
+            "--injector-modes",
+            injector_mode,
+            "--adversarial-pressures",
+            pressure,
+            "--n-runs",
+            cfg["n_runs"],
+            "--generations",
+            cfg["generations"],
+            "--population-size",
+            cfg["population_size"],
+            "--seeds-per-generation",
+            cfg["seeds_per_generation"],
+            "--test-seeds-per-generation",
+            cfg["test_seeds_per_generation"],
+            "--replacement-fraction",
+            cfg["replacement_fraction"],
+            "--max-workers",
+            "1",
+            "--output-prefix",
+            str(shard_prefix),
+            "--experiment-tag",
+            cfg["experiment_tag"],
+            "--llm-provider",
+            args.llm_provider,
+            "--llm-model",
+            args.llm_model,
+            "--llm-api-key-env",
+            args.llm_api_key_env,
+            "--llm-timeout-s",
+            str(args.llm_timeout_s),
+            "--llm-temperature",
+            str(args.llm_temperature),
+        ]
+        if args.llm_base_url:
+            cmd.extend(["--llm-base-url", args.llm_base_url])
+        jobs.append((slug, cmd))
 
-    total_jobs = len(
-        cfg["tiers"]
-    ) * len(cfg["partner_mixes"]) * len(cfg["conditions"]) * len(cfg["injector_modes"]) * len(cfg["pressures"])
+    total_jobs = len(cells)
     print(f"Stage: {args.stage}")
     print(f"Shard dir: {shard_dir}")
     print(f"Output prefix: {output_prefix}")

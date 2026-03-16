@@ -8,25 +8,7 @@ The first study uses a minimal renewable fishery commons with a shared stock, pe
 
 The Fishery Commons study has two invasion layers plus one learned-policy validation. The first invasion layer is a matched baseline that compares no governance, monitoring alone, and monitoring with sanctions across two injector types: mutation and live JSON-based LLM injection through Ollama with the `qwen2.5:3b-instruct` model. This baseline is run on the easy and medium fishery tiers. The second invasion layer is a broader top-down sweep, restricted to the medium tier, that compares no governance, monitoring with sanctions, adaptive quotas, and temporary closures under three non-LLM injector families: mutation, an adversarial heuristic injector, and search over mutations. The sweep also varies partner composition between balanced and adversarial-heavy populations, and it varies adversarial pressure between 0.3 and 0.5. This second layer is what identifies which central governance signals remain effective once the setting becomes more hostile.
 
-The learned-policy validation asks a narrower question: does the resulting governance ranking survive outside the hand-specified threshold family? For this check, agents share a parameter-shared PPO policy with a small multilayer perceptron, observe normalized stock and normalized timestep, and choose among 11 harvest bins. Training uses the same fishery train regime as the matched baseline (`regen\_rate = 2.0`, `obs\_noise\_std = 6.0`) for 250{,}000 environment steps per seed. Final checkpoint selection uses train-regime evaluation only, and held-out reporting uses the fixed `medium\_v1` benchmark pack. A direct five-seed confirmatory comparison evaluates no governance against adaptive quotas, and a matched five-seed governance follow-up compares monitoring with sanctions, adaptive quotas, and temporary closures under the same PPO protocol. This is not a second invasion matrix; it is a policy-family robustness check on the top-down ranking.
-
-\begin{table}[H]
-  \centering
-  \caption{Shared run settings for the matched Fishery Commons baseline.}
-  \begin{tabular}{ll}
-    \toprule
-    Setting & Value \\
-    \midrule
-    Generations & 15 \\
-    Train seeds per generation & 32 \\
-    Test seeds per generation & 32 \\
-    Replacement fraction & 0.2 \\
-    Adversarial pressure & 0.3 \\
-    Train regeneration rate & 2.0 \\
-    Train observation noise std & 6.0 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+The learned-policy validation asks a narrower question: does the resulting governance ranking survive outside the hand-specified threshold family? For this check, agents share a parameter-shared PPO policy with a small multilayer perceptron, observe normalized stock and normalized timestep, and choose among 11 harvest bins. Training uses the same fishery train regime as the matched baseline (`regen\_rate = 2.0`, `obs\_noise\_std = 6.0`) for 250{,}000 environment steps per seed. Final checkpoint selection uses train-regime evaluation only, and held-out reporting uses the fixed `medium\_v1` benchmark pack. A direct five-seed confirmatory comparison evaluates no governance against adaptive quotas, and a matched five-seed governance follow-up compares monitoring with sanctions, adaptive quotas, and temporary closures under the same PPO protocol. This is not a second invasion matrix; it is a policy-family robustness check on the top-down ranking. The shared Fishery invasion defaults for the matched baseline are 15 generations, 32 train and 32 test seeds per generation, replacement fraction 0.2, and adversarial pressure 0.3.
 
 \subsection{Second study: Harvest Commons and governance architecture}
 
@@ -44,4 +26,4 @@ The primary matched-baseline outcome in the Fishery Commons study is held-out co
 
 The primary comparison in the Harvest Commons study is the paired difference between hybrid and top-down-only governance at matched run identifiers within each tier, partner mix, and adversarial-pressure cell. This comparison isolates whether local communication and credit sharing add anything once central intervention is already present. Confidence intervals are again estimated by bootstrap over paired deltas. In the high-power Stage C matrix, garden failure is never the discriminating outcome, so the main Harvest Commons evidence is carried by patch health, welfare, local aggression, and neighborhood overharvest. The supporting Harvest PPO validation reports held-out means over five independent training seeds in `medium\_h1`; because garden failure is saturated there as well, interpretation again focuses on patch health, welfare, local aggression, and neighborhood overharvest.
 
-Formal invasion dynamics, the definition of collapse robustness, and the saturation identifiability condition are given in Section~\ref{sec:theory}. In the empirical pipeline, these quantities are estimated from run-level summaries and frozen result artifacts to avoid post-hoc threshold drift.
+Formal invasion dynamics and the saturation identifiability condition are maintained in the project notes and supplementary source files. In the empirical pipeline, the reported quantities are estimated from run-level summaries and frozen result artifacts to avoid post-hoc threshold drift.

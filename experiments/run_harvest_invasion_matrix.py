@@ -7,7 +7,12 @@ import numpy as np
 import pandas as pd
 
 from fishery_sim.harvest_benchmarks import get_harvest_regime_pack, make_harvest_cfg_for_tier
-from fishery_sim.harvest_evolution import make_harvest_strategy_injector, run_harvest_invasion
+from fishery_sim.harvest_evolution import (
+    HARVEST_LLM_PARSE_ERROR_TYPES,
+    _llm_integrity_base_df,
+    make_harvest_strategy_injector,
+    run_harvest_invasion,
+)
 from fishery_sim.llm_adapter import (
     FileReplayPolicyLLMClient,
     OllamaPolicyLLMClient,
@@ -46,7 +51,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--llm-base-url", default=None)
     parser.add_argument("--llm-api-key-env", default="OPENAI_API_KEY")
     parser.add_argument("--llm-timeout-s", type=float, default=120.0)
-    parser.add_argument("--llm-temperature", type=float, default=0.8)
+    parser.add_argument("--llm-temperature", type=float, default=0.2)
 
     parser.add_argument("--government-trigger", type=float, default=16.0)
     parser.add_argument("--strict-cap-frac", type=float, default=0.18)
@@ -127,6 +132,38 @@ def _summary_from_generation_df(condition: str, injector_mode: str, run_id: int,
         row["per_regime_health_survival_over_generations_mean"] = float(np.mean(per_regime_survival))
     else:
         row["per_regime_health_survival_over_generations_mean"] = float((1.0 - generation_df["test_garden_failure_rate"]).mean())
+    return row
+
+
+def _llm_integrity_summary(strategy_df: pd.DataFrame) -> dict[str, float | int]:
+    integrity_df = _llm_integrity_base_df(strategy_df)
+    if integrity_df.empty:
+        row: dict[str, float | int] = {
+            "llm_json_fraction": 0.0,
+            "llm_fallback_fraction": 0.0,
+            "direct_json_fraction": 0.0,
+            "repaired_json_fraction": 0.0,
+            "effective_llm_fraction": 0.0,
+            "unrepaired_fallback_fraction": 0.0,
+        }
+        for error_type in HARVEST_LLM_PARSE_ERROR_TYPES:
+            row[f"llm_parse_error_count__{error_type}"] = 0
+        return row
+
+    llm_parse_status = integrity_df["llm_parse_status"] if "llm_parse_status" in integrity_df.columns else pd.Series("", index=integrity_df.index)
+    llm_parse_error_type = (
+        integrity_df["llm_parse_error_type"] if "llm_parse_error_type" in integrity_df.columns else pd.Series("", index=integrity_df.index)
+    )
+    row = {
+        "llm_json_fraction": float((integrity_df["origin"] == "llm_json").mean()),
+        "llm_fallback_fraction": float((integrity_df["origin"] == "llm_fallback_mutation").mean()),
+        "direct_json_fraction": float((llm_parse_status == "direct_json").mean()),
+        "repaired_json_fraction": float((llm_parse_status == "repaired_json").mean()),
+        "effective_llm_fraction": float(((llm_parse_status == "direct_json") | (llm_parse_status == "repaired_json")).mean()),
+        "unrepaired_fallback_fraction": float((llm_parse_status == "fallback_mutation").mean()),
+    }
+    for error_type in HARVEST_LLM_PARSE_ERROR_TYPES:
+        row[f"llm_parse_error_count__{error_type}"] = int((llm_parse_error_type == error_type).sum())
     return row
 
 
@@ -223,10 +260,9 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
             "experiment_tag": str(args["experiment_tag"]),
             "llm_provider": str(args["llm_provider"] if injector_mode == "llm_json" else "none"),
             "llm_model": str(args["llm_model"] if injector_mode == "llm_json" else ""),
-            "llm_json_fraction": float((strategy_df["origin"] == "llm_json").mean()),
-            "llm_fallback_fraction": float((strategy_df["origin"] == "llm_fallback_mutation").mean()),
         }
     )
+    summary_row.update(_llm_integrity_summary(strategy_df))
     return summary_row, generation_df, strategy_df
 
 

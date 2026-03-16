@@ -84,6 +84,8 @@ class HarvestStrategySpec:
     cap_compliance_margin: float
     origin: str = "seed"
     rationale: str = ""
+    llm_parse_status: str = ""
+    llm_parse_error_type: str = ""
 
     def to_agent(self) -> "HarvestThresholdAgent":
         return HarvestThresholdAgent(spec=self)

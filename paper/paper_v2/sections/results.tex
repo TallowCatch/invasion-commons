@@ -45,13 +45,6 @@ Mechanism logging explains why monitoring with sanctions is weaker than the more
 
 A learned-policy validation reaches the same conclusion. Under five PPO self-play training runs on the held-out `medium\_v1` pack, adaptive quotas reduce mean collapse from \(0.8141\) under no governance to \(0.0\), raise mean stock from \(97.56\) to \(186.05\), and raise mean welfare from \(4770.20\) to \(9902.35\). A matched governance follow-up under the same PPO protocol also ranks adaptive quotas above the other governed conditions: monitoring with sanctions reaches held-out collapse \(0.0016\), stock \(126.52\), and welfare \(6800.78\), while temporary closures reach collapse \(0.0\), stock \(124.05\), and welfare \(4719.58\). So the first-study ranking is not tied only to hand-written threshold strategies. A simple learned policy family rediscovers adaptive quotas as the strongest medium-tier governance signal.
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.98\linewidth]{figures/study1_rl_summary.png}
-  \caption{Fishery Commons PPO validation on the held-out `medium\_v1` pack. The gray no-governance baseline comes from the direct no-governance versus adaptive-quota confirmatory run; the governed conditions come from the matched governance follow-up under the same PPO protocol. Lower collapse is better, while higher stock and welfare are better. Adaptive quotas dominate the learned-policy comparison on all three held-out targets.}
-  \label{fig:study1_rl}
-\end{figure}
-
 \subsection{Second study: governance architecture in Harvest Commons}
 
 The second study now uses the same invasion logic as the first, rather than only a fixed-composition comparison. The earlier fixed-composition Harvest matrix and the first invasion pass with lighter non-LLM injectors both suggested that hybrid governance was worth taking seriously. The stronger test in the current draft comes from the search-over-mutations cycle. Its Stage B pilot already showed that hybrid governance survives a harsher attacker: hybrid won 13 of 16 pilot cells, while top-down-only control won the remaining 3. The main Harvest Commons evidence therefore comes from the Stage C high-power search-over-mutations matrix, which restricts attention to the decision-critical rows in the medium and hard tiers, the balanced and adversarial-heavy partner mixes, top-down-only versus hybrid governance, and pressures 0.3 and 0.5.

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import copy
 import json
 import re
@@ -17,7 +18,6 @@ from .harvest_benchmarks import get_harvest_partner_mix_preset
 from .llm_adapter import (
     NullPolicyLLMClient,
     PolicyLLMClient,
-    extract_json_object,
 )
 
 
@@ -32,6 +32,58 @@ DEFAULT_GOVERNMENT_PARAMS: dict[str, float | int | bool] = {
     "aggressive_agent_fraction_trigger": 0.34,
     "local_neighborhood_trigger": 0.67,
 }
+
+HARVEST_POLICY_REQUIRED_KEYS = (
+    "rationale",
+    "low_patch_threshold",
+    "high_patch_threshold",
+    "low_harvest_frac",
+    "mid_harvest_frac",
+    "high_harvest_frac",
+    "restraint_low",
+    "restraint_high",
+    "credit_request_low",
+    "credit_request_high",
+    "credit_offer_threshold",
+    "credit_offer_amount",
+    "neighbor_reciprocity_weight",
+    "credit_response_weight",
+    "cap_compliance_margin",
+)
+
+HARVEST_POLICY_NUMERIC_KEYS = (
+    "low_patch_threshold",
+    "high_patch_threshold",
+    "low_harvest_frac",
+    "mid_harvest_frac",
+    "high_harvest_frac",
+    "restraint_low",
+    "restraint_high",
+    "credit_request_low",
+    "credit_request_high",
+    "credit_offer_threshold",
+    "credit_offer_amount",
+    "neighbor_reciprocity_weight",
+    "credit_response_weight",
+    "cap_compliance_margin",
+)
+
+HARVEST_LLM_PARSE_ERROR_TYPES = (
+    "fenced_json",
+    "trailing_prose",
+    "single_quotes",
+    "numeric_strings",
+    "missing_outer_object",
+    "missing_keys",
+    "request_error",
+    "other",
+)
+
+
+class HarvestLLMParseError(ValueError):
+    def __init__(self, error_type: str, message: str):
+        super().__init__(message)
+        self.error_type = error_type
 
 
 @dataclass
@@ -73,26 +125,10 @@ class HarvestPolicyJSON:
 
     @classmethod
     def from_dict(cls, raw: dict[str, Any]) -> "HarvestPolicyJSON":
-        required = [
-            "rationale",
-            "low_patch_threshold",
-            "high_patch_threshold",
-            "low_harvest_frac",
-            "mid_harvest_frac",
-            "high_harvest_frac",
-            "restraint_low",
-            "restraint_high",
-            "credit_request_low",
-            "credit_request_high",
-            "credit_offer_threshold",
-            "credit_offer_amount",
-            "neighbor_reciprocity_weight",
-            "credit_response_weight",
-            "cap_compliance_margin",
-        ]
+        required = list(HARVEST_POLICY_REQUIRED_KEYS)
         missing = [key for key in required if key not in raw]
         if missing:
-            raise ValueError(f"Missing harvest policy keys: {missing}")
+            raise HarvestLLMParseError("missing_keys", f"Missing harvest policy keys: {missing}")
         return cls(
             rationale=str(raw["rationale"]),
             low_patch_threshold=float(raw["low_patch_threshold"]),
@@ -161,6 +197,8 @@ def harvest_policy_json_to_strategy_spec(
     policy: HarvestPolicyJSON,
     strategy_id: str,
     origin: str,
+    llm_parse_status: str = "",
+    llm_parse_error_type: str = "",
 ) -> HarvestStrategySpec:
     return HarvestStrategySpec(
         strategy_id=strategy_id,
@@ -180,6 +218,8 @@ def harvest_policy_json_to_strategy_spec(
         cap_compliance_margin=policy.cap_compliance_margin,
         origin=origin,
         rationale=policy.rationale,
+        llm_parse_status=llm_parse_status,
+        llm_parse_error_type=llm_parse_error_type,
     )
 
 
@@ -191,40 +231,207 @@ def build_harvest_policy_prompt(
 ) -> str:
     target_style = "aggressive harvest invader" if adversarial_pressure >= 0.5 else "balanced harvest contender"
     schema = {
-        "rationale": "short explanation (<=30 words)",
-        "low_patch_threshold": "float in [0, patch_max]",
-        "high_patch_threshold": "float in [low_patch_threshold, patch_max]",
-        "low_harvest_frac": "float in [0,1]",
-        "mid_harvest_frac": "float in [0,1]",
-        "high_harvest_frac": "float in [0,1]",
-        "restraint_low": "float in [0,1]",
-        "restraint_high": "float in [0,1]",
-        "credit_request_low": "float in [0,1]",
-        "credit_request_high": "float in [0,1]",
-        "credit_offer_threshold": "float in [0, patch_max]",
-        "credit_offer_amount": "float in [0,1]",
-        "neighbor_reciprocity_weight": "float in [0,1]",
-        "credit_response_weight": "float in [0,1]",
-        "cap_compliance_margin": "float in [0,0.25]",
+        "rationale": "short explanation, 30 words max",
+        "low_patch_threshold": f"float in [0, {patch_max:.1f}]",
+        "high_patch_threshold": f"float in [low_patch_threshold, {patch_max:.1f}]",
+        "low_harvest_frac": "float in [0, 1]",
+        "mid_harvest_frac": "float in [0, 1], and usually >= low_harvest_frac",
+        "high_harvest_frac": "float in [0, 1], and usually >= mid_harvest_frac",
+        "restraint_low": "float in [0, 1]",
+        "restraint_high": "float in [0, 1]",
+        "credit_request_low": "float in [0, 1]",
+        "credit_request_high": "float in [0, 1]",
+        "cap_compliance_margin": "float in [0, 0.25]",
+        "credit_offer_threshold": f"float in [0, {patch_max:.1f}]",
+        "credit_offer_amount": "float in [0, 1]",
+        "neighbor_reciprocity_weight": "float in [0, 1]",
+        "credit_response_weight": "float in [0, 1]",
+    }
+    example = {
+        "rationale": "restrain on weak patches and trade credit for reciprocity",
+        "low_patch_threshold": 5.0,
+        "high_patch_threshold": 12.0,
+        "low_harvest_frac": 0.12,
+        "mid_harvest_frac": 0.38,
+        "high_harvest_frac": 0.68,
+        "restraint_low": 0.72,
+        "restraint_high": 0.34,
+        "credit_request_low": 0.28,
+        "credit_request_high": 0.06,
+        "cap_compliance_margin": 0.03,
+        "credit_offer_threshold": 10.0,
+        "credit_offer_amount": 0.22,
+        "neighbor_reciprocity_weight": 0.55,
+        "credit_response_weight": 0.48,
     }
     return (
-        "You are generating a Harvest Commons strategy as strict JSON.\n"
+        "You are generating one Harvest Commons strategy as strict JSON.\n"
         f"Parent fitness: {parent_fitness:.4f}\n"
         f"Patch max: {patch_max:.4f}\n"
         f"Target style: {target_style}\n"
-        "The strategy controls local harvest, restraint signals, credit requests/offers, reciprocity, and cap compliance.\n"
+        "The strategy controls local harvest, restraint signals, credit requests and offers, reciprocity, and cap compliance.\n"
         "Parent policy:\n"
         f"{json.dumps(parent_policy.to_dict(), indent=2)}\n\n"
-        "Output exactly one JSON object using this schema:\n"
+        "Required keys in exact order:\n"
+        f"{json.dumps(list(schema.keys()))}\n"
+        "Output exactly one JSON object using this schema and ranges:\n"
         f"{json.dumps(schema, indent=2)}\n"
-        "No markdown. No commentary. No extra keys."
+        "Valid example:\n"
+        f"{json.dumps(example, indent=2)}\n"
+        "Rules:\n"
+        "- Return exactly one JSON object.\n"
+        "- Do not use markdown or code fences.\n"
+        "- Do not add commentary before or after the JSON.\n"
+        "- Do not add extra keys.\n"
+        "- Keep values numeric, not quoted strings.\n"
+        "- Every key is required. Do not omit cap_compliance_margin.\n"
+        "- If unsure, copy the parent value instead of dropping a key."
     )
+
+
+def _load_json_dict(text: str) -> dict[str, Any]:
+    parsed = json.loads(text)
+    if not isinstance(parsed, dict):
+        raise HarvestLLMParseError("other", "Harvest policy response must decode to a JSON object.")
+    return parsed
+
+
+def _contains_required_harvest_fields(text: str) -> bool:
+    lower = text.lower()
+    probe_keys = (
+        "low_patch_threshold",
+        "high_patch_threshold",
+        "low_harvest_frac",
+        "credit_offer_amount",
+    )
+    return all(key in lower for key in probe_keys)
+
+
+def _strip_code_fences(text: str) -> str:
+    stripped = text.strip()
+    if not stripped.startswith("```"):
+        return stripped
+    match = re.search(r"^```[a-zA-Z0-9_-]*\s*(.*?)\s*```$", stripped, flags=re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    lines = [line for line in stripped.splitlines() if not line.strip().startswith("```")]
+    return "\n".join(lines).strip()
+
+
+def _extract_outer_json(text: str) -> str:
+    stripped = text.strip()
+    start = stripped.find("{")
+    end = stripped.rfind("}")
+    if start == -1 or end == -1 or end <= start:
+        return stripped
+    return stripped[start : end + 1].strip()
+
+
+def _wrap_missing_outer_object(text: str) -> str:
+    stripped = text.strip().strip(",")
+    if not stripped or "{" in stripped or "}" in stripped:
+        return stripped
+    if not _contains_required_harvest_fields(stripped):
+        return stripped
+    return "{" + stripped + "}"
+
+
+def _normalize_numeric_strings(raw: dict[str, Any]) -> tuple[dict[str, Any], bool]:
+    normalized = dict(raw)
+    changed = False
+    for key in HARVEST_POLICY_NUMERIC_KEYS:
+        value = normalized.get(key)
+        if isinstance(value, str):
+            stripped = value.strip()
+            try:
+                normalized[key] = float(stripped)
+            except ValueError:
+                continue
+            changed = True
+    return normalized, changed
+
+
+def parse_harvest_policy_response(
+    raw_response: str,
+    *,
+    patch_max: float,
+) -> tuple[HarvestPolicyJSON, str, str]:
+    stripped = raw_response.strip()
+
+    direct_error: HarvestLLMParseError | None = None
+    try:
+        parsed = _load_json_dict(stripped)
+        normalized, changed = _normalize_numeric_strings(parsed)
+        policy = clamp_harvest_policy(HarvestPolicyJSON.from_dict(normalized), patch_max=patch_max)
+        if changed:
+            return policy, "repaired_json", "numeric_strings"
+        return policy, "direct_json", ""
+    except HarvestLLMParseError as exc:
+        direct_error = exc
+    except Exception as exc:
+        direct_error = HarvestLLMParseError("other", str(exc))
+
+    repair_candidates: list[tuple[str, str, str]] = []
+    fenced = _strip_code_fences(stripped)
+    if fenced != stripped:
+        repair_candidates.append(("fenced_json", fenced, "json"))
+
+    trailing = _extract_outer_json(stripped)
+    if trailing != stripped:
+        repair_candidates.append(("trailing_prose", trailing, "json"))
+
+    wrapped = _wrap_missing_outer_object(stripped)
+    if wrapped != stripped:
+        repair_candidates.append(("missing_outer_object", wrapped, "json"))
+
+    single_quote_sources = [candidate for _, candidate, _ in repair_candidates]
+    single_quote_sources.extend([stripped, trailing, wrapped, fenced])
+    seen_single_quote: set[str] = set()
+    for candidate in single_quote_sources:
+        candidate = candidate.strip()
+        if "'" not in candidate or candidate in seen_single_quote:
+            continue
+        seen_single_quote.add(candidate)
+        repair_candidates.append(("single_quotes", candidate, "python_literal"))
+
+    seen: set[tuple[str, str]] = set()
+    for error_type, candidate, parser_kind in repair_candidates:
+        key = (error_type, candidate)
+        if key in seen or not candidate:
+            continue
+        seen.add(key)
+        try:
+            if parser_kind == "python_literal":
+                parsed = ast.literal_eval(candidate)
+                if not isinstance(parsed, dict):
+                    raise HarvestLLMParseError(error_type, "Harvest policy response must decode to a mapping.")
+            else:
+                parsed = _load_json_dict(candidate)
+            normalized, numeric_changed = _normalize_numeric_strings(parsed)
+            policy = clamp_harvest_policy(HarvestPolicyJSON.from_dict(normalized), patch_max=patch_max)
+            final_error_type = "numeric_strings" if numeric_changed and error_type == "" else error_type
+            return policy, "repaired_json", final_error_type
+        except HarvestLLMParseError:
+            continue
+        except Exception:
+            continue
+
+    if direct_error is not None:
+        raise direct_error
+    raise HarvestLLMParseError("other", "Unable to parse Harvest LLM response.")
 
 
 def _safe_name(text: str) -> str:
     out = re.sub(r"[^a-zA-Z0-9]+", "_", text.strip())
     out = out.strip("_")
     return out or "regime"
+
+
+def _strategy_birth_generation(strategy_id: str) -> int:
+    match = re.match(r"^g(\d+)_s\d+$", str(strategy_id))
+    if match is None:
+        return -1
+    return int(match.group(1))
 
 
 def _build_seed_schedule(seed_start: int, n_seeds: int) -> list[int]:
@@ -656,24 +863,79 @@ class LLMJSONHarvestStrategyInjector:
         )
         try:
             raw_response = self.llm_client.complete(prompt)
-            parsed = extract_json_object(raw_response)
-            policy = HarvestPolicyJSON.from_dict(parsed)
-            policy = clamp_harvest_policy(policy, patch_max=patch_max)
-            policy = self._perturb_policy(policy, rng=rng, adversarial_pressure=adversarial_pressure, patch_max=patch_max)
-            return harvest_policy_json_to_strategy_spec(policy=policy, strategy_id=strategy_id, origin="llm_json")
-        except Exception:
-            child = self.fallback_injector.inject(
+        except Exception as exc:
+            return self._fallback_child(
                 parent=parent,
                 parent_fitness=parent_fitness,
                 strategy_id=strategy_id,
                 patch_max=patch_max,
                 rng=rng,
                 adversarial_pressure=adversarial_pressure,
+                error_type="request_error",
+                default_rationale=f"request fallback from {parent.strategy_id}",
             )
-            child.origin = "llm_fallback_mutation"
-            if not child.rationale:
-                child.rationale = f"fallback from {parent.strategy_id}"
-            return child
+
+        try:
+            policy, llm_parse_status, llm_parse_error_type = parse_harvest_policy_response(
+                raw_response,
+                patch_max=patch_max,
+            )
+            policy = self._perturb_policy(policy, rng=rng, adversarial_pressure=adversarial_pressure, patch_max=patch_max)
+            return harvest_policy_json_to_strategy_spec(
+                policy=policy,
+                strategy_id=strategy_id,
+                origin="llm_json",
+                llm_parse_status=llm_parse_status,
+                llm_parse_error_type=llm_parse_error_type,
+            )
+        except HarvestLLMParseError as exc:
+            return self._fallback_child(
+                parent=parent,
+                parent_fitness=parent_fitness,
+                strategy_id=strategy_id,
+                patch_max=patch_max,
+                rng=rng,
+                adversarial_pressure=adversarial_pressure,
+                error_type=exc.error_type or "other",
+                default_rationale=f"parse fallback from {parent.strategy_id}",
+            )
+        except Exception:
+            return self._fallback_child(
+                parent=parent,
+                parent_fitness=parent_fitness,
+                strategy_id=strategy_id,
+                patch_max=patch_max,
+                rng=rng,
+                adversarial_pressure=adversarial_pressure,
+                error_type="other",
+                default_rationale=f"fallback from {parent.strategy_id}",
+            )
+
+    def _fallback_child(
+        self,
+        parent: HarvestStrategySpec,
+        parent_fitness: float,
+        strategy_id: str,
+        patch_max: float,
+        rng: np.random.Generator,
+        adversarial_pressure: float,
+        error_type: str,
+        default_rationale: str,
+    ) -> HarvestStrategySpec:
+        child = self.fallback_injector.inject(
+            parent=parent,
+            parent_fitness=parent_fitness,
+            strategy_id=strategy_id,
+            patch_max=patch_max,
+            rng=rng,
+            adversarial_pressure=adversarial_pressure,
+        )
+        child.origin = "llm_fallback_mutation"
+        child.llm_parse_status = "fallback_mutation"
+        child.llm_parse_error_type = error_type if error_type in HARVEST_LLM_PARSE_ERROR_TYPES else "other"
+        if not child.rationale:
+            child.rationale = default_rationale
+        return child
 
     def _perturb_policy(
         self,
@@ -773,6 +1035,36 @@ def _origin_fraction(strategy_df: pd.DataFrame, origin: str) -> float:
     if strategy_df.empty:
         return 0.0
     return float((strategy_df["origin"] == origin).mean())
+
+
+def _llm_parse_status_fraction(strategy_df: pd.DataFrame, status: str) -> float:
+    if strategy_df.empty or "llm_parse_status" not in strategy_df.columns:
+        return 0.0
+    return float((strategy_df["llm_parse_status"] == status).mean())
+
+
+def _llm_parse_error_counts(strategy_df: pd.DataFrame) -> dict[str, int]:
+    if strategy_df.empty or "llm_parse_error_type" not in strategy_df.columns:
+        return {f"llm_parse_error_count__{error_type}": 0 for error_type in HARVEST_LLM_PARSE_ERROR_TYPES}
+    counts: dict[str, int] = {}
+    for error_type in HARVEST_LLM_PARSE_ERROR_TYPES:
+        counts[f"llm_parse_error_count__{error_type}"] = int((strategy_df["llm_parse_error_type"] == error_type).sum())
+    return counts
+
+
+def _llm_integrity_base_df(strategy_df: pd.DataFrame, generation: int | None = None) -> pd.DataFrame:
+    if strategy_df.empty:
+        return strategy_df
+    base = strategy_df.copy()
+    if "birth_generation" not in base.columns:
+        base["birth_generation"] = base["strategy_id"].map(_strategy_birth_generation)
+    if "is_new_in_generation" not in base.columns and generation is not None:
+        base["is_new_in_generation"] = base["birth_generation"] == int(generation)
+    if "is_new_in_generation" in base.columns:
+        base = base[base["is_new_in_generation"]]
+    else:
+        base = base[base["birth_generation"] > 0]
+    return base[base["origin"].isin(["llm_json", "llm_fallback_mutation"])].copy()
 
 
 def _make_condition_setup(
@@ -884,6 +1176,8 @@ def evaluate_harvest_population(
                 "strategy_id": spec.strategy_id,
                 "origin": spec.origin,
                 "rationale": spec.rationale,
+                "llm_parse_status": spec.llm_parse_status,
+                "llm_parse_error_type": spec.llm_parse_error_type,
                 "mean_payoff": float(payoff_sum[i] / n_seeds),
                 "fitness": float(fitness_sum[i] / n_seeds),
                 "low_patch_threshold": spec.low_patch_threshold,
@@ -963,8 +1257,11 @@ def run_harvest_invasion(
         train_score_df = train_score_df.sort_values("fitness", ascending=False).reset_index(drop=True)
         train_score_df["rank"] = np.arange(1, len(train_score_df) + 1)
         train_score_df["generation"] = generation
+        train_score_df["birth_generation"] = train_score_df["strategy_id"].map(_strategy_birth_generation)
+        train_score_df["is_new_in_generation"] = train_score_df["birth_generation"] == generation
         for _, row in train_score_df.iterrows():
             strategy_rows.append(row.to_dict())
+        llm_integrity_df = _llm_integrity_base_df(train_score_df, generation=generation)
 
         all_test_episode_dfs: list[pd.DataFrame] = []
         per_regime_summaries: dict[str, float] = {}
@@ -997,9 +1294,15 @@ def run_harvest_invasion(
             "partner_mix_preset": partner_mix_preset,
             "condition": condition,
             "adversarial_pressure": float(adversarial_pressure),
-            "llm_json_fraction": _origin_fraction(train_score_df, "llm_json"),
-            "llm_fallback_fraction": _origin_fraction(train_score_df, "llm_fallback_mutation"),
+            "llm_json_fraction": _origin_fraction(llm_integrity_df, "llm_json"),
+            "llm_fallback_fraction": _origin_fraction(llm_integrity_df, "llm_fallback_mutation"),
+            "direct_json_fraction": _llm_parse_status_fraction(llm_integrity_df, "direct_json"),
+            "repaired_json_fraction": _llm_parse_status_fraction(llm_integrity_df, "repaired_json"),
+            "effective_llm_fraction": _llm_parse_status_fraction(llm_integrity_df, "direct_json")
+            + _llm_parse_status_fraction(llm_integrity_df, "repaired_json"),
+            "unrepaired_fallback_fraction": _llm_parse_status_fraction(llm_integrity_df, "fallback_mutation"),
         }
+        row.update(_llm_parse_error_counts(llm_integrity_df))
         row.update(_summarize_episode_df(train_episode_df, prefix="train"))
         row.update(_summarize_episode_df(test_episode_df, prefix="test"))
         row.update(per_regime_summaries)
