@@ -11,7 +11,7 @@ The matched Fishery Commons baseline shows that even a minimal central intervent
   \label{fig:study1_baseline}
 \end{figure}
 
-The broader top-down sweep in the medium fishery tier sharpens the central-governance question. Across balanced and adversarial-heavy partner mixes, pressure levels 0.3 and 0.5, and three non-LLM injector families, adaptive quotas are the most frequent winner in every injector block. They win all four scenarios for mutation, all four for the adversarial heuristic injector, and all four for search over mutations. This happens because adaptive quotas and temporary closures tie on collapse reduction in most cells, but adaptive quotas usually retain more welfare outside the most hostile partner mixes.
+The broader top-down sweep in the medium fishery tier sharpens the central-governance question. Across balanced and adversarial-heavy partner mixes, pressure levels 0.3 and 0.5, and three non-LLM injector families, adaptive quotas are the most frequent winner in every injector block. They win all four scenarios for mutation, all four for the adversarial heuristic injector, and all four for search over mutations. This pattern arises because adaptive quotas and temporary closures tie on collapse reduction in most cells, but adaptive quotas usually retain more welfare outside the most hostile partner mixes.
 
 \begin{table}[H]
   \centering
@@ -32,7 +32,7 @@ The broader top-down sweep in the medium fishery tier sharpens the central-gover
   }
 \end{table}
 
-The nuance matters. In balanced partner mixes, adaptive quotas dominate closures on welfare by large margins: \(4792.55\) for mutation, \(5202.70\) for the adversarial heuristic injector, and \(5367.27\) for search over mutations at pressure 0.3. In adversarial-heavy partner mixes, that advantage shrinks or reverses: the same adaptive-minus-closure welfare difference is \(-215.62\), \(-779.48\), and \(-71.33\) at pressure 0.3 for the three injectors. So the correct interpretation is not that temporary closures fail. It is that adaptive quotas are the strongest overall signal, while closures remain a serious fallback when ecological protection is prioritized over welfare retention.
+The welfare comparison is heterogeneous across partner mixes. In balanced partner mixes, adaptive quotas dominate closures on welfare by large margins: \(4792.55\) for mutation, \(5202.70\) for the adversarial heuristic injector, and \(5367.27\) for search over mutations at pressure 0.3. In adversarial-heavy partner mixes, that advantage shrinks or reverses: the same adaptive-minus-closure welfare difference is \(-215.62\), \(-779.48\), and \(-71.33\) at pressure 0.3 for the three injectors. These results indicate that adaptive quotas are the strongest overall signal, while closures remain a credible fallback when ecological protection is prioritized over welfare retention.
 
 Mechanism logging explains why monitoring with sanctions is weaker than the more forceful top-down alternatives. Mean quota-clipped harvest under monitoring with sanctions is \(8.53\) for mutation, \(18.32\) for the adversarial heuristic injector, and \(9.61\) for search over mutations, while mean repeat-offender rates remain \(0.3032\), \(0.5568\), and \(0.3458\). Monitoring with sanctions therefore reduces harm without fully suppressing aggressive extraction, whereas adaptive quotas and temporary closures push collapse to zero in nearly every cell of the first Fishery Commons study.
 
@@ -43,24 +43,24 @@ Mechanism logging explains why monitoring with sanctions is weaker than the more
   \label{fig:study1b_topdown}
 \end{figure}
 
-A learned-policy validation reaches the same conclusion. Under five PPO self-play training runs on the held-out `medium\_v1` pack, adaptive quotas reduce mean collapse from \(0.8141\) under no governance to \(0.0\), raise mean stock from \(97.56\) to \(186.05\), and raise mean welfare from \(4770.20\) to \(9902.35\). A matched governance follow-up under the same PPO protocol also ranks adaptive quotas above the other governed conditions: monitoring with sanctions reaches held-out collapse \(0.0016\), stock \(126.52\), and welfare \(6800.78\), while temporary closures reach collapse \(0.0\), stock \(124.05\), and welfare \(4719.58\). So the first-study ranking is not tied only to hand-written threshold strategies. A simple learned policy family rediscovers adaptive quotas as the strongest medium-tier governance signal.
+A learned-policy validation reaches the same conclusion. Under five PPO self-play training runs on the held-out `medium\_v1` pack, adaptive quotas reduce mean collapse from \(0.8141\) under no governance to \(0.0\), raise mean stock from \(97.56\) to \(186.05\), and raise mean welfare from \(4770.20\) to \(9902.35\). A matched governance follow-up under the same PPO protocol also ranks adaptive quotas above the other governed conditions: monitoring with sanctions reaches held-out collapse \(0.0016\), stock \(126.52\), and welfare \(6800.78\), while temporary closures reach collapse \(0.0\), stock \(124.05\), and welfare \(4719.58\). These results indicate that the first-study ranking is not confined to hand-written threshold strategies. A learned-policy family recovers adaptive quotas as the strongest medium-tier governance signal.
 
 \subsection{Second study: governance architecture in Harvest Commons}
 
-The second study now uses the same invasion logic as the first, rather than only a fixed-composition comparison. The earlier fixed-composition Harvest matrix and the first invasion pass with lighter non-LLM injectors both suggested that hybrid governance was worth taking seriously. The stronger test in the current draft comes from the search-over-mutations cycle. Its Stage B pilot already showed that hybrid governance survives a harsher attacker: hybrid won 13 of 16 pilot cells, while top-down-only control won the remaining 3. The main Harvest Commons evidence therefore comes from the Stage C high-power search-over-mutations matrix, which restricts attention to the decision-critical rows in the medium and hard tiers, the balanced and adversarial-heavy partner mixes, top-down-only versus hybrid governance, and pressures 0.3 and 0.5.
+The second study applies the same invasion protocol used in Fishery Commons rather than relying only on a fixed-composition comparison. Precursor experiments also included none and bottom-up-only conditions, but the decision-critical evidence reported here is restricted to top-down-only versus hybrid. The fixed-composition Harvest matrix and the initial invasion pass with lighter non-LLM injectors both identified hybrid governance as the stronger architecture in this narrowed comparison. The principal Harvest evidence comes from the search-over-mutations cycle. Its Stage B pilot showed that hybrid governance remained competitive under a stronger invader: hybrid ranked first in 13 of 16 pilot cells, whereas top-down-only ranked first in the remaining 3. The main Harvest Commons evidence therefore comes from the Stage C high-power search-over-mutations matrix, which restricts attention to the decision-critical rows in the medium and hard tiers, the balanced and adversarial-heavy partner mixes, top-down-only versus hybrid governance, and pressures 0.3 and 0.5.
 
 \begin{table}[H]
   \centering
   \captionsetup{font=small}
-  \caption{Harvest Commons high-power search-over-mutations summary. Positive deltas mean hybrid governance exceeds top-down-only control; negative values are improvements for lower-is-better metrics such as local aggression and neighborhood overharvest.}
+  \caption{Harvest Commons high-power search-over-mutations summary for the top-down-only versus hybrid comparison. Best-condition counts use the manuscript's Stage C ranking rule: lower garden failure, then higher patch health, then higher welfare. Positive deltas mean hybrid governance exceeds top-down-only control; negative values are improvements for lower-is-better metrics such as local aggression and neighborhood overharvest.}
   \label{tab:study2_summary}
   \small
   \begin{tabular}{lr}
     \toprule
     Summary quantity & Value \\
     \midrule
-    Hybrid best-condition cells & 8 / 8 \\
-    Top-down-only best-condition cells & 0 / 8 \\
+    Hybrid top-ranked decision cells & 8 / 8 \\
+    Top-down-only top-ranked decision cells & 0 / 8 \\
     Mean patch-health delta & +0.0438 \\
     Mean welfare delta & -0.0918 \\
     Mean local-aggression delta & -0.0037 \\
@@ -69,11 +69,11 @@ The second study now uses the same invasion logic as the first, rather than only
   \end{tabular}
 \end{table}
 
-In that stronger high-power matrix, hybrid governance wins all 8 decision cells. That matters because the question is no longer whether hybrid can beat top-down-only control under a friendly attacker. The question is whether it still does so once the invader actively searches for stronger exploitative children. The answer is yes, but with a clearer trade-off than the earlier Harvest passes suggested.
+In that stronger high-power matrix, hybrid governance ranks first in all 8 decision cells under the Stage C failure-then-patch-health-then-welfare rule. The central inferential question is whether hybrid continues to outperform top-down-only control once the invader actively searches for more damaging children. The Stage C results show that it does, although the associated trade-off is sharper than in earlier Harvest experiments.
 
 The aggregated Stage C view makes that trade-off readable. Patch health rises in every single decision cell, and every patch-health confidence interval remains above zero. In the hard tier with an adversarial-heavy population, the paired patch-health delta is \(+0.0157\), with a 95\% confidence interval from \(0.0027\) to \(0.0264\), while the welfare delta is \(-0.0883\), with a 95\% confidence interval from \(-0.1668\) to \(-0.0119\). In the hard tier with a balanced population at pressure 0.3, hybrid improves patch health by \(+0.1356\), with a 95\% confidence interval from \(0.0303\) to \(0.2722\), but welfare falls by \(0.2306\), with a 95\% confidence interval from \(-0.3922\) to \(-0.0643\).
 
-The medium tier is more mixed, but still directionally consistent. In the adversarial-heavy block at pressure 0.3, patch health rises by \(+0.0474\), with a 95\% confidence interval from \(0.0140\) to \(0.1019\), while welfare overlaps a modest cost. In the balanced block at pressure 0.3, both patch health and welfare lean in hybrid's favor, though the welfare interval crosses zero. The hardest welfare penalty appears in the medium balanced block at pressure 0.5, where patch health still rises by \(+0.0438\), with a 95\% confidence interval from \(0.0052\) to \(0.0863\), but welfare falls by \(0.2866\), with a 95\% confidence interval from \(-0.5390\) to \(-0.0702\). The second Harvest Commons study therefore does not claim that hybrid governance is free. It claims something more precise: even under a stronger search-based invader, hybrid governance preserves the commons better than top-down-only control, while the welfare price depends strongly on social composition and pressure.
+Medium-tier effects are more heterogeneous, but remain directionally consistent. In the adversarial-heavy block at pressure 0.3, patch health rises by \(+0.0474\), with a 95\% confidence interval from \(0.0140\) to \(0.1019\), while welfare overlaps a modest cost. In the balanced block at pressure 0.3, both patch health and welfare favor hybrid in point estimates, although the welfare interval crosses zero. The largest welfare penalty appears in the medium balanced block at pressure 0.5, where patch health still rises by \(+0.0438\), with a 95\% confidence interval from \(0.0052\) to \(0.0863\), but welfare falls by \(0.2866\), with a 95\% confidence interval from \(-0.5390\) to \(-0.0702\). These results do not imply universal metric dominance or zero welfare cost for hybrid governance. The narrower conclusion is that, under a stronger search-based invader, hybrid governance preserves the commons more effectively than top-down-only control under the manuscript's ranking rule, while the welfare cost depends strongly on social composition and pressure.
 
 \begin{figure}[H]
   \centering
@@ -89,14 +89,14 @@ The medium tier is more mixed, but still directionally consistent. In the advers
   \label{fig:study2_harvest}
 \end{figure}
 
-These mechanism metrics explain why the failure metric is uninformative in the Harvest Commons study. Across all 8 high-power rows, the paired garden-failure delta is exactly zero, so governance separation happens before outright garden failure. Hybrid governance matters because it shifts local behavior: averaged over the full Stage C matrix, local aggression falls by \(0.0037\) and neighborhood overharvest falls by \(0.0646\) relative to top-down-only control. The stronger result is therefore behavioral and ecological rather than catastrophic.
+These mechanism metrics explain why the failure metric is uninformative in the Harvest Commons study. Across all 8 high-power rows, the paired garden-failure delta is exactly zero, so governance separation happens before outright garden failure. Hybrid governance matters because it shifts local behavior: averaged over the full Stage C matrix, local aggression falls by \(0.0037\) and neighborhood overharvest falls by \(0.0646\) relative to top-down-only control. The stronger result is therefore behavioral and ecological rather than catastrophic, and the 8-of-8 ranking result should be read through those mechanism margins rather than as a claim of metric-by-metric domination.
 
-A narrow learned-policy validation points in the same direction. Under five PPO self-play training runs on the held-out `medium\_h1` pack, hybrid raises mean patch health from \(15.5673\) under top-down-only control to \(15.8064\), lowers mean max local aggression from \(0.6\) to \(0.4\), and lowers mean neighborhood overharvest from \(9.0\) to \(7.65\). Mean welfare falls only slightly, from \(16.3757\) to \(16.2898\). Because garden failure is again saturated at zero in this medium-tier RL setting, the learned-policy check is informative only on the same local mechanism margins that matter in the invasion matrix. It should therefore be read as supporting evidence for the architecture ranking, not as a substitute for the stronger search-over-mutations result.
+A narrow learned-policy validation yields concordant evidence. Under five PPO self-play training runs on the held-out `medium\_h1` pack, hybrid raises mean patch health from \(15.5673\) under top-down-only control to \(15.8064\), lowers mean max local aggression from \(0.6\) to \(0.4\), and lowers mean neighborhood overharvest from \(9.0\) to \(7.65\). Mean welfare falls only slightly, from \(16.3757\) to \(16.2898\). Because garden failure is again saturated at zero in this medium-tier RL setting, the learned-policy check is informative only on the same local mechanism margins that matter in the invasion matrix. It should therefore be read as supporting evidence for the architecture ranking, not as a substitute for the stronger search-over-mutations result.
 
 \begin{table}[H]
   \centering
   \captionsetup{font=small}
-  \caption{Harvest Commons PPO validation in `medium\_h1`. Lower is better for local aggression and neighborhood overharvest. This is supporting evidence only; the main Study 2 claim remains anchored in the high-power search-over-mutations matrix.}
+  \caption{Harvest Commons PPO validation in `medium\_h1`. Lower values are better for local aggression and neighborhood overharvest. The table provides supporting evidence, whereas the main Study 2 claim remains anchored in the high-power search-over-mutations matrix.}
   \label{tab:study2_rl}
   \small
   \begin{tabular}{lrrrr}
@@ -109,7 +109,7 @@ A narrow learned-policy validation points in the same direction. Under five PPO 
   \end{tabular}
 \end{table}
 
-Together, the two studies now give a layered invasion result. In the controlled fishery setting, central governance signals can be ranked and adaptive quotas emerge as the strongest overall top-down signal under invasion pressure. In the second substrate, once governance is allowed to become architectural rather than only signal-level, hybrid governance still produces better local ecological control than top-down-only control even under a stronger search-based invader, though the welfare effect depends on both social composition and task difficulty.
+Taken together, the two studies provide a layered invasion result. In the controlled fishery setting, central governance signals can be ranked, and adaptive quotas emerge as the strongest overall top-down signal under invasion pressure. In the second substrate, once governance is allowed to become architectural rather than only signal-level, the narrower top-down-only versus hybrid comparison shows that hybrid produces better local ecological control under a stronger search-based invader, although the welfare effect depends on both social composition and task difficulty.
 
 \begin{figure}[H]
   \centering
@@ -121,6 +121,6 @@ Together, the two studies now give a layered invasion result. In the controlled 
     \centering
     \includegraphics[width=\linewidth]{figures/harvest_tradeoff_scatter_talk.png}
   \end{minipage}
-  \caption{At-a-glance comparison of Fishery Commons and Harvest Commons. The left panel summarizes which top-down policy most often wins in the fishery setting. The right panel shows the Harvest Commons trade-off between ecological gain and welfare cost when hybrid governance is compared with top-down-only control; point color marks tier, marker shape marks partner mix, and labels indicate adversarial pressure.}
+  \caption{Comparison of Fishery Commons and Harvest Commons. The left panel summarizes which top-down policy most often ranks first in the fishery setting. The right panel shows the Harvest Commons trade-off between ecological gain and welfare cost when hybrid governance is compared with top-down-only control; point color marks tier, marker shape marks partner mix, and labels indicate adversarial pressure.}
   \label{fig:two_study_glance}
 \end{figure}
