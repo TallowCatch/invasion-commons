@@ -167,7 +167,7 @@ def _llm_integrity_summary(strategy_df: pd.DataFrame) -> dict[str, float | int]:
     return row
 
 
-def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
+def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     tier = str(job["tier"])
     partner_mix = str(job["partner_mix"])
     condition = str(job["condition"])
@@ -208,7 +208,7 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
         n_agents=int(args["population_size"]),
         seed=int(args["cfg_seed_start"]) + run_id * int(args["run_seed_stride"]),
     )
-    generation_df, strategy_df = run_harvest_invasion(
+    generation_df, strategy_df, agent_history_df = run_harvest_invasion(
         base_cfg=copy.deepcopy(cfg),
         condition=condition,
         generations=int(args["generations"]),
@@ -246,6 +246,17 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
         llm_provider=str(args["llm_provider"] if injector_mode == "llm_json" else "none"),
         llm_model=str(args["llm_model"] if injector_mode == "llm_json" else ""),
     )
+    agent_history_df = agent_history_df.assign(
+        tier=tier,
+        partner_mix=partner_mix,
+        condition=condition,
+        injector_mode_requested=injector_mode,
+        adversarial_pressure=pressure,
+        run_id=run_id,
+        experiment_tag=str(args["experiment_tag"]),
+        llm_provider=str(args["llm_provider"] if injector_mode == "llm_json" else "none"),
+        llm_model=str(args["llm_model"] if injector_mode == "llm_json" else ""),
+    )
     summary_row = _summary_from_generation_df(condition, injector_mode, run_id, generation_df)
     summary_row.update(
         {
@@ -263,7 +274,7 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
         }
     )
     summary_row.update(_llm_integrity_summary(strategy_df))
-    return summary_row, generation_df, strategy_df
+    return summary_row, generation_df, strategy_df, agent_history_df
 
 
 def main() -> None:
@@ -313,6 +324,7 @@ def main() -> None:
     per_run_rows: list[dict] = []
     generation_histories: list[pd.DataFrame] = []
     strategy_histories: list[pd.DataFrame] = []
+    agent_histories: list[pd.DataFrame] = []
 
     job_specs = [
         {
@@ -355,17 +367,19 @@ def main() -> None:
             with ProcessPoolExecutor(max_workers=args.max_workers) as executor:
                 futures = [executor.submit(_run_job, job) for job in job_specs]
                 for future in as_completed(futures):
-                    summary_row, generation_df, strategy_df = future.result()
+                    summary_row, generation_df, strategy_df, agent_history_df = future.result()
                     generation_histories.append(generation_df)
                     strategy_histories.append(strategy_df)
+                    agent_histories.append(agent_history_df)
                     per_run_rows.append(summary_row)
                     if not args.no_progress:
                         _progress(0, 0)
         else:
             for job in job_specs:
-                summary_row, generation_df, strategy_df = _run_job(job)
+                summary_row, generation_df, strategy_df, agent_history_df = _run_job(job)
                 generation_histories.append(generation_df)
                 strategy_histories.append(strategy_df)
+                agent_histories.append(agent_history_df)
                 per_run_rows.append(summary_row)
                 if not args.no_progress:
                     for _ in range(args.generations):
@@ -381,16 +395,20 @@ def main() -> None:
     runs_df = pd.DataFrame(per_run_rows)
     history_df = pd.concat(generation_histories, ignore_index=True) if generation_histories else pd.DataFrame()
     strategy_df = pd.concat(strategy_histories, ignore_index=True) if strategy_histories else pd.DataFrame()
+    agent_history_df = pd.concat(agent_histories, ignore_index=True) if agent_histories else pd.DataFrame()
 
     runs_csv = f"{args.output_prefix}_runs.csv"
     history_csv = f"{args.output_prefix}_generation_history.csv"
     strategy_csv = f"{args.output_prefix}_strategy_history.csv"
+    agent_history_csv = f"{args.output_prefix}_agent_history.csv"
     runs_df.to_csv(runs_csv, index=False)
     history_df.to_csv(history_csv, index=False)
     strategy_df.to_csv(strategy_csv, index=False)
+    agent_history_df.to_csv(agent_history_csv, index=False)
     print(f"Saved: {runs_csv}")
     print(f"Saved: {history_csv}")
     print(f"Saved: {strategy_csv}")
+    print(f"Saved: {agent_history_csv}")
 
 
 if __name__ == "__main__":

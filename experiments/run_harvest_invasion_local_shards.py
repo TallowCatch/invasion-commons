@@ -4,6 +4,17 @@ import subprocess
 import sys
 from pathlib import Path
 
+try:
+    from experiments.harvest_invasion_presets import shard_slug
+    from experiments.harvest_invasion_presets import stage_cells
+    from experiments.harvest_invasion_presets import stage_config
+    from experiments.harvest_invasion_presets import stage_names
+except ModuleNotFoundError:  # pragma: no cover
+    from harvest_invasion_presets import shard_slug
+    from harvest_invasion_presets import stage_cells
+    from harvest_invasion_presets import stage_config
+    from harvest_invasion_presets import stage_names
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -11,13 +22,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--stage",
-        choices=[
-            "stage_a_llm_reliability",
-            "stage_b_llm",
-            "stage_b_llm_narrow",
-            "stage_c_llm",
-            "stage_c_llm_narrow",
-        ],
+        choices=stage_names(),
         default="stage_b_llm_narrow",
         help="Preset sweep to execute.",
     )
@@ -45,137 +50,10 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def stage_config(stage: str) -> dict:
-    if stage == "stage_a_llm_reliability":
-        return {
-            "explicit_cells": [
-                {
-                    "tier": "medium_h1",
-                    "partner_mix": "balanced",
-                    "condition": "top_down_only",
-                    "injector_mode": "llm_json",
-                    "pressure": "0.3",
-                },
-                {
-                    "tier": "medium_h1",
-                    "partner_mix": "balanced",
-                    "condition": "hybrid",
-                    "injector_mode": "llm_json",
-                    "pressure": "0.3",
-                },
-                {
-                    "tier": "medium_h1",
-                    "partner_mix": "adversarial_heavy",
-                    "condition": "hybrid",
-                    "injector_mode": "llm_json",
-                    "pressure": "0.3",
-                },
-            ],
-            "n_runs": "1",
-            "generations": "4",
-            "population_size": "6",
-            "seeds_per_generation": "8",
-            "test_seeds_per_generation": "8",
-            "replacement_fraction": "0.2",
-            "run_name": "harvest_invasion_llm_stageA_reliability",
-            "experiment_tag": "harvest_invasion_llm_stageA_reliability",
-        }
-    if stage == "stage_b_llm":
-        return {
-            "tiers": ["medium_h1", "hard_h1"],
-            "partner_mixes": ["balanced", "adversarial_heavy"],
-            "conditions": ["top_down_only", "hybrid"],
-            "injector_modes": ["mutation", "llm_json"],
-            "pressures": ["0.3", "0.5"],
-            "n_runs": "3",
-            "generations": "12",
-            "population_size": "6",
-            "seeds_per_generation": "24",
-            "test_seeds_per_generation": "24",
-            "replacement_fraction": "0.2",
-            "run_name": "harvest_invasion_llm_stageB_local",
-            "experiment_tag": "harvest_invasion_llm_stageB_local",
-        }
-    if stage == "stage_b_llm_narrow":
-        return {
-            "tiers": ["medium_h1", "hard_h1"],
-            "partner_mixes": ["balanced", "adversarial_heavy"],
-            "conditions": ["top_down_only", "hybrid"],
-            "injector_modes": ["mutation", "llm_json"],
-            "pressures": ["0.3"],
-            "n_runs": "3",
-            "generations": "12",
-            "population_size": "6",
-            "seeds_per_generation": "24",
-            "test_seeds_per_generation": "24",
-            "replacement_fraction": "0.2",
-            "run_name": "harvest_invasion_llm_stageB_narrow",
-            "experiment_tag": "harvest_invasion_llm_stageB_narrow",
-        }
-    if stage == "stage_c_llm":
-        return {
-            "tiers": ["medium_h1", "hard_h1"],
-            "partner_mixes": ["balanced", "adversarial_heavy"],
-            "conditions": ["top_down_only", "hybrid"],
-            "injector_modes": ["llm_json"],
-            "pressures": ["0.3"],
-            "n_runs": "5",
-            "generations": "15",
-            "population_size": "6",
-            "seeds_per_generation": "32",
-            "test_seeds_per_generation": "32",
-            "replacement_fraction": "0.2",
-            "run_name": "harvest_invasion_llm_stageC_local",
-            "experiment_tag": "harvest_invasion_llm_stageC_local",
-        }
-    if stage == "stage_c_llm_narrow":
-        return {
-            "tiers": ["medium_h1", "hard_h1"],
-            "partner_mixes": ["balanced", "adversarial_heavy"],
-            "conditions": ["top_down_only", "hybrid"],
-            "injector_modes": ["llm_json"],
-            "pressures": ["0.3"],
-            "n_runs": "5",
-            "generations": "15",
-            "population_size": "6",
-            "seeds_per_generation": "32",
-            "test_seeds_per_generation": "32",
-            "replacement_fraction": "0.2",
-            "run_name": "harvest_invasion_llm_stageC_narrow",
-            "experiment_tag": "harvest_invasion_llm_stageC_narrow",
-        }
-    raise ValueError(f"Unknown stage: {stage}")
-
-
-def shard_slug(tier: str, partner_mix: str, condition: str, injector_mode: str, pressure: str) -> str:
-    return f"{tier}__{partner_mix}__{condition}__{injector_mode}__p{pressure}".replace(".", "p")
-
-
 def run_cmd(cmd: list[str], env: dict[str, str] | None = None) -> None:
     proc = subprocess.run(cmd, env=env, check=False)
     if proc.returncode != 0:
         raise subprocess.CalledProcessError(proc.returncode, cmd)
-
-
-def _stage_cells(cfg: dict) -> list[dict[str, str]]:
-    if "explicit_cells" in cfg:
-        return [dict(cell) for cell in cfg["explicit_cells"]]
-    cells: list[dict[str, str]] = []
-    for tier in cfg["tiers"]:
-        for partner_mix in cfg["partner_mixes"]:
-            for condition in cfg["conditions"]:
-                for injector_mode in cfg["injector_modes"]:
-                    for pressure in cfg["pressures"]:
-                        cells.append(
-                            {
-                                "tier": tier,
-                                "partner_mix": partner_mix,
-                                "condition": condition,
-                                "injector_mode": injector_mode,
-                                "pressure": pressure,
-                            }
-                        )
-    return cells
 
 
 def main() -> None:
@@ -191,7 +69,7 @@ def main() -> None:
     summary_prefix = Path(f"results/runs/showcase/curated/{cfg['run_name']}")
     summary_prefix.parent.mkdir(parents=True, exist_ok=True)
 
-    cells = _stage_cells(cfg)
+    cells = stage_cells(cfg)
     jobs: list[tuple[str, list[str]]] = []
     for cell in cells:
         tier = cell["tier"]
@@ -246,6 +124,24 @@ def main() -> None:
             str(args.llm_timeout_s),
             "--llm-temperature",
             str(args.llm_temperature),
+            "--government-trigger",
+            str(cfg["government_trigger"]),
+            "--strict-cap-frac",
+            str(cfg["strict_cap_frac"]),
+            "--relaxed-cap-frac",
+            str(cfg["relaxed_cap_frac"]),
+            "--soft-trigger",
+            str(cfg["soft_trigger"]),
+            "--deterioration-threshold",
+            str(cfg["deterioration_threshold"]),
+            "--activation-warmup",
+            str(cfg["activation_warmup"]),
+            "--aggressive-request-threshold",
+            str(cfg["aggressive_request_threshold"]),
+            "--aggressive-agent-fraction-trigger",
+            str(cfg["aggressive_agent_fraction_trigger"]),
+            "--local-neighborhood-trigger",
+            str(cfg["local_neighborhood_trigger"]),
         ]
         if args.llm_base_url:
             cmd.extend(["--llm-base-url", args.llm_base_url])
@@ -287,6 +183,8 @@ def main() -> None:
                 str(output_prefix.with_name(output_prefix.name + "_runs.csv")),
                 "--output-prefix",
                 str(summary_prefix),
+                "--agent-history-csv",
+                str(output_prefix.with_name(output_prefix.name + "_agent_history.csv")),
             ]
         )
 
@@ -294,18 +192,40 @@ def main() -> None:
         env_plot = os.environ.copy()
         env_plot.setdefault("MPLCONFIGDIR", "/tmp/mpl")
         env_plot.setdefault("XDG_CACHE_HOME", "/tmp")
-        run_cmd(
-            [
-                sys.executable,
-                "-m",
-                "experiments.plot_harvest_invasion",
-                "--ci-csv",
-                str(summary_prefix.with_name(summary_prefix.name + "_ci.csv")),
-                "--output-prefix",
-                str(summary_prefix),
-            ],
-            env=env_plot,
-        )
+        if cfg.get("plot_mode") == "institutional":
+            run_cmd(
+                [
+                    sys.executable,
+                    "-m",
+                    "experiments.plot_harvest_architecture_followup",
+                    "--ranking-csv",
+                    str(summary_prefix.with_name(summary_prefix.name + "_ranking.csv")),
+                    "--contrast-ci-csv",
+                    str(summary_prefix.with_name(summary_prefix.name + "_contrast_ci.csv")),
+                    "--capability-ladder-csv",
+                    str(summary_prefix.with_name(summary_prefix.name + "_capability_ladder.csv")),
+                    "--aggression-summary-csv",
+                    str(summary_prefix.with_name(summary_prefix.name + "_aggression_summary.csv")),
+                    "--targeting-summary-csv",
+                    str(summary_prefix.with_name(summary_prefix.name + "_targeting_summary.csv")),
+                    "--output-prefix",
+                    str(summary_prefix),
+                ],
+                env=env_plot,
+            )
+        else:
+            run_cmd(
+                [
+                    sys.executable,
+                    "-m",
+                    "experiments.plot_harvest_invasion",
+                    "--ci-csv",
+                    str(summary_prefix.with_name(summary_prefix.name + "_ci.csv")),
+                    "--output-prefix",
+                    str(summary_prefix),
+                ],
+                env=env_plot,
+            )
 
     print("Completed local shard sweep, merge, summary, and plots.")
 

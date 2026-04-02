@@ -5,6 +5,7 @@ on:
     branches:
       - codex/harvest-remote-sweeps
       - codex/harvest-remote-stagec
+      - codex/harvest-institutional-alignment
   workflow_dispatch:
     inputs:
       stage:
@@ -14,6 +15,9 @@ on:
         options:
           - stage_b_pilot
           - stage_c_highpower
+          - architecture_stageB
+          - architecture_stageC
+          - capability_ladder_stageB
       python_version:
         description: "Python version"
         required: false
@@ -27,15 +31,18 @@ jobs:
       matrix: ${{ steps.build.outputs.matrix }}
       run_name: ${{ steps.build.outputs.run_name }}
       summary_prefix: ${{ steps.build.outputs.summary_prefix }}
+      plot_mode: ${{ steps.build.outputs.plot_mode }}
       ci_plot_filter: ${{ steps.build.outputs.ci_plot_filter }}
     steps:
       - id: build
         shell: bash
         run: |
           python - <<'PY' >> "$GITHUB_OUTPUT"
-          import itertools
           import json
           import os
+          import itertools
+
+          from experiments.harvest_invasion_presets import github_matrix_payload
 
           stage = os.environ["STAGE"]
           if stage == "stage_b_pilot":
@@ -70,6 +77,16 @@ jobs:
               }
               ci_plot_filter = "--tiers medium_h1,hard_h1 --partner-mixes balanced,adversarial_heavy --injector-modes mutation,adversarial_heuristic --pressures 0.3,0.5"
               run_name = "harvest_invasion_stageC_highpower_gh"
+              plot_mode = "legacy"
+          elif stage in {"architecture_stageB", "architecture_stageC", "capability_ladder_stageB"}:
+              payload = github_matrix_payload(stage)
+              matrix = json.dumps(payload["matrix"])
+              print(f"matrix={matrix}")
+              print(f"run_name={payload['run_name']}")
+              print(f"summary_prefix={payload['summary_prefix']}")
+              print(f"plot_mode={payload['plot_mode']}")
+              print(f"ci_plot_filter={payload['ci_plot_filter']}")
+              raise SystemExit(0)
           else:
               raise ValueError(f"Unknown stage: {stage}")
 
@@ -95,6 +112,7 @@ jobs:
           print(f"matrix={matrix}")
           print(f"run_name={run_name}")
           print(f"summary_prefix={summary_prefix}")
+          print("plot_mode=legacy")
           print(f"ci_plot_filter={ci_plot_filter}")
           PY
         env:
@@ -150,6 +168,7 @@ jobs:
             results/runs/harvest_invasion/gh/${{ needs.define-matrix.outputs.run_name }}/${{ matrix.slug }}_runs.csv
             results/runs/harvest_invasion/gh/${{ needs.define-matrix.outputs.run_name }}/${{ matrix.slug }}_generation_history.csv
             results/runs/harvest_invasion/gh/${{ needs.define-matrix.outputs.run_name }}/${{ matrix.slug }}_strategy_history.csv
+            results/runs/harvest_invasion/gh/${{ needs.define-matrix.outputs.run_name }}/${{ matrix.slug }}_agent_history.csv
 
   aggregate:
     needs: [define-matrix, run-shards]
@@ -189,9 +208,11 @@ jobs:
         run: |
           python -m experiments.summarize_harvest_invasion \
             --runs-csv "results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_runs.csv" \
+            --agent-history-csv "results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_agent_history.csv" \
             --output-prefix "${{ needs.define-matrix.outputs.summary_prefix }}"
 
-      - name: Plot merged outputs
+      - name: Plot merged outputs (legacy)
+        if: ${{ needs.define-matrix.outputs.plot_mode == 'legacy' }}
         env:
           MPLCONFIGDIR: /tmp/mpl
           XDG_CACHE_HOME: /tmp
@@ -201,6 +222,20 @@ jobs:
             --output-prefix "${{ needs.define-matrix.outputs.summary_prefix }}" \
             ${{ needs.define-matrix.outputs.ci_plot_filter }}
 
+      - name: Plot merged outputs (institutional)
+        if: ${{ needs.define-matrix.outputs.plot_mode == 'institutional' }}
+        env:
+          MPLCONFIGDIR: /tmp/mpl
+          XDG_CACHE_HOME: /tmp
+        run: |
+          python -m experiments.plot_harvest_architecture_followup \
+            --ranking-csv "${{ needs.define-matrix.outputs.summary_prefix }}_ranking.csv" \
+            --contrast-ci-csv "${{ needs.define-matrix.outputs.summary_prefix }}_contrast_ci.csv" \
+            --capability-ladder-csv "${{ needs.define-matrix.outputs.summary_prefix }}_capability_ladder.csv" \
+            --aggression-summary-csv "${{ needs.define-matrix.outputs.summary_prefix }}_aggression_summary.csv" \
+            --targeting-summary-csv "${{ needs.define-matrix.outputs.summary_prefix }}_targeting_summary.csv" \
+            --output-prefix "${{ needs.define-matrix.outputs.summary_prefix }}"
+
       - name: Upload merged artifact bundle
         uses: actions/upload-artifact@v4
         with:
@@ -209,10 +244,24 @@ jobs:
             results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_runs.csv
             results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_generation_history.csv
             results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_strategy_history.csv
+            results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_agent_history.csv
             ${{ needs.define-matrix.outputs.summary_prefix }}_table.csv
             ${{ needs.define-matrix.outputs.summary_prefix }}_ranking.csv
             ${{ needs.define-matrix.outputs.summary_prefix }}_delta.csv
             ${{ needs.define-matrix.outputs.summary_prefix }}_ci.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_contrast_delta.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_contrast_ci.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_capability_ladder.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_aggression_groups.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_aggression_deltas.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_aggression_summary.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_targeting_groups.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_targeting_deltas.csv
+            ${{ needs.define-matrix.outputs.summary_prefix }}_targeting_summary.csv
             ${{ needs.define-matrix.outputs.summary_prefix }}_summary.md
             ${{ needs.define-matrix.outputs.summary_prefix }}_main.png
             ${{ needs.define-matrix.outputs.summary_prefix }}_mechanisms.png
+            ${{ needs.define-matrix.outputs.summary_prefix }}_architecture.png
+            ${{ needs.define-matrix.outputs.summary_prefix }}_architecture_contrasts.png
+            ${{ needs.define-matrix.outputs.summary_prefix }}_capability_ladder.png
+            ${{ needs.define-matrix.outputs.summary_prefix }}_welfare_incidence.png

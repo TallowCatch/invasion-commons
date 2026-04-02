@@ -1123,13 +1123,14 @@ def evaluate_harvest_population(
     population: list[HarvestStrategySpec],
     seeds: list[int],
     government_params: dict[str, float | int | bool] | None = None,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     if not population:
         raise ValueError("Population cannot be empty.")
 
     payoff_sum = np.zeros(len(population))
     fitness_sum = np.zeros(len(population))
     rows: list[dict] = []
+    agent_rows: list[dict] = []
 
     for seed in seeds:
         cfg = copy.deepcopy(base_cfg)
@@ -1167,6 +1168,21 @@ def evaluate_harvest_population(
                 "mean_realized_harvest": out["mean_realized_harvest"],
             }
         )
+        for agent_row in out.get("agent_episode_rows", []):
+            agent_idx = int(agent_row["agent_index"])
+            spec = population[agent_idx]
+            agent_rows.append(
+                {
+                    "seed": seed,
+                    "agent_index": agent_idx,
+                    "strategy_id": spec.strategy_id,
+                    "origin": spec.origin,
+                    "rationale": spec.rationale,
+                    "llm_parse_status": spec.llm_parse_status,
+                    "llm_parse_error_type": spec.llm_parse_error_type,
+                    **agent_row,
+                }
+            )
 
     n_seeds = max(1, len(seeds))
     score_rows: list[dict] = []
@@ -1197,7 +1213,7 @@ def evaluate_harvest_population(
             }
         )
 
-    return pd.DataFrame(rows), pd.DataFrame(score_rows)
+    return pd.DataFrame(rows), pd.DataFrame(score_rows), pd.DataFrame(agent_rows)
 
 
 def run_harvest_invasion(
@@ -1215,7 +1231,7 @@ def run_harvest_invasion(
     test_regimes: list[dict[str, dict[str, float]]] | None = None,
     government_params: dict[str, float | int | bool] | None = None,
     progress_callback: Callable[[int, int], None] | None = None,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     if population_size < 2:
         raise ValueError("population_size must be >= 2")
     if generations < 1:
@@ -1237,6 +1253,7 @@ def run_harvest_invasion(
 
     generation_rows: list[dict] = []
     strategy_rows: list[dict] = []
+    agent_history_rows: list[dict] = []
 
     keep_count = max(2, int(round(population_size * (1.0 - replacement_fraction))))
     replace_count = population_size - keep_count
@@ -1247,13 +1264,23 @@ def run_harvest_invasion(
         train_seeds = _build_seed_schedule(train_seed_start, seeds_per_generation)
         test_seeds = _build_seed_schedule(test_seed_start, test_seed_count)
 
-        train_episode_df, train_score_df = evaluate_harvest_population(
+        train_episode_df, train_score_df, train_agent_df = evaluate_harvest_population(
             base_cfg=base_cfg,
             condition=condition,
             population=population,
             seeds=train_seeds,
             government_params=government_params,
         )
+        if not train_agent_df.empty:
+            train_agent_df = train_agent_df.assign(
+                generation=generation,
+                phase="train",
+                regime="train",
+                condition=condition,
+                partner_mix_preset=partner_mix_preset,
+                adversarial_pressure=float(adversarial_pressure),
+            )
+            agent_history_rows.extend(train_agent_df.to_dict("records"))
         train_score_df = train_score_df.sort_values("fitness", ascending=False).reset_index(drop=True)
         train_score_df["rank"] = np.arange(1, len(train_score_df) + 1)
         train_score_df["generation"] = generation
@@ -1268,7 +1295,7 @@ def run_harvest_invasion(
         for regime in resolved_test_regimes:
             regime_name = str(regime["name"])
             regime_cfg = _apply_cfg_overrides(base_cfg, regime["overrides"])
-            regime_episode_df, _ = evaluate_harvest_population(
+            regime_episode_df, _, regime_agent_df = evaluate_harvest_population(
                 base_cfg=regime_cfg,
                 condition=condition,
                 population=population,
@@ -1278,6 +1305,16 @@ def run_harvest_invasion(
             safe = _safe_name(regime_name)
             per_regime_summaries.update(_summarize_episode_df(regime_episode_df, prefix=f"test_{safe}"))
             all_test_episode_dfs.append(regime_episode_df.assign(regime=regime_name))
+            if not regime_agent_df.empty:
+                regime_agent_df = regime_agent_df.assign(
+                    generation=generation,
+                    phase="test",
+                    regime=regime_name,
+                    condition=condition,
+                    partner_mix_preset=partner_mix_preset,
+                    adversarial_pressure=float(adversarial_pressure),
+                )
+                agent_history_rows.extend(regime_agent_df.to_dict("records"))
         test_episode_df = pd.concat(all_test_episode_dfs, ignore_index=True)
 
         row = {
@@ -1349,4 +1386,4 @@ def run_harvest_invasion(
 
         population = parent_pool + injected
 
-    return pd.DataFrame(generation_rows), pd.DataFrame(strategy_rows)
+    return pd.DataFrame(generation_rows), pd.DataFrame(strategy_rows), pd.DataFrame(agent_history_rows)

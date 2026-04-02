@@ -8,7 +8,10 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from experiments.run_harvest_invasion_local_shards import stage_config
+from experiments.summarize_harvest_invasion import _build_capability_ladder_df
 from experiments.summarize_harvest_invasion import _build_integrity_df
+from experiments.summarize_harvest_invasion import _build_ranking_table
+from experiments.summarize_harvest_invasion import _build_welfare_incidence_outputs
 from fishery_sim.harvest import GovernmentAgent
 from fishery_sim.harvest import HarvestCommonsConfig
 from fishery_sim.harvest import SelfInterestedHarvestAgent
@@ -30,7 +33,7 @@ def test_harvest_invasion_is_deterministic_for_random_mutation_and_search() -> N
     regimes = get_harvest_regime_pack("medium_h1")[:2]
     for mode in ("random", "mutation", "search_mutation"):
         injector = make_harvest_strategy_injector(mode)
-        gen_a, strat_a = run_harvest_invasion(
+        gen_a, strat_a, agent_a = run_harvest_invasion(
             base_cfg=copy.deepcopy(cfg),
             condition="hybrid",
             generations=3,
@@ -45,7 +48,7 @@ def test_harvest_invasion_is_deterministic_for_random_mutation_and_search() -> N
             test_regimes=regimes,
         )
         injector = make_harvest_strategy_injector(mode)
-        gen_b, strat_b = run_harvest_invasion(
+        gen_b, strat_b, agent_b = run_harvest_invasion(
             base_cfg=copy.deepcopy(cfg),
             condition="hybrid",
             generations=3,
@@ -61,6 +64,7 @@ def test_harvest_invasion_is_deterministic_for_random_mutation_and_search() -> N
         )
         assert gen_a.equals(gen_b)
         assert strat_a.equals(strat_b)
+        assert agent_a.equals(agent_b)
 
 
 def test_harvest_llm_replay_is_deterministic(tmp_path: Path) -> None:
@@ -77,7 +81,7 @@ def test_harvest_llm_replay_is_deterministic(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     injector_a = make_harvest_strategy_injector("llm_json", llm_client=FileReplayPolicyLLMClient(str(replay_path)))
-    gen_a, strat_a = run_harvest_invasion(
+    gen_a, strat_a, agent_a = run_harvest_invasion(
         base_cfg=copy.deepcopy(cfg),
         condition="hybrid",
         generations=3,
@@ -92,7 +96,7 @@ def test_harvest_llm_replay_is_deterministic(tmp_path: Path) -> None:
         test_regimes=regimes,
     )
     injector_b = make_harvest_strategy_injector("llm_json", llm_client=FileReplayPolicyLLMClient(str(replay_path)))
-    gen_b, strat_b = run_harvest_invasion(
+    gen_b, strat_b, agent_b = run_harvest_invasion(
         base_cfg=copy.deepcopy(cfg),
         condition="hybrid",
         generations=3,
@@ -108,6 +112,7 @@ def test_harvest_llm_replay_is_deterministic(tmp_path: Path) -> None:
     )
     assert gen_a.equals(gen_b)
     assert strat_a.equals(strat_b)
+    assert agent_a.equals(agent_b)
     assert "llm_json_fraction" in gen_a.columns
     assert float((strat_a["origin"] == "llm_json").mean()) > 0.0
 
@@ -119,7 +124,7 @@ def test_harvest_llm_invalid_json_falls_back_to_mutation(tmp_path: Path) -> None
         '{"rationale":"broken","low_patch_threshold":3.0,"high_harvest_frac":0.9}',
         encoding="utf-8",
     )
-    generation_df, strategy_df = run_harvest_invasion(
+    generation_df, strategy_df, agent_df = run_harvest_invasion(
         base_cfg=copy.deepcopy(cfg),
         condition="top_down_only",
         generations=2,
@@ -135,6 +140,7 @@ def test_harvest_llm_invalid_json_falls_back_to_mutation(tmp_path: Path) -> None
     )
     assert float((strategy_df["origin"] == "llm_fallback_mutation").mean()) > 0.0
     assert float(generation_df["llm_fallback_fraction"].max()) > 0.0
+    assert not agent_df.empty
 
 
 def test_harvest_policy_parser_repairs_common_malformed_outputs() -> None:
@@ -178,7 +184,7 @@ def test_harvest_llm_repaired_json_is_deterministic_and_clamped(tmp_path: Path) 
         '```json {"rationale":"repair me","low_patch_threshold":"-2.0","high_patch_threshold":"30.0","low_harvest_frac":"-0.10","mid_harvest_frac":"0.60","high_harvest_frac":"1.40","restraint_low":"1.20","restraint_high":"-0.30","credit_request_low":"0.25","credit_request_high":"0.05","credit_offer_threshold":"25.0","credit_offer_amount":"1.20","neighbor_reciprocity_weight":"0.55","credit_response_weight":"0.50","cap_compliance_margin":"0.40"} ```',
         encoding="utf-8",
     )
-    generation_df, strategy_df = run_harvest_invasion(
+    generation_df, strategy_df, agent_df = run_harvest_invasion(
         base_cfg=copy.deepcopy(cfg),
         condition="hybrid",
         generations=2,
@@ -202,6 +208,7 @@ def test_harvest_llm_repaired_json_is_deterministic_and_clamped(tmp_path: Path) 
     assert float(repaired["cap_compliance_margin"].max()) <= 0.25
     assert float(generation_df["repaired_json_fraction"].max()) > 0.0
     assert float(generation_df["effective_llm_fraction"].max()) > 0.0
+    assert not agent_df.empty
 
 
 def test_harvest_integrity_summary_adds_gate_flags() -> None:
@@ -259,6 +266,9 @@ def test_harvest_local_shard_presets_cover_reliability_and_narrow_stages() -> No
     stage_a = stage_config("stage_a_llm_reliability")
     stage_b = stage_config("stage_b_llm_narrow")
     stage_c = stage_config("stage_c_llm_narrow")
+    arch_b = stage_config("architecture_stageB")
+    arch_c = stage_config("architecture_stageC")
+    ladder = stage_config("capability_ladder_stageB")
     assert len(stage_a["explicit_cells"]) == 3
     assert stage_a["generations"] == "4"
     assert stage_a["seeds_per_generation"] == "8"
@@ -267,16 +277,19 @@ def test_harvest_local_shard_presets_cover_reliability_and_narrow_stages() -> No
     assert stage_b["n_runs"] == "3"
     assert stage_c["injector_modes"] == ["llm_json"]
     assert stage_c["n_runs"] == "5"
+    assert arch_b["conditions"] == ["none", "bottom_up_only", "top_down_only", "hybrid"]
+    assert arch_c["injector_modes"] == ["search_mutation"]
+    assert ladder["injector_modes"] == ["random", "mutation", "adversarial_heuristic", "search_mutation"]
 
 
 def test_harvest_invasion_condition_gating_controls_caps_and_credits() -> None:
     cfg = make_harvest_cfg_for_tier("medium_h1", n_agents=6, seed=3)
     population = build_initial_harvest_population(6, patch_max=cfg.patch_max, rng=np.random.default_rng(2), partner_mix_preset="cooperative_heavy")
 
-    none_df, _ = evaluate_harvest_population(cfg, "none", population, seeds=[1, 2])
-    top_df, _ = evaluate_harvest_population(cfg, "top_down_only", population, seeds=[1, 2])
-    bottom_df, _ = evaluate_harvest_population(cfg, "bottom_up_only", population, seeds=[1, 2])
-    hybrid_df, _ = evaluate_harvest_population(cfg, "hybrid", population, seeds=[1, 2])
+    none_df, _, none_agents = evaluate_harvest_population(cfg, "none", population, seeds=[1, 2])
+    top_df, _, top_agents = evaluate_harvest_population(cfg, "top_down_only", population, seeds=[1, 2])
+    bottom_df, _, bottom_agents = evaluate_harvest_population(cfg, "bottom_up_only", population, seeds=[1, 2])
+    hybrid_df, _, hybrid_agents = evaluate_harvest_population(cfg, "hybrid", population, seeds=[1, 2])
 
     assert float(none_df["mean_government_cap"].mean()) == 0.0
     assert float(bottom_df["mean_government_cap"].mean()) == 0.0
@@ -287,6 +300,11 @@ def test_harvest_invasion_condition_gating_controls_caps_and_credits() -> None:
     assert float(top_df["mean_credit_transferred"].mean()) == 0.0
     assert float(bottom_df["mean_credit_transferred"].mean()) > 0.0
     assert float(hybrid_df["mean_credit_transferred"].mean()) > 0.0
+    assert "targeted_step_fraction" in top_agents.columns
+    assert float(top_agents["targeted_step_fraction"].mean()) > 0.0
+    assert float(bottom_agents["targeted_step_fraction"].mean()) == 0.0
+    assert float(hybrid_agents["mean_credit_received"].mean()) > 0.0
+    assert float(none_agents["mean_credit_received"].mean()) == 0.0
 
 
 def test_harvest_mutation_pressure_increases_exploitation_and_reduces_restraint() -> None:
@@ -329,7 +347,7 @@ def test_harvest_garden_failure_triggers_under_sustained_low_patch_health() -> N
 def test_harvest_invasion_uses_full_held_out_pack() -> None:
     cfg = make_harvest_cfg_for_tier("medium_h1", n_agents=6, seed=11)
     regimes = get_harvest_regime_pack("medium_h1")[:2]
-    generation_df, _ = run_harvest_invasion(
+    generation_df, _, agent_df = run_harvest_invasion(
         base_cfg=cfg,
         condition="hybrid",
         generations=3,
@@ -346,6 +364,7 @@ def test_harvest_invasion_uses_full_held_out_pack() -> None:
     assert int(generation_df["test_regime_count"].iloc[0]) == 2
     assert "test_noisy_weather_garden_failure_rate" in generation_df.columns
     assert "test_strong_externality_garden_failure_rate" in generation_df.columns
+    assert set(agent_df["regime"].unique()) >= {"train", "noisy_weather", "strong_externality"}
 
 
 def test_government_agent_interface_matches_previous_behavior() -> None:
@@ -369,3 +388,130 @@ def test_government_agent_interface_matches_previous_behavior() -> None:
     assert targeted.sum() == 2
     assert float(capped[0]) <= 0.32
     assert float(capped[1]) <= 0.32
+
+
+def test_harvest_agent_history_records_targeting_and_credit_metrics() -> None:
+    cfg = make_harvest_cfg_for_tier("medium_h1", n_agents=6, seed=19)
+    population = build_initial_harvest_population(6, patch_max=cfg.patch_max, rng=np.random.default_rng(4), partner_mix_preset="balanced")
+    _, _, top_agents = evaluate_harvest_population(cfg, "top_down_only", population, seeds=[1])
+    _, _, hybrid_agents = evaluate_harvest_population(cfg, "hybrid", population, seeds=[1])
+    assert {
+        "total_welfare",
+        "mean_requested_harvest",
+        "mean_realized_harvest",
+        "mean_prevented_harvest",
+        "targeted_step_fraction",
+        "capped_step_fraction",
+        "mean_credit_sent",
+        "mean_credit_received",
+        "mean_local_patch_health",
+    }.issubset(top_agents.columns)
+    assert float(top_agents["targeted_step_fraction"].max()) >= 0.0
+    assert float(hybrid_agents["mean_credit_received"].mean()) >= 0.0
+
+
+def test_harvest_ranking_and_capability_tables_handle_multi_condition_inputs() -> None:
+    table_df = pd.DataFrame(
+        [
+            {
+                "tier": "medium_h1",
+                "partner_mix": "balanced",
+                "injector_mode_requested": "search_mutation",
+                "adversarial_pressure": 0.3,
+                "condition": "bottom_up_only",
+                "test_garden_failure_mean_mean": 0.0,
+                "test_mean_patch_health_mean_mean": 15.0,
+                "test_mean_welfare_mean_mean": 10.0,
+            },
+            {
+                "tier": "medium_h1",
+                "partner_mix": "balanced",
+                "injector_mode_requested": "search_mutation",
+                "adversarial_pressure": 0.3,
+                "condition": "top_down_only",
+                "test_garden_failure_mean_mean": 0.0,
+                "test_mean_patch_health_mean_mean": 16.0,
+                "test_mean_welfare_mean_mean": 9.5,
+            },
+            {
+                "tier": "medium_h1",
+                "partner_mix": "balanced",
+                "injector_mode_requested": "search_mutation",
+                "adversarial_pressure": 0.3,
+                "condition": "hybrid",
+                "test_garden_failure_mean_mean": 0.0,
+                "test_mean_patch_health_mean_mean": 17.0,
+                "test_mean_welfare_mean_mean": 9.0,
+            },
+        ]
+    )
+    ranking_df = _build_ranking_table(table_df)
+    assert ranking_df.loc[ranking_df["rank"] == 1, "condition"].iloc[0] == "hybrid"
+
+    contrast_ci_df = pd.DataFrame(
+        [
+            {
+                "tier": "medium_h1",
+                "partner_mix": "balanced",
+                "injector_mode_requested": "random",
+                "adversarial_pressure": 0.3,
+                "left_condition": "hybrid",
+                "right_condition": "top_down_only",
+                "contrast_name": "hybrid_minus_top_down_only",
+                "delta__test_mean_patch_health_mean_mean": 0.1,
+                "delta__test_mean_neighborhood_overharvest_mean_mean": -0.05,
+                "delta__test_mean_welfare_mean_mean": -0.05,
+            },
+            {
+                "tier": "medium_h1",
+                "partner_mix": "balanced",
+                "injector_mode_requested": "search_mutation",
+                "adversarial_pressure": 0.3,
+                "left_condition": "hybrid",
+                "right_condition": "top_down_only",
+                "contrast_name": "hybrid_minus_top_down_only",
+                "delta__test_mean_patch_health_mean_mean": -0.01,
+                "delta__test_mean_neighborhood_overharvest_mean_mean": 0.01,
+                "delta__test_mean_welfare_mean_mean": -0.20,
+            },
+        ]
+    )
+    ladder_df = _build_capability_ladder_df(contrast_ci_df)
+    row = ladder_df.iloc[0]
+    assert row["first_ecological_break_injector"] == "search_mutation"
+    assert row["first_control_break_injector"] == "search_mutation"
+    assert row["first_costly_robustness_injector"] == "search_mutation"
+
+
+def test_welfare_incidence_outputs_include_aggression_and_targeting_views() -> None:
+    agent_history_df = pd.DataFrame(
+        [
+            {
+                "tier": "medium_h1",
+                "partner_mix": "balanced",
+                "injector_mode_requested": "search_mutation",
+                "adversarial_pressure": 0.3,
+                "condition": condition,
+                "run_id": 0,
+                "generation": 1,
+                "phase": "test",
+                "regime": "default",
+                "seed": 10,
+                "agent_index": agent_idx,
+                "aggressive_request_fraction": float(agent_idx) / 10.0,
+                "mean_requested_harvest": 1.0 + agent_idx,
+                "mean_welfare": 5.0 + agent_idx + (1.0 if condition == "hybrid" else 0.0),
+                "mean_prevented_harvest": 0.2 * agent_idx,
+                "mean_realized_harvest": 1.5 + agent_idx,
+                "targeted_step_fraction": 1.0 if agent_idx < 2 else 0.0,
+                "mean_local_patch_health": 12.0 - agent_idx,
+            }
+            for condition in ("top_down_only", "hybrid")
+            for agent_idx in range(6)
+        ]
+    )
+    outputs = _build_welfare_incidence_outputs(agent_history_df)
+    assert not outputs["aggression_summary"].empty
+    assert not outputs["targeting_summary"].empty
+    assert set(outputs["aggression_summary"]["aggression_group"]) == {"low_aggression", "mid_aggression", "high_aggression"}
+    assert set(outputs["targeting_summary"]["target_group"]) == {"targeted", "untargeted"}

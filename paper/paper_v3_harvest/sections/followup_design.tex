@@ -1,0 +1,23 @@
+\section{Follow-Up Design}
+
+\subsection{Architecture restoration}
+
+The first experiment in the follow-up restores the full Harvest architecture spectrum. The goal is to rerun the main architecture study with \texttt{none}, \texttt{bottom\_up\_only}, \texttt{top\_down\_only}, and \texttt{hybrid} under the existing invasion protocol. This begins with a pilot over the medium and hard tiers, balanced and adversarial-heavy partner mixes, pressure \(0.3\), and the \texttt{mutation} and \texttt{search\_mutation} injectors. The pilot is intended to answer three concrete questions: whether bottom-up-only behavior is distinguishable from no governance, whether local-only coordination recovers any ecological benefit without central intervention, and whether hybrid improves outcomes because it combines two genuinely useful mechanisms.
+
+The confirmatory architecture comparison then narrows to \texttt{bottom\_up\_only}, \texttt{top\_down\_only}, and \texttt{hybrid} under \texttt{search\_mutation}. This is the main high-power experiment for the follow-up. The primary ranking rule remains lexicographic---lower garden failure, then higher patch health, then higher welfare---but the pairwise contrasts become more informative: \texttt{hybrid - top\_down\_only}, \texttt{hybrid - bottom\_up\_only}, and \texttt{top\_down\_only - bottom\_up\_only}. The central interpretive question is no longer only whether hybrid beats top-down control. It is what central-only, local-only, and combined governance each add under stronger adversarial pressure.
+
+\subsection{Welfare-incidence analysis}
+
+The second extension identifies who bears the welfare cost of robust governance. This requires agent-level logging during Harvest evaluation. Each episode should record realized welfare, requested harvest, realized harvest, prevented harvest, credit sent, credit received, local patch health experienced, and whether the agent was targeted or capped. From those logs, the analysis should produce two decompositions.
+
+The first is an aggression-based decomposition. Agents are grouped within each evaluation episode into low-, middle-, and high-aggression terciles using realized aggressive-request behavior, with requested harvest as a fallback grouping variable if needed. The reported outputs are mean welfare delta, prevented-harvest delta, realized-harvest delta, and targeted-fraction delta by tercile. This reveals whether robust governance mainly penalizes the most exploitative agents or instead imposes a broad welfare tax.
+
+The second is a targeting-based decomposition. Agents are split into targeted and untargeted groups according to whether they face caps during the episode. The same welfare, harvest, and local-patch metrics are then compared across governance conditions. This reveals whether the observed welfare cost is concentrated on targeted restraint or arises from a wider system-level efficiency loss.
+
+\subsection{Capability ladder}
+
+The third extension makes attacker strength explicit. The current codebase already supports a clear non-LLM ladder: \texttt{random}, \texttt{mutation}, \texttt{adversarial\_heuristic}, and \texttt{search\_mutation}. The follow-up should present these as increasing rungs of adversarial capability and ask when each governance architecture loses its advantage. The planned reporting rule is intentionally simple: an ecological break occurs when a patch-health delta becomes non-positive; a control break occurs when neighborhood-overharvest becomes worse rather than better; and a costly-robustness flag occurs when the welfare delta falls below \(-0.15\). A summary table can then report the first rung at which each pairwise architecture contrast breaks in each tier, partner-mix, and pressure cell.
+
+\subsection{Harvest LLM status}
+
+The live Harvest LLM path remains diagnostic only. It is implemented, reliability-screened, and scientifically interesting, but it has not cleared the evidence gate for the main architecture story. In particular, the narrow matched pilot remained below the required effective-LLM fraction and above the allowed unrepaired-fallback fraction. For the follow-up paper, the correct role of Harvest LLM is therefore appendix or limitation material unless a separate model-quality cycle clears the reliability thresholds.

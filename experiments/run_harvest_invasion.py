@@ -63,7 +63,14 @@ def _safe_git_hash() -> str:
         return "unknown"
 
 
-def _write_manifest(path: str, args: argparse.Namespace, generation_path: str, strategy_path: str, test_regimes: list[dict]) -> None:
+def _write_manifest(
+    path: str,
+    args: argparse.Namespace,
+    generation_path: str,
+    strategy_path: str,
+    agent_history_path: str,
+    test_regimes: list[dict],
+) -> None:
     out_dir = os.path.dirname(path)
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
@@ -76,6 +83,7 @@ def _write_manifest(path: str, args: argparse.Namespace, generation_path: str, s
         "outputs": {
             "generations_csv": generation_path,
             "strategies_csv": strategy_path,
+            "agent_history_csv": agent_history_path,
         },
         "params": vars(args),
         "benchmark": {
@@ -164,7 +172,7 @@ def main() -> None:
         progress_callback = _callback
 
     try:
-        generation_df, strategy_df = run_harvest_invasion(
+        generation_df, strategy_df, agent_history_df = run_harvest_invasion(
             base_cfg=cfg,
             condition=args.condition,
             generations=args.generations,
@@ -198,16 +206,26 @@ def main() -> None:
     strategy_df["llm_provider"] = args.llm_provider if args.injector_mode == "llm_json" else "none"
     generation_df["llm_model"] = args.llm_model if args.injector_mode == "llm_json" else ""
     strategy_df["llm_model"] = args.llm_model if args.injector_mode == "llm_json" else ""
+    agent_history_df["experiment_tag"] = args.experiment_tag
+    agent_history_df["tier"] = args.tier
+    agent_history_df["condition"] = args.condition
+    agent_history_df["partner_mix"] = args.partner_mix
+    agent_history_df["injector_mode_requested"] = args.injector_mode
+    agent_history_df["llm_provider"] = args.llm_provider if args.injector_mode == "llm_json" else "none"
+    agent_history_df["llm_model"] = args.llm_model if args.injector_mode == "llm_json" else ""
 
     generation_path = f"{args.output_prefix}_generations.csv"
     strategy_path = f"{args.output_prefix}_strategies.csv"
+    agent_history_path = f"{args.output_prefix}_agent_history.csv"
     generation_df.to_csv(generation_path, index=False)
     strategy_df.to_csv(strategy_path, index=False)
+    agent_history_df.to_csv(agent_history_path, index=False)
     print(f"Saved: {generation_path}")
     print(f"Saved: {strategy_path}")
+    print(f"Saved: {agent_history_path}")
 
     if args.manifest_out:
-        _write_manifest(args.manifest_out, args, generation_path, strategy_path, test_regimes)
+        _write_manifest(args.manifest_out, args, generation_path, strategy_path, agent_history_path, test_regimes)
         print(f"Saved: {args.manifest_out}")
     if args.injector_mode == "llm_json" and not strategy_df.empty:
         print(f"llm_json_fraction: {float((strategy_df['origin'] == 'llm_json').mean()):.4f}")

@@ -399,6 +399,15 @@ def run_harvest_episode(
     final_payoffs = np.zeros(cfg.n_agents, dtype=float)
     aggressive_threshold = governor.aggressive_request_threshold if governor is not None else 0.75
     t_end = cfg.horizon
+    observed_patch_sum = np.zeros(cfg.n_agents, dtype=float)
+    requested_harvest_total = np.zeros(cfg.n_agents, dtype=float)
+    realized_harvest_total = np.zeros(cfg.n_agents, dtype=float)
+    prevented_harvest_total = np.zeros(cfg.n_agents, dtype=float)
+    targeted_step_total = np.zeros(cfg.n_agents, dtype=float)
+    capped_step_total = np.zeros(cfg.n_agents, dtype=float)
+    aggressive_request_step_total = np.zeros(cfg.n_agents, dtype=float)
+    credit_sent_total = np.zeros(cfg.n_agents, dtype=float)
+    credit_received_total = np.zeros(cfg.n_agents, dtype=float)
 
     for t in range(cfg.horizon):
         government_cap_fracs = None
@@ -418,6 +427,7 @@ def run_harvest_episode(
             cap_frac_i = None
             if government_cap_fracs is not None and not np.isnan(government_cap_fracs[i]):
                 cap_frac_i = float(government_cap_fracs[i])
+            observed_patch_sum[i] += float(patch_health[i])
             obs = HarvestObservation(
                 local_patch=float(patch_health[i]),
                 neighbor_mean=neighbor_mean,
@@ -455,6 +465,11 @@ def run_harvest_episode(
             HarvestAction(harvest_frac=float(capped_fracs_arr[i]), credit_offer=raw_actions[i].credit_offer)
             for i in range(cfg.n_agents)
         ]
+        requested_harvest_total += requested_fracs_arr * cfg.max_harvest_per_agent
+        prevented_harvest_total += np.maximum(0.0, requested_fracs_arr - capped_fracs_arr) * cfg.max_harvest_per_agent
+        targeted_step_total += targeted_mask.astype(float)
+        capped_step_total += (capped_fracs_arr + 1e-9 < requested_fracs_arr).astype(float)
+        aggressive_request_step_total += (requested_fracs_arr > aggressive_threshold).astype(float)
 
         aggressive_request_trace.append(float(np.mean(requested_fracs_arr > aggressive_threshold)))
         local_aggression = []
@@ -490,6 +505,8 @@ def run_harvest_episode(
                     per_neighbor = min(action.credit_offer, cfg.credit_cap) / len(eligible_neighbors)
                     credits_received[eligible_neighbors] += per_neighbor
                     credit_costs[i] += per_neighbor * len(eligible_neighbors)
+        credit_sent_total += credit_costs
+        credit_received_total += credits_received
 
         overharvest = np.maximum(0.0, harvests - cfg.sustainable_harvest_frac * cfg.max_harvest_per_agent)
         next_health = np.zeros_like(patch_health)
@@ -502,6 +519,7 @@ def run_harvest_episode(
 
         payoffs = harvests + credits_received - credit_costs
         final_payoffs += payoffs
+        realized_harvest_total += harvests
         patch_health = next_health
         last_credit_received = credits_received
 
@@ -549,6 +567,29 @@ def run_harvest_episode(
         "mean_requested_harvest": float(np.mean(requested_harvest_trace)) if requested_harvest_trace else 0.0,
         "mean_realized_harvest": float(np.mean(realized_harvest_trace)) if realized_harvest_trace else 0.0,
         "final_payoffs": final_payoffs,
+        "agent_episode_rows": [
+            {
+                "agent_index": i,
+                "total_welfare": float(final_payoffs[i]),
+                "mean_welfare": float(final_payoffs[i] / max(1, t_end)),
+                "total_requested_harvest": float(requested_harvest_total[i]),
+                "mean_requested_harvest": float(requested_harvest_total[i] / max(1, t_end)),
+                "total_realized_harvest": float(realized_harvest_total[i]),
+                "mean_realized_harvest": float(realized_harvest_total[i] / max(1, t_end)),
+                "total_prevented_harvest": float(prevented_harvest_total[i]),
+                "mean_prevented_harvest": float(prevented_harvest_total[i] / max(1, t_end)),
+                "aggressive_request_fraction": float(aggressive_request_step_total[i] / max(1, t_end)),
+                "targeted_step_fraction": float(targeted_step_total[i] / max(1, t_end)),
+                "capped_step_fraction": float(capped_step_total[i] / max(1, t_end)),
+                "total_credit_sent": float(credit_sent_total[i]),
+                "mean_credit_sent": float(credit_sent_total[i] / max(1, t_end)),
+                "total_credit_received": float(credit_received_total[i]),
+                "mean_credit_received": float(credit_received_total[i] / max(1, t_end)),
+                "mean_local_patch_health": float(observed_patch_sum[i] / max(1, t_end)),
+                "final_local_patch_health": float(patch_health[i]),
+            }
+            for i in range(cfg.n_agents)
+        ],
     }
 
 
