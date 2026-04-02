@@ -6,6 +6,7 @@ on:
       - codex/harvest-remote-sweeps
       - codex/harvest-remote-stagec
       - codex/harvest-architecture-stagec
+      - codex/harvest-capability-ladder-stageb
       - codex/harvest-institutional-alignment
   workflow_dispatch:
     inputs:
@@ -118,7 +119,7 @@ jobs:
           print(f"ci_plot_filter={ci_plot_filter}")
           PY
         env:
-          STAGE: ${{ github.event_name == 'workflow_dispatch' && inputs.stage || (github.ref_name == 'codex/harvest-remote-stagec' && 'stage_c_highpower' || github.ref_name == 'codex/harvest-architecture-stagec' && 'architecture_stageC' || 'stage_b_pilot') }}
+          STAGE: ${{ github.event_name == 'workflow_dispatch' && inputs.stage || (github.ref_name == 'codex/harvest-remote-stagec' && 'stage_c_highpower' || github.ref_name == 'codex/harvest-architecture-stagec' && 'architecture_stageC' || github.ref_name == 'codex/harvest-capability-ladder-stageb' && 'capability_ladder_stageB' || 'stage_b_pilot') }}
 
   run-shards:
     needs: define-matrix
