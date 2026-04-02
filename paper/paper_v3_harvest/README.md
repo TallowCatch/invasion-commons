@@ -1,6 +1,6 @@
 # `paper_v3_harvest` working draft
 
-This folder is the Harvest-led follow-up scaffold. It is intentionally separate from `paper_v2`, which stays frozen as the completed two-study baseline paper.
+This folder contains the Harvest-led follow-up draft. It is intentionally separate from `paper_v2`, which stays frozen as the completed two-study baseline paper.
 
 ## Purpose
 
@@ -10,7 +10,12 @@ This draft recenters the project around:
 - governance architecture rather than only signal design
 - capability escalation rather than only fixed cooperation
 
-It is a working draft, not yet the final submission manuscript. The new architecture-restoration, capability-ladder, and welfare-incidence experiments are expected to feed directly into this paper.
+The current draft already integrates:
+
+- the Harvest architecture-restoration pilot
+- the high-power architecture confirmation
+- the welfare-incidence analysis
+- the capability-ladder analysis
 
 ## Build
 
