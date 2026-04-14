@@ -62,9 +62,15 @@ def _cell_sort_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _cell_label(row: pd.Series) -> str:
+    parts: list[str] = []
+    if "scenario_preset" in row.index and pd.notna(row["scenario_preset"]) and str(row["scenario_preset"]).strip():
+        parts.append(str(row["scenario_preset"]).replace("_", " "))
+    if "governance_friction_regime" in row.index and pd.notna(row["governance_friction_regime"]) and str(row["governance_friction_regime"]).strip():
+        parts.append(str(row["governance_friction_regime"]))
     tier = row["tier"].replace("_h1", "").replace("_", " ")
     mix = row["partner_mix"].replace("_", " ")
-    return f"{tier} | {mix} | p={row['adversarial_pressure']}"
+    parts.extend([tier, mix, f"p={row['adversarial_pressure']}"])
+    return " | ".join(parts)
 
 
 def _architecture_effect_plot(contrast_ci_df: pd.DataFrame, output: Path) -> None:
@@ -207,7 +213,7 @@ def _capability_ladder_plot(ladder_df: pd.DataFrame, output: Path) -> None:
     for idx, (ax, (col, title)) in enumerate(zip(axes, break_cols)):
         pivot = (
             ladder_df.assign(value=ladder_df[col].map(rung_map))
-            .pivot(index="cell", columns="contrast_name", values="value")
+            .pivot_table(index="cell", columns="contrast_name", values="value", aggfunc="first")
             .reindex(index=cell_order, columns=contrast_order)
         )
         data = pivot.to_numpy()
