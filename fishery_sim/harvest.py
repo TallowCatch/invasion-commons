@@ -247,6 +247,10 @@ class GovernmentAgent:
         local_neighborhood_trigger: float = 0.67,
         enforcement_scope: str = "global",
         expand_target_neighbors: bool = False,
+        detection_recall: float = 1.0,
+        enforcement_delay_rounds: int = 0,
+        max_target_share: float = 1.0,
+        governance_budget_cost: float = 0.0,
     ):
         self.trigger = float(trigger)
         self.strict_cap_frac = float(strict_cap_frac)
@@ -257,18 +261,29 @@ class GovernmentAgent:
         self.aggressive_request_threshold = float(np.clip(aggressive_request_threshold, 0.0, 1.0))
         self.aggressive_agent_fraction_trigger = float(np.clip(aggressive_agent_fraction_trigger, 0.0, 1.0))
         self.local_neighborhood_trigger = float(np.clip(local_neighborhood_trigger, 0.0, 1.0))
+        self.detection_recall = float(np.clip(detection_recall, 0.0, 1.0))
+        self.enforcement_delay_rounds = int(max(0, enforcement_delay_rounds))
+        self.max_target_share = float(np.clip(max_target_share, 0.0, 1.0))
+        self.governance_budget_cost = float(max(0.0, governance_budget_cost))
         if enforcement_scope not in {"global", "local"}:
             raise ValueError("enforcement_scope must be 'global' or 'local'")
         self.enforcement_scope = enforcement_scope
         self.expand_target_neighbors = bool(expand_target_neighbors)
         self.reset()
 
-    def reset(self) -> None:
+    def reset(self, seed: int | None = None) -> None:
         self._prev_mean_patch_health: float | None = None
         self._prev_aggressive_fraction: float = 0.0
         self._prev_max_local_aggression: float = 0.0
         self._prev_local_aggression: np.ndarray | None = None
         self._prev_requested_fracs: np.ndarray | None = None
+        self._pending_caps: list[np.ndarray | None] = []
+        self._rng = np.random.default_rng(0 if seed is None else int(seed))
+        self._last_delayed_intervention_count: int = 0
+        self._last_intended_target_count: int = 0
+        self._last_missed_target_count: int = 0
+        self._last_governance_budget_spent: float = 0.0
+        self._last_actual_target_count: int = 0
 
     def _build_cap_array(self, cap_frac: float, n_agents: int) -> np.ndarray:
         if self.enforcement_scope == "global":
@@ -316,11 +331,10 @@ class GovernmentAgent:
     def act(self, mean_patch_health: float, t: int, n_agents: int) -> np.ndarray | None:
         trend = None if self._prev_mean_patch_health is None else mean_patch_health - self._prev_mean_patch_health
         self._prev_mean_patch_health = float(mean_patch_health)
+        planned_caps: np.ndarray | None = None
         if mean_patch_health < self.trigger:
-            return self._build_cap_array(self.strict_cap_frac, n_agents)
-        if t < self.activation_warmup:
-            return None
-        if (
+            planned_caps = self._build_cap_array(self.strict_cap_frac, n_agents)
+        elif t >= self.activation_warmup and (
             mean_patch_health < self.soft_trigger
             and trend is not None
             and trend < -self.deterioration_threshold
@@ -329,17 +343,45 @@ class GovernmentAgent:
                 or self._prev_max_local_aggression >= self.local_neighborhood_trigger
             )
         ):
-            return self._build_cap_array(self.relaxed_cap_frac, n_agents)
-        return None
+            planned_caps = self._build_cap_array(self.relaxed_cap_frac, n_agents)
+        self._last_delayed_intervention_count = 0
+        if self.enforcement_delay_rounds <= 0:
+            return planned_caps
+        self._pending_caps.append(None if planned_caps is None else planned_caps.copy())
+        delayed = 1 if planned_caps is not None else 0
+        if len(self._pending_caps) <= self.enforcement_delay_rounds:
+            self._last_delayed_intervention_count = delayed
+            return None
+        self._last_delayed_intervention_count = delayed
+        matured = self._pending_caps.pop(0)
+        return None if matured is None else matured.copy()
 
     def apply_cap(
         self,
         requested_fracs: np.ndarray,
         cap_fracs: np.ndarray | None,
     ) -> tuple[np.ndarray, np.ndarray]:
+        self._last_intended_target_count = 0
+        self._last_missed_target_count = 0
+        self._last_governance_budget_spent = 0.0
+        self._last_actual_target_count = 0
         if cap_fracs is None:
             return requested_fracs.copy(), np.zeros_like(requested_fracs, dtype=bool)
         targeted = ~np.isnan(cap_fracs)
+        self._last_intended_target_count = int(targeted.sum())
+        if np.any(targeted) and self.detection_recall < 1.0:
+            detected = self._rng.random(requested_fracs.size) <= self.detection_recall
+            targeted &= detected
+        if np.any(targeted) and self.max_target_share < 1.0:
+            max_targets = max(1, int(np.floor(self.max_target_share * requested_fracs.size)))
+            active_idx = np.flatnonzero(targeted)
+            if active_idx.size > max_targets:
+                ranked = active_idx[np.argsort(requested_fracs[active_idx])[::-1]]
+                keep_idx = set(int(x) for x in ranked[:max_targets])
+                targeted = np.array([idx in keep_idx for idx in range(requested_fracs.size)], dtype=bool)
+        self._last_actual_target_count = int(targeted.sum())
+        self._last_missed_target_count = max(0, self._last_intended_target_count - self._last_actual_target_count)
+        self._last_governance_budget_spent = float(self._last_actual_target_count) * self.governance_budget_cost
         capped = requested_fracs.copy()
         capped[targeted] = np.minimum(capped[targeted], cap_fracs[targeted])
         return capped, targeted
@@ -380,7 +422,7 @@ def run_harvest_episode(
         if callable(reset):
             reset()
     if governor is not None:
-        governor.reset()
+        governor.reset(seed=cfg.seed)
 
     patch_mean_trace: list[float] = []
     welfare_trace: list[float] = []
@@ -393,6 +435,9 @@ def run_harvest_episode(
     patch_variance_trace: list[float] = []
     neighborhood_overharvest_trace: list[float] = []
     targeted_agent_trace: list[float] = []
+    missed_target_rate_trace: list[float] = []
+    delayed_intervention_trace: list[float] = []
+    governance_budget_trace: list[float] = []
     requested_harvest_trace: list[float] = []
     realized_harvest_trace: list[float] = []
 
@@ -416,10 +461,12 @@ def run_harvest_episode(
         if government_cap_fracs is None:
             government_cap_trace.append(-1.0)
             targeted_agent_trace.append(0.0)
+            delayed_intervention_trace.append(float(getattr(governor, "_last_delayed_intervention_count", 0)) if governor is not None else 0.0)
         else:
             active_caps = government_cap_fracs[~np.isnan(government_cap_fracs)]
             government_cap_trace.append(float(np.mean(active_caps)) if active_caps.size else -1.0)
             targeted_agent_trace.append(float(np.mean(~np.isnan(government_cap_fracs))))
+            delayed_intervention_trace.append(float(getattr(governor, "_last_delayed_intervention_count", 0)) if governor is not None else 0.0)
 
         observations = []
         for i in range(cfg.n_agents):
@@ -461,6 +508,11 @@ def run_harvest_episode(
         else:
             capped_fracs_arr = requested_fracs_arr.copy()
             targeted_mask = np.zeros(cfg.n_agents, dtype=bool)
+        intended_targets = getattr(governor, "_last_intended_target_count", 0) if governor is not None else 0
+        missed_targets = getattr(governor, "_last_missed_target_count", 0) if governor is not None else 0
+        governance_budget_spent = getattr(governor, "_last_governance_budget_spent", 0.0) if governor is not None else 0.0
+        missed_target_rate_trace.append(float(missed_targets / intended_targets) if intended_targets > 0 else 0.0)
+        governance_budget_trace.append(float(governance_budget_spent))
         actions = [
             HarvestAction(harvest_frac=float(capped_fracs_arr[i]), credit_offer=raw_actions[i].credit_offer)
             for i in range(cfg.n_agents)
@@ -517,7 +569,8 @@ def run_harvest_episode(
             weather = rng.normal(0.0, cfg.weather_noise_std)
             next_health[i] = float(np.clip(remaining + max(0.0, growth) + weather, 0.0, cfg.patch_max))
 
-        payoffs = harvests + credits_received - credit_costs
+        per_target_budget_cost = float(getattr(governor, "governance_budget_cost", 0.0)) if governor is not None else 0.0
+        payoffs = harvests + credits_received - credit_costs - per_target_budget_cost * targeted_mask.astype(float)
         final_payoffs += payoffs
         realized_harvest_total += harvests
         patch_health = next_health
@@ -563,6 +616,10 @@ def run_harvest_episode(
         "mean_prevented_harvest": float(np.mean(prevented_harvest_trace)) if prevented_harvest_trace else 0.0,
         "mean_neighborhood_overharvest": float(np.mean(neighborhood_overharvest_trace)) if neighborhood_overharvest_trace else 0.0,
         "mean_targeted_agent_fraction": float(np.mean(targeted_agent_trace)) if targeted_agent_trace else 0.0,
+        "missed_target_rate": float(np.mean(missed_target_rate_trace)) if missed_target_rate_trace else 0.0,
+        "targeted_share": float(np.mean(targeted_agent_trace)) if targeted_agent_trace else 0.0,
+        "delayed_intervention_count": float(np.sum(delayed_intervention_trace)) if delayed_intervention_trace else 0.0,
+        "governance_budget_spent": float(np.sum(governance_budget_trace)) if governance_budget_trace else 0.0,
         "mean_patch_variance": float(np.mean(patch_variance_trace)) if patch_variance_trace else 0.0,
         "mean_requested_harvest": float(np.mean(requested_harvest_trace)) if requested_harvest_trace else 0.0,
         "mean_realized_harvest": float(np.mean(realized_harvest_trace)) if realized_harvest_trace else 0.0,
@@ -581,6 +638,8 @@ def run_harvest_episode(
                 "aggressive_request_fraction": float(aggressive_request_step_total[i] / max(1, t_end)),
                 "targeted_step_fraction": float(targeted_step_total[i] / max(1, t_end)),
                 "capped_step_fraction": float(capped_step_total[i] / max(1, t_end)),
+                "missed_target_rate": float(np.mean(missed_target_rate_trace)) if missed_target_rate_trace else 0.0,
+                "governance_budget_spent": float(np.sum(governance_budget_trace)) if governance_budget_trace else 0.0,
                 "total_credit_sent": float(credit_sent_total[i]),
                 "mean_credit_sent": float(credit_sent_total[i] / max(1, t_end)),
                 "total_credit_received": float(credit_received_total[i]),

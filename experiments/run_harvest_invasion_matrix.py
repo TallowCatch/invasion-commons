@@ -6,7 +6,13 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 import numpy as np
 import pandas as pd
 
-from fishery_sim.harvest_benchmarks import get_harvest_regime_pack, make_harvest_cfg_for_tier
+from fishery_sim.harvest_benchmarks import (
+    get_harvest_governance_friction_regime,
+    get_harvest_regime_pack,
+    get_harvest_scenario_preset,
+    make_harvest_cfg_for_scenario,
+    make_harvest_cfg_for_tier,
+)
 from fishery_sim.harvest_evolution import (
     HARVEST_LLM_PARSE_ERROR_TYPES,
     _llm_integrity_base_df,
@@ -29,9 +35,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run Harvest Commons invasion matrix sweeps.")
     parser.add_argument("--tiers", default="easy_h1,medium_h1,hard_h1")
     parser.add_argument("--partner-mixes", default="cooperative_heavy,balanced,adversarial_heavy")
+    parser.add_argument("--scenario-presets", default="")
     parser.add_argument("--conditions", default="none,top_down_only,bottom_up_only,hybrid")
     parser.add_argument("--injector-modes", default="random,mutation,adversarial_heuristic")
     parser.add_argument("--adversarial-pressures", default="0.3")
+    parser.add_argument("--governance-friction-regimes", default="ideal")
     parser.add_argument("--n-runs", type=int, default=3)
     parser.add_argument("--generations", type=int, default=12)
     parser.add_argument("--population-size", type=int, default=6)
@@ -104,6 +112,10 @@ def _summary_from_generation_df(condition: str, injector_mode: str, run_id: int,
         "test_mean_neighborhood_overharvest_mean": float(generation_df["test_mean_neighborhood_overharvest"].mean()),
         "test_mean_capped_action_fraction_mean": float(generation_df["test_mean_capped_action_fraction"].mean()),
         "test_mean_targeted_agent_fraction_mean": float(generation_df["test_mean_targeted_agent_fraction"].mean()),
+        "test_missed_target_rate_mean": float(generation_df["test_missed_target_rate"].mean()) if "test_missed_target_rate" in generation_df.columns else 0.0,
+        "test_targeted_share_mean": float(generation_df["test_targeted_share"].mean()) if "test_targeted_share" in generation_df.columns else 0.0,
+        "test_delayed_intervention_count_mean": float(generation_df["test_delayed_intervention_count"].mean()) if "test_delayed_intervention_count" in generation_df.columns else 0.0,
+        "test_governance_budget_spent_mean": float(generation_df["test_governance_budget_spent"].mean()) if "test_governance_budget_spent" in generation_df.columns else 0.0,
         "test_mean_prevented_harvest_mean": float(generation_df["test_mean_prevented_harvest"].mean()),
         "test_mean_patch_variance_mean": float(generation_df["test_mean_patch_variance"].mean()),
         "test_mean_requested_harvest_mean": float(generation_df["test_mean_requested_harvest"].mean()),
@@ -174,6 +186,8 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame, pd.DataFrame]
     injector_mode = str(job["injector_mode"])
     pressure = float(job["pressure"])
     run_id = int(job["run_id"])
+    scenario_preset = str(job.get("scenario_preset", ""))
+    governance_friction_regime = str(job.get("governance_friction_regime", "ideal"))
     args = job["args"]
     llm_client = None
     if args["llm_policy_replay_file"]:
@@ -203,11 +217,18 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame, pd.DataFrame]
         else:
             raise ValueError(f"Unsupported llm provider: {args['llm_provider']}")
 
-    cfg = make_harvest_cfg_for_tier(
-        tier,
-        n_agents=int(args["population_size"]),
-        seed=int(args["cfg_seed_start"]) + run_id * int(args["run_seed_stride"]),
-    )
+    if scenario_preset:
+        cfg = make_harvest_cfg_for_scenario(
+            scenario_preset,
+            n_agents=int(args["population_size"]),
+            seed=int(args["cfg_seed_start"]) + run_id * int(args["run_seed_stride"]),
+        )
+    else:
+        cfg = make_harvest_cfg_for_tier(
+            tier,
+            n_agents=int(args["population_size"]),
+            seed=int(args["cfg_seed_start"]) + run_id * int(args["run_seed_stride"]),
+        )
     generation_df, strategy_df, agent_history_df = run_harvest_invasion(
         base_cfg=copy.deepcopy(cfg),
         condition=condition,
@@ -234,6 +255,8 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame, pd.DataFrame]
         experiment_tag=str(args["experiment_tag"]),
         llm_provider=str(args["llm_provider"] if injector_mode == "llm_json" else "none"),
         llm_model=str(args["llm_model"] if injector_mode == "llm_json" else ""),
+        scenario_preset=scenario_preset,
+        governance_friction_regime=governance_friction_regime,
     )
     strategy_df = strategy_df.assign(
         tier=tier,
@@ -245,6 +268,8 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame, pd.DataFrame]
         experiment_tag=str(args["experiment_tag"]),
         llm_provider=str(args["llm_provider"] if injector_mode == "llm_json" else "none"),
         llm_model=str(args["llm_model"] if injector_mode == "llm_json" else ""),
+        scenario_preset=scenario_preset,
+        governance_friction_regime=governance_friction_regime,
     )
     agent_history_df = agent_history_df.assign(
         tier=tier,
@@ -256,6 +281,8 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame, pd.DataFrame]
         experiment_tag=str(args["experiment_tag"]),
         llm_provider=str(args["llm_provider"] if injector_mode == "llm_json" else "none"),
         llm_model=str(args["llm_model"] if injector_mode == "llm_json" else ""),
+        scenario_preset=scenario_preset,
+        governance_friction_regime=governance_friction_regime,
     )
     summary_row = _summary_from_generation_df(condition, injector_mode, run_id, generation_df)
     summary_row.update(
@@ -271,6 +298,8 @@ def _run_job(job: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame, pd.DataFrame]
             "experiment_tag": str(args["experiment_tag"]),
             "llm_provider": str(args["llm_provider"] if injector_mode == "llm_json" else "none"),
             "llm_model": str(args["llm_model"] if injector_mode == "llm_json" else ""),
+            "scenario_preset": scenario_preset,
+            "governance_friction_regime": governance_friction_regime,
         }
     )
     summary_row.update(_llm_integrity_summary(strategy_df))
@@ -281,9 +310,11 @@ def main() -> None:
     args = parse_args()
     tiers = _parse_csv_arg(args.tiers)
     partner_mixes = _parse_csv_arg(args.partner_mixes)
+    scenario_presets = _parse_csv_arg(args.scenario_presets)
     conditions = _parse_csv_arg(args.conditions)
     injector_modes = _parse_csv_arg(args.injector_modes)
     pressures = [float(x) for x in _parse_csv_arg(args.adversarial_pressures)]
+    governance_friction_regimes = _parse_csv_arg(args.governance_friction_regimes)
 
     government_params = {
         "trigger": args.government_trigger,
@@ -297,7 +328,33 @@ def main() -> None:
         "local_neighborhood_trigger": args.local_neighborhood_trigger,
     }
 
-    total_jobs = len(tiers) * len(partner_mixes) * len(conditions) * len(injector_modes) * len(pressures) * args.n_runs
+    job_cells = []
+    if scenario_presets:
+        for scenario_name in scenario_presets:
+            scenario = get_harvest_scenario_preset(scenario_name)
+            job_cells.extend(
+                {
+                    "scenario_preset": scenario_name,
+                    "tier": str(scenario["tier"]),
+                    "partner_mix": str(scenario["partner_mix"]),
+                    "governance_friction_regime": regime,
+                }
+                for regime in governance_friction_regimes
+            )
+    else:
+        for tier in tiers:
+            for partner_mix in partner_mixes:
+                for regime in governance_friction_regimes:
+                    job_cells.append(
+                        {
+                            "scenario_preset": "",
+                            "tier": tier,
+                            "partner_mix": partner_mix,
+                            "governance_friction_regime": regime,
+                        }
+                    )
+
+    total_jobs = len(job_cells) * len(conditions) * len(injector_modes) * len(pressures) * args.n_runs
     total_steps = total_jobs * args.generations
     progress_bar = None
     use_job_progress = args.max_workers > 1
@@ -326,41 +383,46 @@ def main() -> None:
     strategy_histories: list[pd.DataFrame] = []
     agent_histories: list[pd.DataFrame] = []
 
-    job_specs = [
-        {
-            "tier": tier,
-            "partner_mix": partner_mix,
-            "condition": condition,
-            "injector_mode": injector_mode,
-            "pressure": float(pressure),
-            "run_id": run_id,
-            "args": {
-                "generations": args.generations,
-                "population_size": args.population_size,
-                "seeds_per_generation": args.seeds_per_generation,
-                "test_seeds_per_generation": args.test_seeds_per_generation,
-                "replacement_fraction": args.replacement_fraction,
-                "rng_seed_start": args.rng_seed_start,
-                "cfg_seed_start": args.cfg_seed_start,
-                "run_seed_stride": args.run_seed_stride,
-                "government_params": government_params,
-                "experiment_tag": args.experiment_tag,
-                "llm_policy_replay_file": args.llm_policy_replay_file,
-                "llm_provider": args.llm_provider,
-                "llm_model": args.llm_model,
-                "llm_base_url": args.llm_base_url,
-                "llm_api_key_env": args.llm_api_key_env,
-                "llm_timeout_s": args.llm_timeout_s,
-                "llm_temperature": args.llm_temperature,
-            },
-        }
-        for tier in tiers
-        for partner_mix in partner_mixes
-        for condition in conditions
-        for injector_mode in injector_modes
-        for pressure in pressures
-        for run_id in range(args.n_runs)
-    ]
+    job_specs = []
+    for cell in job_cells:
+        regime_params = get_harvest_governance_friction_regime(str(cell["governance_friction_regime"]))
+        merged_government_params = dict(government_params)
+        merged_government_params.update(regime_params)
+        for condition in conditions:
+            for injector_mode in injector_modes:
+                for pressure in pressures:
+                    for run_id in range(args.n_runs):
+                        job_specs.append(
+                            {
+                                "scenario_preset": str(cell["scenario_preset"]),
+                                "governance_friction_regime": str(cell["governance_friction_regime"]),
+                                "tier": str(cell["tier"]),
+                                "partner_mix": str(cell["partner_mix"]),
+                                "condition": condition,
+                                "injector_mode": injector_mode,
+                                "pressure": float(pressure),
+                                "run_id": run_id,
+                                "args": {
+                                    "generations": args.generations,
+                                    "population_size": args.population_size,
+                                    "seeds_per_generation": args.seeds_per_generation,
+                                    "test_seeds_per_generation": args.test_seeds_per_generation,
+                                    "replacement_fraction": args.replacement_fraction,
+                                    "rng_seed_start": args.rng_seed_start,
+                                    "cfg_seed_start": args.cfg_seed_start,
+                                    "run_seed_stride": args.run_seed_stride,
+                                    "government_params": merged_government_params,
+                                    "experiment_tag": args.experiment_tag,
+                                    "llm_policy_replay_file": args.llm_policy_replay_file,
+                                    "llm_provider": args.llm_provider,
+                                    "llm_model": args.llm_model,
+                                    "llm_base_url": args.llm_base_url,
+                                    "llm_api_key_env": args.llm_api_key_env,
+                                    "llm_timeout_s": args.llm_timeout_s,
+                                    "llm_temperature": args.llm_temperature,
+                                },
+                            }
+                        )
 
     try:
         if args.max_workers > 1:

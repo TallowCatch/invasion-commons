@@ -4,7 +4,13 @@ import os
 import subprocess
 from datetime import datetime, timezone
 
-from fishery_sim.harvest_benchmarks import get_harvest_regime_pack, make_harvest_cfg_for_tier
+from fishery_sim.harvest_benchmarks import (
+    get_harvest_governance_friction_regime,
+    get_harvest_regime_pack,
+    get_harvest_scenario_preset,
+    make_harvest_cfg_for_scenario,
+    make_harvest_cfg_for_tier,
+)
 from fishery_sim.harvest_evolution import make_harvest_strategy_injector
 from fishery_sim.harvest_evolution import run_harvest_invasion
 from fishery_sim.llm_adapter import (
@@ -22,6 +28,7 @@ except Exception:  # pragma: no cover
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Evolutionary invasion experiment for Harvest Commons.")
     parser.add_argument("--tier", choices=["easy_h1", "medium_h1", "hard_h1"], default="medium_h1")
+    parser.add_argument("--scenario-preset", choices=["regulated_fishery", "community_irrigation", "forest_co_management"], default=None)
     parser.add_argument("--condition", choices=["none", "top_down_only", "bottom_up_only", "hybrid"], default="hybrid")
     parser.add_argument("--generations", type=int, default=15)
     parser.add_argument("--population-size", type=int, default=6)
@@ -53,6 +60,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--aggressive-request-threshold", type=float, default=0.75)
     parser.add_argument("--aggressive-agent-fraction-trigger", type=float, default=0.34)
     parser.add_argument("--local-neighborhood-trigger", type=float, default=0.67)
+    parser.add_argument("--governance-friction-regime", choices=["ideal", "constrained"], default="ideal")
     return parser.parse_args()
 
 
@@ -105,7 +113,17 @@ def _write_manifest(
 
 def main() -> None:
     args = parse_args()
-    cfg = make_harvest_cfg_for_tier(args.tier, n_agents=args.population_size)
+    scenario_preset = get_harvest_scenario_preset(args.scenario_preset) if args.scenario_preset else None
+    resolved_tier = str(scenario_preset["tier"]) if scenario_preset is not None else args.tier
+    resolved_partner_mix = str(scenario_preset["partner_mix"]) if scenario_preset is not None else args.partner_mix
+    if scenario_preset is not None:
+        cfg = make_harvest_cfg_for_scenario(
+            args.scenario_preset,
+            n_agents=args.population_size,
+            seed=0,
+        )
+    else:
+        cfg = make_harvest_cfg_for_tier(args.tier, n_agents=args.population_size)
     llm_client = None
     if args.llm_policy_replay_file:
         llm_client = FileReplayPolicyLLMClient(path=args.llm_policy_replay_file)
@@ -134,7 +152,7 @@ def main() -> None:
         else:
             raise ValueError(f"Unsupported llm provider: {args.llm_provider}")
     injector = make_harvest_strategy_injector(args.injector_mode, llm_client=llm_client)
-    test_regimes = get_harvest_regime_pack(args.tier)
+    test_regimes = get_harvest_regime_pack(resolved_tier)
     government_params = {
         "trigger": args.government_trigger,
         "strict_cap_frac": args.strict_cap_frac,
@@ -146,6 +164,7 @@ def main() -> None:
         "aggressive_agent_fraction_trigger": args.aggressive_agent_fraction_trigger,
         "local_neighborhood_trigger": args.local_neighborhood_trigger,
     }
+    government_params.update(get_harvest_governance_friction_regime(args.governance_friction_regime))
 
     output_dir = os.path.dirname(args.output_prefix)
     if output_dir:
@@ -182,7 +201,7 @@ def main() -> None:
             replacement_fraction=args.replacement_fraction,
             adversarial_pressure=args.adversarial_pressure,
             rng_seed=args.rng_seed,
-            partner_mix_preset=args.partner_mix,
+            partner_mix_preset=resolved_partner_mix,
             injector=injector,
             test_regimes=test_regimes,
             government_params=government_params,
@@ -194,25 +213,31 @@ def main() -> None:
 
     generation_df["experiment_tag"] = args.experiment_tag
     strategy_df["experiment_tag"] = args.experiment_tag
-    generation_df["tier"] = args.tier
-    strategy_df["tier"] = args.tier
+    generation_df["tier"] = resolved_tier
+    strategy_df["tier"] = resolved_tier
     generation_df["condition"] = args.condition
     strategy_df["condition"] = args.condition
-    generation_df["partner_mix"] = args.partner_mix
-    strategy_df["partner_mix"] = args.partner_mix
+    generation_df["partner_mix"] = resolved_partner_mix
+    strategy_df["partner_mix"] = resolved_partner_mix
     generation_df["injector_mode_requested"] = args.injector_mode
     strategy_df["injector_mode_requested"] = args.injector_mode
     generation_df["llm_provider"] = args.llm_provider if args.injector_mode == "llm_json" else "none"
     strategy_df["llm_provider"] = args.llm_provider if args.injector_mode == "llm_json" else "none"
     generation_df["llm_model"] = args.llm_model if args.injector_mode == "llm_json" else ""
     strategy_df["llm_model"] = args.llm_model if args.injector_mode == "llm_json" else ""
+    generation_df["scenario_preset"] = args.scenario_preset or ""
+    strategy_df["scenario_preset"] = args.scenario_preset or ""
+    generation_df["governance_friction_regime"] = args.governance_friction_regime
+    strategy_df["governance_friction_regime"] = args.governance_friction_regime
     agent_history_df["experiment_tag"] = args.experiment_tag
-    agent_history_df["tier"] = args.tier
+    agent_history_df["tier"] = resolved_tier
     agent_history_df["condition"] = args.condition
-    agent_history_df["partner_mix"] = args.partner_mix
+    agent_history_df["partner_mix"] = resolved_partner_mix
     agent_history_df["injector_mode_requested"] = args.injector_mode
     agent_history_df["llm_provider"] = args.llm_provider if args.injector_mode == "llm_json" else "none"
     agent_history_df["llm_model"] = args.llm_model if args.injector_mode == "llm_json" else ""
+    agent_history_df["scenario_preset"] = args.scenario_preset or ""
+    agent_history_df["governance_friction_regime"] = args.governance_friction_regime
 
     generation_path = f"{args.output_prefix}_generations.csv"
     strategy_path = f"{args.output_prefix}_strategies.csv"

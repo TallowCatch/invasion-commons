@@ -18,6 +18,10 @@ SUMMARY_METRICS = [
     "test_mean_neighborhood_overharvest_mean",
     "test_mean_capped_action_fraction_mean",
     "test_mean_targeted_agent_fraction_mean",
+    "test_missed_target_rate_mean",
+    "test_targeted_share_mean",
+    "test_delayed_intervention_count_mean",
+    "test_governance_budget_spent_mean",
     "test_mean_prevented_harvest_mean",
     "test_mean_patch_variance_mean",
     "test_mean_requested_harvest_mean",
@@ -43,6 +47,10 @@ PAIR_METRICS = [
     "test_mean_neighborhood_overharvest_mean",
     "test_mean_capped_action_fraction_mean",
     "test_mean_targeted_agent_fraction_mean",
+    "test_missed_target_rate_mean",
+    "test_targeted_share_mean",
+    "test_delayed_intervention_count_mean",
+    "test_governance_budget_spent_mean",
     "test_mean_prevented_harvest_mean",
 ]
 
@@ -73,6 +81,11 @@ INJECTOR_ORDER = {
     "adversarial_heuristic": 2,
     "search_mutation": 3,
 }
+
+OPTIONAL_CONTEXT_COLS = [
+    "scenario_preset",
+    "governance_friction_regime",
+]
 
 
 def parse_args() -> argparse.Namespace:
@@ -108,23 +121,33 @@ def _markdown_table(df: pd.DataFrame) -> str:
     return "\n".join(lines)
 
 
+def _context_group_cols(df: pd.DataFrame, base_cols: list[str]) -> list[str]:
+    return base_cols + [col for col in OPTIONAL_CONTEXT_COLS if col in df.columns]
+
+
 def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
-    group_cols = ["tier", "partner_mix", "injector_mode_requested", "adversarial_pressure", "condition"]
+    group_cols = _context_group_cols(
+        per_run_df,
+        ["tier", "partner_mix", "injector_mode_requested", "adversarial_pressure", "condition"],
+    )
     rows = []
     regime_cols = sorted([c for c in per_run_df.columns if c.startswith("per_regime_health_survival_over_generations__")])
     parse_error_cols = sorted([c for c in per_run_df.columns if c.startswith("llm_parse_error_count__")])
     metric_keys = [key for key in SUMMARY_METRICS if key in per_run_df.columns] + regime_cols + parse_error_cols
     for keys, gdf in per_run_df.groupby(group_cols, sort=True):
         row = {
-            "tier": keys[0],
-            "partner_mix": keys[1],
-            "injector_mode_requested": keys[2],
-            "adversarial_pressure": keys[3],
-            "condition": keys[4],
+            "tier": keys[group_cols.index("tier")],
+            "partner_mix": keys[group_cols.index("partner_mix")],
+            "injector_mode_requested": keys[group_cols.index("injector_mode_requested")],
+            "adversarial_pressure": keys[group_cols.index("adversarial_pressure")],
+            "condition": keys[group_cols.index("condition")],
             "n_runs": int(len(gdf)),
             "llm_provider": str(gdf["llm_provider"].iloc[0]) if "llm_provider" in gdf.columns else "none",
             "llm_model": str(gdf["llm_model"].iloc[0]) if "llm_model" in gdf.columns else "",
         }
+        for col in OPTIONAL_CONTEXT_COLS:
+            if col in gdf.columns:
+                row[col] = str(gdf[col].iloc[0])
         for key in metric_keys:
             mean, lo, hi = _ci95(gdf[key].tolist())
             row[f"{key}_mean"] = round(mean, 6)
@@ -134,7 +157,8 @@ def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
     out = pd.DataFrame(rows)
     if not out.empty:
         out = out.sort_values(
-            [
+            [col for col in OPTIONAL_CONTEXT_COLS if col in out.columns]
+            + [
                 "tier",
                 "partner_mix",
                 "injector_mode_requested",
@@ -143,7 +167,7 @@ def _aggregate_with_ci(per_run_df: pd.DataFrame) -> pd.DataFrame:
                 "test_mean_patch_health_mean_mean",
                 "test_mean_welfare_mean_mean",
             ],
-            ascending=[True, True, True, True, True, False, False],
+            ascending=[True] * len([col for col in OPTIONAL_CONTEXT_COLS if col in out.columns]) + [True, True, True, True, True, False, False],
         ).reset_index(drop=True)
     return out
 
@@ -204,7 +228,10 @@ def _build_ranking_table(table_df: pd.DataFrame) -> pd.DataFrame:
     if table_df.empty:
         return pd.DataFrame()
     rows = []
-    group_cols = ["tier", "partner_mix", "injector_mode_requested", "adversarial_pressure"]
+    group_cols = _context_group_cols(
+        table_df,
+        ["tier", "partner_mix", "injector_mode_requested", "adversarial_pressure"],
+    )
     for keys, gdf in table_df.groupby(group_cols, sort=True):
         ranked = gdf.sort_values(
             ["test_garden_failure_mean_mean", "test_mean_patch_health_mean_mean", "test_mean_welfare_mean_mean"],
@@ -213,10 +240,10 @@ def _build_ranking_table(table_df: pd.DataFrame) -> pd.DataFrame:
         for rank, (_, row) in enumerate(ranked.iterrows(), start=1):
             rows.append(
                 {
-                    "tier": keys[0],
-                    "partner_mix": keys[1],
-                    "injector_mode_requested": keys[2],
-                    "adversarial_pressure": keys[3],
+                    "tier": keys[group_cols.index("tier")],
+                    "partner_mix": keys[group_cols.index("partner_mix")],
+                    "injector_mode_requested": keys[group_cols.index("injector_mode_requested")],
+                    "adversarial_pressure": keys[group_cols.index("adversarial_pressure")],
                     "condition": row["condition"],
                     "rank": rank,
                     "test_garden_failure_mean_mean": row["test_garden_failure_mean_mean"],
@@ -224,6 +251,9 @@ def _build_ranking_table(table_df: pd.DataFrame) -> pd.DataFrame:
                     "test_mean_welfare_mean_mean": row["test_mean_welfare_mean_mean"],
                 }
             )
+            for col in OPTIONAL_CONTEXT_COLS:
+                if col in row.index:
+                    rows[-1][col] = row[col]
     return pd.DataFrame(rows)
 
 
@@ -256,7 +286,10 @@ def _contrast_pairs(conditions: list[str]) -> list[tuple[str, str]]:
 def _build_condition_delta_df(per_run_df: pd.DataFrame, pairs: list[tuple[str, str]] | None = None) -> pd.DataFrame:
     if per_run_df.empty:
         return pd.DataFrame()
-    join_cols = ["tier", "partner_mix", "injector_mode_requested", "adversarial_pressure", "run_id"]
+    join_cols = _context_group_cols(
+        per_run_df,
+        ["tier", "partner_mix", "injector_mode_requested", "adversarial_pressure", "run_id"],
+    )
     conditions = sorted(per_run_df["condition"].dropna().astype(str).unique().tolist(), key=lambda x: (GOVERNANCE_ORDER.get(x, 999), x))
     rows = []
     for left_condition, right_condition in (pairs or _contrast_pairs(conditions)):
@@ -295,27 +328,33 @@ def _build_condition_ci_df(delta_df: pd.DataFrame, n_samples: int, seed: int) ->
         return pd.DataFrame()
     rng = np.random.default_rng(seed)
     rows = []
-    group_cols = [
-        "tier",
-        "partner_mix",
-        "injector_mode_requested",
-        "adversarial_pressure",
-        "left_condition",
-        "right_condition",
-        "contrast_name",
-    ]
+    group_cols = _context_group_cols(
+        delta_df,
+        [
+            "tier",
+            "partner_mix",
+            "injector_mode_requested",
+            "adversarial_pressure",
+            "left_condition",
+            "right_condition",
+            "contrast_name",
+        ],
+    )
     metric_cols = [c for c in delta_df.columns if c.startswith("delta__")]
     for keys, gdf in delta_df.groupby(group_cols, sort=True):
         row = {
-            "tier": keys[0],
-            "partner_mix": keys[1],
-            "injector_mode_requested": keys[2],
-            "adversarial_pressure": keys[3],
-            "left_condition": keys[4],
-            "right_condition": keys[5],
-            "contrast_name": keys[6],
+            "tier": keys[group_cols.index("tier")],
+            "partner_mix": keys[group_cols.index("partner_mix")],
+            "injector_mode_requested": keys[group_cols.index("injector_mode_requested")],
+            "adversarial_pressure": keys[group_cols.index("adversarial_pressure")],
+            "left_condition": keys[group_cols.index("left_condition")],
+            "right_condition": keys[group_cols.index("right_condition")],
+            "contrast_name": keys[group_cols.index("contrast_name")],
             "n_pairs": int(len(gdf)),
         }
+        for col in OPTIONAL_CONTEXT_COLS:
+            if col in gdf.columns:
+                row[col] = str(gdf[col].iloc[0])
         for metric in metric_cols:
             mean, lo, hi = _bootstrap_ci(gdf[metric].to_numpy(dtype=float), rng=rng, n_samples=n_samples)
             row[f"{metric}_mean"] = round(mean, 6)
@@ -329,15 +368,8 @@ def _build_paired_delta_df(per_run_df: pd.DataFrame) -> pd.DataFrame:
     generic = _build_condition_delta_df(per_run_df, pairs=[("hybrid", "top_down_only")])
     if generic.empty:
         return pd.DataFrame()
-    out = generic[
-        [
-            "tier",
-            "partner_mix",
-            "injector_mode_requested",
-            "adversarial_pressure",
-            "run_id",
-        ]
-    ].copy()
+    base_cols = ["tier", "partner_mix", "injector_mode_requested", "adversarial_pressure", "run_id"]
+    out = generic[_context_group_cols(generic, base_cols)].copy()
     for metric in PAIR_METRICS:
         out[f"hybrid_minus_top__{metric}"] = generic[f"delta__{metric}"]
     return out
@@ -348,15 +380,21 @@ def _build_paired_ci_df(delta_df: pd.DataFrame, n_samples: int, seed: int) -> pd
         return pd.DataFrame()
     rng = np.random.default_rng(seed)
     rows = []
-    group_cols = ["tier", "partner_mix", "injector_mode_requested", "adversarial_pressure"]
+    group_cols = _context_group_cols(
+        delta_df,
+        ["tier", "partner_mix", "injector_mode_requested", "adversarial_pressure"],
+    )
     for keys, gdf in delta_df.groupby(group_cols, sort=True):
         row = {
-            "tier": keys[0],
-            "partner_mix": keys[1],
-            "injector_mode_requested": keys[2],
-            "adversarial_pressure": keys[3],
+            "tier": keys[group_cols.index("tier")],
+            "partner_mix": keys[group_cols.index("partner_mix")],
+            "injector_mode_requested": keys[group_cols.index("injector_mode_requested")],
+            "adversarial_pressure": keys[group_cols.index("adversarial_pressure")],
             "n_pairs": int(len(gdf)),
         }
+        for col in OPTIONAL_CONTEXT_COLS:
+            if col in gdf.columns:
+                row[col] = str(gdf[col].iloc[0])
         for metric in [c for c in delta_df.columns if c.startswith("hybrid_minus_top__")]:
             mean, lo, hi = _bootstrap_ci(gdf[metric].to_numpy(dtype=float), rng=rng, n_samples=n_samples)
             row[f"{metric}_mean"] = round(mean, 6)
@@ -388,7 +426,7 @@ def _assign_aggression_groups(agent_df: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame()
     working = agent_df.copy()
     working["aggression_group"] = ""
-    group_cols = [
+    group_cols = _context_group_cols(agent_df, [
         "tier",
         "partner_mix",
         "injector_mode_requested",
@@ -399,7 +437,7 @@ def _assign_aggression_groups(agent_df: pd.DataFrame) -> pd.DataFrame:
         "phase",
         "regime",
         "seed",
-    ]
+    ])
     value_col = (
         "aggressive_request_fraction"
         if "aggressive_request_fraction" in working.columns and not working["aggressive_request_fraction"].isna().all()
@@ -416,7 +454,7 @@ def _assign_aggression_groups(agent_df: pd.DataFrame) -> pd.DataFrame:
 def _build_agent_group_means(agent_df: pd.DataFrame, label_col: str, metric_cols: list[str]) -> pd.DataFrame:
     if agent_df.empty:
         return pd.DataFrame()
-    group_cols = [
+    group_cols = _context_group_cols(agent_df, [
         "tier",
         "partner_mix",
         "injector_mode_requested",
@@ -428,7 +466,7 @@ def _build_agent_group_means(agent_df: pd.DataFrame, label_col: str, metric_cols
         "regime",
         "seed",
         label_col,
-    ]
+    ])
     aggregations = {col: "mean" for col in metric_cols if col in agent_df.columns}
     return agent_df.groupby(group_cols, sort=True).agg(aggregations).reset_index()
 
@@ -436,7 +474,7 @@ def _build_agent_group_means(agent_df: pd.DataFrame, label_col: str, metric_cols
 def _build_agent_group_deltas(group_means_df: pd.DataFrame, label_col: str, metric_cols: list[str]) -> pd.DataFrame:
     if group_means_df.empty:
         return pd.DataFrame()
-    join_cols = [
+    join_cols = _context_group_cols(group_means_df, [
         "tier",
         "partner_mix",
         "injector_mode_requested",
@@ -447,7 +485,7 @@ def _build_agent_group_deltas(group_means_df: pd.DataFrame, label_col: str, metr
         "regime",
         "seed",
         label_col,
-    ]
+    ])
     conditions = sorted(group_means_df["condition"].dropna().astype(str).unique().tolist(), key=lambda x: (GOVERNANCE_ORDER.get(x, 999), x))
     rows = []
     for left_condition, right_condition in _contrast_pairs(conditions):
@@ -474,7 +512,7 @@ def _aggregate_agent_group_deltas(delta_df: pd.DataFrame, label_col: str) -> pd.
         return pd.DataFrame()
     metric_cols = [c for c in delta_df.columns if c.startswith("delta__")]
     rows = []
-    group_cols = [
+    group_cols = _context_group_cols(delta_df, [
         "tier",
         "partner_mix",
         "injector_mode_requested",
@@ -483,19 +521,22 @@ def _aggregate_agent_group_deltas(delta_df: pd.DataFrame, label_col: str) -> pd.
         "right_condition",
         "contrast_name",
         label_col,
-    ]
+    ])
     for keys, gdf in delta_df.groupby(group_cols, sort=True):
         row = {
-            "tier": keys[0],
-            "partner_mix": keys[1],
-            "injector_mode_requested": keys[2],
-            "adversarial_pressure": keys[3],
-            "left_condition": keys[4],
-            "right_condition": keys[5],
-            "contrast_name": keys[6],
-            label_col: keys[7],
+            "tier": keys[group_cols.index("tier")],
+            "partner_mix": keys[group_cols.index("partner_mix")],
+            "injector_mode_requested": keys[group_cols.index("injector_mode_requested")],
+            "adversarial_pressure": keys[group_cols.index("adversarial_pressure")],
+            "left_condition": keys[group_cols.index("left_condition")],
+            "right_condition": keys[group_cols.index("right_condition")],
+            "contrast_name": keys[group_cols.index("contrast_name")],
+            label_col: keys[group_cols.index(label_col)],
             "n_episode_pairs": int(len(gdf)),
         }
+        for col in OPTIONAL_CONTEXT_COLS:
+            if col in gdf.columns:
+                row[col] = str(gdf[col].iloc[0])
         for metric in metric_cols:
             mean, lo, hi = _ci95(gdf[metric].tolist())
             row[f"{metric}_mean"] = round(mean, 6)
@@ -542,7 +583,10 @@ def _build_capability_ladder_df(contrast_ci_df: pd.DataFrame) -> pd.DataFrame:
     if contrast_ci_df.empty:
         return pd.DataFrame()
     rows = []
-    group_cols = ["tier", "partner_mix", "adversarial_pressure", "left_condition", "right_condition", "contrast_name"]
+    group_cols = _context_group_cols(
+        contrast_ci_df,
+        ["tier", "partner_mix", "adversarial_pressure", "left_condition", "right_condition", "contrast_name"],
+    )
     for keys, gdf in contrast_ci_df.groupby(group_cols, sort=True):
         ordered = gdf.copy()
         ordered["injector_rank"] = ordered["injector_mode_requested"].map(lambda x: INJECTOR_ORDER.get(x, 999))
@@ -556,12 +600,12 @@ def _build_capability_ladder_df(contrast_ci_df: pd.DataFrame) -> pd.DataFrame:
 
         rows.append(
             {
-                "tier": keys[0],
-                "partner_mix": keys[1],
-                "adversarial_pressure": keys[2],
-                "left_condition": keys[3],
-                "right_condition": keys[4],
-                "contrast_name": keys[5],
+                "tier": keys[group_cols.index("tier")],
+                "partner_mix": keys[group_cols.index("partner_mix")],
+                "adversarial_pressure": keys[group_cols.index("adversarial_pressure")],
+                "left_condition": keys[group_cols.index("left_condition")],
+                "right_condition": keys[group_cols.index("right_condition")],
+                "contrast_name": keys[group_cols.index("contrast_name")],
                 "first_ecological_break_injector": _first_break(
                     "delta__test_mean_patch_health_mean_mean",
                     lambda x: x <= 0.0,
@@ -576,6 +620,9 @@ def _build_capability_ladder_df(contrast_ci_df: pd.DataFrame) -> pd.DataFrame:
                 ),
             }
         )
+        for col in OPTIONAL_CONTEXT_COLS:
+            if col in gdf.columns:
+                rows[-1][col] = str(gdf[col].iloc[0])
     return pd.DataFrame(rows)
 
 

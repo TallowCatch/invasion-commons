@@ -183,6 +183,78 @@ _STAGE_CONFIGS: dict[str, dict] = {
         "ci_plot_filter": "--tiers medium_h1,hard_h1 --partner-mixes balanced,adversarial_heavy --injector-modes random,mutation,adversarial_heuristic,search_mutation --pressures 0.3,0.5",
         **_BASE_GOVERNMENT_PARAMS,
     },
+    "institutional_friction_moduleA": {
+        "scenario_presets": ["regulated_fishery", "community_irrigation", "forest_co_management"],
+        "governance_friction_regimes": ["ideal", "constrained"],
+        "conditions": ["bottom_up_only", "top_down_only", "hybrid"],
+        "injector_modes": ["search_mutation"],
+        "pressures": ["0.3", "0.5"],
+        "n_runs": "5",
+        "generations": "15",
+        "population_size": "6",
+        "seeds_per_generation": "32",
+        "test_seeds_per_generation": "32",
+        "replacement_fraction": "0.2",
+        "run_name": "harvest_institutional_friction_moduleA",
+        "experiment_tag": "harvest_institutional_friction_moduleA",
+        "summary_prefix": "results/runs/showcase/curated/harvest_institutional_friction_moduleA",
+        "plot_mode": "institutional",
+        **_BASE_GOVERNMENT_PARAMS,
+    },
+    "institutional_friction_regulated_fishery": {
+        "scenario_presets": ["regulated_fishery"],
+        "governance_friction_regimes": ["ideal", "constrained"],
+        "conditions": ["bottom_up_only", "top_down_only", "hybrid"],
+        "injector_modes": ["search_mutation"],
+        "pressures": ["0.3", "0.5"],
+        "n_runs": "5",
+        "generations": "15",
+        "population_size": "6",
+        "seeds_per_generation": "32",
+        "test_seeds_per_generation": "32",
+        "replacement_fraction": "0.2",
+        "run_name": "harvest_institutional_friction_regulated_fishery",
+        "experiment_tag": "harvest_institutional_friction_regulated_fishery",
+        "summary_prefix": "results/runs/showcase/curated/harvest_institutional_friction_regulated_fishery",
+        "plot_mode": "institutional",
+        **_BASE_GOVERNMENT_PARAMS,
+    },
+    "institutional_friction_community_irrigation": {
+        "scenario_presets": ["community_irrigation"],
+        "governance_friction_regimes": ["ideal", "constrained"],
+        "conditions": ["bottom_up_only", "top_down_only", "hybrid"],
+        "injector_modes": ["search_mutation"],
+        "pressures": ["0.3", "0.5"],
+        "n_runs": "5",
+        "generations": "15",
+        "population_size": "6",
+        "seeds_per_generation": "32",
+        "test_seeds_per_generation": "32",
+        "replacement_fraction": "0.2",
+        "run_name": "harvest_institutional_friction_community_irrigation",
+        "experiment_tag": "harvest_institutional_friction_community_irrigation",
+        "summary_prefix": "results/runs/showcase/curated/harvest_institutional_friction_community_irrigation",
+        "plot_mode": "institutional",
+        **_BASE_GOVERNMENT_PARAMS,
+    },
+    "institutional_friction_forest_co_management": {
+        "scenario_presets": ["forest_co_management"],
+        "governance_friction_regimes": ["ideal", "constrained"],
+        "conditions": ["bottom_up_only", "top_down_only", "hybrid"],
+        "injector_modes": ["search_mutation"],
+        "pressures": ["0.3", "0.5"],
+        "n_runs": "5",
+        "generations": "15",
+        "population_size": "6",
+        "seeds_per_generation": "32",
+        "test_seeds_per_generation": "32",
+        "replacement_fraction": "0.2",
+        "run_name": "harvest_institutional_friction_forest_co_management",
+        "experiment_tag": "harvest_institutional_friction_forest_co_management",
+        "summary_prefix": "results/runs/showcase/curated/harvest_institutional_friction_forest_co_management",
+        "plot_mode": "institutional",
+        **_BASE_GOVERNMENT_PARAMS,
+    },
 }
 
 
@@ -199,6 +271,29 @@ def stage_config(stage: str) -> dict:
 def stage_cells(cfg: dict) -> list[dict[str, str]]:
     if "explicit_cells" in cfg:
         return [dict(cell) for cell in cfg["explicit_cells"]]
+    scenario_presets = cfg.get("scenario_presets")
+    governance_friction_regimes = cfg.get("governance_friction_regimes", ["ideal"])
+    if scenario_presets:
+        cells: list[dict[str, str]] = []
+        for scenario_preset, governance_friction_regime, condition, injector_mode, pressure in itertools.product(
+            scenario_presets,
+            governance_friction_regimes,
+            cfg["conditions"],
+            cfg["injector_modes"],
+            cfg["pressures"],
+        ):
+            cells.append(
+                {
+                    "scenario_preset": scenario_preset,
+                    "governance_friction_regime": governance_friction_regime,
+                    "tier": "",
+                    "partner_mix": "",
+                    "condition": condition,
+                    "injector_mode": injector_mode,
+                    "pressure": pressure,
+                }
+            )
+        return cells
     cells: list[dict[str, str]] = []
     for tier, partner_mix, condition, injector_mode, pressure in itertools.product(
         cfg["tiers"],
@@ -231,8 +326,8 @@ def github_matrix_payload(stage: str) -> dict:
             {
                 **cell,
                 "slug": shard_slug(
-                    cell["tier"],
-                    cell["partner_mix"],
+                    cell.get("scenario_preset") or cell["tier"],
+                    cell.get("governance_friction_regime") or cell["partner_mix"],
                     cell["condition"],
                     cell["injector_mode"],
                     cell["pressure"],

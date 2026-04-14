@@ -72,12 +72,20 @@ def main() -> None:
     cells = stage_cells(cfg)
     jobs: list[tuple[str, list[str]]] = []
     for cell in cells:
+        scenario_preset = cell.get("scenario_preset", "")
+        governance_friction_regime = cell.get("governance_friction_regime", "ideal")
         tier = cell["tier"]
         partner_mix = cell["partner_mix"]
         condition = cell["condition"]
         injector_mode = cell["injector_mode"]
         pressure = cell["pressure"]
-        slug = shard_slug(tier, partner_mix, condition, injector_mode, pressure)
+        slug = shard_slug(
+            scenario_preset or tier,
+            governance_friction_regime or partner_mix,
+            condition,
+            injector_mode,
+            pressure,
+        )
         shard_prefix = shard_dir / slug
         runs_csv = shard_prefix.with_name(shard_prefix.name + "_runs.csv")
         if args.resume and runs_csv.exists():
@@ -90,12 +98,16 @@ def main() -> None:
             tier,
             "--partner-mixes",
             partner_mix,
+            "--scenario-presets",
+            scenario_preset,
             "--conditions",
             condition,
             "--injector-modes",
             injector_mode,
             "--adversarial-pressures",
             pressure,
+            "--governance-friction-regimes",
+            governance_friction_regime,
             "--n-runs",
             cfg["n_runs"],
             "--generations",

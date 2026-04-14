@@ -1,0 +1,28 @@
+\section{Methods}
+
+\subsection{Scenario Archetypes}
+
+The paper uses three scenario presets that are grounded in established commons-governance literatures rather than invented labels:
+\begin{itemize}
+\item \textbf{Regulated fishery}: centralized monitoring, quotas, and enforcement under ecological uncertainty \citep{hilborn2005, gutierrez2011}.
+\item \textbf{Community irrigation}: local rule enforcement and user monitoring in self-governing irrigation systems \citep{ostrom1993, ostrom1994, villamayor2020}.
+\item \textbf{Forest co-management}: mixed local stewardship and higher-level intervention in polycentric forest governance \citep{nagendra2012}.
+\end{itemize}
+
+These presets are literature-backed institutional archetypes rather than quantitative reconstructions of specific case studies. Their numerical values remain benchmark abstractions chosen to reflect contrasting governance forms.
+
+\subsection{Governance Architecture and Oversight Frictions}
+
+Harvest remains the main environment. The governance conditions are none, bottom-up only, top-down only, and hybrid. The extension adds explicit oversight frictions through four parameters:
+\begin{itemize}
+\item detection recall,
+\item enforcement delay,
+\item maximum targeted share,
+\item governance budget cost.
+\end{itemize}
+
+Two regimes are compared. The ideal regime reproduces frictionless governance. The constrained regime introduces incomplete detection, one-round delays, capped targeting capacity, and a per-intervention budget cost.
+
+\subsection{LLM-Generated Strategy Populations}
+
+The strategy class remains controlled through the existing Harvest JSON policy representation. LLMs generate complete Harvest policies, which are validated, repaired when possible, clamped to feasible ranges, and deduplicated by structured policy content. This preserves reproducibility and avoids arbitrary code execution while still allowing the strategy population to include model-generated policies.

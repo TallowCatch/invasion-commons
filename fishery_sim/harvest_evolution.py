@@ -31,6 +31,10 @@ DEFAULT_GOVERNMENT_PARAMS: dict[str, float | int | bool] = {
     "aggressive_request_threshold": 0.75,
     "aggressive_agent_fraction_trigger": 0.34,
     "local_neighborhood_trigger": 0.67,
+    "detection_recall": 1.0,
+    "enforcement_delay_rounds": 0,
+    "max_target_share": 1.0,
+    "governance_budget_cost": 0.0,
 }
 
 HARVEST_POLICY_REQUIRED_KEYS = (
@@ -1085,12 +1089,12 @@ def _make_condition_setup(
         cfg.side_payments_enabled = False
         return cfg, GovernmentAgent(**params, enforcement_scope="global", expand_target_neighbors=False)
     if condition == "bottom_up_only":
-        cfg.communication_enabled = True
-        cfg.side_payments_enabled = True
+        cfg.communication_enabled = bool(cfg.communication_enabled)
+        cfg.side_payments_enabled = bool(cfg.side_payments_enabled and cfg.communication_enabled)
         return cfg, None
     if condition == "hybrid":
-        cfg.communication_enabled = True
-        cfg.side_payments_enabled = True
+        cfg.communication_enabled = bool(cfg.communication_enabled)
+        cfg.side_payments_enabled = bool(cfg.side_payments_enabled and cfg.communication_enabled)
         return cfg, GovernmentAgent(**params, enforcement_scope="local", expand_target_neighbors=True)
     raise ValueError(f"Unknown Harvest governance condition: {condition}")
 
@@ -1109,6 +1113,10 @@ def _summarize_episode_df(episode_df: pd.DataFrame, prefix: str) -> dict[str, fl
         f"{prefix}_mean_neighborhood_overharvest": float(episode_df["mean_neighborhood_overharvest"].mean()),
         f"{prefix}_mean_capped_action_fraction": float(episode_df["mean_capped_action_fraction"].mean()),
         f"{prefix}_mean_targeted_agent_fraction": float(episode_df["mean_targeted_agent_fraction"].mean()),
+        f"{prefix}_missed_target_rate": float(episode_df["missed_target_rate"].mean()),
+        f"{prefix}_targeted_share": float(episode_df["targeted_share"].mean()),
+        f"{prefix}_delayed_intervention_count": float(episode_df["delayed_intervention_count"].mean()),
+        f"{prefix}_governance_budget_spent": float(episode_df["governance_budget_spent"].mean()),
         f"{prefix}_mean_prevented_harvest": float(episode_df["mean_prevented_harvest"].mean()),
         f"{prefix}_mean_patch_variance": float(episode_df["mean_patch_variance"].mean()),
         f"{prefix}_mean_requested_harvest": float(episode_df["mean_requested_harvest"].mean()),
@@ -1162,6 +1170,10 @@ def evaluate_harvest_population(
                 "mean_neighborhood_overharvest": out["mean_neighborhood_overharvest"],
                 "mean_capped_action_fraction": out["mean_capped_action_fraction"],
                 "mean_targeted_agent_fraction": out["mean_targeted_agent_fraction"],
+                "missed_target_rate": out["missed_target_rate"],
+                "targeted_share": out["targeted_share"],
+                "delayed_intervention_count": out["delayed_intervention_count"],
+                "governance_budget_spent": out["governance_budget_spent"],
                 "mean_prevented_harvest": out["mean_prevented_harvest"],
                 "mean_patch_variance": out["mean_patch_variance"],
                 "mean_requested_harvest": out["mean_requested_harvest"],

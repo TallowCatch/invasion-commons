@@ -8,6 +8,9 @@ on:
       - codex/harvest-architecture-stagec
       - codex/harvest-capability-ladder-stageb
       - codex/harvest-institutional-alignment
+      - codex/harvest-institutional-regulated-fishery
+      - codex/harvest-institutional-community-irrigation
+      - codex/harvest-institutional-forest-co-management
   workflow_dispatch:
     inputs:
       stage:
@@ -20,6 +23,10 @@ on:
           - architecture_stageB
           - architecture_stageC
           - capability_ladder_stageB
+          - institutional_friction_moduleA
+          - institutional_friction_regulated_fishery
+          - institutional_friction_community_irrigation
+          - institutional_friction_forest_co_management
       python_version:
         description: "Python version"
         required: false
@@ -81,7 +88,15 @@ jobs:
               ci_plot_filter = "--tiers medium_h1,hard_h1 --partner-mixes balanced,adversarial_heavy --injector-modes mutation,adversarial_heuristic --pressures 0.3,0.5"
               run_name = "harvest_invasion_stageC_highpower_gh"
               plot_mode = "legacy"
-          elif stage in {"architecture_stageB", "architecture_stageC", "capability_ladder_stageB"}:
+          elif stage in {
+              "architecture_stageB",
+              "architecture_stageC",
+              "capability_ladder_stageB",
+              "institutional_friction_moduleA",
+              "institutional_friction_regulated_fishery",
+              "institutional_friction_community_irrigation",
+              "institutional_friction_forest_co_management",
+          }:
               payload = github_matrix_payload(stage)
               matrix = json.dumps(payload["matrix"])
               print(f"matrix={matrix}")
@@ -119,7 +134,7 @@ jobs:
           print(f"ci_plot_filter={ci_plot_filter}")
           PY
         env:
-          STAGE: ${{ github.event_name == 'workflow_dispatch' && inputs.stage || (github.ref_name == 'codex/harvest-remote-stagec' && 'stage_c_highpower' || github.ref_name == 'codex/harvest-architecture-stagec' && 'architecture_stageC' || github.ref_name == 'codex/harvest-capability-ladder-stageb' && 'capability_ladder_stageB' || 'stage_b_pilot') }}
+          STAGE: ${{ github.event_name == 'workflow_dispatch' && inputs.stage || (github.ref_name == 'codex/harvest-remote-stagec' && 'stage_c_highpower' || github.ref_name == 'codex/harvest-architecture-stagec' && 'architecture_stageC' || github.ref_name == 'codex/harvest-capability-ladder-stageb' && 'capability_ladder_stageB' || github.ref_name == 'codex/harvest-institutional-regulated-fishery' && 'institutional_friction_regulated_fishery' || github.ref_name == 'codex/harvest-institutional-community-irrigation' && 'institutional_friction_community_irrigation' || github.ref_name == 'codex/harvest-institutional-forest-co-management' && 'institutional_friction_forest_co_management' || 'stage_b_pilot') }}
 
   run-shards:
     needs: define-matrix
@@ -150,9 +165,11 @@ jobs:
           python -m experiments.run_harvest_invasion_matrix \
             --tiers "${{ matrix.tier }}" \
             --partner-mixes "${{ matrix.partner_mix }}" \
+            --scenario-presets "${{ matrix.scenario_preset }}" \
             --conditions "${{ matrix.condition }}" \
             --injector-modes "${{ matrix.injector_mode }}" \
             --adversarial-pressures "${{ matrix.pressure }}" \
+            --governance-friction-regimes "${{ matrix.governance_friction_regime }}" \
             --n-runs "${{ matrix.n_runs }}" \
             --generations "${{ matrix.generations }}" \
             --population-size "${{ matrix.population_size }}" \
