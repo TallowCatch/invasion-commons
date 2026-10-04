@@ -127,7 +127,7 @@ def _candidate_generations(generation_df: pd.DataFrame, max_candidates: int) -> 
     ).head(max_candidates)
 
 
-def _matching_strategy_rows(strategy_df: pd.DataFrame, candidate: pd.Series) -> pd.DataFrame:
+def _matching_strategy_rows(strategy_df: pd.DataFrame, candidate: pd.Series, *, restore_order: bool = True) -> pd.DataFrame:
     filters = [
         ("run_id", candidate.get("run_id")),
         ("generation", candidate.get("generation")),
@@ -143,8 +143,25 @@ def _matching_strategy_rows(strategy_df: pd.DataFrame, candidate: pd.Series) -> 
         value = _clean_text(candidate.get(column))
         if column in out.columns and value:
             out = out[out[column].fillna("").astype(str) == value]
-    if "rank" in out.columns:
-        out = out.sort_values("rank")
+    if restore_order and not out.empty:
+        generation = int(candidate["generation"])
+        if "agent_index" in out:
+            out = out.sort_values("agent_index")
+        elif generation == 0:
+            order = sorted(out.strategy_id, key=lambda sid: int(sid.rsplit("_s", 1)[1]))
+            out = out.set_index("strategy_id", drop=False).loc[order].reset_index(drop=True)
+        else:
+            previous = candidate.copy()
+            previous["generation"] = generation - 1
+            prior = _matching_strategy_rows(strategy_df, previous, restore_order=False)
+            if prior.empty or "rank" not in prior:
+                raise ValueError("Cannot restore spatial order without previous-generation fitness ranks or agent_index")
+            survivors = [sid for sid in prior.sort_values("rank").strategy_id if sid in set(out.strategy_id)]
+            entrants = [sid for sid in out.strategy_id if sid not in set(survivors)]
+            if any(not sid.startswith(f"g{generation}_s") for sid in entrants):
+                raise ValueError("Unrecognized entrant IDs; spatial order needs original agent_index")
+            order = survivors + sorted(entrants, key=lambda sid: int(sid.rsplit("_s", 1)[1]))
+            out = out.set_index("strategy_id", drop=False).loc[order].reset_index(drop=True)
     return out
 
 
@@ -198,6 +215,8 @@ def _write_no_case(prefix: Path, reason: str) -> None:
         columns=[
             "step",
             "mean_requested_harvest",
+            "max_requested_frac",
+            "mean_requested_frac",
             "local_safe_action_fraction",
             "mean_patch_health_after",
             "failed_patch_fraction_after",

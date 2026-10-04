@@ -1,0 +1,5 @@
+# Optional local experiment tracking, separate from model serving or RL.
+-r requirements-validation.txt
+mlflow-skinny==3.11.1
+SQLAlchemy>=2,<3
+alembic>=1.13,<2

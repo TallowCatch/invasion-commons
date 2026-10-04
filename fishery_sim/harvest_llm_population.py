@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import asdict
 from typing import Any
@@ -32,14 +33,63 @@ HARVEST_BANK_METADATA_FIELDS = [
     "bank_provider",
     "bank_model_name",
     "bank_attitude",
+    "bank_prompt_version",
     "prompt_nonce",
 ]
 
 ATTITUDE_CHOICES = ("cooperative", "exploitative")
+HARVEST_BANK_PROMPT_VERSION = "harvest_bank_v3_attitude_anchors"
 
 
 def sanitize_bank_label(text: str) -> str:
     return re.sub(r"[^a-zA-Z0-9]+", "_", text.strip()).strip("_").lower()
+
+
+def _harvest_bank_variation_anchors(attitude: str, patch_max: float, prompt_nonce: int) -> dict[str, float]:
+    rng = np.random.default_rng(int(prompt_nonce))
+    if attitude == "cooperative":
+        low_patch = float(rng.uniform(5.5, 10.5))
+        high_patch = float(rng.uniform(max(low_patch + 2.0, 11.5), patch_max))
+        ranges = {
+            "low_harvest_frac": (0.05, 0.30),
+            "mid_harvest_frac": (0.20, 0.50),
+            "high_harvest_frac": (0.45, 0.75),
+            "restraint_low": (0.60, 1.00),
+            "restraint_high": (0.40, 0.80),
+            "credit_request_low": (0.20, 0.80),
+            "credit_request_high": (0.00, 0.35),
+            "credit_offer_threshold": (7.0, 13.5),
+            "credit_offer_amount": (0.30, 1.00),
+            "neighbor_reciprocity_weight": (0.45, 1.00),
+            "credit_response_weight": (0.35, 1.00),
+            "cap_compliance_margin": (0.00, 0.06),
+        }
+    elif attitude == "exploitative":
+        low_patch = float(rng.uniform(4.0, 9.0))
+        high_patch = float(rng.uniform(max(low_patch + 2.0, 11.0), patch_max))
+        ranges = {
+            "low_harvest_frac": (0.35, 0.70),
+            "mid_harvest_frac": (0.65, 0.95),
+            "high_harvest_frac": (0.85, 1.00),
+            "restraint_low": (0.00, 0.25),
+            "restraint_high": (0.00, 0.35),
+            "credit_request_low": (0.40, 1.00),
+            "credit_request_high": (0.25, 0.80),
+            "credit_offer_threshold": (13.0, patch_max),
+            "credit_offer_amount": (0.00, 0.15),
+            "neighbor_reciprocity_weight": (0.00, 0.25),
+            "credit_response_weight": (0.00, 0.25),
+            "cap_compliance_margin": (0.12, 0.25),
+        }
+    else:
+        raise ValueError(f"Unknown Harvest bank attitude: {attitude}")
+    anchors = {
+        "low_patch_threshold": round(low_patch, 2),
+        "high_patch_threshold": round(high_patch, 2),
+    }
+    for key, (low, high) in ranges.items():
+        anchors[key] = round(float(rng.uniform(low, high)), 2)
+    return anchors
 
 
 def build_harvest_bank_prompt(attitude: str, patch_max: float, prompt_nonce: int) -> str:
@@ -55,6 +105,32 @@ def build_harvest_bank_prompt(attitude: str, patch_max: float, prompt_nonce: int
             "Generate an exploitative Harvest Commons policy that prioritizes individual gain, "
             "pushes extraction when possible, and only restrains when pressure is hard to ignore."
         ),
+    }
+    attitude_profiles = {
+        "cooperative": {
+            "low_harvest_frac": "prefer 0.05 to 0.30",
+            "mid_harvest_frac": "prefer 0.20 to 0.50",
+            "high_harvest_frac": "prefer 0.45 to 0.75",
+            "restraint_low": "prefer 0.60 to 1.00",
+            "restraint_high": "prefer 0.40 to 0.80",
+            "credit_offer_amount": "prefer 0.30 to 1.00 when neighbors request credit",
+            "neighbor_reciprocity_weight": "prefer 0.45 to 1.00",
+            "credit_response_weight": "prefer 0.35 to 1.00",
+            "cap_compliance_margin": "prefer 0.00 to 0.06",
+        },
+        "exploitative": {
+            "low_harvest_frac": "prefer 0.35 to 0.70",
+            "mid_harvest_frac": "prefer 0.65 to 0.95",
+            "high_harvest_frac": "prefer 0.85 to 1.00",
+            "restraint_low": "prefer 0.00 to 0.25",
+            "restraint_high": "prefer 0.00 to 0.35",
+            "credit_request_low": "prefer 0.40 to 1.00",
+            "credit_request_high": "prefer 0.25 to 0.80",
+            "credit_offer_amount": "prefer 0.00 to 0.15",
+            "neighbor_reciprocity_weight": "prefer 0.00 to 0.25",
+            "credit_response_weight": "prefer 0.00 to 0.25",
+            "cap_compliance_margin": "prefer 0.12 to 0.25",
+        },
     }
     schema = {
         "rationale": "short explanation, 30 words max",
@@ -73,14 +149,26 @@ def build_harvest_bank_prompt(attitude: str, patch_max: float, prompt_nonce: int
         "credit_response_weight": "float in [0, 1]",
         "cap_compliance_margin": "float in [0, 0.25]",
     }
+    variation_anchors = _harvest_bank_variation_anchors(
+        attitude=attitude,
+        patch_max=patch_max,
+        prompt_nonce=prompt_nonce,
+    )
     return (
         "You are writing a complete Harvest Commons strategy as strict JSON.\n"
+        f"Prompt version: {HARVEST_BANK_PROMPT_VERSION}\n"
         f"Attitude: {attitude}\n"
         f"Variation nonce: {prompt_nonce}\n"
         f"{attitude_instructions[attitude]}\n"
+        "Use these attitude-specific numeric guidelines as soft targets while keeping the policy internally consistent:\n"
+        f"{json.dumps(attitude_profiles[attitude], indent=2)}\n"
+        "For this sampled strategy, choose concrete values close to these variation anchors:\n"
+        f"{json.dumps(variation_anchors, indent=2)}\n"
+        "Small deviations from the anchors are allowed if they make the policy more internally consistent.\n"
+        "Do not copy the example ranges verbatim; output concrete numeric values within the schema.\n"
         "The policy should be internally consistent and executable as a threshold policy.\n"
         "Output exactly one JSON object with no markdown and no extra keys.\n"
-        f"Schema:\n{schema}\n"
+        f"Schema:\n{json.dumps(schema, indent=2)}\n"
     )
 
 
@@ -110,6 +198,7 @@ def strategy_spec_to_bank_row(
             "bank_provider": bank_provider,
             "bank_model_name": bank_model_name,
             "bank_attitude": bank_attitude,
+            "bank_prompt_version": HARVEST_BANK_PROMPT_VERSION,
             "prompt_nonce": int(prompt_nonce),
             "policy_signature": "|".join(f"{value:.6f}" for value in harvest_policy_signature(spec)),
         }

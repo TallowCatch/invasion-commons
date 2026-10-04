@@ -252,11 +252,13 @@ class OllamaPolicyLLMClient:
         base_url: str | None = None,
         timeout_s: float = 120.0,
         temperature: float = 0.8,
+        max_output_tokens: int = 300,
     ):
         self.model = model
         self.base_url = (base_url or os.environ.get("OLLAMA_BASE_URL") or "http://localhost:11434").rstrip("/")
         self.timeout_s = float(max(1.0, timeout_s))
         self.temperature = float(max(0.0, temperature))
+        self.max_output_tokens = int(max(64, max_output_tokens))
 
     def complete(self, prompt: str) -> str:
         payload = {
@@ -265,6 +267,7 @@ class OllamaPolicyLLMClient:
             "stream": False,
             "options": {
                 "temperature": self.temperature,
+                "num_predict": self.max_output_tokens,
             },
         }
         body = json.dumps(payload).encode("utf-8")

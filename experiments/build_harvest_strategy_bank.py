@@ -43,6 +43,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--ollama-base-url", default=None)
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--timeout-s", type=float, default=120.0)
+    parser.add_argument("--max-output-tokens", type=int, default=300)
+    parser.add_argument("--progress-every", type=int, default=10)
+    parser.add_argument("--partial-save-every", type=int, default=1)
     return parser.parse_args()
 
 
@@ -63,6 +66,7 @@ def _make_client(provider: str, model: str, args: argparse.Namespace) -> PolicyL
             base_url=args.openai_base_url,
             timeout_s=float(args.timeout_s),
             temperature=float(args.temperature),
+            max_output_tokens=int(args.max_output_tokens),
         )
     if provider == "ollama":
         return OllamaPolicyLLMClient(
@@ -70,6 +74,7 @@ def _make_client(provider: str, model: str, args: argparse.Namespace) -> PolicyL
             base_url=args.ollama_base_url,
             timeout_s=float(args.timeout_s),
             temperature=float(args.temperature),
+            max_output_tokens=int(args.max_output_tokens),
         )
     raise ValueError(f"Unsupported provider: {provider}")
 
@@ -86,6 +91,8 @@ def main() -> None:
 
     output_prefix = Path(args.output_prefix)
     output_prefix.parent.mkdir(parents=True, exist_ok=True)
+    bank_csv = str(output_prefix.with_name(output_prefix.name + "_bank.csv"))
+    summary_csv = str(output_prefix.with_name(output_prefix.name + "_summary.csv"))
 
     cfg = make_harvest_cfg_for_tier(args.reference_tier, n_agents=6, seed=args.seed)
     rng = np.random.default_rng(args.seed)
@@ -99,7 +106,13 @@ def main() -> None:
             accepted = 0
             attempts = 0
             parse_failures = 0
+            duplicates = 0
             seen_signatures: set[tuple[float, ...]] = set()
+            print(
+                f"Building bank: provider={provider} model={model} attitude={attitude} "
+                f"target={int(args.target_per_pair)}",
+                flush=True,
+            )
             while accepted < int(args.target_per_pair) and attempts < int(args.max_attempts_per_pair):
                 attempts += 1
                 prompt_nonce = int(rng.integers(0, 1_000_000_000))
@@ -107,8 +120,15 @@ def main() -> None:
                 try:
                     raw_response = client.complete(prompt)
                     policy, parse_status, parse_error_type = parse_harvest_policy_response(raw_response, patch_max=cfg.patch_max)
-                except Exception:
+                except Exception as exc:
                     parse_failures += 1
+                    if int(args.progress_every) > 0 and attempts % int(args.progress_every) == 0:
+                        print(
+                            f"  attempts={attempts} accepted={accepted} "
+                            f"parse_failures={parse_failures} duplicates={duplicates} "
+                            f"last_error={type(exc).__name__}",
+                            flush=True,
+                        )
                     continue
 
                 spec = harvest_policy_json_to_strategy_spec(
@@ -120,9 +140,21 @@ def main() -> None:
                 )
                 signature = harvest_policy_signature(spec)
                 if signature in seen_signatures:
+                    duplicates += 1
+                    if int(args.progress_every) > 0 and attempts % int(args.progress_every) == 0:
+                        print(
+                            f"  attempts={attempts} accepted={accepted} "
+                            f"parse_failures={parse_failures} duplicates={duplicates}",
+                            flush=True,
+                        )
                     continue
                 seen_signatures.add(signature)
                 accepted += 1
+                print(
+                    f"  accepted={accepted}/{int(args.target_per_pair)} "
+                    f"attempts={attempts} parse_failures={parse_failures}",
+                    flush=True,
+                )
                 all_rows.append(
                     strategy_spec_to_bank_row(
                         spec,
@@ -133,6 +165,13 @@ def main() -> None:
                         prompt_nonce=prompt_nonce,
                     )
                 )
+                if int(args.partial_save_every) > 0 and accepted % int(args.partial_save_every) == 0:
+                    pd.DataFrame(all_rows).to_csv(bank_csv, index=False)
+                if int(args.progress_every) > 0 and attempts % int(args.progress_every) == 0:
+                    print(
+                        f"  attempts={attempts} accepted={accepted} parse_failures={parse_failures}",
+                        flush=True,
+                    )
 
             summary_rows.append(
                 {
@@ -144,6 +183,7 @@ def main() -> None:
                     "accepted_unique": accepted,
                     "attempts": attempts,
                     "parse_failures": parse_failures,
+                    "duplicates": duplicates,
                     "acceptance_rate": round(float(accepted / max(1, attempts)), 6),
                     "target_reached": bool(accepted >= int(args.target_per_pair)),
                 }
@@ -151,8 +191,6 @@ def main() -> None:
 
     bank_df = pd.DataFrame(all_rows)
     summary_df = pd.DataFrame(summary_rows)
-    bank_csv = str(output_prefix.with_name(output_prefix.name + "_bank.csv"))
-    summary_csv = str(output_prefix.with_name(output_prefix.name + "_summary.csv"))
     bank_df.to_csv(bank_csv, index=False)
     summary_df.to_csv(summary_csv, index=False)
     print(f"Saved: {bank_csv}")

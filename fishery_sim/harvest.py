@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Callable
+import json
 
 import numpy as np
 
@@ -253,6 +255,7 @@ class GovernmentAgent:
         enforcement_delay_rounds: int = 0,
         max_target_share: float = 1.0,
         governance_budget_cost: float = 0.0,
+        capacity_rule: str = "legacy_min_one",
     ):
         self.trigger = float(trigger)
         self.strict_cap_frac = float(strict_cap_frac)
@@ -267,6 +270,9 @@ class GovernmentAgent:
         self.enforcement_delay_rounds = int(max(0, enforcement_delay_rounds))
         self.max_target_share = float(np.clip(max_target_share, 0.0, 1.0))
         self.governance_budget_cost = float(max(0.0, governance_budget_cost))
+        if capacity_rule not in {"legacy_min_one", "floor"}:
+            raise ValueError("Unknown capacity rule")
+        self.capacity_rule = capacity_rule
         if enforcement_scope not in {"global", "local"}:
             raise ValueError("enforcement_scope must be 'global' or 'local'")
         self.enforcement_scope = enforcement_scope
@@ -375,7 +381,8 @@ class GovernmentAgent:
             detected = self._rng.random(requested_fracs.size) <= self.detection_recall
             targeted &= detected
         if np.any(targeted) and self.max_target_share < 1.0:
-            max_targets = max(1, int(np.floor(self.max_target_share * requested_fracs.size)))
+            lower_bound = 1 if self.capacity_rule == "legacy_min_one" else 0
+            max_targets = max(lower_bound, int(np.floor(self.max_target_share * requested_fracs.size)))
             active_idx = np.flatnonzero(targeted)
             if active_idx.size > max_targets:
                 ranked = active_idx[np.argsort(requested_fracs[active_idx])[::-1]]
@@ -435,12 +442,20 @@ def run_harvest_episode(
     agents: list[BaseHarvestAgent],
     governor: GovernmentAgent | None = None,
     record_trace: bool = False,
+    action_filter: Callable[[HarvestCommonsConfig, np.ndarray, np.ndarray], np.ndarray] | None = None,
+    initial_patch_health: np.ndarray | None = None,
 ) -> dict:
     if len(agents) != cfg.n_agents:
         raise ValueError("agents list must match cfg.n_agents")
 
     rng = np.random.default_rng(cfg.seed)
     patch_health = np.full(cfg.n_agents, cfg.patch_init, dtype=float)
+    if initial_patch_health is not None:
+        # Replay one-step state/proposal cases without changing native dynamics.
+        patch_health = np.asarray(initial_patch_health, dtype=float).copy()
+        if (patch_health.shape != (cfg.n_agents,) or not np.isfinite(patch_health).all()
+                or np.any(patch_health < 0) or np.any(patch_health > cfg.patch_max)):
+            raise ValueError("Initial patch health must be a finite vector within resource bounds")
     last_credit_received = np.zeros(cfg.n_agents, dtype=float)
     failure_streak = 0
     garden_failure_event = 0
@@ -490,7 +505,19 @@ def run_harvest_episode(
     credit_sent_total = np.zeros(cfg.n_agents, dtype=float)
     credit_received_total = np.zeros(cfg.n_agents, dtype=float)
 
+    diagnostic_counts = dict.fromkeys([
+        "approved_steps", "approved_safe_opportunities", "approved_onset_count",
+        "approved_persistence_count", "some_local_fail_global_safe_count",
+        "executed_local_safe_steps", "executed_safe_onset_count", "clean_prefix_onset_count",
+    ], 0)
+    executed_safe_prefix = True
     for t in range(cfg.horizon):
+        pre_global_safe = harvest_global_safe(
+            patch_health, min_mean_patch_health=cfg.global_min_mean_patch_health,
+            local_patch_failure_threshold=cfg.local_patch_failure_threshold,
+            failure_fraction_threshold=cfg.failure_fraction_threshold,
+        )
+        pre_failed_fraction = float(np.mean(patch_health < cfg.local_patch_failure_threshold))
         government_cap_fracs = None
         if governor is not None:
             government_cap_fracs = governor.act(float(patch_health.mean()), t, cfg.n_agents)
@@ -553,6 +580,15 @@ def run_harvest_episode(
         else:
             capped_fracs_arr = requested_fracs_arr.copy()
             targeted_mask = np.zeros(cfg.n_agents, dtype=bool)
+        if action_filter is not None:
+            filtered = np.asarray(action_filter(cfg, patch_health.copy(), capped_fracs_arr.copy()), dtype=float)
+            if (filtered.shape != capped_fracs_arr.shape or not np.isfinite(filtered).all()
+                    or np.any(filtered < 0) or np.any(filtered > capped_fracs_arr + 1e-12)):
+                raise ValueError("Action filter must return finite, nonnegative requests no larger than its input")
+            capped_fracs_arr = filtered
+        executed_local_safe = bool(np.all(harvest_local_safety_mask(
+            capped_fracs_arr, cfg.sustainable_harvest_frac, cfg.local_safety_margin)))
+        executed_safe_prefix = executed_safe_prefix and executed_local_safe
         intended_targets = getattr(governor, "_last_intended_target_count", 0) if governor is not None else 0
         missed_targets = getattr(governor, "_last_missed_target_count", 0) if governor is not None else 0
         governance_budget_spent = getattr(governor, "_last_governance_budget_spent", 0.0) if governor is not None else 0.0
@@ -621,6 +657,14 @@ def run_harvest_episode(
         )
         failed_patch_fraction = float(np.mean(next_health < cfg.local_patch_failure_threshold))
         global_unsafe = not global_safe
+        diagnostic_counts["approved_steps"] += int(all_local_safe)
+        diagnostic_counts["approved_safe_opportunities"] += int(all_local_safe and pre_global_safe)
+        diagnostic_counts["approved_onset_count"] += int(all_local_safe and pre_global_safe and global_unsafe)
+        diagnostic_counts["approved_persistence_count"] += int(all_local_safe and not pre_global_safe and global_unsafe)
+        diagnostic_counts["some_local_fail_global_safe_count"] += int(not all_local_safe and global_safe)
+        diagnostic_counts["executed_local_safe_steps"] += int(executed_local_safe)
+        diagnostic_counts["executed_safe_onset_count"] += int(executed_local_safe and pre_global_safe and global_unsafe)
+        diagnostic_counts["clean_prefix_onset_count"] += int(executed_safe_prefix and pre_global_safe and global_unsafe)
         if global_unsafe and first_global_unsafe_step == cfg.horizon:
             first_global_unsafe_step = t + 1
         global_unsafe_trace.append(float(global_unsafe))
@@ -634,6 +678,18 @@ def run_harvest_episode(
             trace_rows.append(
                 {
                     "step": t,
+                    "pre_global_safe": int(pre_global_safe),
+                    "failed_patch_fraction_before": pre_failed_fraction,
+                    "executed_all_local_safe": int(executed_local_safe),
+                    "executed_safe_prefix": int(executed_safe_prefix),
+                    "approved_onset": int(all_local_safe and pre_global_safe and global_unsafe),
+                    "approved_persistence": int(all_local_safe and not pre_global_safe and global_unsafe),
+                    "patch_health_before_json": json.dumps(patch_health.tolist()),
+                    "patch_health_after_json": json.dumps(next_health.tolist()),
+                    "requested_fracs_json": json.dumps(requested_fracs_arr.tolist()),
+                    "allowed_fracs_json": json.dumps(capped_fracs_arr.tolist()),
+                    "executed_targets_json": json.dumps(targeted_mask.astype(int).tolist()),
+                    "announced_caps_json": json.dumps([None if np.isnan(v) else float(v) for v in government_cap_fracs]) if government_cap_fracs is not None else "null",
                     "mean_patch_health_before": float(np.mean(patch_health)),
                     "mean_patch_health_after": float(np.mean(next_health)),
                     "failed_patch_fraction_after": failed_patch_fraction,
@@ -678,6 +734,11 @@ def run_harvest_episode(
             break
 
     return {
+        **diagnostic_counts,
+        "approval_coverage": diagnostic_counts["approved_steps"] / max(t_end, 1),
+        "unsafe_given_approval": (sum(local_pass_global_fail_trace) / diagnostic_counts["approved_steps"]
+                                  if diagnostic_counts["approved_steps"] else float("nan")),
+        "oversight_cost_per_step": float(np.sum(governance_budget_trace)) / max(t_end, 1),
         "seed": cfg.seed,
         "garden_failure_event": int(garden_failure_event),
         "failure_step": int(failure_step),

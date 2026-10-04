@@ -1,0 +1,16 @@
+# Optional CPU-only sidecar, Python 3.10-3.12. Never install globally.
+# Source dependency (not a working wheel at this revision):
+# socialjaxproject @ git+https://github.com/cooperativex/SocialJax.git@9df972d07657c7e2d4cd4fec1ed1f437099cb128
+# Clone outside the repo, checkout that exact revision, set SOCIALJAX_SOURCE.
+# See notes/research_review/CLEANUP_ADAPTER.md. The adapter verifies the pin.
+jax[cpu]==0.6.2
+jaxlib==0.6.2
+flax==0.10.7
+chex==0.1.89
+numpy==1.26.4
+scipy==1.15.3
+ml-dtypes==0.5.4
+optax==0.2.5
+orbax-checkpoint==0.11.13
+Pillow==11.1.0
+pytest==9.0.2
