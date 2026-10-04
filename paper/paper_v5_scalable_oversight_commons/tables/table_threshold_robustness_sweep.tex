@@ -1,0 +1,22 @@
+\begin{table}[t]
+    \centering
+    \caption{Full threshold robustness sweep. The grid varies five local safety margins, five global patch-health thresholds, three actor-capability levels, and three overseer-capability levels. Cell wins are patch-health wins out of 225 threshold-capability cells per stress setting. Positive LPGF cells are cells with nonzero local-pass/global-fail rate.}
+    \label{tab:threshold-robustness-sweep}
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{llrrrrrr}
+        \toprule
+        Stress setting & Architecture & Mean unsafe & Mean LPGF & Positive LPGF cells & Cell wins & Mean patch & Garden fail \\
+        \midrule
+        Moderate coupling & None & 0.090 & 0.001 & 204/225 & 0 & 12.19 & 0.012 \\
+        Moderate coupling & Local & 0.072 & 0.001 & 186/225 & 0 & 12.19 & 0.000 \\
+        Moderate coupling & Global & 0.049 & 0.014 & 150/225 & 50 & 14.54 & 0.000 \\
+        Moderate coupling & Hybrid & 0.038 & 0.008 & 149/225 & 175 & 14.60 & 0.000 \\
+        \addlinespace
+        High coupling & None & 0.313 & 0.035 & 225/225 & 0 & 10.64 & 0.126 \\
+        High coupling & Local & 0.240 & 0.026 & 225/225 & 0 & 11.06 & 0.095 \\
+        High coupling & Global & 0.078 & 0.036 & 150/225 & 25 & 13.89 & 0.002 \\
+        High coupling & Hybrid & 0.051 & 0.020 & 150/225 & 200 & 14.06 & 0.005 \\
+        \bottomrule
+    \end{tabular}
+    }
+\end{table}

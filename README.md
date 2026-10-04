@@ -1,18 +1,39 @@
 # invasion-commons
 
-Minimal sequential fishery commons simulator for studying cooperation stability.
+Sequential commons experiments for evaluating resource use, local checks, and oversight.
 
 ## Research Focus
-This repo is scoped to the following question:
+**When do local resource-use checks miss global failure, and what information or intervention addresses that failure?**
 
-Are cooperative norms in a renewable commons evolutionarily stable under repeated adversarial strategy injection, and which governance signals improve resistance to invasion?
+Harvest is the main controlled game: local patches regenerate and agents affect their neighbours. Fishery is the earlier, separate single-stock study. Neither is a field-calibrated model of a fishery or agricultural system. The original environment names remain useful for distinguishing their structures and experiment histories.
 
-The project is intentionally simple:
-- one global renewable stock
-- harvest actions by multiple agents
-- collapse threshold with patience window
-- optional noisy stock observations
-- optional monitoring + quota enforcement + graduated sanctions
+Start with the [current manuscript](paper/paper_v5_scalable_oversight_commons/main.pdf), the [September closeout](notes/research_review/PAPER_CLOSEOUT_20260924.md), and the [project history](PROJECT_HISTORY.md). The [paper data README](paper/paper_v5_scalable_oversight_commons/data/README.md) explains which source results are included in the repository and how to audit them. Earlier plans elsewhere in the repo are historical, not a queue of experiments to launch.
+
+The September validation pass keeps policies fixed across mechanisms, tests failure onset, checks search on unseen episodes, and compares saved model policies with their prompt's numerical templates. It does not use a scalar capability-gap claim or require new model calls. The closeout note explains the evidence and remaining scientific limits.
+
+## Reproduce the current paper
+
+The current paper's figures and tables are checked in. The fresh reviewer
+confirmation source run is packaged under `paper/paper_v5_scalable_oversight_commons/data/sources/`.
+From a clean clone, use Python 3.11 and run:
+
+```bash
+python -m pip install -r requirements-validation.txt
+pytest -q tests
+python -m experiments.plot_reviewer_decisions \
+  --input-dir paper/paper_v5_scalable_oversight_commons/data \
+  --output-dir paper/paper_v5_scalable_oversight_commons/figures
+```
+
+To inspect frozen proposals, complete trajectories, and the post-hoc
+coupled-local replay, follow the [paper data instructions](paper/paper_v5_scalable_oversight_commons/data/README.md).
+LaTeX source and the compiled review PDF are in the paper directory. The
+2.3 GB local exploratory `results/` tree is deliberately not versioned; the
+paper bundle contains the bounded source cohort needed for its main result.
+
+## Earlier Fishery Study
+
+The original study asks whether cooperation survives repeated strategy replacement and how quotas, monitoring, and sanctions affect a single renewable stock. The Fishery entry points below remain available; they are not the next Harvest validation experiment.
 
 ## Project Layout
 - `fishery_sim/env.py`: environment dynamics and collapse logic

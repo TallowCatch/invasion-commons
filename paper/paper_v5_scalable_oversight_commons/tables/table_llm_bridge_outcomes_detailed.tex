@@ -1,0 +1,31 @@
+\begin{table}[t]
+    \centering
+    \caption{Detailed LLM-bridge outcomes, averaged over two stress settings and exploitative-share levels.}
+    \label{tab:llm-bridge-outcomes-detailed}
+    \begin{tabular}{llrrrr}
+        \toprule
+        Model/regime & Architecture & Patch health & Failure & Welfare & Burden \\
+        \midrule
+        Qwen 2.5 3B, ideal & None & 8.47 & 0.667 & 14.56 & 0.00 \\
+         & Local & 9.82 & 0.663 & 13.27 & 0.00 \\
+         & Global & 15.55 & 0.000 & 13.49 & 0.00 \\
+         & Hybrid & 15.89 & 0.000 & 12.65 & 0.00 \\
+        \addlinespace
+        Qwen 2.5 3B, constrained & None & 8.58 & 0.666 & 14.51 & 0.00 \\
+         & Local & 9.81 & 0.665 & 13.34 & 0.00 \\
+         & Global & 15.24 & 0.000 & 12.04 & 3.25 \\
+         & Hybrid & 15.53 & 0.001 & 11.50 & 2.65 \\
+        \addlinespace
+        Llama 3.2 3B, ideal & None & 8.50 & 0.666 & 14.84 & 0.00 \\
+         & Local & 9.88 & 0.659 & 13.71 & 0.00 \\
+         & Global & 15.54 & 0.000 & 13.64 & 0.00 \\
+         & Hybrid & 15.83 & 0.000 & 12.91 & 0.00 \\
+        \addlinespace
+        Llama 3.2 3B, constrained & None & 8.54 & 0.658 & 14.80 & 0.00 \\
+         & Local & 9.83 & 0.652 & 13.70 & 0.00 \\
+         & Global & 15.18 & 0.001 & 12.14 & 3.31 \\
+         & Hybrid & 15.42 & 0.001 & 11.70 & 2.74 \\
+        \addlinespace
+        \bottomrule
+    \end{tabular}
+\end{table}

@@ -1,0 +1,255 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{natbib}
+\usepackage{hyperref}
+
+\graphicspath{{figures/}}
+
+\title{Scalable Oversight Under Capability Pressure in Multi-Agent Commons}
+\author{Ameer Alhashemi}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Scalable oversight is usually framed around supervising harder individual tasks. This paper studies a complementary multi-agent case: in a sequential commons, each local action can satisfy an oversight check while the aggregate shared-resource state becomes unsafe. We develop a Harvest Commons benchmark for evaluating this compositional oversight failure under capability pressure. The benchmark compares no oversight, local oversight, a global oversight signal, and hybrid oversight while varying actor capability and overseer capability separately. Actor capability is operationalized through stronger strategy-generation processes, including search-generated entrants. Overseer capability is operationalized through detection recall, intervention delay, targeting capacity, and intervention cost. The main outcomes are global unsafe rate, local-pass/global-fail rate, resource health, welfare, and governance burden. In the main pilot, hybrid oversight ranks first in 13 of 18 decision cells, while local oversight ranks first in four cells and the global signal in one. The ranking is setting-dependent: local oversight wins several moderate-coupling cells despite weaker patch health, while hybrid oversight is selected in every high-coupling cell. A controlled LLM bridge then shows that two open-weight language models can generate valid structured Harvest strategies that reproduce the same oversight pressure when evaluated offline. The result is a benchmark formulation for studying oversight architectures in interacting agent populations as actor capability rises relative to overseer capability.
+\end{abstract}
+
+\section{Introduction}
+
+Shared-resource systems expose a basic difficulty in multi-agent governance. Each agent can often improve its own payoff by taking more from the resource, while the same behavior can degrade the resource when repeated across a population. This structure is familiar from commons problems and sequential social dilemmas, and it is also relevant to multi-agent AI settings where agents may share infrastructure, information channels, user attention, operational environments, or other limited resources.
+
+The difficulty increases when the population is not fixed. A governance rule that is adequate for simple or cooperative agents may become less reliable when stronger or more exploitative strategies enter the population. The overseer can also be limited. It may detect only some harmful behavior, respond with delay, target only part of the population, or impose a cost whenever it intervenes. These conditions make the evaluation problem a stress test: an oversight architecture should be assessed under changing actor capability and bounded overseer capability.
+
+This paper studies that problem in Harvest Commons, a stylized renewable commons in which agents harvest from local patches while their actions affect the wider system. The experiment compares four oversight settings: no oversight, local oversight, a global oversight signal, and hybrid oversight. The global signal denotes system-level guidance or intervention in the benchmark. In deployed agent populations, comparable guidance may be implemented through agent context, protocols, institutional interfaces, or other mechanisms that shape agent behavior.
+
+The main research question is:
+\begin{quote}
+How do local, global-signal, and hybrid oversight architectures perform in a shared-resource multi-agent benchmark when local actions can pass checks while aggregate resource dynamics become unsafe?
+\end{quote}
+
+The paper makes three contributions. First, it formulates a scalable-oversight version of the Harvest commons benchmark in which actor capability and overseer capability are varied separately. Second, it introduces a compositional safety metric, local-pass/global-fail rate, which records cases where all agents pass local checks while the aggregate system becomes unsafe. Third, it adds a controlled bridge to LLM-generated strategy populations by having open-weight language models generate complete structured Harvest strategies that are validated and evaluated inside the same benchmark. The benchmark is intended as controlled evaluation and does not field-calibrate a policy model.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig01_evidence_chain}
+    \caption{Study logic. The paper keeps the commons substrate fixed while increasing the difficulty of strategy generation and oversight. Fishery Commons supplies a support study for central signals; Harvest Commons is the main scalable-oversight benchmark; the LLM bridge tests whether the same pipeline can evaluate model-generated structured strategies.}
+    \label{fig:evidence-chain}
+\end{figure}
+
+Figure~\ref{fig:evidence-chain} summarizes the study structure. Fishery Commons is used as a simpler signal-design support study for quotas, sanctions, and closures. Harvest Commons is the main benchmark because it supports local oversight, a global signal, and hybrid oversight in the same shared-resource environment. The LLM bridge keeps the Harvest substrate fixed and changes the source of strategies.
+
+\section{Related Work}
+
+Commons scholarship provides the institutional background for this work. \citet{ostrom1990governing} emphasizes that successful commons governance depends on rules, monitoring, graduated responses, local participation, and institutional fit. These ideas are relevant for multi-agent AI because they treat collective stability as a property of interaction rules, monitoring arrangements, and incentives. The present benchmark uses this institutional logic in a controlled computational setting.
+
+Computational sequential social dilemmas translate related problems into multi-agent environments where cooperation, depletion, and mixed incentives can be studied experimentally \citep{leibo2017sequential, agapiou2022meltingpot, guo2025socialjax}. This line of work provides the substrate idea: a shared environment, repeated interaction, and measurable collective outcomes. It also frames cooperation as a policy-level property over repeated interaction. Broader reviews of multi-agent cooperation emphasize incentive structure, strategic interaction, and evaluation metrics alongside single-agent return \citep{du2023cooperationreview}. The benchmark in this paper follows that view by evaluating complete strategies under repeated population turnover.
+
+Recent work on LLM-agent populations studies strategies generated by language models alongside hand-coded agents. \citet{willis2025cooperate} prompt language models to generate complete strategies for an iterated social dilemma and then examine whether those strategies cooperate. \citet{willis2026hundreds} scale the approach to larger populations and use cultural evolution to study the spread of strategies. The present work adopts the strategy-as-artifact idea: a model generates a complete strategy that can be inspected before deployment in the simulator.
+
+Scalable oversight research studies supervision when the system being supervised can become more capable than the overseer. \citet{bowman2022scalable} argue that oversight tasks should make the gap between task difficulty and overseer competence measurable. \citet{sudhir2025benchmark} benchmark scalable oversight protocols, and \citet{engels2025scaling} study how oversight performance changes as capability mismatch changes. The present paper brings this concern into an interacting commons setting. The actor side becomes stronger through search or model-generated strategy production, while the overseer side is limited through imperfect detection, delay, limited capacity, and cost.
+
+The resulting gap is the oversight architecture question in a changing multi-agent population. Existing work gives social-dilemma environments, model-generated strategy populations, and scalable-oversight formalisms. The contribution here is a benchmark combination rather than a claim that each component is new: the paper compares local, global-signal, and hybrid oversight under an explicit actor-overseer capability gap, with a metric for aggregate unsafe states that can occur after all local action checks pass.
+
+\section{Problem Formulation}
+
+Consider $N$ agents interacting for $T$ steps in a renewable commons. At time $t$, the environment state is $s_t$. The state includes local resource levels $p_t=(p_{1,t},\ldots,p_{N,t})$, where $p_{i,t}\geq 0$ denotes the local patch health experienced by agent $i$. Each agent chooses a requested harvest fraction
+\[
+    a_{i,t} \in [0,1],
+\]
+and the joint action is $a_t=(a_{1,t},\ldots,a_{N,t})$. Oversight may modify or constrain the realized action through an intervention $g_t$. The environment evolves according to
+\[
+    s_{t+1} \sim P(s_{t+1}\mid s_t,a_t,g_t).
+\]
+
+An agent strategy is a parameterized policy
+\[
+    \pi_i(a_{i,t}\mid h_{i,t};\phi_i),
+\]
+where $h_{i,t}$ is the agent's local history and $\phi_i$ is a structured strategy specification. In the Harvest implementation, $\phi_i$ contains resource thresholds, harvest fractions, communication behavior, credit behavior, neighbor response, and cap-compliance behavior. This representation is intentionally restricted. It allows strategies to be written by hand, mutated, searched over, or generated by a language model while remaining inspectable and comparable.
+
+An oversight architecture is a mapping
+\[
+    g_t = G(o_t;\theta_G),
+\]
+where $o_t$ is the information available to the overseer and $\theta_G$ describes its operating limits. The experiment compares local oversight, a global oversight signal, and hybrid oversight. Local oversight acts through local interaction and local response. The global signal acts through system-level guidance or intervention. Hybrid oversight applies both.
+
+Actor capability is represented by a rank
+\[
+    c_A \in \{0,1,2\}.
+\]
+Low actor capability uses ordinary mutation entrants. Medium and high actor capability use search-generated entrants with increasing candidate counts and internal evaluation horizons. Overseer capability is represented by a rank
+\[
+    c_O \in \{0,1,2\},
+\]
+where the rank is determined by detection recall, enforcement delay, targeting capacity, and budget cost. The capability gap is
+\[
+    \Delta c = c_A - c_O.
+\]
+Positive values mean that the actor side has higher operational capability than the overseer under this benchmark definition.
+The rank is a design variable that must be checked empirically. In the experiments below, actor ranks are reported alongside entrant payoff and action-pressure measures.
+
+The local safety predicate checks whether an agent's requested action is locally acceptable:
+\[
+    L_{i,t}^{\epsilon}=\mathbf{1}\{a_{i,t}\leq a_{\mathrm{sust}}+\epsilon\},
+\]
+where $a_{\mathrm{sust}}$ is the sustainable harvest fraction and $\epsilon$ is a margin. The global safety predicate checks whether the next aggregate state is safe:
+\[
+    H_{t+1}^{\tau,\rho}=\mathbf{1}\{\bar{p}_{t+1}\geq \tau \land f_{t+1}\leq \rho\},
+\]
+where $\bar{p}_{t+1}$ is mean patch health, $f_{t+1}$ is the failed-patch fraction, $\tau$ is the patch-health threshold, and $\rho$ is the failed-patch threshold. The local-pass/global-fail event is
+\[
+    F_t^{\epsilon,\tau,\rho}
+    =
+    \mathbf{1}\left[
+    \left(\prod_{i=1}^{N} L_{i,t}^{\epsilon}=1\right)
+    \land
+    \left(H_{t+1}^{\tau,\rho}=0\right)
+    \right].
+\]
+The episode-level rate is
+\[
+    \operatorname{LPGF}(\epsilon,\tau,\rho)
+    =
+    \frac{1}{T}\sum_{t=1}^{T}F_t^{\epsilon,\tau,\rho}.
+\]
+This metric records compositional safety failures: each local action passes the local check, but the joint system enters an unsafe state.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig02_method_schematic}
+    \caption{Benchmark mechanism. Strategies enter the Harvest commons through mutation, search, or model generation. Oversight acts through local mechanisms, a global signal, or both. The same episode is evaluated through an individual local predicate and an aggregate global predicate; local-pass/global-fail records steps where all local requests pass while the next resource state is unsafe.}
+    \label{fig:method-schematic}
+\end{figure}
+
+\section{Method}
+
+The benchmark uses Harvest Commons as the main substrate. The environment provides controlled benchmark abstractions for comparing oversight mechanisms under shared-resource pressure. Agents request harvest from local patches. Local oversight responds to the agent's local action and local interaction context. The global signal responds to system-level information and can constrain realized harvest. Hybrid oversight combines the local and global channels.
+
+The main pilot varies actor capability, overseer capability, and oversight architecture. Actor capability is varied through the entrant-generation process. Low actor capability uses mutation entrants. Medium actor capability uses search mutation with six candidates and a thirty-step internal evaluation horizon. High actor capability uses search mutation with twelve candidates and a sixty-step internal evaluation horizon. This operationalization captures a simple form of capability pressure: stronger entrants can search more alternatives before entering the population. It is a controlled proxy for planning/search strength, not a complete model of AI capability.
+
+Overseer capability is varied through three regimes. A strong overseer has complete detection, no enforcement delay, full targeting capacity, and no intervention cost. A limited overseer has detection recall of 0.7, a one-round enforcement delay, a maximum target share of 0.5, and a budget cost of 0.02 per intervention. A weak overseer has detection recall of 0.5, a two-round delay, a maximum target share of 0.33, and a budget cost of 0.04 per intervention.
+
+The experiment uses two stress settings. The moderate-coupling setting has balanced partner composition and moderate spillovers across local patches. The high-coupling setting has a harder resource regime, more adversarial partner composition, and stronger externalities. These labels describe interaction stress settings used for evaluation. Table~\ref{tab:stress-settings} reports the parameter values.
+
+\input{tables/table_stress_settings.tex}
+
+Each main-pilot cell is run with five seeds, fifteen generations, a population size of six, and fixed training and test seed counts. The primary outcomes are global unsafe rate, local-pass/global-fail rate, garden failure rate, mean patch health, neighborhood overharvest, welfare, governance burden, missed-target rate, and delayed-intervention count.
+
+\section{Results: Oversight Under Capability Pressure}
+
+The main pilot contains 72 condition rows and 18 decision cells. Hybrid oversight ranks first in 13 cells, local oversight in four cells, and the global signal in one cell. The high-coupling setting is the clearest case: hybrid oversight ranks first in all nine actor-overseer cells. The moderate-coupling setting is mixed, with hybrid oversight ranking first in four cells, local oversight in four cells, and the global signal in one cell.
+
+\input{tables/table_stagea_condition_means.tex}
+
+Table~\ref{tab:stagea-condition-means} reports mean outcomes by architecture. No oversight has the highest global unsafe rate. Local oversight improves the unsafe rate only modestly because it acts on local requests and local interaction context. It has no direct aggregate resource signal and cannot coordinate restraint across all patches. Architectures with a global signal produce healthier patches and lower global unsafe rates because they can constrain realized harvest when system-level resource conditions deteriorate. The same mechanism reduces welfare: agents harvest less, some requested harvest is prevented, and constrained overseers accumulate intervention burden. Hybrid oversight has the lowest global unsafe rate and the highest mean patch health among the four conditions. The welfare and burden columns qualify that result: ecological robustness is achieved with lower welfare and additional intervention cost.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig03_capability_gap}
+    \caption{Oversight performance by capability gap. Panels report global unsafe rate, local-pass/global-fail rate, and mean patch health as actor capability rises relative to overseer capability. Lines are means across cells at each capability gap. Shaded bands show the range across stress cells, and thin error bars show approximate 95\% confidence intervals over run-level rows.}
+    \label{fig:oversight-gap}
+\end{figure}
+
+Figure~\ref{fig:oversight-gap} shows how the oversight architectures behave as the actor side becomes stronger relative to the overseer. No oversight and local oversight leave higher global unsafe rates than architectures with a global signal. The local-pass/global-fail panel shows the main compositional safety pattern: local action checks can pass while the next aggregate state is unsafe. The pattern differs across architectures. Under no oversight and local oversight, aggregate failure often appears directly as a high unsafe rate. Under the global signal, realized harvest is constrained enough to preserve resource health, but local-pass/global-fail can still occur when local requests remain individually acceptable while the aggregate patch state is near the safety boundary. The resource-health panel shows the ecological separation: global signal and hybrid oversight preserve healthier patches than no oversight or local oversight across capability gaps.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.92\linewidth]{fig04_winner_map}
+    \caption{Top-ranked oversight architecture across actor capability and overseer capability. Letters show the top-ranked architecture in each cell. Cell numbers report the winner's patch-health difference against the best non-winning patch-health architecture, so negative values indicate that the winner is not the ecological winner.}
+    \label{fig:oversight-winners}
+\end{figure}
+
+Figure~\ref{fig:oversight-winners} shows that the stress setting matters. In the high-coupling setting, hybrid oversight is consistently selected and the patch-health margins are generally positive. High coupling makes local decisions more systemically consequential because lower regeneration, stronger spillovers, and more adversarial partner composition make one agent's extraction affect the wider resource state more quickly. In that setting, local response and a global signal reinforce each other. In the moderate-coupling setting, local oversight wins several cells, but the negative patch-health margins show that these wins come with lower ecological protection than the best global-signal or hybrid alternative. The ranking therefore reflects a trade-off among safety, patch health, welfare, and burden instead of a single architecture dominating all cells.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.92\linewidth]{fig05_case_trace}
+    \caption{Example episode trace for a local-pass/global-fail case. The extracted case occurs under local oversight in the high-coupling setting and contains 29 steps where local checks pass while the global state is unsafe. The trace is explanatory case evidence, not a standalone robustness result.}
+    \label{fig:case-trace}
+\end{figure}
+
+Figure~\ref{fig:case-trace} gives a concrete episode-level example. Mean patch health falls below the global safety threshold while local checks continue to pass at multiple steps. The failure is compositional: no individual request needs to violate the local predicate for the shared resource to remain below the global safety threshold. This is the benchmark version of the scalable-oversight problem studied here. The overseer can be locally satisfied while the system-level state remains unsafe.
+
+\subsection{Capability validation and threshold robustness}
+
+\input{tables/table_actor_capability_validation.tex}
+
+Table~\ref{tab:actor-capability-validation} separates the designed capability setting from observed behavior. The low setting introduces ordinary mutation entrants. The medium and high settings use search mutation with increasing candidate counts and evaluation horizons. The mean payoff of newly introduced entrants rises from 188.3 to 211.4 and 214.4 under no oversight. No-oversight requested harvest and aggressive-request fraction also rise. The unsafe rate does not rise monotonically because stronger search can identify strategies that preserve enough resource to continue earning payoff. Capability pressure in this benchmark therefore means stronger strategy generation and selection pressure, not a guarantee of monotonic collapse. The validation requirement is that stronger entrant processes produce higher-performing or more strategically pressuring entrants, which the payoff and request metrics support.
+
+The extracted local-pass/global-fail trace was checked against nearby thresholds. At the default local margin of 0.05 and at a wider margin of 0.10, the failure persists across global patch-health thresholds of 9.5, 10.0, and 10.5. At a stricter local margin of 0.00, the case no longer qualifies because the local predicate becomes too strict. Table~\ref{tab:threshold-sensitivity} reports the episode-level sensitivity check.
+
+\input{tables/table_threshold_sensitivity.tex}
+
+The full threshold sweep varies five local safety margins, five global patch-health thresholds, all three actor-capability levels, all three overseer-capability levels, both stress settings, and all four oversight architectures. This gives 225 threshold-capability cells per stress setting after averaging over five runs. The local-pass/global-fail metric is therefore no longer supported only by the default threshold or by the extracted trace. Its magnitude is stress- and threshold-dependent. The more stable architecture result is resource protection: architectures with a global signal preserve higher patch health and lower global unsafe rates than no oversight or local oversight across the grid.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig07_threshold_robustness}
+    \caption{Full threshold robustness sweep. The figure summarizes 25 threshold pairs and nine actor-overseer capability combinations per stress setting, with means computed over five runs per cell. Hybrid oversight is the patch-health winner in 175 of 225 moderate-coupling cells and 200 of 225 high-coupling cells; the global signal wins the remaining cells. No oversight and local oversight never rank first by patch health in this sweep.}
+    \label{fig:threshold-robustness}
+\end{figure}
+
+Figure~\ref{fig:threshold-robustness} and Table~\ref{tab:threshold-robustness-sweep} show three robustness checks. First, the patch-health ranking is not driven by a single threshold pair: hybrid oversight wins 375 of 450 full-grid cells and the global signal wins the remaining 75. Second, architectures with a global signal retain lower global unsafe rates than no oversight or local oversight in both stress settings. Third, local-pass/global-fail remains measurable across many threshold-capability cells, especially in the high-coupling setting. The protected architectures do not eliminate compositional failure under every threshold, but they substantially improve aggregate resource health and reduce global unsafe rates.
+
+\input{tables/table_threshold_robustness_sweep.tex}
+
+\clearpage
+
+\section{LLM-Generated Strategy Bridge}
+
+The second module tests whether the same evaluation pipeline can use model-generated strategies. The purpose is methodological: language models are used as sources of structured policy artifacts, and the Harvest simulator evaluates those artifacts under fixed oversight conditions. Two local open-weight models were used through Ollama: Qwen 2.5 3B Instruct \citep{yang2024qwen25} and Llama 3.2 3B \citep{meta2024llama32}. Local models keep the pilot reproducible and inexpensive, although they limit the scope of the claim. Each model generated 32 cooperative and 32 exploitative structured Harvest strategies. The cooperative and exploitative banks test whether the generation process can produce behaviorally separated strategy families. The models produced complete strategy specifications offline; live action selection was outside this pilot. The generated specifications were validated, clamped to legal bounds, deduplicated, and evaluated in Harvest.
+
+\input{tables/table_llm_bank_validity.tex}
+
+Table~\ref{tab:llm-bank-validity} shows that both models generated valid banks. Qwen reached the full target with no parse failures. Llama reached the same target with three parse failures across 67 attempts. Validation and deduplication establish that the generated objects are legal, reusable, and not exact duplicates. They do not establish that the models are broadly capable agents. The generated strategies also separated behaviorally at the parameter level: exploitative strategies used higher harvest fractions and looser cap-compliance margins than cooperative strategies.
+
+The generated banks were evaluated under ideal and constrained oversight. The map used the two stress settings, all four oversight architectures, exploitative shares of 0.0, 0.5, and 1.0, forty sampled populations per cell, and eight evaluation seeds per sampled population.
+
+\input{tables/table_llm_bridge_outcomes.tex}
+
+The bridge uses patch health as the main readout because it tracks the shared resource directly. Garden failure is kept as a collapse summary rather than a second full trajectory because the stressed cells are almost binary once exploitative share is high. Table~\ref{tab:llm-bridge-outcomes} therefore summarizes the protection effect relative to local oversight. Averaged across both models, both stress settings, both regimes, and all exploitative-share levels, the global signal improves patch health by 5.55 points over local oversight and hybrid improves it by 5.83 points. Both reduce garden failure by 0.659 on average. Hybrid carries the lower constrained-regime burden, while the global signal retains the smaller welfare loss. The detailed per-model averages are retained in the generated appendix table, but the main text keeps the comparative summary because the bridge claim is about protection under model-generated pressure rather than about small rank changes between the two protected architectures.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{fig06_llm_bridge}
+    \caption{LLM-generated strategy populations under ideal and constrained oversight, split by model and stress setting. The figure reports patch health as exploitative share increases. Solid lines denote ideal oversight and dashed lines denote constrained oversight. Error bars show approximate 95\% confidence intervals over sampled populations. At exploitative share 1.0, none and local oversight collapse in every model-setting-regime cell, while the worst protected cell-mean garden failure stays below 0.01 under global-signal or hybrid oversight. These are pilot averages over offline structured strategies, not live LLM-agent interactions.}
+    \label{fig:llm-bridge}
+\end{figure}
+
+Figure~\ref{fig:llm-bridge} shows the bridge claim directly. As the sampled population shifts toward exploitative model-generated strategies, patch health deteriorates sharply under no oversight and local oversight. The deterioration is similar across the two model families and across both stress settings, which is the main reason to keep the exploitative-share axis in the figure. The global signal and hybrid oversight preserve patch health across the same cells by constraining realized extraction once the resource state weakens. The collapse summary at exploitative share 1.0 makes the same mechanism visible in binary form: none and local oversight fail in every model-setting-regime cell, whereas the worst protected cell-mean failure rate stays below 0.01 under global or hybrid oversight. This supports a limited bridge claim. Offline model-generated exploitative strategies can enter the same structured strategy pipeline and recreate the oversight pressure seen with hand-designed and search-generated strategies. The bridge still does not establish a broader claim about live LLM-agent behavior.
+
+\section{Discussion}
+
+The main pilot establishes a scalable-oversight formulation inside a commons benchmark. Actor capability and overseer capability are varied separately, the benchmark records both local and global safety, and the results distinguish oversight architectures. The central failure mode is compositional: oversight can approve each local request while the repeated joint trajectory leaves the shared resource in an unsafe state.
+
+This failure mode appears because local checks are action-level and myopic. They evaluate whether each requested harvest is acceptable relative to a local threshold. They do not account for simultaneous requests, spillovers across patches, delayed regeneration, or the possibility that many locally acceptable actions accumulate into global depletion. In a sequential commons, safety must be evaluated over the joint trajectory as well as individual actions.
+
+Global-signal and hybrid oversight help because they respond to resource-state information that is unavailable to purely local checks. When patch health deteriorates, the global signal can reduce realized extraction and preserve regeneration capacity. Hybrid oversight is strongest in high-coupling settings because local information and system-level guidance address different parts of the failure: local response handles neighborhood interaction, while the global signal limits aggregate depletion. The same mechanism creates the welfare/burden trade-off. Resource protection comes from reduced realized harvest and from interventions that carry cost, so ecological robustness can lower welfare even when it prevents collapse.
+
+A reduced overseer-limit ablation gives a first mechanism check on which limitations matter most inside the protected architectures. In the high-coupling setting with high actor capability, isolated delay is the first single limitation that produces nonzero unsafe and local-pass/global-fail rates. Isolated recall and capacity limits raise missed-target rates but do not by themselves produce unsafe outcomes in this reduced run, while the isolated cost limit primarily appears as intervention burden. The bundled weak overseer causes the largest overall degradation. This ablation is narrower than the main pilot and should be read as validation support rather than as a full ranking result.
+
+The actor-capability result should be read carefully. Higher actor capability does not need to produce a monotonically higher unsafe rate. Search can produce entrants that earn more by exploiting the resource while preserving enough patch health to continue earning payoff. The relevant validation is that stronger entrant processes have larger search budgets and produce higher-payoff or more strategically pressuring entrants. The payoff, requested-harvest, and aggressive-request measures support that interpretation.
+
+The LLM bridge adds a second strategy source while keeping the same evaluation pipeline fixed. Its value is methodological. The models generate complete Harvest strategies offline, those strategies are validated and deduplicated, and the simulator then evaluates them under the same oversight conditions as the main pilot. The bridge shows that exploitative model-generated strategies can recreate the same pressure pattern that the oversight architectures must handle. The bridge remains preliminary. It uses two small open-weight models and offline structured policies. It does not test live LLM autonomy, broad model-family behavior, prompt sensitivity, or agentic tool use.
+
+\section{Limitations and Next Steps}
+
+The benchmark is stylized and isolates oversight mechanisms in a controlled resource setting. The intended claim is comparative oversight behavior inside this benchmark; field-policy claims would require domain-specific calibration and external validation. The actor-capability ladder is operational and leaves other forms of capability for later work, including tool access, private information, model scale, and richer planning. The threshold sweep varies the local margin and the global patch-health threshold, but it keeps the failed-patch threshold and the broader environment dynamics fixed. The LLM bridge uses small local open-weight models and should be interpreted as a controlled pilot.
+
+The next experimental step is to scale validation while keeping the framing fixed. The full threshold sweep shows that the local-pass/global-fail metric is stress-dependent rather than tied to a single default threshold. Further validation should vary additional global safety definitions and environment stress parameters. A third open model or a larger open-weight model would test whether the model-generated strategy result is robust across model families. A later module should introduce a more direct actor-overseer task in which actor capability and overseer capability can be varied through information access, tool access, planning depth, and inspection budget. The same measurement structure can be retained: local checks, global outcomes, welfare, burden, and capability gap.
+
+\section{Conclusion}
+
+This paper presents a controlled benchmark for evaluating oversight architectures in a shared-resource multi-agent system under capability pressure. The main result is a compositional oversight failure: local action checks can pass while the aggregate commons becomes unsafe. The main pilot shows that architectures with a global signal provide stronger resource protection than no oversight or local oversight, with hybrid oversight strongest in most decision cells and especially in high-coupling settings. The same protection carries welfare and intervention costs. The LLM bridge shows that structured strategies generated by two open-weight language models can be validated and evaluated in the same pipeline, and that exploitative model-generated strategies recreate the pressure that oversight must handle. The result is a focused benchmark direction for studying scalable oversight in interacting agent populations.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}

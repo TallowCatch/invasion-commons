@@ -1,0 +1,13 @@
+game,comparison,metric,independent_contexts,mean_difference,ci_95_low,ci_95_high,bootstrap_draws,bootstrap_seed
+fishery,joint_minus_local_bounded,mean_patch_health,64,-8.698394660647619,-9.760042264596514,-7.692087469530735,4000,20260924
+fishery,joint_minus_local_bounded,total_welfare,64,-233.2064417712976,-259.825938206017,-207.60344054655678,4000,20260924
+fishery,joint_minus_local_bounded,unsafe_fixed_horizon,64,0.0,0.0,0.0,4000,20260924
+fishery,joint_minus_local_optimistic,mean_patch_health,64,-9.345028367173544,-10.011745400064775,-8.604548940232702,4000,20260924
+fishery,joint_minus_local_optimistic,total_welfare,64,330.1743270193132,316.79469808315565,339.7781303005289,4000,20260924
+fishery,joint_minus_local_optimistic,unsafe_fixed_horizon,64,-0.8609374999999999,-0.8843749999999999,-0.8267578124999999,4000,20260924
+harvest,joint_minus_local_bounded,mean_patch_health,64,-0.7508405477891722,-0.8020015150631705,-0.7065189312179034,4000,20260924
+harvest,joint_minus_local_bounded,total_welfare,64,28.059176065455524,15.720888554354909,38.76809172576358,4000,20260924
+harvest,joint_minus_local_bounded,unsafe_fixed_horizon,64,0.0,0.0,0.0,4000,20260924
+harvest,joint_minus_local_optimistic,mean_patch_health,64,0.0437849075191942,0.03749528964814133,0.050493922123483206,4000,20260924
+harvest,joint_minus_local_optimistic,total_welfare,64,0.49152026161449847,-0.9616752206774891,2.4859902866119974,4000,20260924
+harvest,joint_minus_local_optimistic,unsafe_fixed_horizon,64,0.0,0.0,0.0,4000,20260924
