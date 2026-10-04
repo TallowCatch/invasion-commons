@@ -1,5 +1,5 @@
-# CPU-only validation and analysis; recorded from the successful 2026-09-13 run.
-# Separate from optional RL training and model-serving dependencies.
+# CPU-only validation and analysis. Optional RL tests require PyTorch separately.
+# Separate from model-serving dependencies.
 numpy==2.2.6
 pandas==2.3.2
 scipy==1.16.2

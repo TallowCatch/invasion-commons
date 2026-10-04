@@ -135,6 +135,12 @@ Many `results/` outputs are intentionally ignored; do not assume they exist
 in a clean clone. The paper PDF is a convenient read, but `main.tex` is the
 source of record.
 
+The pull-request `Validation` workflow runs the core tests but omits
+`tests/test_fishery_rl.py` and `tests/test_harvest_rl.py`, which import the
+optional PyTorch stack. A local environment with that stack installed can
+run the full suite shown above; CI passing does not certify the optional RL
+pipeline.
+
 ## GitHub Actions issue, October 2026
 
 The three historical sweeps were wired to branch pushes. A documentation push
