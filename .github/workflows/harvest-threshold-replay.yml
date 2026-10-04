@@ -6,15 +6,6 @@ on:
       - codex/harvest-oversight-gap-stagea
     paths:
       - ".github/threshold_replay_request.json"
-      - ".github/workflows/harvest-threshold-replay.yml"
-      - "experiments/threshold_replay_shards.py"
-      - "experiments/run_threshold_replay_shard_group.py"
-      - "experiments/merge_threshold_replay_shards.py"
-      - "experiments/analyze_threshold_replay_grid.py"
-      - "experiments/run_harvest_invasion.py"
-      - "experiments/run_harvest_invasion_matrix.py"
-      - "fishery_sim/harvest.py"
-      - "fishery_sim/harvest_benchmarks.py"
   workflow_dispatch:
     inputs:
       group_size:

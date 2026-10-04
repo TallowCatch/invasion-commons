@@ -6,9 +6,6 @@ on:
       - codex/harvest-oversight-gap-stagea
     paths:
       - ".github/threshold_aggregate_request.json"
-      - ".github/workflows/harvest-threshold-aggregate.yml"
-      - "experiments/merge_threshold_replay_shards.py"
-      - "experiments/analyze_threshold_replay_grid.py"
   workflow_dispatch:
     inputs:
       source_run_id:

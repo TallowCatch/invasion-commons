@@ -11,7 +11,6 @@ on:
       - codex/harvest-institutional-regulated-fishery
       - codex/harvest-institutional-community-irrigation
       - codex/harvest-institutional-forest-co-management
-      - codex/harvest-oversight-gap-stagea
     paths-ignore:
       - ".github/threshold_replay_request.json"
       - ".github/threshold_aggregate_request.json"
