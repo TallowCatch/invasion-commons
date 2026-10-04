@@ -8,7 +8,7 @@ Current paper status:
 
 - targeted replay implemented;
 - reduced high-actor / weak-overseer threshold sweep completed;
-- full-matrix threshold robustness still pending.
+- full-matrix threshold robustness completed and recovered from the aggregate bundle.
 
 ## Sharding Scheme
 
@@ -122,14 +122,12 @@ Analysis outputs:
 
 Use this wording:
 
-“The full threshold robustness check is implemented and resumable, but the full grid is too large for local single-worker execution. I have moved it to a sharded remote workflow. For now, the paper reports targeted replay and keeps full-matrix robustness as pending.”
+“The full threshold robustness check was too large for local single-worker execution, so I moved it to a sharded remote workflow. The recovered full-grid summary now covers 25 threshold pairs, all actor and overseer capability settings, both stress settings, and all four oversight architectures.”
 
 ## What Not To Claim Yet
 
-Do not claim:
+Claim carefully:
 
-- full threshold robustness across all Stage A cells;
-- threshold invariance of the local-pass/global-fail metric across the whole paper setting;
-- final robustness figures for the complete matrix.
-
-Those claims should only be added after the remote shard run is merged and analyzed.
+- the completed sweep supports robustness to local safety margin and global patch-health threshold variation;
+- it does not test every possible global safety definition;
+- it does not vary the failed-patch threshold or broader environment dynamics.

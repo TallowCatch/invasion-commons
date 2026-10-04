@@ -1,0 +1,68 @@
+{
+  "stage_a_run_rows": 360,
+  "stage_a_architecture_cells": 72,
+  "full_threshold_run_rows": 9000,
+  "threshold_variation_max_within_run": {
+    "test_mean_patch_health_mean": 0.0,
+    "test_mean_welfare_mean": 0.0,
+    "test_governance_budget_spent_mean": 0.0
+  },
+  "inactive_overseer_max_within_run": {
+    "none": {
+      "test_global_unsafe_rate_mean": 0.0,
+      "test_local_pass_global_fail_rate_mean": 0.0,
+      "test_mean_patch_health_mean": 0.0,
+      "test_mean_welfare_mean": 0.0,
+      "test_governance_budget_spent_mean": 0.0
+    },
+    "bottom_up_only": {
+      "test_global_unsafe_rate_mean": 0.0,
+      "test_local_pass_global_fail_rate_mean": 0.0,
+      "test_mean_patch_health_mean": 0.0,
+      "test_mean_welfare_mean": 0.0,
+      "test_governance_budget_spent_mean": 0.0
+    }
+  },
+  "trace": {
+    "steps": 80,
+    "all_local_safe_steps": 33,
+    "global_unsafe_steps": 70,
+    "lpgf_steps": 29,
+    "lpgf_safe_to_unsafe_known_previous_state": 0,
+    "lpgf_already_unsafe_known_previous_state": 29,
+    "lpgf_previous_state_unavailable": 0,
+    "some_local_fail_global_safe_steps": 6,
+    "lpgf_rows_with_pre_mean_below_10": 29
+  },
+  "llm_anchor_comparison": [
+    {
+      "model": "qwen2_5_3b",
+      "strategies": 64,
+      "numeric_fields": 14,
+      "exact_anchor_strategies": 35,
+      "exact_anchor_field_fraction": 0.7410714285714286,
+      "high_harvest_anchor_mae": 0.006718749999999998
+    },
+    {
+      "model": "llama3_2_3b",
+      "strategies": 64,
+      "numeric_fields": 14,
+      "exact_anchor_strategies": 2,
+      "exact_anchor_field_fraction": 0.033482142857142856,
+      "high_harvest_anchor_mae": 0.031875
+    }
+  ],
+  "input_sha256": {
+    "results/runs/harvest_invasion/curated/harvest_oversight_gap_stageA_runs.csv": "a7b6c38f8c5e5dba59ee7bcbeb3c29e5d7c22af510604abbf06a4e360eb54d59",
+    "results/runs/threshold_replay/curated/harvest_oversight_gap_threshold_replay_full_grid_recovered_runs.csv": "53c93d481e3a196910c736a93de8dfe71b91841f6dcd73e730f0774e5195d6e1",
+    "results/runs/showcase/curated/harvest_oversight_gap_stageA_oversight_case_trace.csv": "2abc44ab03366e381e754e27d6398d233129ce5dba95e97bc588789a8d60cae8",
+    "results/runs/showcase/curated/harvest_llm_bridge_stageB32_v3_local_qwen2_5_3b_bank.csv": "e164e07726a62d6344f01e11134a2b0ba91a1a5040e7028261733c1afd2eb1e6",
+    "results/runs/showcase/curated/harvest_llm_bridge_stageB32_v3_local_llama3_2_3b_bank.csv": "20dbb2921d862bde98f4eb83bdd754e75c43da89c446fce8aec15b74b5678f6b",
+    "fishery_sim/harvest.py": "f1d92852dd2a7e751aceeecabbc193349362f1d0ee373ace670b79c6681024e8",
+    "fishery_sim/harvest_evolution.py": "3a554d4177dabeb56d0af37a41b4b8beb5117941d9f2be0f224982c7f09fc64f",
+    "fishery_sim/harvest_llm_population.py": "f29f3cabba4ba86614a53b61a5220ba4389f9a75690e078080339ecfc774a7b1",
+    "experiments/audit_research_evidence.py": "6522afebbbcd7a69d73e4d09d9275d6cb03a70266787b295165883364903871b",
+    "paper/paper_v5_scalable_oversight_commons/main.tex": "89b4df9b795abe05d996c420da394fa74163ecfd0e47980cb05e8621574a0ded"
+  },
+  "git_head": "413e1f9af11da91c98ba6e0600d94482d2657896"
+}

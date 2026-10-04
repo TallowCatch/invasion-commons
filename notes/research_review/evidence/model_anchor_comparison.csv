@@ -1,0 +1,3 @@
+model,strategies,numeric_fields,exact_anchor_strategies,exact_anchor_field_fraction,high_harvest_anchor_mae
+qwen2_5_3b,64,14,35,0.7410714285714286,0.006718749999999998
+llama3_2_3b,64,14,2,0.033482142857142856,0.031875

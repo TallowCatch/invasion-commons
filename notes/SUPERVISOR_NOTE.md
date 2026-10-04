@@ -1,10 +1,18 @@
 # Supervisor Note
 
+> Historical Stage A note, **not current supervisor material**. Several
+> architecture and capability claims below predate the matched-reviewer
+> confirmation and the 24 September coupled-local replay. Use
+> `notes/research_review/SUPERVISOR_BRIEF_20260924.md` for the current
+> evidence and question; retain this file only as development history.
+
 ## What the Paper Is Trying to Study
 
 The paper studies scalable oversight in a sequential multi-agent commons. The main question is how oversight architectures behave when agents share a resource, stronger strategies enter the population, and the overseer has limited detection, limited capacity, delayed response, and intervention cost.
 
 The central research angle is compositional oversight failure. In the benchmark, every agent can pass a local action check, while the aggregate resource state becomes unsafe. This makes the oversight problem different from checking a single action in isolation.
+
+The paper is now best framed as a scalable-oversight benchmark in sequential commons. It should not be presented primarily as an LLM-agent paper. The LLM bridge is useful because it shows that model-generated structured strategies can enter the same evaluation pipeline, but the core paper is about actor-overseer capability pressure and oversight architecture in a shared-resource system.
 
 ## What Is Genuinely Interesting
 
@@ -24,11 +32,12 @@ The strongest evidence is the Stage A scalable-oversight pilot:
 - In moderate-coupling commons, the ranking is mixed.
 - Global-signal and hybrid oversight produce lower global unsafe rates and higher patch health than no/local oversight.
 - Welfare and burden show a real cost to stronger ecological protection.
-- A reduced 25-pair threshold sweep over the high-actor / weak-overseer slice shows that the local-pass/global-fail metric is stress-dependent rather than tied to one default threshold. In the moderate-coupling setting it stays effectively zero for the protected architectures across all 25 pairs. In the high-coupling setting it stays positive for all architectures across all 25 pairs.
+- A full threshold sweep has now been completed and audited. It covers both stress settings, 25 local/global threshold pairs, all three actor-capability levels, all three overseer-capability levels, all four oversight architectures, and five runs per cell. The completeness audit found 9,000 observed run rows out of 9,000 expected rows, no missing run keys, no duplicate run keys, no bad run-count cells, and exact agreement with the original Stage A default-threshold rows. Across 450 threshold-capability decision cells, hybrid wins 375 by patch health and the global signal wins the remaining 75. No oversight and local oversight never rank first by patch health in this sweep.
+- The full threshold sweep also shows that local-pass/global-fail is not tied to one default threshold. Its magnitude is stress-dependent, but it remains measurable across many threshold-capability cells, especially in the high-coupling setting.
 
 The extracted episode trace is also useful because it makes the local-pass/global-fail failure mode concrete. It should be treated as explanatory case evidence, not standalone proof.
 
-Run-level uncertainty has now been added to the main capability-gap figure, and sampled-population uncertainty has been added to the LLM bridge figure. These intervals strengthen presentation of the existing evidence, but they do not replace the need for a full threshold-sensitivity run.
+Run-level uncertainty has now been added to the main capability-gap figure, sampled-population uncertainty has been added to the LLM bridge figure, and the audited full threshold sweep has been summarized in a robustness figure and table.
 
 A reduced overseer-limit ablation has also been completed in the high-coupling setting with high actor capability. In that reduced check, isolated delay is the first single overseer limitation that produces nonzero unsafe and local-pass/global-fail rates. Isolated recall and capacity mainly raise missed-target rates, while isolated cost mainly appears as intervention burden. The bundled weak overseer causes the largest overall degradation. This is useful mechanism evidence, but it is not yet a full ablation across all Stage A cells.
 
@@ -44,11 +53,7 @@ The bridge currently uses Qwen 2.5 3B and Llama 3.2 3B. Both models produced val
 
 The actor-capability ladder is operational. Search candidate count and evaluation horizon are useful controlled proxies, but they are not a full account of AI capability.
 
-Threshold sensitivity is now supported by an episode-level trace check and a reduced 25-pair sweep over the high-actor / weak-overseer slice. A full matrix sensitivity test is still needed before treating the metric as broadly robust across all Stage A cells.
-
-The full robustness check is implemented, but it is no longer framed as a local run. The full grid is too large for practical single-worker execution on a laptop. The next step is a sharded remote workflow that splits the threshold sweep into independent blocks and merges them afterward. For now, the paper should continue to report targeted replay and reduced-slice evidence while keeping full-matrix robustness as pending.
-
-The remote workflow is configured to run a reduced smoke batch first. That smoke run is intended to validate shard execution, artifact upload, merge, and analysis. The full paper-setting sweep should only be launched after that remote artifact path has completed successfully.
+Threshold sensitivity is now supported by an episode-level trace check and a full remote threshold sweep over the local safety margin and global patch-health threshold. This strengthens the local-pass/global-fail claim, but the sweep still keeps the failed-patch threshold and broader environment dynamics fixed.
 
 The LLM bridge is a pilot. It uses two small local models and offline structured strategies. It does not establish broad claims about live LLM agents, frontier models, tool use, or deployment behavior.
 
@@ -58,11 +63,15 @@ The stress settings are benchmark settings. They are useful for controlled evalu
 
 The next validation steps should be:
 
-1. Run full matrix threshold sensitivity for the local safety margin and global patch-health threshold.
-2. Add or run a reduced overseer-limit ablation that separates recall, delay, capacity, and cost.
-3. Add a third open model or larger open-weight model if the LLM bridge becomes central.
-4. Add stronger justification for actor capability as search/evaluation capacity, or test another capability axis such as information access or planning depth.
+1. Add or run a broader overseer-limit ablation that separates recall, delay, capacity, and cost across more Stage A cells.
+2. Add a third open model or larger open-weight model if the LLM bridge becomes central.
+3. Add stronger justification for actor capability as search/evaluation capacity, or test another capability axis such as information access or planning depth.
+4. Test additional global safety definitions, including failed-patch threshold variation or alternative aggregate-state predicates.
 5. Decide whether the paper should prioritize benchmark formulation, empirical architecture comparison, or LLM-generated strategy populations for the target venue.
+
+The next technical question is which overseer limitation drives failure: detection recall, delay, targeting capacity, or intervention cost. The current overseer capability axis bundles these, so a fuller ablation is the most direct way to strengthen the benchmark paper.
+
+Live LLM agents should remain future work. Moving there now would introduce prompt design, memory, tool use, action validity, safety-policy interactions, and reproducibility issues that are separate from the current paper's clean benchmark contribution.
 
 ## Feedback Needed From Supervisor
 

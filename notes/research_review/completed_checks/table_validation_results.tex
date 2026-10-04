@@ -1,0 +1,15 @@
+\begin{table}[t]\centering\small
+\begin{tabular}{lrrrr}\toprule
+& \multicolumn{2}{c}{Base regrowth} & \multicolumn{2}{c}{Slower regrowth}\\
+Mechanism & Moderate & High & Moderate & High\\\midrule
+None & 0.00 & 0.81 & 1.53 & 19.70 \\
+Messages only & 0.00 & 0.00 & 0.66 & 0.00 \\
+Announcement only & 0.00 & 0.00 & 0.00 & 0.00 \\
+Uniform caps & 0.00 & 0.00 & 0.00 & 0.00 \\
+Neighbourhood caps + messages & 0.00 & 0.00 & 0.00 & 0.00 \\
+Fixed local filter & 0.00 & 0.00 & 0.00 & 5.33 \\
+Local state filter & 0.00 & 0.02 & 0.00 & 0.12 \\
+Joint reference & 0.00 & 0.61 & 0.66 & 8.30 \\
+\bottomrule\end{tabular}
+\caption{Unsafe step percentages in matched-policy checks. Each cell has ten fixed populations (five source runs at each generation treatment) and eight seeds. These are descriptive means; generation treatment and source-run variation are retained in the accompanying data. The slow-regrowth follow-up uses an existing held-out condition.}
+\label{tab:matched}\end{table}

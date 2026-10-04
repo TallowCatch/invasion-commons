@@ -80,17 +80,51 @@ Main result:
 - in the high-coupling setting, local-pass/global-fail remains positive in all 25 threshold pairs for no oversight, local oversight, global signal, and hybrid oversight;
 - the patch-health ranking is stable inside this slice: hybrid wins all 25 moderate-coupling pairs, while global signal wins all 25 high-coupling pairs.
 
-This is stronger than a pipeline smoke test, but it is still not the full robustness result because it covers only the high-actor / weak-overseer slice.
+This reduced slice was useful as a pipeline and analysis check before launching the full sharded run.
 
-## Still Requires Full Or Larger Validation
+## Full Threshold Robustness Completed
 
-- Full threshold sensitivity across all actor-capability, overseer-capability, stress-setting, and architecture cells.
+The full threshold sweep has now been completed through the sharded GitHub Actions workflow and aggregate recovery path, then verified with:
+
+```bash
+python -m experiments.audit_threshold_sweep_completeness
+```
+
+It covers:
+
+- both stress settings;
+- all 25 local/global threshold pairs;
+- all three actor-capability levels;
+- all three overseer-capability levels;
+- all four oversight architectures;
+- five runs per cell.
+
+Main full-grid result:
+
+- the recovered summary has 9,000 rows;
+- the completeness audit found 9,000 expected run keys, 9,000 observed unique run keys, no missing run keys, no duplicate run keys, and no bad run-count cells;
+- the default-threshold subset exactly matches the original Stage A run-level defaults on the checked metrics;
+- across 450 threshold-capability decision cells, hybrid wins 375 by patch health and the global signal wins 75;
+- no oversight and local oversight never rank first by patch health in the full threshold sweep;
+- local-pass/global-fail remains measurable across many threshold-capability cells, especially in the high-coupling setting.
+
+Files:
+
+- `results/runs/showcase/curated/harvest_oversight_gap_threshold_replay_full_grid_recovered.csv`
+- `results/runs/showcase/curated/harvest_oversight_gap_threshold_replay_full_grid_recovered_summary.md`
+- `notes/THRESHOLD_SWEEP_COMPLETENESS_AUDIT.md`
+- `paper/paper_v5_scalable_oversight_commons/tables/table_threshold_robustness_sweep.tex`
+- `paper/paper_v5_scalable_oversight_commons/figures/fig07_threshold_robustness.pdf`
+
+## Still Requires Larger Validation
+
 - Additional LLM model or larger strategy bank if the LLM bridge is meant to be more than a pilot.
 - More case traces if the paper wants to characterize local-pass/global-fail qualitatively beyond one selected episode.
+- Additional safety-definition sensitivity, especially failed-patch threshold variation or alternative aggregate-state predicates.
 
 ## Full Matrix Execution Status
 
-The full threshold-robustness check is implemented but is no longer treated as a local execution task.
+The full threshold-robustness check was too large for local single-worker execution and was moved to a sharded remote workflow.
 
 Local status:
 
@@ -100,11 +134,11 @@ Local status:
 
 Remote status:
 
-- a sharded workflow is now the intended path;
+- a sharded workflow completed the full sweep;
 - the logical grid is split by scenario, local margin, global threshold, actor capability, and overseer capability;
 - each logical shard runs all four oversight architectures under the paper settings;
-- GitHub Actions infrastructure has been added for grouped shard execution, artifact merge, and summary analysis.
-- the first request-file run is configured as a reduced smoke batch, not a scientific robustness result.
+- GitHub Actions infrastructure handles grouped shard execution, artifact merge, and summary analysis;
+- aggregate recovery was added to merge the run-level robustness summary without concatenating all large history files.
 
 See:
 
@@ -126,6 +160,16 @@ Outputs:
 - `results/runs/showcase/curated/harvest_overseer_limit_ablation_reduced_compact.csv`
 - `results/runs/showcase/curated/harvest_overseer_limit_ablation_reduced_summary.md`
 - `results/runs/showcase/curated/harvest_overseer_limit_ablation_reduced_table.tex`
+- `results/runs/showcase/curated/harvest_overseer_limit_ablation_reduced.pdf`
+- `results/runs/showcase/curated/harvest_overseer_limit_ablation_reduced_audit.md`
+
+Completeness check:
+
+- expected run rows: 28;
+- observed run rows: 28;
+- missing run keys: 0;
+- duplicate run rows: 0;
+- null values in checked metrics: 0.
 
 Reduced-run mechanism summary:
 
