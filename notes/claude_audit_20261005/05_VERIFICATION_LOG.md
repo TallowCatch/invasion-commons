@@ -252,3 +252,29 @@ results and run sizes.
     drops the duplicate "fine" column.
   - Figure 6 now plots only the tested points, shows per-agent values and
     total harvest, and states the design limits in its caption.
+
+## 11. S3 (5 October 2026)
+
+**Order of work.** The protocol (file 15) was committed as `087d392` before any S3 code existed. The runner, tests and Amendment 1 were committed as `7c6494d` before any full run.
+
+**Engineering gates:**
+- `pytest -q tests` passes: 254 passed, 11 skipped, including 6 new S3 tests.
+- Smoke runs for parts A, C and D are byte-identical on rerun.
+- **S2 equivalence.** The S3 Fishery episode reproduces 256 sampled saved S2 episodes. In 2 of them, the mean stock differs in the 10th significant digit. S2's own code gives the identical value on this machine.
+- **S1/S1b equivalence on this machine.** The S3 `memoryless`, `trust` and `full` arms equal S1's episode functions in 112 of 112 checks.
+- **Environment drift.** Saved S1 episodes are not exactly reproduced here, even by S1's own unchanged code. Example: Fishery `full`, context 48. Hence Amendment 1: every Part D contrast is computed inside the S3 run.
+
+**Full runs.** One run each:
+
+| Part | Seconds | Episodes |
+| --- | ---: | ---: |
+| A | 28 | 2,944 |
+| B | 15 | 1,536 |
+| C | 6 | 512 |
+| D | 104 | 3,264 |
+
+**Analysis.** `PYTHONPATH=. python -m experiments.oversight.analyze_s3` runs cleanly with `-W error::RuntimeWarning`. A first attempt had two analysis-code bugs, both fixed before any number was written up:
+- a pandas index mismatch, which gave NaN for the no-check gain;
+- the column name `mode` clashing with `DataFrame.mode`, which made the Part D selections empty.
+
+**Re-checked by hand from the condition table:** the table values and the "two thirds of the gap" figure in file 16, and the usefulness-loss values in the Figure 13 caption.

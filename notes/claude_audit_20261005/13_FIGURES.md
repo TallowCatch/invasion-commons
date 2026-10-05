@@ -19,10 +19,17 @@ one fixed palette; the three reviewers are always:
 | `fig7_fishery_stock_over_time` | Fishery stock at the start of each step, 64 contexts per line, for MSY vs the old line (all 6 inspected) and the old line with none inspected | Under the old line the joint reviewer lets the stock fall to just above 10 within about 10 steps and keep it there (harvest 555). The MSY target holds it near 70 (1,393). With nothing inspected, assuming the maximum held it near 37 by accident (1,073). | R1 `closed_loop_decisions.jsonl.gz`, `closed_loop_outcomes.csv` |
 | `fig8_s1_per_context` | S1 arms as in fig4, counted per context: contexts (of 64) with at least one unsafe executed action | Trusting reports harmed 58 of 64 Harvest contexts and 61 of 64 Fishery contexts (all 61 collapsed), so fig4's averages are not driven by a few outliers. In Harvest, 16 contexts had an unsafe action even under full verification. | S1 `episodes.jsonl.gz` |
 | `fig9_s1b_paired` | S1b: for each context, whether each checking rule made it safer, unchanged or less safe than the same context with trusted reports | Excluding caught agents made 42–61 of 64 contexts safer; only 3 Harvest contexts (2 random audits) were less safe. Using audit results without memory made 4–9 contexts less safe in four of the five settings, and changed nothing in 22–40 Harvest contexts. | S1b `episodes.jsonl.gz` (paired: same contexts in every arm, checked) |
+| `fig10_game_step_schematic` | Schematic of one step: requests → reports → reviewer → one shared cut → extraction → resource update, with where audits enter | The whole set-up on one slide; both games share steps 1–5. | code: `fishery_sim/calibrated_oversight.py`, `run_s1/s2/s3_*.py` |
+| `fig11_what_each_reviewer_counts` | Worked example: six hand-picked requests, and what the joint, bounded-local and optimistic-local reviewers add up | Joint counts 21.3 and cuts to 0.75 (meets the target). Bounded counts 32.4 and cuts to 0.5 (safe, but loses 5 fish). Optimistic counts 5.4 and approves (breaks the target). By construction; computed with the project's reviewer code. | `fishery_predicted_total`, `fishery_choose_scale` |
+| `fig12_s3_threshold_timing` | S3 A–C: held-out gain from cheating against the expected fine per agent-step, for 4 audit rates and 2 miss rates; plus honest harvest under random against periodic audits | Cheaters stop at e ≈ 0.30–0.40, around the break-even 0.36, whatever the audit rate or miss rate. A known schedule at the same rate is worse than no checks (28.8 against 40.9 per honest agent; 12/64 collapse). | file 16, parts A–C |
+| `fig13_s3_memory_reviewer` | S3 D: unsafe share by reviewer belief (trust, no memory, memory, assume max) against fixed or noisy liars | Memory makes audits useful without sanctions (Fishery 69% → 1.5% unsafe). Against noisy lies it gives about half that gain. Assume-max is safest but cuts most safe requests. | file 16, part D |
 
-**Suggested order for a short progress talk:** 1, 7, 2, 4, 8, 9, 6. Figure 7 shows how
-figure 2 happens. Figures 8 and 9 are the per-context versions of 4 and 5, which can
-become backup. Figure 3 is backup.
+**Suggested order for a short progress talk:** 10 → 11 → 7 → 1 → 8 → 9 → 6 → 12 → 13.
+- **Set-up:** 10 and 11 explain the game and the reviewers.
+- **Results:** 7, 1, 8, 9 and 6 are the R1–S2 story.
+- **Newest:** 12 and 13 are the S3 results.
+
+**Figure 2 is backup only.** It joins three tested inspection counts (k = 0, 3, 6) with lines, so it implies the values in between were measured. Figure 7 shows the same result over time, where joining points is correct. Figures 3, 4 and 5 are also backup; 8 and 9 are the per-context versions of 4 and 5.
 
 **Caveats to state with the figures:**
 - Two simulated games only.

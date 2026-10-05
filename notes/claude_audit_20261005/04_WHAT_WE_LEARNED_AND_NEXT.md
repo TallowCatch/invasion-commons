@@ -1,5 +1,25 @@
 # What we have learned, and what should come next
 
+## Update 3, 5 October 2026: after S3 (protocol file 15, results file 16, figures 10–13)
+
+1. **Where deterrence starts.** Unpredictable audits plus a flat fine stopped the cheaters at almost exactly the expected-penalty break-even.
+   - The break-even is e ≈ 0.36 per agent-step, where e = audit rate × detection × fine.
+   - Audits that were 8 times rarer, or that missed three quarters of over-takes, worked just as well once the fine was scaled up.
+   - This is mostly arithmetic for a risk-neutral cheater facing a flat fine.
+2. **Known audit schedules backfire.** At the same audit rate, a known schedule let cheaters take everything on unaudited steps.
+   - Honest agents ended up worse off than with no checks: 28.8 per agent, against 40.9 with no checks and 104 when everyone complies.
+   - The stock collapsed in 12 of 64 runs.
+3. **Memory makes audits useful without sanctions.** A reviewer that remembers caught lies turns audits into better decisions, with no exclusion or fines.
+   - Fishery: from 69% of steps unsafe (no memory) to 1.5%.
+   - Harvest: from 1.7% to 1.0%, against 0.6% when everyone is honest.
+   - Against lies that vary each step, the gain is about half as large. That is the more credible number.
+4. **Next:**
+   - liars who adapt to a reviewer with memory;
+   - a cost per audit;
+   - risk-averse cheaters, or fines that grow with the over-take.
+
+The three decisions for Ameer and the supervisors are unchanged: the definition of harm, which paper, and the main game.
+
 ## Update 2, 5 October 2026: after S1b and S2 (file 12, figures in file 13; checked independently, see file 05 §10)
 
 1. **With a reviewer that has no memory, one or two audit results per step
