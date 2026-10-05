@@ -572,7 +572,44 @@ def fig13():
     save(fig, "fig13_s3_memory_reviewer")
 
 
+# ----------------------------------------------------------------- Figure 14: S4 adaptive cheaters, memory, audit cost
+def fig14():
+    p = RUNS / "claude_s4_partA_v1/analysis/s4a_table.csv"
+    if not p.exists():
+        return
+    T = pd.read_csv(p)
+    none = T[T.regime == "none"].iloc[0]
+    comply_honest = T[(T.regime == "fine") & (T.d_star == 0)].honest_per_agent.iloc[0]
+    spec = [("fine", "Fine 6 per catch", BLUE, "o"), ("memory", "Memory, no fine", ORANGE, "s"), ("fine+memory", "Fine + memory", AQUA, "D")]
+    fig, axes = plt.subplots(1, 3, figsize=(10.4, 3.5))
+    panels = [("cheater_gain", "Cheaters' held-out gain over\ncomplying (group of 4, 80 steps)", none.cheater_gain, "no checks"),
+              ("honest_per_agent", "Harvest per honest agent", none.honest_per_agent, "no checks"),
+              ("net_c0.2", "Total harvest minus audit cost\n(0.2 per agent-audit)", none["net_c0.2"], "no audits")]
+    for ax, (col, ylab, ref, reflab) in zip(axes, panels):
+        for regime, lab, c, mk in spec:
+            d = T[T.regime == regime].sort_values("q")
+            ax.plot(d.q, d[col], color=c, marker=mk, ms=5, lw=0.8, ls=":", label=lab)
+        ax.axhline(ref, color=INK2, lw=1, ls="--")
+        ax.text(0.0105, ref, reflab, fontsize=6.8, color=INK2, va="bottom")
+        ax.set_xscale("log"); ax.set_xticks([0.01, 0.02, 0.05, 0.1, 1 / 6, 1 / 3])
+        ax.set_xticklabels(["0.01", "0.02", "0.05", "0.10", "1/6", "1/3"], fontsize=7)
+        ax.minorticks_off()
+        ax.set_xlabel("Audit rate per agent-step (tested values)")
+        ax.set_ylabel(ylab)
+    axes[1].axhline(comply_honest, color=INK, lw=0.8, ls=(0, (1, 2)))
+    axes[1].text(0.0105, comply_honest, "everyone complies", fontsize=6.8, color=INK, va="bottom")
+    axes[0].legend(fontsize=6.8, loc="center left")
+    axes[2].set_ylim(1355, 1400)
+    fig.suptitle("S4: cheaters who know the reviewer remembers (Fishery, MSY target)", x=0.01, ha="left", fontsize=10, color=INK)
+    caption(fig, "64 held-out contexts; cheaters choose level and reaction to a catch on 8 training contexts (they always chose 'keep "
+                 "cheating at 0.75' or 'comply'). Memory alone cuts the gain (to 41% of the no-check gain at 1/3) but cannot remove it: in 98% of caught-cheater steps the "
+                 "targeted allowance was already 0, so a caught cheater still took more than planned [post hoc]. With memory, a fine "
+                 "deters at half the audit rate (0.05 instead of 0.10). Dotted lines only join tested rates.", y=0.0)
+    fig.tight_layout(rect=(0, 0.1, 1, 1))
+    save(fig, "fig14_s4_memory_adaptive_cost")
+
+
 if __name__ == "__main__":
-    for f in (fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8, fig9, fig10, fig11, fig12, fig13):
+    for f in (fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8, fig9, fig10, fig11, fig12, fig13, fig14):
         f()
     print(sorted(p.name for p in OUT.glob("*.png")))

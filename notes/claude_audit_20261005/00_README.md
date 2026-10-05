@@ -30,9 +30,11 @@ computer, so I could not check whether you have uncommitted local changes.
 | `10_RESULTS_S1_REPORTING_AND_AUDITS.md` | S1 results: misreporting, audits, peer reports and collusion. |
 | `11_PROTOCOL_S1B_S2_ABLATION_AND_DETERRENCE.md` | Protocol for S1b (audit ablation, Fishery MSY) and S2 (private-gain cheating, deterrence), frozen before the runs. |
 | `12_RESULTS_S1B_S2_ABLATION_AND_DETERRENCE.md` | S1b and S2 results. |
-| `13_FIGURES.md` and `figures/` | Thirteen figures (PDF and PNG), including two schematics, with one-line takeaways. |
+| `13_FIGURES.md` and `figures/` | Fourteen figures (PDF and PNG), including two schematics, with one-line takeaways. |
 | `15_PROTOCOL_S3_THRESHOLD_TIMING_MEMORY.md` | Protocol for S3 (deterrence threshold, imperfect audits, timed cheating, reviewer memory), frozen before the run, with one pre-run amendment. |
 | `16_RESULTS_S3_THRESHOLD_TIMING_MEMORY.md` | S3 results. |
+| `17_PROTOCOL_S4_ADAPTIVE_CHEATERS_MEMORY_AUDIT_COST.md` | Protocol for S4 (cheaters who adapt to a reviewer with memory; cost per audit), frozen before the run. |
+| `18_RESULTS_S4_ADAPTIVE_CHEATERS_MEMORY_AUDIT_COST.md` | S4 results. |
 | `14_REPO_LAYOUT_AND_FIGURE_OPTIONS.md` | Repository layout and a safe cleanup order; which line graphs mislead; candidate figures ranked by readiness. |
 | `scripts/` | The two re-analysis scripts and their outputs, so every new number here can be reproduced. |
 

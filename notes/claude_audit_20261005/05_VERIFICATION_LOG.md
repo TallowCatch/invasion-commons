@@ -278,3 +278,28 @@ results and run sizes.
 - the column name `mode` clashing with `DataFrame.mode`, which made the Part D selections empty.
 
 **Re-checked by hand from the condition table:** the table values and the "two thirds of the gap" figure in file 16, and the usefulness-loss values in the Figure 13 caption.
+
+## 12. S4 (5 October 2026)
+
+**Order of work.** The protocol (file 17) was committed as `5da1d9e` before any code. The runner and tests were committed as `2836785` after the gates and before the full runs.
+
+**Gates:**
+- `pytest -q tests`: 258 passed, 11 skipped, including 4 new S4 tests.
+- Smoke runs for A and B are byte-identical on rerun.
+
+| Gate | Check | Result |
+| --- | --- | ---: |
+| 3 | S4 `fine` (q = 1/6, F = 6) equals the S3 `bern` episode | 16/16 |
+| 4 | S4 `memory` with compliers equals `fine` with compliers | 16/16 |
+| 5 | Part B equals the S3 Part D `memory` episodes (Harvest, Fishery one-step, Fishery MSY) | 24/24 |
+
+**Full runs:**
+
+| Part | Seconds | Episodes |
+| --- | ---: | ---: |
+| A | 25 | 2,432 |
+| B | 7 | 256 |
+
+**Analysis.** `analyze_s4` runs with `-W error::RuntimeWarning`.
+
+**Floor-effect check [post hoc].** An instrumented rerun of `memory`, q = 1/3, d = 0.75, continue, over 64 contexts counted caught-cheater steps with the targeted allowance at 0. Result: 19,410 of 19,733 (98.4%). This instrumentation is diagnostic only. It changes no reported outcome.

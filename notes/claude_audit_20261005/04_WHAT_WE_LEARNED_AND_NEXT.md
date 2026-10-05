@@ -1,5 +1,18 @@
 # What we have learned, and what should come next
 
+## Update 4, 5 October 2026: after S4 (protocol file 17, results file 18, figure 14)
+
+1. **Memory alone reduces harm but does not deter.** Against cheaters who know the reviewer remembers, a reviewer with memory but no fine reduced the harm without stopping the cheating.
+   - At the highest audit rate tested, cheaters kept 41% of their gain.
+   - Honest agents recovered about two thirds of their loss.
+   - **[post hoc]** The memory rule cannot cut a caught agent's allowance below zero. Under the MSY target that floor was hit in 98% of caught-cheater steps.
+2. **Memory plus a fine works best.** The fine deters at half the audit rate needed without memory (0.05 against 0.10). With audit costs, this combination gives the most harvest net of costs, though the margins are small.
+3. **Net harvest hides transfers.** It can look best while honest agents still lose (memory alone at q = 1/3), so always report honest agents' harvest next to it.
+4. **Strategic misreporting still does not pay against memory.** The one non-zero choice gained 0.25 [−0.09, +0.63].
+5. **Next:** a memory rule that tightens the shared cut, or caps a known cheater's take.
+
+The three decisions for Ameer and the supervisors are unchanged.
+
 ## Update 3, 5 October 2026: after S3 (protocol file 15, results file 16, figures 10–13)
 
 1. **Where deterrence starts.** Unpredictable audits plus a flat fine stopped the cheaters at almost exactly the expected-penalty break-even.
