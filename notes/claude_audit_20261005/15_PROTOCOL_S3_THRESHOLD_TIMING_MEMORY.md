@@ -260,4 +260,32 @@ harder test.
 
 ## Amendments
 
-(none yet)
+### Amendment 1 (2026-10-05, after the engineering gates, before any full run)
+
+Gates 3 and 4 asked for exact reproduction of *saved* S1, S1b and S2
+episodes. On this machine (Python 3.12.11, NumPy 2.3.3), **S1's own
+unchanged code** no longer reproduces some saved S1 episodes exactly.
+- Example: Fishery `full`, context 48, total harvest 500.95 now against
+  508.98 saved.
+- Example: in Harvest, a few Monte Carlo labels flip.
+- Likely cause: the saved runs came from a different numerical
+  environment. Tiny floating-point differences change the hashed
+  reference seeds and marginal decisions.
+
+S2 is unaffected: 254 of 256 sampled episodes are identical, and the other
+2 differ in the 10th significant digit of the mean stock only.
+
+The gates are therefore read as **code equivalence on this machine**:
+- **Gate 3:** the S3 Fishery episode equals S2's `fishery_episode` run here,
+  and matches the saved S2 episodes as described above.
+- **Gate 4:** the S3 `memoryless`, `trust` and `full` arms equal S1's
+  `harvest_episode` / `fishery_episode` run here (belief on, sanction none,
+  where relevant) in 112 of 112 checked episodes (every 4th context, 7
+  arms).
+
+**Consequence for Part D.** Every Part D contrast is computed inside the S3
+run, which reruns its own `trust` and `memoryless` arms on the same
+contexts. Saved S1 and S1b numbers are quoted only as background, not
+paired against.
+
+Nothing else changes.
