@@ -248,3 +248,15 @@ and `fig9_s1b_paired` (see `13_FIGURES.md`).
   contexts were less safe than when reports were trusted.
 - Even under full verification, 16 of 64 Harvest contexts had an unsafe
   executed action, at most 2 steps per context.
+
+**Cleanup steps 1 and 2 are done.**
+- **Step 1** is commit `24e45e4`.
+- **Step 2** moved 20 Fishery-study scripts to `experiments/archive/fishery_2026q1/`
+  and 8 one-off scripts to `experiments/archive/oneoff/` (see
+  `experiments/archive/README.md`).
+  - Before the move, a search confirmed that no test, workflow or active
+    script imports any of them.
+  - References were updated in the README, `paper/paper_v2/README.md`,
+    notebooks 02–03, and the scripts themselves.
+  - Every archived module still imports, and `pytest -q tests` passes.
+- **Step 3** (moving the shared libraries) is not done.

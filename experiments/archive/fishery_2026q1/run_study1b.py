@@ -11,13 +11,13 @@ from fishery_sim.benchmarks import get_benchmark_pack
 from fishery_sim.config import load_config
 from fishery_sim.evolution import make_strategy_injector
 from fishery_sim.evolution import run_evolutionary_invasion
-from experiments.run_governance_ablation import _aggregate_with_ci
-from experiments.run_governance_ablation import _build_llm_client
-from experiments.run_governance_ablation import _build_survival_curves
-from experiments.run_governance_ablation import _origin_fraction
-from experiments.run_governance_ablation import _summary_from_generation_df
-from experiments.run_governance_ablation import _to_markdown_table
-from experiments.run_governance_ablation import _write_manifest
+from experiments.archive.fishery_2026q1.run_governance_ablation import _aggregate_with_ci
+from experiments.archive.fishery_2026q1.run_governance_ablation import _build_llm_client
+from experiments.archive.fishery_2026q1.run_governance_ablation import _build_survival_curves
+from experiments.archive.fishery_2026q1.run_governance_ablation import _origin_fraction
+from experiments.archive.fishery_2026q1.run_governance_ablation import _summary_from_generation_df
+from experiments.archive.fishery_2026q1.run_governance_ablation import _to_markdown_table
+from experiments.archive.fishery_2026q1.run_governance_ablation import _write_manifest
 
 try:
     from tqdm.auto import tqdm

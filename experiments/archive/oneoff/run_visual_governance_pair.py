@@ -77,13 +77,13 @@ def main() -> None:
     ]
 
     _run(
-        ["python", "-m", "experiments.run_invasion"]
+        ["python", "-m", "experiments.archive.fishery_2026q1.run_invasion"]
         + common
         + ["--output-prefix", args.none_prefix]
     )
 
     _run(
-        ["python", "-m", "experiments.run_invasion"]
+        ["python", "-m", "experiments.archive.fishery_2026q1.run_invasion"]
         + common
         + [
             "--monitoring-prob",
@@ -103,7 +103,7 @@ def main() -> None:
         [
             "python",
             "-m",
-            "experiments.make_invasion_gif",
+            "experiments.archive.oneoff.make_invasion_gif",
             "--input",
             f"{args.none_prefix}_generations.csv",
             "--title",
@@ -120,7 +120,7 @@ def main() -> None:
         [
             "python",
             "-m",
-            "experiments.make_invasion_gif",
+            "experiments.archive.oneoff.make_invasion_gif",
             "--input",
             f"{args.governed_prefix}_generations.csv",
             "--title",
@@ -137,7 +137,7 @@ def main() -> None:
         [
             "python",
             "-m",
-            "experiments.make_governance_comparison_gif",
+            "experiments.archive.oneoff.make_governance_comparison_gif",
             "--none-input",
             f"{args.none_prefix}_generations.csv",
             "--governed-input",

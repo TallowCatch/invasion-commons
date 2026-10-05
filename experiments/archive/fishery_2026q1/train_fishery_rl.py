@@ -74,7 +74,7 @@ def _write_manifest(
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
     payload = {
-        "script": "experiments/train_fishery_rl.py",
+        "script": "experiments/archive/fishery_2026q1/train_fishery_rl.py",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "git_commit": _safe_git_hash(),
         "experiment_tag": args.experiment_tag,
