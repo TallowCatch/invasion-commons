@@ -4,7 +4,7 @@ The `analysis/` tables and `provenance.json` are generated from the completed
 `budgeted_reviewer_confirmation_v1` run by:
 
 ```sh
-python -m experiments.export_reviewer_paper_data \
+python -m experiments.paper_v5.export_reviewer_paper_data \
   --input-dir results/runs/budgeted_reviewer_confirmation_v1 \
   --output-dir paper/paper_v5_scalable_oversight_commons/data
 ```
@@ -17,7 +17,7 @@ intervals. The tables are sufficient to regenerate the main decision figure
 and the long-run paired table without the ignored raw run directory:
 
 ```sh
-python -m experiments.plot_reviewer_decisions \
+python -m experiments.paper_v5.plot_reviewer_decisions \
   --input-dir paper/paper_v5_scalable_oversight_commons/data \
   --output-dir paper/paper_v5_scalable_oversight_commons/figures
 ```
@@ -32,7 +32,7 @@ step-level traces; the small CSVs above remain convenient for figures.
 ```sh
 mkdir -p results/runs
 tar -xzf paper/paper_v5_scalable_oversight_commons/data/sources/budgeted_reviewer_confirmation_v1.tar.gz -C results/runs
-python -m experiments.replay_coupled_local \
+python -m experiments.paper_v5.replay_coupled_local \
   --input-dir results/runs/budgeted_reviewer_confirmation_v1 \
   --output-dir results/runs/coupled_local_replay_reproduced
 ```

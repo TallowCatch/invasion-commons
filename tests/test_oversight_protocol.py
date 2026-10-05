@@ -12,8 +12,8 @@ from fishery_sim.oversight_protocol import (
 )
 from fishery_sim.config import FisheryConfig
 from fishery_sim.fishery_oversight import FisherySnapshot, decide_fishery, reference_risk, transition, safe
-from experiments.analyze_matched_oversight import context_summary, METRICS
-from experiments.run_matched_oversight import make_manifest, harvest_block, frozen_judgments, write_json, read_json
+from experiments.common.analyze_matched_oversight import context_summary, METRICS
+from experiments.common.run_matched_oversight import make_manifest, harvest_block, frozen_judgments, write_json, read_json
 
 
 def test_prediction_matches_native_harvest_with_identical_weather():
@@ -159,7 +159,7 @@ def test_frozen_monitors_share_same_case_and_reference(tmp_path):
 
 
 def test_completed_resume_preserves_evidence_and_rejects_corruption(tmp_path, monkeypatch):
-    import experiments.run_matched_oversight as runner
+    import experiments.common.run_matched_oversight as runner
 
     cfg = make_manifest(tmp_path, "smoke", 128, MonitorSettings())["protocol"]
     names = [f"harvest__{regime}__0__0__{method}"

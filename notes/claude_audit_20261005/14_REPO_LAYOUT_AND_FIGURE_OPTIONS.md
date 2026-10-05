@@ -260,3 +260,19 @@ and `fig9_s1b_paired` (see `13_FIGURES.md`).
     notebooks 02–03, and the scripts themselves.
   - Every archived module still imports, and `pytest -q tests` passes.
 - **Step 3** (moving the shared libraries) is not done.
+- **Step 3 is done (same day).** The remaining 76 scripts now sit in
+  `experiments/paper_v5/` (21), `common/` (11), `oversight/` (9) and
+  `archive/harvest_2026q2/` (35). `experiments/README.md` has the full
+  old → new table.
+  - References were rewritten in all code, tests, workflows, `scripts/`,
+    notebooks, the top-level README, `CLAUDE_HANDOFF.md`, the paper READMEs,
+    and files 00 and 13 of this folder.
+  - The protocol and results notes were left as written, because they are
+    records.
+  - Checks after the move:
+    - `pytest -q tests` passes (248 passed, 11 skipped);
+    - all 104 modules import;
+    - `check_paper_inputs` passes;
+    - the README's fig08 command reproduces `fig08_reviewer_decisions_data.csv`
+      byte for byte;
+    - `make_progress_figures` runs.

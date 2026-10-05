@@ -20,7 +20,7 @@ From a clean clone, use Python 3.11 and run:
 ```bash
 python -m pip install -r requirements-validation.txt
 pytest -q tests
-python -m experiments.plot_reviewer_decisions \
+python -m experiments.paper_v5.plot_reviewer_decisions \
   --input-dir paper/paper_v5_scalable_oversight_commons/data \
   --output-dir paper/paper_v5_scalable_oversight_commons/figures
 ```

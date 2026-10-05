@@ -4,16 +4,16 @@
 | --- | --- | --- |
 | paper source | `paper/paper_v5_scalable_oversight_commons/main.tex` | present |
 | paper source | `paper/paper_v5_scalable_oversight_commons/refs.bib` | present |
-| scripts | `experiments/analyze_harvest_oversight_stageA.py` | present |
-| scripts | `experiments/plot_scalable_oversight_paper_v5.py` | present |
-| scripts | `experiments/analyze_llm_bridge_uncertainty.py` | present |
-| scripts | `experiments/analyze_stagea_stress_regimes.py` | present |
-| scripts | `experiments/run_targeted_threshold_replay.py` | present |
-| scripts | `experiments/analyze_threshold_replay_grid.py` | present |
-| scripts | `experiments/audit_threshold_sweep_completeness.py` | present |
-| scripts | `experiments/run_overseer_limit_ablation.py` | present |
-| scripts | `experiments/analyze_overseer_limit_ablation.py` | present |
-| scripts | `experiments/audit_overseer_limit_ablation.py` | present |
+| scripts | `experiments/paper_v5/analyze_harvest_oversight_stageA.py` | present |
+| scripts | `experiments/paper_v5/plot_scalable_oversight_paper_v5.py` | present |
+| scripts | `experiments/paper_v5/analyze_llm_bridge_uncertainty.py` | present |
+| scripts | `experiments/paper_v5/analyze_stagea_stress_regimes.py` | present |
+| scripts | `experiments/paper_v5/run_targeted_threshold_replay.py` | present |
+| scripts | `experiments/paper_v5/analyze_threshold_replay_grid.py` | present |
+| scripts | `experiments/paper_v5/audit_threshold_sweep_completeness.py` | present |
+| scripts | `experiments/paper_v5/run_overseer_limit_ablation.py` | present |
+| scripts | `experiments/paper_v5/analyze_overseer_limit_ablation.py` | present |
+| scripts | `experiments/paper_v5/audit_overseer_limit_ablation.py` | present |
 | figures | `paper/paper_v5_scalable_oversight_commons/figures/fig01_evidence_chain.pdf` | present |
 | figures | `paper/paper_v5_scalable_oversight_commons/figures/fig02_method_schematic.pdf` | present |
 | figures | `paper/paper_v5_scalable_oversight_commons/figures/fig03_capability_gap.pdf` | present |

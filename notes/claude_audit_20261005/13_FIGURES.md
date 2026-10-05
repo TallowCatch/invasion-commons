@@ -1,6 +1,6 @@
 # Progress figures
 
-All figures come from `experiments/make_progress_figures.py` and read only
+All figures come from `experiments/oversight/make_progress_figures.py` and read only
 saved run tables. The PDF and PNG versions are in `figures/`. Colours follow
 one fixed palette; the three reviewers are always:
 

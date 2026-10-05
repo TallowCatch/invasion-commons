@@ -122,7 +122,7 @@ From a clean checkout of the working branch:
 ```sh
 python -m pip install -r requirements-validation.txt
 python -m pytest -q tests
-python -m experiments.plot_reviewer_decisions \
+python -m experiments.paper_v5.plot_reviewer_decisions \
   --input-dir paper/paper_v5_scalable_oversight_commons/data \
   --output-dir paper/paper_v5_scalable_oversight_commons/figures
 ```

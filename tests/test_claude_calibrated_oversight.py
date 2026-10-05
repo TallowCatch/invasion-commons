@@ -2,7 +2,7 @@ import gzip, json
 from pathlib import Path
 import numpy as np
 import pytest
-from experiments.claude_oversight_common import fishery_setup, harvest_setup
+from experiments.oversight.claude_oversight_common import fishery_setup, harvest_setup
 from fishery_sim.calibrated_oversight import (fishery_choose_scale, fishery_reference, harvest_choose_scale,
                                               harvest_reference, SCALES)
 

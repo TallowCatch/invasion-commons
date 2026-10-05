@@ -56,7 +56,7 @@ jobs:
           import os
           import itertools
 
-          from experiments.harvest_invasion_presets import github_matrix_payload
+          from experiments.archive.harvest_2026q2.harvest_invasion_presets import github_matrix_payload
 
           stage = os.environ["STAGE"]
           if stage == "stage_b_pilot":
@@ -167,7 +167,7 @@ jobs:
 
       - name: Run shard
         run: |
-          python -m experiments.run_harvest_invasion_matrix \
+          python -m experiments.common.run_harvest_invasion_matrix \
             --tiers "${{ matrix.tier }}" \
             --partner-mixes "${{ matrix.partner_mix }}" \
             --scenario-presets "${{ matrix.scenario_preset }}" \
@@ -229,13 +229,13 @@ jobs:
 
       - name: Merge shard CSVs
         run: |
-          python -m experiments.merge_harvest_invasion_outputs \
+          python -m experiments.archive.harvest_2026q2.merge_harvest_invasion_outputs \
             --input-dir downloaded \
             --output-prefix "results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}"
 
       - name: Summarize merged outputs
         run: |
-          python -m experiments.summarize_harvest_invasion \
+          python -m experiments.archive.harvest_2026q2.summarize_harvest_invasion \
             --runs-csv "results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_runs.csv" \
             --agent-history-csv "results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_agent_history.csv" \
             --output-prefix "${{ needs.define-matrix.outputs.summary_prefix }}"
@@ -246,7 +246,7 @@ jobs:
           MPLCONFIGDIR: /tmp/mpl
           XDG_CACHE_HOME: /tmp
         run: |
-          python -m experiments.plot_harvest_invasion \
+          python -m experiments.archive.harvest_2026q2.plot_harvest_invasion \
             --ci-csv "${{ needs.define-matrix.outputs.summary_prefix }}_ci.csv" \
             --output-prefix "${{ needs.define-matrix.outputs.summary_prefix }}" \
             ${{ needs.define-matrix.outputs.ci_plot_filter }}
@@ -257,7 +257,7 @@ jobs:
           MPLCONFIGDIR: /tmp/mpl
           XDG_CACHE_HOME: /tmp
         run: |
-          python -m experiments.plot_harvest_architecture_followup \
+          python -m experiments.archive.harvest_2026q2.plot_harvest_architecture_followup \
             --ranking-csv "${{ needs.define-matrix.outputs.summary_prefix }}_ranking.csv" \
             --table-csv "${{ needs.define-matrix.outputs.summary_prefix }}_table.csv" \
             --contrast-ci-csv "${{ needs.define-matrix.outputs.summary_prefix }}_contrast_ci.csv" \
@@ -272,7 +272,7 @@ jobs:
           MPLCONFIGDIR: /tmp/mpl
           XDG_CACHE_HOME: /tmp
         run: |
-          python -m experiments.extract_harvest_oversight_case \
+          python -m experiments.common.extract_harvest_oversight_case \
             --runs-csv "results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_runs.csv" \
             --generation-history-csv "results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_generation_history.csv" \
             --strategy-history-csv "results/runs/harvest_invasion/curated/${{ needs.define-matrix.outputs.run_name }}_strategy_history.csv" \

@@ -37,11 +37,11 @@ computer, so I could not check whether you have uncommitted local changes.
 Experiment code and data in the repository:
 
 - shared reviewer code: `fishery_sim/calibrated_oversight.py`;
-- runners and analyses: `experiments/claude_oversight_common.py`,
-  `experiments/run_r1_repaired_reviewer.py`,
-  `experiments/run_s1_reporting_audit.py`,
-  `experiments/analyze_r1_repaired_reviewer.py`,
-  `experiments/analyze_s1_reporting_audit.py`;
+- runners and analyses: `experiments/oversight/claude_oversight_common.py`,
+  `experiments/oversight/run_r1_repaired_reviewer.py`,
+  `experiments/oversight/run_s1_reporting_audit.py`,
+  `experiments/oversight/analyze_r1_repaired_reviewer.py`,
+  `experiments/oversight/analyze_s1_reporting_audit.py`;
 - tests: `tests/test_claude_calibrated_oversight.py`;
 - raw runs and analysis tables: `results/runs/claude_r1_repaired_reviewer_v1/`
   and `results/runs/claude_s1_reporting_audit_v1/`.
