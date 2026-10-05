@@ -1,0 +1,194 @@
+# Verification log
+
+All checks below were run on 4–5 October 2026 against commit `8812f4f`
+(branch `codex/harvest-oversight-gap-stagea`). The repository was a fresh
+clone from GitHub; your local repository is on the same commit. No new
+simulation episodes were run. Everything is either a rerun of an existing
+script or a re-analysis of saved data.
+
+## 1. Integrity and reproduction
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Data hashes | `sha256sum` on `paper/.../data/analysis/*`, `data/sources/*` | All match `provenance.json` and `sources/manifest.json` |
+| Core tests | `python -m pytest -q tests --ignore=tests/test_fishery_rl.py --ignore=tests/test_harvest_rl.py` | 236 passed, 11 skipped (the PyTorch RL tests were not run) |
+| Coupled-local replay | `python -m experiments.replay_coupled_local --input-dir results/runs/budgeted_reviewer_confirmation_v1 --output-dir <tmp>` | 11,249 cases, 33,747 paired decisions, 0 disagreements |
+| Figure 8 data | `python -m experiments.plot_reviewer_decisions --input-dir paper/.../data --output-dir <tmp>` | Data CSV identical to the committed one |
+| Paper build | `pdflatex`/`bibtex`/`pdflatex` ×2 | No warnings; text identical to the committed `main.pdf` |
+| Worked example | Recomputed Fishery context 0, step 14 | Demand 14.70, next stock 10.77, bound 20.65, chosen scale 0.5: all match |
+
+## 2. Numbers verified against committed data
+
+- **Confirmation results:** every count and rate in the decision table,
+  the closed-loop outcomes, and the paired long-run differences
+  (`data/analysis/*.csv`).
+- **Stage A:** 72 rows; winners hybrid 13 / local 4 / global 1
+  (`harvest_oversight_gap_stageA_ranking.csv`).
+- **Threshold grid:** 9,000 rows, 25 threshold pairs, no duplicate keys.
+- **September frozen-population checks** (`completed_checks/slow_regrowth/mechanism_episodes.csv`):
+  - 19.70%, 5.33%, 0.125% and 8.30% unsafe time;
+  - health 11.12 → 11.79 and return 980.48 → 1,028.95;
+  - uniform caps 14.74 / 908.18;
+  - 16 of 80 clean-prefix onsets for the fixed cutoff;
+  - 8 own-model onsets across 6 episodes.
+- **Messages vs none, paired over 10 populations:** −0.197 ± 0.213
+  (95% t-interval); median −0.008.
+- **Code facts used in the issues file:**
+  - weather allowance (`budgeted_oversight.py:77`);
+  - bounded-local formulas (`budgeted_oversight.py:121-122`, `oversight_protocol.py:81-91`);
+  - regime-pack bug (`harvest_benchmarks.py:267-297`);
+  - uniform collapse penalty (`evolution.py:587-590`);
+  - 1.96 × SE intervals (`summarize_harvest_invasion.py:120`);
+  - governor trigger 16 / cap 0.18 (`harvest_evolution.py:24-38`);
+  - Fishery quota 0.07 (`run_governance_ablation.py:73`).
+
+## 3. Numbers I could not verify (notes only)
+
+Raw results for these live in git-ignored `results/` folders that are not
+in the repository:
+
+- all Fishery Phase 1 results;
+- the March–April Harvest results (except one paper_v2 summary file);
+- PPO;
+- the September development pilots;
+- the actor-pressure pilot;
+- Clean Up.
+
+They are quoted from your notes and labelled "(notes only)" in file 01.
+
+## 4. New post hoc analyses (scripts in `scripts/`)
+
+These were computed after seeing the confirmation results. They are
+exploratory and need prospective confirmation.
+
+| Script | What it computes | Key outputs |
+| --- | --- | --- |
+| `reanalysis.py` | Harvest decisions at k = 6 under three allowances (computed with the reviewers' own prediction functions); 4,000-draw risk per Harvest case; structure of the Fishery risky cases; where "safe" Fishery requests leave the stock; closed-loop stock and restriction frequency | `reanalysis.json` |
+| `margin_sweep.py` | All three reviewers × budgets 0/3/6 under the original and the average-sized allowance, using the repository's own reviewer code | `margin_sweep_output.txt` (original-allowance rows reproduce the saved counts exactly) |
+
+Run both from the repository root after unpacking the confirmation archive:
+
+```sh
+mkdir -p results/runs
+tar -xzf paper/paper_v5_scalable_oversight_commons/data/sources/budgeted_reviewer_confirmation_v1.tar.gz -C results/runs
+PYTHONPATH=. python3 notes/claude_audit_20261005/scripts/reanalysis.py
+PYTHONPATH=. python3 notes/claude_audit_20261005/scripts/margin_sweep.py
+```
+
+`reanalysis.py` writes `reanalysis.json` next to itself. (It also contains
+an unused helper function, `closed_states`; it is harmless.)
+
+## 5. How the audit was done
+
+- **I read:** `CLAUDE_HANDOFF.md`, `PROJECT_HISTORY.md`, the paper
+  (`main.tex` and its appendix), `PAPER_CLOSEOUT_20260924.md`, the data
+  README, and the confirmation protocol and closeout.
+- **Two independent sub-audits** read the code and notes for the earlier
+  experiments (February–June) and the September checks. They recomputed
+  numbers wherever committed data existed. Their findings that I used were
+  spot-checked against the code and data, as listed in section 2.
+- **Your installed Codex skills** `scientific-experiment` and
+  `experiment-planner` were read and used as the checklist:
+  - same target and authority across arms;
+  - independent units and no pseudoreplication;
+  - post hoc work labelled as such;
+  - prospective contracts before new runs;
+  - no retrying until significant.
+- **No suitable "science" plugin was available** in the Claude plugin
+  catalogue for this kind of study.
+
+## 6. Independent verification pass on these notes
+
+After drafting, a separate checker re-derived the key claims from the data and
+code without reusing my scripts. It confirmed:
+
+- the margin re-analysis, with an independent re-implementation of the
+  safety predicate;
+- every table in file 02;
+- the closed-loop statistics;
+- the code citations;
+- every "(verified)" number in file 01.
+
+It also found errors and overstatements, which are now corrected:
+
+- **Harvest allowance.** The original allowance is a valid union bound for
+  both safety conditions. It is oversized only because the patch-failure
+  condition never binds in these cases. The 4 risky approvals at 0.282 are
+  borderline label noise, not a gap in the allowance. I added a sensitivity
+  table across allowance sizes.
+- **Fishery levels.** "Below 50" had mixed up the stock before and after
+  regrowth. Corrected: all 694 safe requests leave less than 50 after
+  harvest; 409 leave the regrown stock below 50.
+- **Open vs closed loop.** In closed loop the joint reviewer cut only risky
+  requests, so the 86%-vs-0% contrast was about case mix, not errors.
+  Reframed.
+- **Collapse timing.** Collapse timing in the unregulated Fishery runs is
+  stock below 10 at a median of step 8. The median scored stock is 47.4,
+  not 38.9.
+- **Harvest weather streams.** The no-reviewer runs used 2 weather streams
+  per context.
+- **Stage A details.** Global caps had 3–14% unsafe time outside the
+  strong-overseer setting. The actor ladder runs backwards in every
+  no-overseer condition.
+- **Collapse penalty.** It does influence Harvest's search-based entrant
+  generator.
+- **Hedging.** Wording on the "safety target" explanation now says it is
+  untested, since the target was never varied.
+
+## 7. Experiments R1 and S1 (5 October 2026)
+
+| Check | Result |
+| --- | --- |
+| New unit tests (`tests/test_claude_calibrated_oversight.py`) | 4 passed. They confirm that R1/S1 rebuild the 23 September populations exactly, that Fishery joint review with full information equals the label, that bounded local review is never less cautious than joint, and that the reference labels behave sensibly at extremes. |
+| Smoke runs | R1 and S1 each ran twice with byte-identical outputs (gzip written with a fixed timestamp) |
+| R1 smoke gate | Joint review at k = 6 agreed with the reference on every resolved smoke case |
+| S1 gate (H1) | With *d* = 0, every report-based protocol matched `full` exactly: 0 mismatches in the full run |
+| Full runs | R1: 171 s, 3,648 episode records. S1: 235 s, 3,328 test plus 384 training episodes. Manifests with SHA-256 hashes are in each run folder. |
+
+Reproduce from the repository root:
+
+```sh
+PYTHONPATH=. python -m pytest -q tests/test_claude_calibrated_oversight.py
+PYTHONPATH=. python -m experiments.run_r1_repaired_reviewer --profile full --out results/runs/claude_r1_repaired_reviewer_v1
+PYTHONPATH=. python -m experiments.analyze_r1_repaired_reviewer --run results/runs/claude_r1_repaired_reviewer_v1 --out results/runs/claude_r1_repaired_reviewer_v1/analysis
+PYTHONPATH=. python -m experiments.run_s1_reporting_audit --profile full --out results/runs/claude_s1_reporting_audit_v1
+PYTHONPATH=. python -m experiments.analyze_s1_reporting_audit --run results/runs/claude_s1_reporting_audit_v1 --out results/runs/claude_s1_reporting_audit_v1/analysis
+```
+
+## 8. Independent check of the R1 and S1 write-ups
+
+**What the separate checker did.**
+
+- Reran both analysis scripts. The outputs were byte-identical.
+- Confirmed that the source hashes in both run manifests match the code.
+- Checked the code logic: previous-request fill, the MSY residual, label
+  vectors, no label leakage into reviewer decisions, independent reviewer
+  and reference draws, and S1 report, audit, peer and exclusion handling.
+- Matched every table cell against the data.
+
+**What it found, and what has been corrected:**
+
+- **Two typos:** a CI bound of −489, not −496, and a mean health of 11.28,
+  not 11.29.
+- **R1: the Fishery reversal depends on the fill rule** as well as the
+  target. The interpretation has been rewritten, and both fills are now
+  shown.
+- **S1: safety in the audit and peer arms came from excluding cheaters.**
+  The reviewer never needed to cut, so the earlier "audits correct beliefs"
+  reading was wrong. Rewritten.
+- **S1: lying paid in harvest terms in several audit arms.** The fine
+  reversed it. Now disclosed.
+- **S1, H4:** the Fishery `peer_collude` lie was profitable, so H4 is
+  falsified and "lying never paid" was wrong. Corrected.
+- **Terminology:**
+  - "trusted monitoring with no audits" was self-contradictory; replaced;
+  - the AI-control mapping is now stated as an analogy;
+  - S1's safety measure is renamed "unsafe-action rate" to distinguish it
+    from R1's "unsafe approval rate".
+- **Ratio:** "7 times" corrected to 8.4 times.
+- **Harvest collusion:** collusion was possible in 23 of 64 contexts; the
+  earlier draft called it "rare". Corrected.
+- **Disclosures added:**
+  - the H4 check in R1 covered only k = 6;
+  - Harvest used one weather stream per context;
+  - S1's H1 check compared totals, not individual steps.
