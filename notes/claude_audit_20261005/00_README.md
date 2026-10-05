@@ -28,6 +28,10 @@ computer, so I could not check whether you have uncommitted local changes.
 | `08_PROTOCOL_S1_REPORTING_AND_AUDITS.md` | Protocol for S1, frozen before the run, with one amendment made before the full run. |
 | `09_RESULTS_R1_REPAIRED_REVIEWER.md` | R1 results: calibrated reviewers, limited checking, and the Fishery target test. |
 | `10_RESULTS_S1_REPORTING_AND_AUDITS.md` | S1 results: misreporting, audits, peer reports and collusion. |
+| `11_PROTOCOL_S1B_S2_ABLATION_AND_DETERRENCE.md` | Protocol for S1b (audit ablation, Fishery MSY) and S2 (private-gain cheating, deterrence), frozen before the runs. |
+| `12_RESULTS_S1B_S2_ABLATION_AND_DETERRENCE.md` | S1b and S2 results. |
+| `13_FIGURES.md` and `figures/` | Nine progress figures (PDF and PNG), with one-line takeaways. |
+| `14_REPO_LAYOUT_AND_FIGURE_OPTIONS.md` | Repository layout and a safe cleanup order; which line graphs mislead; candidate figures ranked by readiness. |
 | `scripts/` | The two re-analysis scripts and their outputs, so every new number here can be reproduced. |
 
 Experiment code and data in the repository:
@@ -42,7 +46,7 @@ Experiment code and data in the repository:
 - raw runs and analysis tables: `results/runs/claude_r1_repaired_reviewer_v1/`
   and `results/runs/claude_s1_reporting_audit_v1/`.
 
-Suggested reading order: the update at the top of 04, then 09 and 10 (the
+Suggested reading order: the updates at the top of 04, the figures (13), then 09 and 10 (the
 new experiments), then 02, 03 and 01 for background.
 
 ## The bottom line in five sentences

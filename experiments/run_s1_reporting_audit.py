@@ -44,7 +44,11 @@ def profile(name):
 class Overseer:
     """Applies one protocol: who is audited, who is caught, what the reviewer believes."""
 
-    def __init__(self, protocol, n, misreporters, d, context, game):
+    def __init__(self, protocol, n, misreporters, d, context, game, belief=True, sanction="excl+fine"):
+        # belief/sanction factors added for the S1b ablation (protocol file 11); defaults reproduce S1.
+        if sanction not in ("excl+fine", "fine", "none"):
+            raise ValueError(sanction)
+        self.belief, self.sanction = belief, sanction
         self.protocol, self.n, self.d = protocol, n, d
         self.mis = set(misreporters)
         self.excluded_until = np.full(n, -1)
@@ -84,30 +88,34 @@ class Overseer:
                 q = r[i] if (collude and i in self.mis and m in self.mis) else p_eff[i]
                 if q > r[i] + 1e-12:
                     caught[i] = True
-                b[i] = max(r[i], q)
+                b[i] = max(r[i], q) if self.belief else r[i]
         elif self.protocol != "report":
             raise ValueError(self.protocol)
         for i in audited:
             self.audits += 1
-            b[i] = p_eff[i]
+            if self.belief:
+                b[i] = p_eff[i]
             if r[i] < p_eff[i] - 1e-12:
                 caught[i] = True
         for i in np.flatnonzero(caught):
-            self.excluded_until[i] = t + EXCLUSION_STEPS
             self.catches += 1
             self.catch_by_agent[i] += 1
-            self.fines[i] += FINE
-        p_eff = np.where(caught, 0.0, p_eff)
-        b = np.where(caught, 0.0, b)
+            if self.sanction in ("excl+fine", "fine"):
+                self.fines[i] += FINE
+            if self.sanction == "excl+fine":
+                self.excluded_until[i] = t + EXCLUSION_STEPS
+        if self.sanction == "excl+fine":
+            p_eff = np.where(caught, 0.0, p_eff)
+            b = np.where(caught, 0.0, b)
         return p_eff, b, caught
 
 
 # ------------------------------------------------------------------ Harvest
-def harvest_episode(context, protocol, d, P, train=False):
+def harvest_episode(context, protocol, d, P, train=False, belief=True, sanction="excl+fine"):
     pop = SEEDS["train_harvest_pop"] if train else SEEDS["harvest_pop"]
     wb = SEEDS["train_weather"] if train else SEEDS["weather"]
     cfg, specs, mis = harvest_setup(context, pop, wb, P["horizon"])
-    ov = Overseer(protocol, cfg.n_agents, mis, d, context, "harvest")
+    ov = Overseer(protocol, cfg.n_agents, mis, d, context, "harvest", belief, sanction)
     st = dict(t=0, pred=None)
     rows = []
 
@@ -145,9 +153,9 @@ def harvest_episode(context, protocol, d, P, train=False):
 
 
 # ------------------------------------------------------------------ Fishery
-def fishery_episode(context, protocol, d, P, train=False):
+def fishery_episode(context, protocol, d, P, train=False, belief=True, sanction="excl+fine", target="one_step"):
     cfg, pol, mis = fishery_setup(context, SEEDS["train_fishery_pop"] if train else SEEDS["fishery_pop"], P["horizon"])
-    ov = Overseer(protocol, cfg.n_agents, mis, d, context, "fishery")
+    ov = Overseer(protocol, cfg.n_agents, mis, d, context, "fishery", belief, sanction)
     state, pay, stocks, unsafe, rows = FisherySnapshot(cfg.stock_init), np.zeros(cfg.n_agents), [], [], []
     for t in range(cfg.horizon):
         req = fishery_requests(pol, state.stock)
@@ -156,13 +164,13 @@ def fishery_episode(context, protocol, d, P, train=False):
             executed, scale, p_eff = req.copy(), 1.0, req.copy()
         else:
             p_eff, b, caught = ov.step(t, req)
-            scale, _ = fishery_choose_scale(cfg, state.stock, b, "joint", "one_step", state.collapsed)
+            scale, _ = fishery_choose_scale(cfg, state.stock, b, "joint", target, state.collapsed)
             executed = p_eff * scale
             row["caught"] = int(caught.sum())
         if not train:
-            row["label_exec"] = fishery_reference(cfg, state.stock, executed, "one_step")["label"]
+            row["label_exec"] = fishery_reference(cfg, state.stock, executed, target)["label"]
             if protocol != "none":
-                row["label_req"] = fishery_reference(cfg, state.stock, p_eff, "one_step")["label"]
+                row["label_req"] = fishery_reference(cfg, state.stock, p_eff, target)["label"]
             row["scale"] = scale
         rows.append(row)
         future, payoffs, _ = transition(cfg, state, executed)
@@ -194,9 +202,9 @@ def summarize(game, context, protocol, d, horizon, pay, mis, mean_health, unsafe
                 caught_honest=int(ov.catch_by_agent[honest].sum()), misreporters=list(mis))
 
 
-def run_condition(game, protocol, d, P, contexts, train=False):
+def run_condition(game, protocol, d, P, contexts, train=False, **opts):
     fn = harvest_episode if game == "harvest" else fishery_episode
-    return [fn(c, protocol, d, P, train)[0] for c in contexts]
+    return [fn(c, protocol, d, P, train, **opts)[0] for c in contexts]
 
 
 def main():

@@ -1,5 +1,33 @@
 # What we have learned, and what should come next
 
+## Update 2, 5 October 2026: after S1b and S2 (file 12, figures in file 13; checked independently, see file 05 §10)
+
+1. **With a reviewer that has no memory, one or two audit results per step
+   barely improved its decisions.**
+   - Harvest: 1.9% → 1.7% of the horizon unsafe with 2 random audits.
+   - Complete information from neighbour reports reached the honest level.
+   - The safety in S1's audit arms came from excluding caught cheaters,
+     which also removes their extraction.
+   - A reviewer that remembers caught lies has not been tested.
+2. **Under the productive-level (MSY) target in Fishery, misreporting did
+   little long-run damage.** The stock stayed around 62–66, and adaptive
+   liars even slightly raised total harvest. Excluding fixed-level liars
+   then wasted harvest.
+3. **Hidden over-extraction (S2, Fishery) moved harvest from honest agents
+   to cheaters** (per honest agent, 106 → 45) when unchecked.
+   - Against fixed-level, group-chosen cheaters, perfect random audits of at
+     least one agent per step plus any tested flat fine of 6 or more removed
+     the incentive.
+   - [post hoc] Expected-penalty arithmetic puts the threshold near a fine
+     of 2.
+   - In Harvest cheating never paid, so deterrence could not be tested
+     there.
+4. **Next:**
+   - locate the threshold with a finer grid and lower audit rates;
+   - imperfect audits;
+   - cheaters who time their cheating;
+   - a reviewer that remembers caught lies.
+
 ## Update, 5 October 2026: after experiments R1 and S1
 
 Steps 1 and 3 of the plan below have now been run, each with a protocol

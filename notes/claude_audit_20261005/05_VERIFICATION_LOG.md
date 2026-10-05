@@ -192,3 +192,63 @@ PYTHONPATH=. python -m experiments.analyze_s1_reporting_audit --run results/runs
   - the H4 check in R1 covered only k = 6;
   - Harvest used one weather stream per context;
   - S1's H1 check compared totals, not individual steps.
+
+## 9. S1b and S2 (5 October 2026)
+
+**Gates and checks**
+
+| Check | Result |
+| --- | --- |
+| S1 refactor | Adding the belief and sanction factors reproduced the original S1 smoke run byte-for-byte |
+| Smoke runs | S1b and S2 smoke runs were byte-identical on rerun |
+| Gate A | The (corrected, exclusion+fine) cell matched S1 at *d* = 0.5 (0 mismatches) |
+| Gate C | With everyone complying, `allow`, `rand2` and `peer` gave identical totals and 0 catches |
+| Full test suite | Passed, excluding the PyTorch RL tests |
+
+**Run sizes**
+
+| Run | Episodes | Seconds |
+| --- | ---: | ---: |
+| S1b | 7,168 | 594 |
+| S2 | 5,120 | 396 |
+
+**Reproduce from the repository root:**
+
+```sh
+PYTHONPATH=. python -m experiments.run_s1b_ablation_msy --profile full --out results/runs/claude_s1b_ablation_msy_v1
+PYTHONPATH=. python -m experiments.run_s2_compliance_deterrence --profile full --out results/runs/claude_s2_compliance_deterrence_v1
+PYTHONPATH=. python -m experiments.analyze_s1b_s2 --s1b results/runs/claude_s1b_ablation_msy_v1 --s2 results/runs/claude_s2_compliance_deterrence_v1
+PYTHONPATH=. python -m experiments.make_progress_figures
+```
+
+## 10. Independent check of the S1b and S2 write-up and figures
+
+**Confirmed.** Every table value, interval and verdict, as well as the gate
+results and run sizes.
+
+**Corrected in file 12, figures 5 and 6, file 13 and the file 04 update:**
+
+- **A-H2.** It is true by construction, because under exclusion the belief
+  switch does nothing.
+- **Correction lasted one step.** The reviewer has no memory, so the result
+  is limited to memoryless reviewers.
+- **Exclusion pushed Harvest below the honest level.** It removes
+  extraction as well as stopping lies.
+- **Fishery under the MSY target.** Adaptive liars raised harvest slightly,
+  and audits cost nothing against them, because they chose to be honest.
+- **What S2 tests.** It is non-compliance (hidden over-extraction), not
+  deception. Audits are perfect, the fine is flat, and audit rates are far
+  above AI-control budgets.
+- **Citations.**
+  - Avenhaus is now cited only for the quote that was actually checked.
+  - The unverified claim attributed to Greenblatt was removed.
+  - The Becker wording is now explicitly unread.
+- **Hypothesis wording.** C-H4 and C-H5 are now phrased according to their
+  criteria and the design's limits.
+- **Seeds and gate.** The seed-base wording and the narrower gate C check
+  are disclosed.
+- **Figures.**
+  - Figure 5 now shows values on the bars and the honest reference line, and
+    drops the duplicate "fine" column.
+  - Figure 6 now plots only the tested points, shows per-agent values and
+    total harvest, and states the design limits in its caption.
