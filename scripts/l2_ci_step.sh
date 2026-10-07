@@ -16,6 +16,22 @@ if [ "$MODE" = "pilot" ]; then
   done
   exit 0
 fi
+# Gate record (protocol rule: >= 95% valid first-try answers and mean comprehension >= 2 of 3).
+# gpt-oss passed its pilot locally on 2026-10-07 (notes/claude_audit_20261005/runs/claude_l2_pilot_v1/);
+# gemma4 and nemotron are judged from their rerun pilots in $STORE/claude_l2_pilot_v2 (Amendment 1).
+python - "$STORE" <<'PY'
+import json, os, sys
+store = sys.argv[1]
+path = os.path.join(store, "gates.json")
+gates = json.load(open(path)) if os.path.exists(path) else {}
+gates.setdefault("gpt-oss:120b-cloud", True)  # local pilot: valid 1.00, comprehension 3.0
+for m in ("gemma4:31b-cloud", "nemotron-3-super:cloud"):
+    f = os.path.join(store, "claude_l2_pilot_v2", m.replace(":", "_").replace(".", "_"), "pilot_gate.json")
+    if m not in gates and os.path.exists(f):
+        gates[m] = bool(json.load(open(f))["passed"])
+json.dump(gates, open(path, "w"), indent=1)
+print("gates:", gates)
+PY
 # full run: models whose gate passed, one after another, until the usage limit or the time limit
 for m in "${MODELS[@]}"; do
   slug="${m//[:.]/_}"
