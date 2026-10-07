@@ -1,0 +1,11 @@
+family,hypothesis,cells,verdict,verdict_cells,verdict_interval,verdict_interval_cells,verdict_point,verdict_point_cells,verdict_as_worded,verdict_as_worded_cells
+A,A-H1,4,fail,"{'pass': 3, 'fail': 1, 'not_testable': 0}",fail,"{'pass': 3, 'fail': 1, 'not_testable': 0}",pass,"{'pass': 4, 'fail': 0, 'not_testable': 0}",pass,"{'pass': 4, 'fail': 0, 'not_testable': 0}"
+A,A-H2,6,fail,"{'pass': 5, 'fail': 1, 'not_testable': 0}",fail,"{'pass': 5, 'fail': 1, 'not_testable': 0}",fail,"{'pass': 5, 'fail': 1, 'not_testable': 0}",fail,"{'pass': 5, 'fail': 1, 'not_testable': 0}"
+A,A-H3,10,pass,"{'pass': 9, 'fail': 0, 'not_testable': 1}",pass,"{'pass': 9, 'fail': 0, 'not_testable': 1}",pass,"{'pass': 9, 'fail': 0, 'not_testable': 1}",pass,"{'pass': 9, 'fail': 0, 'not_testable': 1}"
+A,A-H4,6,fail,"{'pass': 1, 'fail': 3, 'not_testable': 2}",fail,"{'pass': 1, 'fail': 3, 'not_testable': 2}",fail,"{'pass': 1, 'fail': 3, 'not_testable': 2}",fail,"{'pass': 1, 'fail': 3, 'not_testable': 2}"
+B,B-H1,2,fail,"{'pass': 1, 'fail': 1, 'not_testable': 0}",pass,"{'pass': 2, 'fail': 0, 'not_testable': 0}",pass,"{'pass': 2, 'fail': 0, 'not_testable': 0}",pass,"{'pass': 2, 'fail': 0, 'not_testable': 0}"
+B,B-H2,4,fail,"{'pass': 2, 'fail': 1, 'not_testable': 1}",fail,"{'pass': 2, 'fail': 1, 'not_testable': 1}",fail,"{'pass': 2, 'fail': 1, 'not_testable': 1}",fail,"{'pass': 2, 'fail': 1, 'not_testable': 1}"
+B,B-H3,2,pass,"{'pass': 2, 'fail': 0, 'not_testable': 0}",pass,"{'pass': 2, 'fail': 0, 'not_testable': 0}",pass,"{'pass': 2, 'fail': 0, 'not_testable': 0}",pass,"{'pass': 2, 'fail': 0, 'not_testable': 0}"
+B,"B-H3 (secondary: stated changes, not the falsifier)",2,fail,"{'pass': 1, 'fail': 1, 'not_testable': 0}",fail,"{'pass': 1, 'fail': 1, 'not_testable': 0}",fail,"{'pass': 1, 'fail': 1, 'not_testable': 0}",fail,"{'pass': 1, 'fail': 1, 'not_testable': 0}"
+B,B-H4,4,fail,"{'pass': 2, 'fail': 1, 'not_testable': 1}",fail,"{'pass': 2, 'fail': 1, 'not_testable': 1}",fail,"{'pass': 2, 'fail': 1, 'not_testable': 1}",fail,"{'pass': 2, 'fail': 1, 'not_testable': 1}"
+B,B-H5,2,fail,"{'pass': 1, 'fail': 1, 'not_testable': 0}",fail,"{'pass': 1, 'fail': 1, 'not_testable': 0}",fail,"{'pass': 1, 'fail': 1, 'not_testable': 0}",fail,"{'pass': 1, 'fail': 1, 'not_testable': 0}"

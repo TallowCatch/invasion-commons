@@ -1,0 +1,10 @@
+hyp,component,estimate,ci,threshold,claim,p,p_holm,significant_holm,violation,violation_uncorrected,verdict
+S5-H1,fine|0.1000 T0 gain,0.0,"[0.0, 0.0]",0.0,above,1.0,1.0,False,False,False,
+S5-H1,fine|0.1000 T1 gain,-242.33641694478786,"[-330.5332835506129, -163.86756944192413]",0.0,above,1.0,1.0,False,False,False,
+S5-H1,fine|0.1667 T0 gain,0.0,"[0.0, 0.0]",0.0,above,1.0,1.0,False,False,False,
+S5-H1,fine|0.1667 T1 gain,-138.79105586726075,"[-153.72003464839054, -124.80536886860713]",0.0,above,1.0,1.0,False,False,False,
+S5-H2,memory_cut|0.1667 T0 gain / none T0 gain,1.2617376669353788,"[1.2118075374172619, 1.3193410975205404]",0.25,below,1.0,1.0,False,,,falsified
+S5-H2,memory_cap|0.1667 T0 gain / none T0 gain,0.07317682747662145,"[0.06283933257009132, 0.08432086178529213]",0.25,below,0.0,0.0,True,,,supported
+S5-H3,memory_cap|0.1667 T1 - T0 gain,0.0,"[0.0, 0.0]",10.0,below,0.0,0.0,True,,,supported
+S5-H3,memory_cap|0.1667 T2 - T0 gain,-0.06779525127140928,"[-0.3672317038034577, 0.23214855657492228]",10.0,below,0.0,0.0,True,,,supported
+S5-H4,fine+memory_cut|0.0500 T1 gain,48.76771636797318,"[1.734616768235701, 83.96774312857244]",0.0,above,0.0425,0.255,False,,,
