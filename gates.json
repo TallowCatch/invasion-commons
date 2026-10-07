@@ -1,0 +1,5 @@
+{
+ "gpt-oss:120b-cloud": true,
+ "gemma4:31b-cloud": true,
+ "nemotron-3-super:cloud": true
+}
