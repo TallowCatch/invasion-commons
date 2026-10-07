@@ -35,7 +35,8 @@ TARGET = "msy"
 Q = 1 / 6
 HORIZON = 20
 CONTEXTS = tuple(range(10))
-MODELS = ("gpt-oss:120b-cloud", "gemma4:31b-cloud", "nemotron-3-super:cloud")
+MODELS = ("gpt-oss:120b-cloud", "gemma4:31b-cloud", "nemotron-3-super:cloud")  # the three frozen families (claim 6)
+ADDED = ("mistral-large-4:cloud",)  # Amendment 2: reported as an addition, not counted for claim 6
 # cell -> (wording, consequence, fine in tonnes)
 CELLS = {"E0": ("explicit", "fine", 0.0), "E1": ("explicit", "fine", 1.0), "E2": ("explicit", "fine", 2.0),
          "E4": ("explicit", "fine", 4.0), "E8": ("explicit", "fine", 8.0), "E36": ("explicit", "fine", 36.0),
@@ -44,7 +45,8 @@ CELLS = {"E0": ("explicit", "fine", 0.0), "E1": ("explicit", "fine", 1.0), "E2":
 PILOT_CELLS = ("E0", "E36")
 TOKEN_CAP = 20_000_000  # Amendment 1 (was 15 M)
 API_NAMES = {"gpt-oss:120b-cloud": "gpt-oss:120b", "gemma4:31b-cloud": "gemma4:31b",
-             "nemotron-3-super:cloud": "nemotron-3-super"}  # names on https://ollama.com/api (Amendment 1)
+             "nemotron-3-super:cloud": "nemotron-3-super",  # names on https://ollama.com/api (Amendment 1)
+             "mistral-large-4:cloud": "mistral-large-4"}  # fourth family, an addition (Amendment 2)
 OVER_T = 0.06  # tonnes above the allowance that count as over-taking (L1: 0.01 of the 6 t maximum)
 
 
@@ -285,8 +287,11 @@ def episode(client, context, cell, log, used, horizon=HORIZON):
                 fallbacks=fallbacks, reprompts=reprompts)
 
 
-def run(client, out, cells, contexts, model_label, horizon=HORIZON, max_minutes=None):
+def run(client, out, cells, contexts, model_label, horizon=HORIZON, max_minutes=None, tag=None):
     """Contexts outer, cells inner, so a partial run covers every cell evenly.
+    With `tag`, this run covers only some contexts of a model (Amendment 2: one model split over parallel jobs);
+    its log, manifest, STATUS and DONE files get the suffix _<tag> so parallel jobs never write the same file,
+    and the token cap counts every log of the model.
     Returns 'done', 'quota', 'budget', 'transient' (network) or 'time' (max_minutes reached between games)."""
     started = time.time()
     out = Path(out)
@@ -294,10 +299,11 @@ def run(client, out, cells, contexts, model_label, horizon=HORIZON, max_minutes=
     manifest = dict(protocol="studies/L2_llm_agents/protocol.md", model=model_label, cells=CELLS, run_cells=list(cells),
                     contexts=list(contexts), horizon=horizon, q=Q, seeds=SEEDS, token_cap=TOKEN_CAP, over_t=OVER_T,
                     python=sys.version.split()[0], platform=platform.platform())
-    (out / "manifest.json").write_text(json.dumps(manifest, indent=1))
-    calls = out / "calls.jsonl"
+    sfx = f"_{tag}" if tag else ""
+    (out / f"manifest{sfx}.json").write_text(json.dumps(manifest, indent=1))
+    calls = out / f"calls{sfx}.jsonl"
     used = dict(tokens=sum(json.loads(x).get("prompt_tokens", 0) + json.loads(x).get("completion_tokens", 0)
-                           for x in open(calls)) if calls.exists() else 0)
+                           for f in out.glob("calls*.jsonl") for x in open(f)))
     status = "done"
     with open(calls, "a") as log:
         for c in contexts:
@@ -333,9 +339,9 @@ def run(client, out, cells, contexts, model_label, horizon=HORIZON, max_minutes=
                 break
     done = all((out / "episodes" / f"{cell}__{c}.json").exists() for c in contexts for cell in cells)
     status = "done" if done else status
-    (out / "STATUS").write_text(json.dumps(dict(status=status, tokens=used["tokens"], time=time.time())))
+    (out / f"STATUS{sfx}").write_text(json.dumps(dict(status=status, tokens=used["tokens"], time=time.time())))
     if done:
-        (out / "DONE").write_text("ok")
+        (out / f"DONE{sfx}").write_text("ok")
     return status
 
 
@@ -371,10 +377,11 @@ def main():
     ap.add_argument("--model", default=MODELS[0])
     ap.add_argument("--out")
     ap.add_argument("--max-minutes", type=float, default=None)
+    ap.add_argument("--contexts", default=None, help="full mode: a range such as 5-7 (Amendment 2); default all")
     a = ap.parse_args()
     if a.mode == "check":  # one tiny call per model; prints OK or the error (never the key)
         bad = 0
-        for m in MODELS:
+        for m in MODELS + ADDED:
             try:
                 r = Client(m, timeout=120).chat([{"role": "user", "content": 'Reply with JSON only: {"ok": true}'}])
                 print(f"OK   {m}: {unfence(r.content)[:40]!r} ({r.prompt_tokens}+{r.completion_tokens} tokens)")
@@ -392,7 +399,11 @@ def main():
         if st == "done":
             print(json.dumps(pilot_report(a.out), indent=1))
         return 3 if st == "quota" else 0
-    st = run(Client(a.model), a.out, tuple(CELLS), CONTEXTS, a.model, max_minutes=a.max_minutes)
+    contexts, tag = CONTEXTS, None
+    if a.contexts:
+        lo, hi = (int(x) for x in a.contexts.split("-"))
+        contexts, tag = tuple(range(lo, hi + 1)), f"ctx{lo}-{hi}"
+    st = run(Client(a.model), a.out, tuple(CELLS), contexts, a.model, max_minutes=a.max_minutes, tag=tag)
     return {"done": 0, "quota": 3, "budget": 4, "transient": 5, "time": 6}[st]
 
 

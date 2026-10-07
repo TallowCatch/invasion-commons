@@ -1,78 +1,79 @@
 #!/usr/bin/env bash
-# One GitHub Actions job of experiment L2 (protocol: notes/claude_audit_20261005/studies/L2_llm_agents/protocol.md, Amendment 1).
-# Usage: bash scripts/l2_ci_step.sh check|pilot|run STORE_DIR MAX_MINUTES
+# One GitHub Actions job of experiment L2 (protocol: notes/claude_audit_20261005/studies/L2_llm_agents/protocol.md, Amendments 1-2).
+# Usage: bash scripts/l2_ci_step.sh check|run STORE_DIR MAX_MINUTES LANE
 # STORE_DIR holds the l2-results branch: claude_l2_v1/<model>/..., claude_l2_pilot_v2/<model>/..., gates.json
+# Amendment 2 (Ollama Pro, 3 models at a time): three lanes run in parallel, each working through its own list of
+# units in order. A unit is a model (all 10 contexts) or MODEL@LO-HI (only those contexts; files get the suffix _ctxLO-HI).
+# No unit appears in two lanes, so parallel jobs never write the same file. Rebalancing = editing the lists below.
 set -u
-MODE="$1"; STORE="$2"; MAXMIN="${3:-330}"
-next() { echo "$1" > "$STORE/NEXT"; }  # tells the workflow what to do next: done | wait | now
-rm -f "$STORE/NEXT"  # a job that crashes leaves no NEXT, so it does not start another job
-# Save progress to the l2-results branch every 20 minutes while the job runs (run mode only), so it is visible early.
-if [ "$MODE" = "run" ] && [ -d "$STORE/.git" ]; then
-  (
-    git -C "$STORE" config user.name "l2-runner"
-    git -C "$STORE" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-    while sleep 1200; do
-      git -C "$STORE" add -A && git -C "$STORE" commit -q -m "L2 progress (in job) $(date -u +%Y-%m-%dT%H:%MZ)" \
-        && git -C "$STORE" push -q origin HEAD:l2-results || true
-    done
-  ) &
+MODE="$1"; STORE="$2"; MAXMIN="${3:-330}"; LANE="${4:-A}"
+LANE_A=("gpt-oss:120b-cloud" "nemotron-3-super:cloud@5-7")
+LANE_B=("gemma4:31b-cloud" "mistral-large-4:cloud" "nemotron-3-super:cloud@8-9")
+LANE_C=("nemotron-3-super:cloud@0-4")
+ADDED_PILOTS=("mistral-large-4:cloud")  # pilot gate run before the full run (Amendment 2)
+next() { echo "$1" > NEXT; }  # tells the workflow what to do next: done | wait | now (outside the store, never committed)
+rm -f NEXT "$STORE/NEXT"  # (store/NEXT was used before Amendment 2) a job that crashes leaves no NEXT, so it does not start another job
+run() { PYTHONPATH=. python -m experiments.oversight.run_l2_llm_agents "$@"; }
+if [ "$MODE" = "check" ]; then run check; exit $?; fi
+# Save progress to the l2-results branch every 20 minutes while the job runs, so it is visible early.
+if [ -d "$STORE/.git" ]; then
+  ( while sleep 1200; do bash scripts/l2_save.sh "$STORE" "L2 progress (lane $LANE, in job)"; done ) &
   SAVER=$!
   trap 'kill $SAVER 2>/dev/null' EXIT
 fi
-MODELS=("gpt-oss:120b-cloud" "gemma4:31b-cloud" "nemotron-3-super:cloud")
+case "$LANE" in A) UNITS=("${LANE_A[@]}") ;; B) UNITS=("${LANE_B[@]}") ;; C) UNITS=("${LANE_C[@]}") ;;
+  *) echo "unknown lane $LANE"; exit 2 ;; esac
 start=$(date +%s)
-run() { PYTHONPATH=. python -m experiments.oversight.run_l2_llm_agents "$@"; }
-if [ "$MODE" = "check" ]; then run check; exit $?; fi
-if [ "$MODE" = "pilot" ]; then
-  for m in "gemma4:31b-cloud" "nemotron-3-super:cloud"; do
-    slug="${m//[:.]/_}"
-    run pilot --model "$m" --out "$STORE/claude_l2_pilot_v2/$slug"; code=$?
-    [ "$code" -eq 3 ] && { echo "usage limit during pilot; rerun later"; exit 0; }
-  done
-  exit 0
-fi
-# Finish any pilot gate that has not completed yet (resumable; stops at the usage limit like the full run).
-for m in "gemma4:31b-cloud" "nemotron-3-super:cloud"; do
-  slug="${m//[:.]/_}"
-  if [ ! -f "$STORE/claude_l2_pilot_v2/$slug/pilot_gate.json" ]; then
-    run pilot --model "$m" --out "$STORE/claude_l2_pilot_v2/$slug"; code=$?
-    [ "$code" -eq 3 ] && { echo "usage limit during pilot; next job resumes"; next wait; exit 0; }
-  fi
-done
-# Gate record (protocol rule: >= 95% valid first-try answers and mean comprehension >= 2 of 3).
-# gpt-oss passed its pilot locally on 2026-10-07 (notes/claude_audit_20261005/runs/claude_l2_pilot_v1/);
-# gemma4 and nemotron are judged from their rerun pilots in $STORE/claude_l2_pilot_v2 (Amendment 1).
+left() { echo $(( MAXMIN - ($(date +%s) - start) / 60 )); }
+# Gate record (protocol rule: >= 95% valid first-try answers and mean comprehension >= 2 of 3); written only if it changes.
+update_gates() {
 python - "$STORE" <<'PY'
 import json, os, sys
 store = sys.argv[1]
 path = os.path.join(store, "gates.json")
 gates = json.load(open(path)) if os.path.exists(path) else {}
-gates.setdefault("gpt-oss:120b-cloud", True)  # local pilot: valid 1.00, comprehension 3.0
-for m in ("gemma4:31b-cloud", "nemotron-3-super:cloud"):
+old = dict(gates)
+gates.setdefault("gpt-oss:120b-cloud", True)  # local pilot 2026-10-07: valid 1.00, comprehension 3.0
+for m in ("gemma4:31b-cloud", "nemotron-3-super:cloud", "mistral-large-4:cloud"):
     f = os.path.join(store, "claude_l2_pilot_v2", m.replace(":", "_").replace(".", "_"), "pilot_gate.json")
     if m not in gates and os.path.exists(f):
         gates[m] = bool(json.load(open(f))["passed"])
-json.dump(gates, open(path, "w"), indent=1)
+if gates != old:
+    json.dump(gates, open(path, "w"), indent=1)
 print("gates:", gates)
 PY
-# full run: models whose gate passed, one after another, until the usage limit or the time limit
-for m in "${MODELS[@]}"; do
-  slug="${m//[:.]/_}"
-  python - "$STORE/gates.json" "$m" <<'PY' || { echo "skip $m: pilot gate not passed (gates.json)"; continue; }
-import json, sys
-g = json.load(open(sys.argv[1])) if __import__("os").path.exists(sys.argv[1]) else {}
-sys.exit(0 if g.get(sys.argv[2]) is True else 1)
+}
+gate() {  # 0 = passed, 1 = failed, 2 = no gate yet
+python - "$STORE/gates.json" "$1" <<'PY'
+import json, os, sys
+g = json.load(open(sys.argv[1])) if os.path.exists(sys.argv[1]) else {}
+sys.exit(2 if sys.argv[2] not in g else (0 if g[sys.argv[2]] is True else 1))
 PY
-  [ -f "$STORE/claude_l2_v1/$slug/DONE" ] && { echo "$m complete"; continue; }
-  left=$(( MAXMIN - ($(date +%s) - start) / 60 ))
-  [ "$left" -le 10 ] && { echo "time limit reached"; next now; exit 0; }
-  run full --model "$m" --out "$STORE/claude_l2_v1/$slug" --max-minutes "$left"; code=$?
+}
+update_gates
+for u in "${UNITS[@]}"; do
+  m="${u%@*}"; ctx=""; sfx=""
+  [ "$u" != "$m" ] && { ctx="${u#*@}"; sfx="_ctx$ctx"; }
+  slug="${m//[:.]/_}"
+  [ -f "$STORE/claude_l2_v1/$slug/DONE$sfx" ] && { echo "$u complete"; continue; }
+  gate "$m"; g=$?
+  if [ "$g" -eq 2 ] && [[ " ${ADDED_PILOTS[*]} " == *" $m "* ]]; then
+    echo "pilot gate for $m"
+    run pilot --model "$m" --out "$STORE/claude_l2_pilot_v2/$slug"; code=$?
+    [ "$code" -eq 3 ] && { echo "usage limit during pilot; next job resumes"; next wait; exit 0; }
+    update_gates; gate "$m"; g=$?
+  fi
+  [ "$g" -ne 0 ] && { echo "skip $u: pilot gate not passed (gates.json)"; continue; }
+  [ "$(left)" -le 10 ] && { echo "time limit reached"; next now; exit 0; }
+  args=(full --model "$m" --out "$STORE/claude_l2_v1/$slug" --max-minutes "$(left)")
+  [ -n "$ctx" ] && args+=(--contexts "$ctx")
+  run "${args[@]}"; code=$?
   case $code in
-    0) echo "$m complete"; continue ;;
+    0) echo "$u complete"; continue ;;
     3) echo "usage limit reached; next job resumes after a wait"; next wait; exit 0 ;;
     5|6) echo "stopped (code $code); next job resumes"; next now; exit 0 ;;
-    *) echo "$m failed with code $code"; next done; exit "$code" ;;
+    *) echo "$u failed with code $code"; next done; exit "$code" ;;
   esac
 done
-echo "all gated models complete"
+echo "lane $LANE complete"
 next done

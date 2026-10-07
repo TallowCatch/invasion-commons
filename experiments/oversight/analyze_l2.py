@@ -1,6 +1,7 @@
 """Analysis for L2 (protocol: notes/claude_audit_20261005/studies/L2_llm_agents/protocol.md).
 
-Per model: per-cell rates, the LLM break-even g from E0, and hypotheses H1-H5; claim 6 holds if H1 holds in >= 2 families.
+Per model: per-cell rates, the LLM break-even g from E0, and hypotheses H1-H5; claim 6 holds if H1 holds in >= 2 of the
+three frozen families (Mistral, added by Amendment 2, is reported separately).
 Paired context bootstrap, 4,000 resamples, seed 20261019. Works on partial runs (reports how many episodes exist).
 Run:  PYTHONPATH=. python -m experiments.oversight.analyze_l2 --run results/runs/claude_l2_v1
 """
@@ -46,7 +47,7 @@ def analyse_model(d, rng):
                            msy_break=float(np.mean([s["msy_break"] for s in e["steps"]])), collapsed=e["collapsed"],
                            comprehension=np.mean([v for v in e["comprehension"].values() if v is not None] or [np.nan]),
                            fallbacks=e["fallbacks"]) for e in eps])
-    calls = [json.loads(x) for x in open(d / "calls.jsonl")]
+    calls = [json.loads(x) for f in sorted(d.glob("calls*.jsonl")) for x in open(f)]  # one log per job lane (Amendment 2)
     first = [c for c in calls if c["phase"] != "comprehension" and c["attempt"] == 0]
     cells = {}
     for cell in l2.CELLS:
@@ -107,9 +108,13 @@ def main():
     rng = np.random.default_rng(SEED)
     res = [r for r in (analyse_model(d, rng) for d in sorted(p for p in run.iterdir() if p.is_dir())) if r]
     complete = {r["model"]: r["n_episodes"] == len(l2.CELLS) * len(l2.CONTEXTS) for r in res}
+    # claim 6 counts only the three frozen families; Mistral (Amendment 2) is reported beside them
+    primary = [r for r in res if r["model"] in {m.replace(":", "_").replace(".", "_") for m in l2.MODELS}]
     summary = dict(models=res, complete=complete,
-                   claim6_H1_families=sum(r["verdicts"].get("H1", False) for r in res),
-                   claim6_holds=sum(r["verdicts"].get("H1", False) for r in res) >= 2 if all(complete.values()) else None)
+                   claim6_H1_families=sum(r["verdicts"].get("H1", False) for r in primary),
+                   claim6_holds=sum(r["verdicts"].get("H1", False) for r in primary) >= 2
+                   if len(primary) == len(l2.MODELS) and all(complete[r["model"]] for r in primary) else None,
+                   added_families_H1={r["model"]: r["verdicts"].get("H1") for r in res if r not in primary})
     (run / "analysis").mkdir(exist_ok=True)
     (run / "analysis" / "l2_summary.json").write_text(json.dumps(summary, indent=1, default=float))
     rows = [dict(model=r["model"], cell=c, **v) for r in res for c, v in r["cells"].items()]

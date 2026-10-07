@@ -158,3 +158,24 @@ looking at the other cells.
 4. **Which models run.** A model enters the full run only after its pilot gate has passed, as recorded in `gates.json` on the `l2-results` branch.
 
 Nothing else changes: the cells, contexts, prompts, seeds, outcomes and hypotheses are unchanged.
+
+### Amendment 2 (2026-10-07 ~16:15Z, during the gpt-oss full run; before any full-run outcome was looked at)
+
+**What was seen before this change:**
+- Ollama's free plan turned out to be a monthly allowance, not a 5-hour one. At 75.5% used, it could not finish L2 (about 4 months of free usage were needed). Ameer bought Ollama Pro, which also serves the paid model families and allows 3 cloud models at a time.
+- gpt-oss had finished 22 of its 110 full-run games. Only the count of finished games was looked at; no outcome (over-taking, stock, harvest) was examined.
+- Measured speeds from the pilots: gemma4 about 0.6 s per call, gpt-oss about 2.2 s, nemotron about 8.3 s. At that speed nemotron alone needs about 40 hours on one job.
+
+**Changes:**
+1. **A fourth family, Mistral, as the addition this protocol already allowed** ("A fourth family (Mistral) can be added later … reported as an addition"). The model is `mistral-large-4` (Ollama Cloud API name; `mistral-large-4:cloud` in the runner), Mistral's current flagship on Ollama Cloud, tested to answer on this account on 2026-10-07.
+   - It passes the same pilot gate first (one context in E0 and E36; ≥ 95% valid first-try answers; mean comprehension ≥ 2 of 3) and uses the same frozen prompts, cells, contexts and seeds.
+   - **Claim 6 is still judged on the three frozen families only** (H1 in at least 2 of gpt-oss, gemma4, nemotron). Mistral's H1–H5 are reported beside them, as an addition.
+   - DeepSeek, GLM, Kimi and MiniMax are now also available. They are not added.
+2. **Parallel jobs.** Three GitHub Actions lanes run at once, within Pro's limit of 3 models at a time. Each lane works through a fixed list of units, and no unit is in two lanes:
+   - Lane A: gpt-oss (all contexts), then nemotron contexts 5–7.
+   - Lane B: gemma4, then the Mistral pilot and full run, then nemotron contexts 8–9.
+   - Lane C: nemotron contexts 0–4.
+   The lists may be rebalanced between jobs to even out finishing times; that changes only which job runs a game, never what a game is.
+3. **Splitting a model by context.** A unit that covers only some contexts writes its own log, manifest, STATUS and DONE files (suffix `_ctxLO-HI`), so parallel jobs never write the same file. The token cap (20 M per model) counts all of a model's logs. A model is complete when all 110 of its games exist. Within a unit the order is unchanged (contexts outer, cells inner), and every game is identical to what a single job would run, because seeds depend only on the context and cell.
+
+Nothing else changes: the cells, contexts, prompts, seeds, outcomes, hypotheses and the claim-6 rule for the three frozen families are unchanged.

@@ -42,3 +42,14 @@ def test_time_limit_stops_between_games(tmp_path):
 def test_api_mode_uses_api_names_and_auth(monkeypatch):
     c = l2.Client("gemma4:31b-cloud", base_url="https://ollama.com", api_key="k")
     assert c.remote and l2.API_NAMES[c.model] == "gemma4:31b"
+
+
+def test_split_lanes_keep_separate_files_and_share_the_token_count(tmp_path):
+    cells = ("E0",)
+    assert l2.run(L.FakeClient(), tmp_path, cells, (0,), "fake", horizon=2, tag="ctx0-0") == "done"
+    assert l2.run(L.FakeClient(), tmp_path, cells, (1,), "fake", horizon=2, tag="ctx1-1") == "done"
+    for f in ("calls_ctx0-0.jsonl", "calls_ctx1-1.jsonl", "DONE_ctx0-0", "DONE_ctx1-1", "manifest_ctx1-1.json"):
+        assert (tmp_path / f).exists()
+    assert not (tmp_path / "calls.jsonl").exists()
+    assert json.loads((tmp_path / "STATUS_ctx1-1").read_text())["tokens"] > json.loads(
+        (tmp_path / "STATUS_ctx0-0").read_text())["tokens"]
