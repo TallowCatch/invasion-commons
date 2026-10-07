@@ -209,20 +209,23 @@ def fig3_audits():
         a.text(xc, -0.30, gname, transform=a.get_xaxis_transform(), ha="center", va="top", fontsize=6.8, fontweight="bold")
     title(a, "a", "Memory makes audits work (nine settings, under-reporters)")
 
-    # (b) deterrence against expected fine
-    shades = [("A_q0.1667_s1.0", "1/6", "#f6c3a8"), ("A_q0.1_s1.0", "0.10", "#f19a6c"), ("A_q0.05_s1.0", "0.05", ORANGE),
-              ("A_q0.02_s1.0", "0.02", "#a8431b")]
-    for key, lab_, col in shades:
-        cells = sorted(S3["AB"][key]["cells"], key=lambda z: z["e"])
-        b.plot([z["e"] for z in cells], [z["heldout_gain_vs_comply"]["estimate"] / 4 for z in cells], color=col, marker="o",
-               ms=2.2, lw=1.0, label=lab_)
-    cells = sorted(S3["AB"]["B_q0.1667_s0.25"]["cells"], key=lambda z: z["e"])
-    b.plot([z["e"] for z in cells], [z["heldout_gain_vs_comply"]["estimate"] / 4 for z in cells], color=INK, ls="--", lw=0.9,
-           label="1/6, misses ¾")
-    be = S3["AB"]["A_allow"]["predicted_e_threshold"]
-    b.axvline(be, color=INK, lw=0.6, ls=":"); b.text(be + 0.02, 4, f"break-even\n{be:.2f}", fontsize=6.0)
-    b.set_xlim(0, 0.7); b.set_xlabel("Expected fine per step"); b.set_ylabel("Gain per cheater")
-    b.legend(title="audit rate", title_fontsize=6.0, fontsize=5.8, loc="upper right", handlelength=1.2, borderaxespad=0.1)
+    # (b) predicted break-even against observed threshold (R3 settings + S3 audit-rate / detection variants)
+    R3 = json.loads((NOTES / "claude_r3_v1/cells.json").read_text())
+    pts = [(c["g_star"], c["e_star"]) for c in R3 if c["testable"]]
+    g3 = S3["AB"]["A_allow"]["predicted_e_threshold"]
+    s3pts = [(g3, S3["AB"][k]["e_star"]) for k in S3["AB"] if k.startswith(("A_q", "B_q"))]
+    lo_, hi_ = 0.12, 2.0
+    xx = np.geomspace(lo_, hi_, 50)
+    b.fill_between(xx, 0.8 * xx, 1.2 * xx, color=GRID, lw=0, label="±1 grid step")
+    b.plot(xx, xx, color=INK2, lw=0.7, ls="--")
+    b.scatter([p[0] for p in s3pts], [p[1] for p in s3pts], s=16, facecolor="white", edgecolor=FINE_C, lw=0.9, zorder=3,
+              label="S3: audit rates, misses")
+    b.scatter([p[0] for p in pts], [p[1] for p in pts], s=18, color=FINE_C, zorder=4, label="R3: five settings")
+    b.set_xscale("log"); b.set_yscale("log"); b.set_xlim(lo_, hi_); b.set_ylim(lo_, hi_)
+    b.set_xticks([0.2, 0.5, 1]); b.set_xticklabels(["0.2", "0.5", "1"]); b.set_yticks([0.2, 0.5, 1]); b.set_yticklabels(["0.2", "0.5", "1"])
+    b.minorticks_off()
+    b.set_xlabel("Predicted break-even $g^*$"); b.set_ylabel("Observed threshold $e^*$")
+    b.legend(fontsize=5.5, loc="upper left", borderaxespad=0.1, handletextpad=0.2)
     title(b, "b", "Fines deter at break-even")
 
     # (c) gain against audit rate, by audit rule
@@ -239,7 +242,7 @@ def fig3_audits():
     c.set_xscale("log"); c.set_xticks([0.02, 0.05, 0.1, 1 / 6]); c.set_xticklabels(["0.02", "0.05", "0.10", "1/6"]); c.minorticks_off()
     c.set_xlabel("Audit rate"); c.set_ylabel("Cheaters' gain (group of 4)")
     hc, lc = c.get_legend_handles_labels()
-    fig.legend(hc, lc, loc="lower left", bbox_to_anchor=(0.06, -0.06), ncol=5, fontsize=6.3, title="Audit rule (panel c):",
+    fig.legend(hc, lc, loc="lower left", bbox_to_anchor=(0.0, -0.06), ncol=3, fontsize=6.3, title="Audit rule (panel c):",
                title_fontsize=6.3, alignment="left", handlelength=1.4, columnspacing=1.0)
     title(c, "c", "Which audit rule deters")
 
@@ -258,18 +261,28 @@ def fig3_audits():
     d.text(3, 38, "12/64\ncollapse", ha="center", fontsize=5.8, color=INK2)
     title(d, "d", "Audit timing (fine 24)")
 
-    # (e) aiming audits by report size
-    names = [("trust", "No audit (trust)", INK2, None), ("random", "Random audit", MEM_C, None), ("targeted", "Audit largest report", MEM_C, "////")]
-    for gi, (game, gl) in enumerate((("comp", "River"), ("add", "Additive\ncontrol"))):
-        for k, (arm, al, col, hat) in enumerate(names):
-            r = C1[(C1.game == game) & (C1.part == "B") & (C1.arm == arm)].iloc[0]
-            lo, hi = json.loads(r.unsafe_share_ci); v = 100 * r.unsafe_share
-            e.bar(gi + (k - 1) * 0.27, v, width=0.25, color="white" if hat else col, edgecolor=col if hat else "white", hatch=hat,
-                  lw=0.8, yerr=[[v - 100 * lo], [100 * hi - v]], capsize=1.2, error_kw=dict(lw=0.6, ecolor=INK),
-                  label=al.replace("\n", " ") if gi == 0 else None)
-    e.set_xticks([0, 1]); e.set_xticklabels(["River", "Additive\ncontrol"], fontsize=6.3); e.grid(axis="x", visible=False)
-    e.set_ylabel("Unsafe steps (%)"); e.set_ylim(0, 30); e.legend(fontsize=5.8, loc="upper right", borderaxespad=0.1)
-    title(e, "e", "Audit targeting (memory)")
+    # (e) aiming audits (T1): harm left as a share of no-audit harm, three games
+    T1 = json.loads((NOTES / "claude_t1_v1/t1_summary.json").read_text())
+    cov = json.loads((NOTES / "claude_t1_v1/t1_posthoc_distinct_liars.json").read_text())
+    arms = [("random", "Random", MEM_C, None), ("report", "Largest report", MEM_C, "////"), ("signal", "Signal (Forest)", "#0b6b4a", None)]
+    games = [("fishery", "Fishery"), ("harvest", "Forest"), ("river", "River")]
+    for gi, (g, gl) in enumerate(games):
+        present = [a for a in arms if a[0] in T1[g]["harm_relative_to_trust"]]
+        w = 0.8 / 3
+        for k, (arm, al, col, hat) in enumerate(present):
+            r = T1[g]["harm_relative_to_trust"][arm]
+            v, lo, hi = 100 * r["estimate"], 100 * r["ci"][0], 100 * r["ci"][1]
+            xk = gi - 0.4 + w * (k + 0.5)
+            e.bar(xk, v, width=w * 0.9, color="white" if hat else col, edgecolor=col if hat else "white", hatch=hat, lw=0.8,
+                  yerr=[[v - lo], [hi - v]], capsize=1.2, error_kw=dict(lw=0.6, ecolor=INK), label=al if gi == 1 else None)
+            caught = cov[f"{g}_{arm}"]["share_of_liars_ever_caught"]
+            e.text(xk, hi + 3, f"{100 * caught:.0f}", ha="center", fontsize=5.2, color=INK2)
+    e.set_xticks(range(3)); e.set_xticklabels([x[1] for x in games], fontsize=6.4); e.grid(axis="x", visible=False)
+    e.set_ylim(0, 112); e.set_ylabel("Harm left (% of no audits)")
+    he, le = e.get_legend_handles_labels()
+    fig.legend(he, le, loc="lower right", bbox_to_anchor=(0.99, -0.06), ncol=3, fontsize=6.3, title="Audit aimed at (panel e):",
+               title_fontsize=6.3, alignment="left", handlelength=1.4, columnspacing=1.0)
+    title(e, "e", "Audit targeting")
     save(fig, "fig3_audits")
 
 

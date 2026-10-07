@@ -33,7 +33,7 @@ with its key numbers. Start there.
 | `runs/` | Small copies of each run's analysis tables and manifests. |
 | `scripts/` | The audit's re-analysis scripts. |
 
-**Studies so far:** R1, S1, S1b/S2, S3, S4, R2, S5, C1 and the L1 pilot.
+**Studies so far:** R1, S1, S1b/S2, S3, S4, R2, S5, C1, the L1 pilot, R3 and T1. L2 is drafted, waiting on decisions.
 
 ### Old file numbers
 

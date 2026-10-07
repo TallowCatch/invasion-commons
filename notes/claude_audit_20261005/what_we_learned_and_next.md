@@ -1,5 +1,15 @@
 # What we have learned, and what should come next
 
+## Update 5, 7 October 2026: after R3 and T1 (studies/R3_breakeven_confirmation, studies/T1_audit_targeting)
+
+1. **The break-even threshold is confirmed prospectively.** The gain per cheating step was computed before any search, and deterrence started within one grid step of it in all 5 testable Fishery settings (R3). This settles claim 4.
+2. **Claim 5 is confirmed, with a different mechanism.** Audits aimed at the largest report let more harm through than random audits in Fishery and River.
+   - They do not miss liars because liars hide.
+   - They keep re-checking one agent that memory has already corrected, so most liars are never caught: 25% caught in Fishery, against 100% at random.
+   - In Forest, aiming at a physical signal of harm (the plot doing worst against prediction) was best.
+   - Claim 5 now reads: *audits work when they are unpredictable and reach every agent.*
+3. **Only L2 remains.** It needs a decision on compute and a second model family. After it, the experiments stop and the writing starts.
+
 ## Update 4, 5 October 2026: after S4 (S4 protocol, S4 results, figure 14)
 
 1. **Memory alone reduces harm but does not deter.** Against cheaters who know the reviewer remembers, a reviewer with memory but no fine reduced the harm without stopping the cheating.

@@ -16,8 +16,8 @@ budget when agents can hide what they take from a shared resource.*
 | 1 | The goal matters more than inspection: an MSY target beats the one-step line wherever the resource is under pressure | R1, R2 | tested |
 | 2 | A wrong model breaks an exact reviewer; a learning reviewer recovers; MSY protects against a wrong model form | R2 Part B | tested |
 | 3 | Audits help only through consequences: memory or sanctions | S1b, S3 Part D, R2 (9 of 9 settings) | tested |
-| 4 | Deterrence starts at the expected-fine break-even; memory plus a fine halves the audit rate needed; this survives richer attackers | S3, S4, S5, R2 | needs **R3** |
-| 5 | How audits are aimed matters: a known schedule is worse than none; report-targeting misses under-reporters | S3 Part C, River Part B | needs **T1** |
+| 4 | Deterrence starts at the expected-fine break-even; memory plus a fine halves the audit rate needed; this survives richer attackers | S3, S4, S5, R2, **R3** (5 of 5 settings, prospective) | tested |
+| 5 | How audits are aimed matters: audits must be unpredictable and reach every agent; a known schedule or a fixed report-based aim leaves agents unchecked | S3 Part C, **T1** (Fishery, River; 25% of liars ever caught under report-aiming) | tested |
 | 6 | LLM agents follow the same logic | L1 pilot | needs **L2** |
 
 ## The only remaining experiments

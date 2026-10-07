@@ -74,7 +74,7 @@ Results from several studies go into **composite multi-panel figures**, one per 
 | --- | --- | --- |
 | Setting | **Fig. 1:** one step of the game (TikZ). **Table 1:** key terms. **Table 2:** the three games. | Ready |
 | 1–2. The reviewer's target and model | **Fig. 2** (2×3 panels): (a) stock over time; (b) harvest in six settings; (c) collapse with a wrong model, all from **Fishery**; (d)–(e) risky requests let through and safe requests blocked with a wrong model, in **Forest**; (f) a reviewer that learns the model. Sources: R1, R2. | Ready |
-| 3–5. What makes audits work | **Fig. 3** (5 panels): (a) memory in nine settings (R2); (b) deterrence against expected fine (S3); (c) gain against audit rate by audit rule (S5); (d) audit timing (S3 Part C); (e) audit targeting (C1). **Table 3:** audit rules (S5). | Ready. Add an R3 threshold panel; replace (e) with T1 across 3 games. |
+| 3–5. What makes audits work | **Fig. 3** (5 panels): (a) memory in nine settings (R2); (b) predicted against observed threshold (R3, S3); (c) gain against audit rate by audit rule (S5); (d) audit timing (S3 Part C); (e) audit targeting (T1). **Table 3:** audit rules (S5). | Ready. Panel (b) now shows R3 (prospective) with S3; panel (e) shows T1 across 3 games. |
 | 6. LLM agents | **Fig. 4:** over-taking against expected fine, 2 models × 2 framings. | Waits for **L2**. |
 
 Every number in a caption is read from the saved run tables in `notes/claude_audit_20261005/runs/` and `results/runs/`. Figure 2a needs the R1 raw file, `results/runs/claude_r1_repaired_reviewer_v1/closed_loop_decisions.jsonl.gz`, which is not in git.

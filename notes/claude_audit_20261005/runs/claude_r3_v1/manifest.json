@@ -1,0 +1,31 @@
+{
+ "experiment": "R3",
+ "profile": "full",
+ "params": {
+  "contexts": 64,
+  "horizon": 80,
+  "train_contexts": 32,
+  "closed_draws": 2000,
+  "open_draws": 4000,
+  "reviewer_draws": 400
+ },
+ "seeds": {
+  "fishery_pop": 1700000000,
+  "audit": 1745000000,
+  "detect": 1746000000,
+  "train_fishery_pop": 1750000000
+ },
+ "q": 0.16666666666666666,
+ "seconds": 59.99319911003113,
+ "n_episodes": 4224,
+ "files": {
+  "episodes.jsonl.gz": "05d4d7b90306aff2b48ee31744ade806f8c35b10f8b9c6aaee438834026687cf",
+  "cells.json": "ec11653751057001add23c5578f83fac46ce06800adeb8ca736d3b1c50379ccd"
+ },
+ "source": {
+  "experiments/oversight/run_r2_robustness_reviewer_model.py": "946d2e47d5a8d9f1c51ea8dd4455787b9864d72f2655acbe2d9756bc462d4250",
+  "experiments/oversight/run_s3_threshold_timing_memory.py": "d142ccf1bcbbb0c7ab0ddba8f51262dfb8b6729a28959e02483b11c2a4aba36f",
+  "experiments/oversight/run_r3_breakeven.py": "3799733b0e8c43f49d85e9efe5c4c6f794283616f4e96e50d6f1211262229b80",
+  "fishery_sim/reviewer_models.py": "1d9e5d628227e4c3d9807776d992e63d8917ce2532f2412bbf95eb0830ccc024"
+ }
+}

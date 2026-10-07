@@ -303,3 +303,25 @@ results and run sizes.
 **Analysis.** `analyze_s4` runs with `-W error::RuntimeWarning`.
 
 **Floor-effect check [post hoc].** An instrumented rerun of `memory`, q = 1/3, d = 0.75, continue, over 64 contexts counted caught-cheater steps with the targeted allowance at 0. Result: 19,410 of 19,733 (98.4%). This instrumentation is diagnostic only. It changes no reported outcome.
+
+## 13. R3 and T1 (7 October 2026)
+
+**Order of work.** The protocols were committed as `49aef43` before any code. The code and tests were committed as `90ce85b` after the gates and before the full runs.
+
+**R3 gates:**
+- The smoke run is byte-identical on rerun.
+- R3's episode (R2's `nc_episode`) equals `s3.fishery_episode` with S3 seeds in the pilot setting: 16 of 16.
+
+**T1 gates:**
+- The smoke run is byte-identical on rerun.
+- **Forest:** T1's `random` and `signal` arms equal S3 Part D's `rand1` and `targ1` memory arms with S1 seeds (16 of 16). The `trust` arm equals S3's trust arm (8 of 8).
+- **River:** T1 equals C1 Part B's `episode` with C1's own seeds (16 of 16; only the arm label differs).
+
+**A bug caught before the run.** A unit test found that the T1 `trust` arm's protocol name (`report`) matched the report-aimed rule by prefix, so the trust arm would have been audited. It was fixed before any full run (`tests/test_r3_t1.py`).
+
+**Full runs:**
+- R3: about 1 minute.
+- T1: 21 seconds, 640 episodes.
+- Tests: 344 passed, 11 skipped.
+
+**Post hoc diagnostic.** The share of liars ever caught came from a deterministic rerun of T1's arms with instrumentation (`runs/claude_t1_v1/t1_posthoc_distinct_liars.json`). The harm values matched the full run exactly.

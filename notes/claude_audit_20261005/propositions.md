@@ -53,6 +53,8 @@ behind e.
   R2's frozen definition (a level of 0.75, per horizon step) failed in 3 of
   4 testable settings. That is a fault of the stated definition, not of P1.
 
+- **R3 (prospective):** g\* was fixed on training runs before any search. The threshold fell within one grid step of g\* in 5 of 5 testable settings, with g\* ranging from 0.19 to 1.20 (`studies/R3_breakeven_confirmation/results.md`).
+
 **What breaks it:** risk aversion, fines that scale with the over-take,
 predictable audits (P2), and memory (P4).
 
@@ -117,7 +119,7 @@ in fixed directions:
   raised them to 82%.
 - **false inputs (S1).**
 
-## Conjecture C1. Targeting large reports helps under-reporters [post hoc]
+## Conjecture C1, revised after T1. A deterministic report-based aim leaves most agents unchecked
 
 **Statement.** If audits go to the agent whose *reported* request most
 changes the predicted harm, an under-reporter lowers its own chance of audit
@@ -129,3 +131,9 @@ unsafe steps than random audits [1.8, 5.3].
 In S1 Harvest, targeted audits used a physical signal (patch state) rather
 than the report, and helped. This is post hoc and needs a direct test: compare
 report-based targeting with signal-based targeting.
+
+**T1 (7 Oct) revises this conjecture.** On new seeds, aiming at the largest report was worse than random in Fishery and River. But it landed on liars *more* often than random audits did (100% and 72%, against 67% and 34%).
+
+The failure is **coverage**. The aim keeps returning to one agent that memory has already corrected, so most liars are never audited: only 25% of liars are ever caught in Fishery and 76% in River, against 100% at random **[post hoc diagnostic]**.
+
+**Corrected statement.** With memory, an audit adds information only about agents not yet corrected. A deterministic aim that keeps choosing the same agent wastes the budget. Random audits, or audits aimed at a physical signal of harm, reach every agent. This is the same lesson as P2: audits must be unpredictable and cover everyone.
