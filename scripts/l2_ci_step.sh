@@ -16,6 +16,14 @@ if [ "$MODE" = "pilot" ]; then
   done
   exit 0
 fi
+# Finish any pilot gate that has not completed yet (resumable; stops at the usage limit like the full run).
+for m in "gemma4:31b-cloud" "nemotron-3-super:cloud"; do
+  slug="${m//[:.]/_}"
+  if [ ! -f "$STORE/claude_l2_pilot_v2/$slug/pilot_gate.json" ]; then
+    run pilot --model "$m" --out "$STORE/claude_l2_pilot_v2/$slug"; code=$?
+    [ "$code" -eq 3 ] && { echo "usage limit during pilot; next scheduled job resumes"; exit 0; }
+  fi
+done
 # Gate record (protocol rule: >= 95% valid first-try answers and mean comprehension >= 2 of 3).
 # gpt-oss passed its pilot locally on 2026-10-07 (notes/claude_audit_20261005/runs/claude_l2_pilot_v1/);
 # gemma4 and nemotron are judged from their rerun pilots in $STORE/claude_l2_pilot_v2 (Amendment 1).
