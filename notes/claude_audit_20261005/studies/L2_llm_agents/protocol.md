@@ -141,4 +141,20 @@ looking at the other cells.
 
 ## Amendments
 
-(none yet)
+### Amendment 1 (2026-10-07, after the pilot gate began; before any full run)
+
+**What was seen before this change:**
+- **gpt-oss:120b** passed its pilot gate: 100% valid answers on the first try (320 decisions), and a mean comprehension score of 3 of 3.
+- **gemma4:31b** failed every decision. It wraps its JSON in a markdown code fence (```` ```json … ``` ````), and the parser rejects that, so every decision fell back to a default. The pilot was stopped before Nemotron ran.
+- Re-parsing Gemma's saved answers with the change below made 314 of 314 first-try decisions valid. No behaviour (over-taking) was looked at.
+
+**Changes:**
+1. **Parsing.** A reply that is exactly one JSON object inside a markdown code fence is unwrapped before parsing; everything else is parsed as before. This is an interface fix of the kind L1's amendments made. It applies to every model, and gives identical results for gpt-oss, which never used fences. Gemma's and Nemotron's pilot gates are rerun from scratch with it, in a new pilot directory; the failed Gemma pilot is kept.
+2. **Where it runs.** The full run happens on GitHub Actions, not on Ameer's laptop:
+   - it calls Ollama Cloud's API directly with an API key, using the API's model names for the same models (`gpt-oss:120b`, `gemma4:31b`, `nemotron-3-super`);
+   - each scheduled job resumes at the next unfinished episode and stops cleanly at the usage limit, after a time limit (between episodes), or after a network failure;
+   - finished episodes are committed to the `l2-results` branch after every job.
+3. **Token cap.** Raised from 15 M to 20 M per model. The pilot measured about 800 tokens per call, so about 14.4 M per model is expected, and restarts add more.
+4. **Which models run.** A model enters the full run only after its pilot gate has passed, as recorded in `gates.json` on the `l2-results` branch.
+
+Nothing else changes: the cells, contexts, prompts, seeds, outcomes and hypotheses are unchanged.

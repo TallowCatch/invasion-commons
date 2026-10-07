@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import json
 import platform
+import re
 import sys
 import time
 import urllib.error
@@ -41,8 +42,31 @@ CELLS = {"E0": ("explicit", "fine", 0.0), "E1": ("explicit", "fine", 1.0), "E2":
          "EM": ("explicit", "memory", 0.0), "S0": ("silent", "fine", 0.0), "S36": ("silent", "fine", 36.0),
          "P0": ("paraphrase", "fine", 0.0), "P36": ("paraphrase", "fine", 36.0)}
 PILOT_CELLS = ("E0", "E36")
-TOKEN_CAP = 15_000_000
+TOKEN_CAP = 20_000_000  # Amendment 1 (was 15 M)
+API_NAMES = {"gpt-oss:120b-cloud": "gpt-oss:120b", "gemma4:31b-cloud": "gemma4:31b",
+             "nemotron-3-super:cloud": "nemotron-3-super"}  # names on https://ollama.com/api (Amendment 1)
 OVER_T = 0.06  # tonnes above the allowance that count as over-taking (L1: 0.01 of the 6 t maximum)
+
+
+FENCE = re.compile(r"^\s*```(?:json)?\s*(.*?)\s*```\s*$", re.S)
+
+
+def unfence(content):
+    """Amendment 1: accept JSON wrapped in a markdown code fence (gemma4 does this); other text is unchanged."""
+    m = FENCE.match(content or "")
+    return m.group(1) if m else content
+
+
+def parse_decision(content, key, lo, hi):
+    return L.parse_decision(unfence(content), key, lo, hi)
+
+
+def parse_comprehension(content, answers):
+    return L.parse_comprehension(unfence(content), answers)
+
+
+class Transient(Exception):
+    """Network failure after retries: stop cleanly; the next run resumes."""
 
 
 class QuotaStop(Exception):
@@ -54,16 +78,24 @@ class Budget(Exception):
 
 
 class Client(L.OllamaClient):
-    """L1's Ollama client, but a usage-limit response stops the run at once instead of being retried."""
+    """L1's Ollama client, but a usage-limit response stops the run at once instead of being retried.
+    With OLLAMA_HOST=https://ollama.com and OLLAMA_API_KEY set, it calls Ollama Cloud's API directly (Amendment 1)."""
+
+    @property
+    def remote(self):
+        return "ollama.com" in self.base_url
 
     def chat(self, messages, seed=None, json_mode=True):
-        body = {"model": self.model, "messages": messages, "stream": False, "options": {"temperature": self.temperature}}
+        model = API_NAMES.get(self.model, self.model) if self.remote else self.model
+        body = {"model": model, "messages": messages, "stream": False, "options": {"temperature": self.temperature}}
         if seed is not None:
             body["options"]["seed"] = int(seed) % (2 ** 31)
         if json_mode:
             body["format"] = "json"
-        req = urllib.request.Request(self.base_url + "/api/chat", data=json.dumps(body).encode(),
-                                     headers={"Content-Type": "application/json"})
+        headers = {"Content-Type": "application/json"}
+        if self.remote and self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
+        req = urllib.request.Request(self.base_url + "/api/chat", data=json.dumps(body).encode(), headers=headers)
         t0, last = time.time(), None
         for attempt in range(4):
             try:
@@ -81,7 +113,7 @@ class Client(L.OllamaClient):
                 last = exc
             time.sleep(5 * (attempt + 1))
         else:
-            raise RuntimeError(f"Ollama request failed after retries: {last}")
+            raise Transient(f"Ollama request failed after retries: {last}")
         return L.Reply(content=data.get("message", {}).get("content", ""),
                        prompt_tokens=int(data.get("prompt_eval_count") or 0),
                        completion_tokens=int(data.get("eval_count") or 0),
@@ -162,7 +194,7 @@ def ask(client, system, prompt, key, lo, hi, seed, log, meta, used):
             raise Budget()
         r = client.chat(msgs, seed=seed + attempt)
         used["tokens"] += r.prompt_tokens + r.completion_tokens
-        value, err = (L.parse_decision(r.content, key, lo, hi) if key else (r.content, None))
+        value, err = (parse_decision(r.content, key, lo, hi) if key else (r.content, None))
         log.write(json.dumps({**meta, "attempt": attempt, "content": r.content, "error": err,
                               "prompt_tokens": r.prompt_tokens, "completion_tokens": r.completion_tokens,
                               "seconds": round(r.seconds, 3), "model": r.model}) + "\n")
@@ -185,7 +217,7 @@ def episode(client, context, cell, log, used, horizon=HORIZON):
         ctext, answers = comprehension(consequence, fine, stable_seed(SEEDS["shuffle"], context, cell, i))
         content, _ = ask(client, system, ctext, None, 0, 0, stable_seed(SEEDS["llm"], context, cell, i, "comp"), log,
                          {**base, "agent": i, "t": -1, "phase": "comprehension"}, used)
-        comp[i] = L.parse_comprehension(content, answers)
+        comp[i] = parse_comprehension(content, answers)
     state, pay, fines = FisherySnapshot(cfg.stock_init), np.zeros(cfg.n_agents), np.zeros(cfg.n_agents)
     hist = {i: [] for i in llm_agents}
     last_req = {i: 0.5 for i in llm_agents}
@@ -253,8 +285,10 @@ def episode(client, context, cell, log, used, horizon=HORIZON):
                 fallbacks=fallbacks, reprompts=reprompts)
 
 
-def run(client, out, cells, contexts, model_label, horizon=HORIZON):
-    """Contexts outer, cells inner, so a partial run covers every cell evenly. Returns 'done', 'quota' or 'budget'."""
+def run(client, out, cells, contexts, model_label, horizon=HORIZON, max_minutes=None):
+    """Contexts outer, cells inner, so a partial run covers every cell evenly.
+    Returns 'done', 'quota', 'budget', 'transient' (network) or 'time' (max_minutes reached between games)."""
+    started = time.time()
     out = Path(out)
     (out / "episodes").mkdir(parents=True, exist_ok=True)
     manifest = dict(protocol="studies/L2_llm_agents/protocol.md", model=model_label, cells=CELLS, run_cells=list(cells),
@@ -271,12 +305,20 @@ def run(client, out, cells, contexts, model_label, horizon=HORIZON):
                 path = out / "episodes" / f"{cell}__{c}.json"
                 if path.exists():
                     continue
+                if max_minutes is not None and time.time() - started > 60 * max_minutes:
+                    status = "time"
+                    print(f"STOP: {max_minutes} minutes reached; resuming later", flush=True)
+                    break
                 t0 = time.time()
                 try:
                     e = episode(client, c, cell, log, used, horizon)
                 except QuotaStop as exc:
                     status = "quota"
                     print(f"STOP (usage limit): {exc}", flush=True)
+                    break
+                except Transient as exc:
+                    status = "transient"
+                    print(f"STOP (network): {exc}", flush=True)
                     break
                 except Budget:
                     status = "budget"
@@ -325,10 +367,21 @@ class QuotaAfter(L.FakeClient):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("mode", choices=("smoke", "pilot", "full"))
+    ap.add_argument("mode", choices=("smoke", "check", "pilot", "full"))
     ap.add_argument("--model", default=MODELS[0])
-    ap.add_argument("--out", required=True)
+    ap.add_argument("--out")
+    ap.add_argument("--max-minutes", type=float, default=None)
     a = ap.parse_args()
+    if a.mode == "check":  # one tiny call per model; prints OK or the error (never the key)
+        bad = 0
+        for m in MODELS:
+            try:
+                r = Client(m, timeout=120).chat([{"role": "user", "content": 'Reply with JSON only: {"ok": true}'}])
+                print(f"OK   {m}: {unfence(r.content)[:40]!r} ({r.prompt_tokens}+{r.completion_tokens} tokens)")
+            except Exception as exc:
+                bad += 1
+                print(f"FAIL {m}: {type(exc).__name__}: {str(exc)[:160]}")
+        return 1 if bad else 0
     if a.mode == "smoke":  # offline gate: a simulated usage limit, then resume to completion
         s1 = run(QuotaAfter(40, over=0.5, broken_every=7), a.out, tuple(CELLS), (0, 1), "fake", horizon=3)
         s2 = run(L.FakeClient(over=0.5, broken_every=7), a.out, tuple(CELLS), (0, 1), "fake", horizon=3)
@@ -339,8 +392,8 @@ def main():
         if st == "done":
             print(json.dumps(pilot_report(a.out), indent=1))
         return 3 if st == "quota" else 0
-    st = run(Client(a.model), a.out, tuple(CELLS), CONTEXTS, a.model)
-    return {"done": 0, "quota": 3, "budget": 4}[st]
+    st = run(Client(a.model), a.out, tuple(CELLS), CONTEXTS, a.model, max_minutes=a.max_minutes)
+    return {"done": 0, "quota": 3, "budget": 4, "transient": 5, "time": 6}[st]
 
 
 if __name__ == "__main__":

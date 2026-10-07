@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# One GitHub Actions job of experiment L2 (protocol: notes/claude_audit_20261005/studies/L2_llm_agents/protocol.md, Amendment 1).
+# Usage: bash scripts/l2_ci_step.sh check|pilot|run STORE_DIR MAX_MINUTES
+# STORE_DIR holds the l2-results branch: claude_l2_v1/<model>/..., claude_l2_pilot_v2/<model>/..., gates.json
+set -u
+MODE="$1"; STORE="$2"; MAXMIN="${3:-330}"
+MODELS=("gpt-oss:120b-cloud" "gemma4:31b-cloud" "nemotron-3-super:cloud")
+start=$(date +%s)
+run() { PYTHONPATH=. python -m experiments.oversight.run_l2_llm_agents "$@"; }
+if [ "$MODE" = "check" ]; then run check; exit $?; fi
+if [ "$MODE" = "pilot" ]; then
+  for m in "gemma4:31b-cloud" "nemotron-3-super:cloud"; do
+    slug="${m//[:.]/_}"
+    run pilot --model "$m" --out "$STORE/claude_l2_pilot_v2/$slug"; code=$?
+    [ "$code" -eq 3 ] && { echo "usage limit during pilot; rerun later"; exit 0; }
+  done
+  exit 0
+fi
+# full run: models whose gate passed, one after another, until the usage limit or the time limit
+for m in "${MODELS[@]}"; do
+  slug="${m//[:.]/_}"
+  python - "$STORE/gates.json" "$m" <<'PY' || { echo "skip $m: pilot gate not passed (gates.json)"; continue; }
+import json, sys
+g = json.load(open(sys.argv[1])) if __import__("os").path.exists(sys.argv[1]) else {}
+sys.exit(0 if g.get(sys.argv[2]) is True else 1)
+PY
+  [ -f "$STORE/claude_l2_v1/$slug/DONE" ] && { echo "$m complete"; continue; }
+  left=$(( MAXMIN - ($(date +%s) - start) / 60 ))
+  [ "$left" -le 10 ] && { echo "time limit reached"; exit 0; }
+  run full --model "$m" --out "$STORE/claude_l2_v1/$slug" --max-minutes "$left"; code=$?
+  case $code in
+    0) echo "$m complete"; continue ;;
+    3) echo "usage limit reached; next scheduled job resumes"; exit 0 ;;
+    5|6) echo "stopped (code $code); next scheduled job resumes"; exit 0 ;;
+    *) echo "$m failed with code $code"; exit "$code" ;;
+  esac
+done
+echo "all gated models complete"
