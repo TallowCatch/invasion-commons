@@ -160,7 +160,7 @@ test against the same fixed reviewer protocol.
 
 ### Next steps already proposed
 
-- **L2, the last experiment:** LLM actors across a fine grid, with two model families. The protocol is drafted in `studies/L2_llm_agents/protocol.md`; it waits for the compute and model decisions.
+- **L2, the last experiment (running since 7 Oct):** LLM fishers across a fine grid, 110 games per model. Three frozen families (gpt-oss, gemma4, nemotron) decide claim 6; Mistral (`mistral-large-4`) is added as a fourth family and reported beside them. It runs on GitHub Actions with Ollama Pro, in three parallel lanes (protocol Amendments 1–2). Check progress with `bash scripts/l2_progress.sh`.
 - **A coordinated group attacker** with per-agent strategies (S5 gap).
 - **A reviewer that hedges against uncertainty in its own model** (R2 gap).
 - **A direct test** of report-based against signal-based audit targeting (C1
