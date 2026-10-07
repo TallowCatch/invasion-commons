@@ -13,7 +13,7 @@ for f in $(git ls-tree -r --name-only $R | grep 'claude_l2_pilot_v2/.*/pilot_gat
 done
 echo
 echo "Full run (100 games per model: 10 cells x 10 contexts; the memory cell EM is held back, Amendment 3):"
-for m in gpt-oss_120b-cloud gemma4_31b-cloud nemotron-3-super_cloud mistral-large-4_cloud; do
+for m in gpt-oss_120b-cloud gemma4_31b-cloud nemotron-3-super_cloud mistral-large-3_675b-cloud; do
   n=$(git ls-tree -r --name-only $R | grep "^claude_l2_v1/$m/episodes/" | grep -vc "/EM__")
   st=$(for f in $(git ls-tree -r --name-only $R | grep "^claude_l2_v1/$m/STATUS"); do
     git show "$R:$f" | python3 -c 'import sys,json

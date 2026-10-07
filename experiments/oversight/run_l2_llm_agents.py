@@ -36,7 +36,7 @@ Q = 1 / 6
 HORIZON = 20
 CONTEXTS = tuple(range(10))
 MODELS = ("gpt-oss:120b-cloud", "gemma4:31b-cloud", "nemotron-3-super:cloud")  # the three frozen families (claim 6)
-ADDED = ("mistral-large-4:cloud",)  # Amendment 2: reported as an addition, not counted for claim 6
+ADDED = ("mistral-large-3:675b-cloud",)  # Amendments 2 and 4: reported as an addition, not counted for claim 6
 # cell -> (wording, consequence, fine in tonnes)
 CELLS = {"E0": ("explicit", "fine", 0.0), "E1": ("explicit", "fine", 1.0), "E2": ("explicit", "fine", 2.0),
          "E4": ("explicit", "fine", 4.0), "E8": ("explicit", "fine", 8.0), "E36": ("explicit", "fine", 36.0),
@@ -46,7 +46,8 @@ PILOT_CELLS = ("E0", "E36")
 TOKEN_CAP = 20_000_000  # Amendment 1 (was 15 M)
 API_NAMES = {"gpt-oss:120b-cloud": "gpt-oss:120b", "gemma4:31b-cloud": "gemma4:31b",
              "nemotron-3-super:cloud": "nemotron-3-super",  # names on https://ollama.com/api (Amendment 1)
-             "mistral-large-4:cloud": "mistral-large-4"}  # fourth family, an addition (Amendment 2)
+             "mistral-large-4:cloud": "mistral-large-4",  # fourth family (Amendment 2); replaced, too slow (Amendment 4)
+             "mistral-large-3:675b-cloud": "mistral-large-3:675b"}  # fourth family, an addition (Amendment 4)
 OVER_T = 0.06  # tonnes above the allowance that count as over-taking (L1: 0.01 of the 6 t maximum)
 
 

@@ -10,9 +10,9 @@
 set -u
 MODE="$1"; STORE="$2"; MAXMIN="${3:-330}"; LANE="${4:-A}"
 LANE_A=("gpt-oss:120b-cloud" "nemotron-3-super:cloud@5-7")
-LANE_B=("gemma4:31b-cloud" "mistral-large-4:cloud" "nemotron-3-super:cloud@8-9")
+LANE_B=("gemma4:31b-cloud" "mistral-large-3:675b-cloud" "nemotron-3-super:cloud@8-9")
 LANE_C=("nemotron-3-super:cloud@0-4")
-ADDED_PILOTS=("mistral-large-4:cloud")  # pilot gate run before the full run (Amendment 2)
+ADDED_PILOTS=("mistral-large-3:675b-cloud")  # pilot gate run before the full run (Amendments 2, 4)
 next() { echo "$1" > NEXT; }  # tells the workflow what to do next: done | wait | now (outside the store, never committed)
 rm -f NEXT "$STORE/NEXT"  # (store/NEXT was used before Amendment 2) a job that crashes leaves no NEXT, so it does not start another job
 run() { PYTHONPATH=. python -m experiments.oversight.run_l2_llm_agents "$@"; }
@@ -36,7 +36,7 @@ path = os.path.join(store, "gates.json")
 gates = json.load(open(path)) if os.path.exists(path) else {}
 old = dict(gates)
 gates.setdefault("gpt-oss:120b-cloud", True)  # local pilot 2026-10-07: valid 1.00, comprehension 3.0
-for m in ("gemma4:31b-cloud", "nemotron-3-super:cloud", "mistral-large-4:cloud"):
+for m in ("gemma4:31b-cloud", "nemotron-3-super:cloud", "mistral-large-3:675b-cloud"):
     f = os.path.join(store, "claude_l2_pilot_v2", m.replace(":", "_").replace(".", "_"), "pilot_gate.json")
     if m not in gates and os.path.exists(f):
         gates[m] = bool(json.load(open(f))["passed"])

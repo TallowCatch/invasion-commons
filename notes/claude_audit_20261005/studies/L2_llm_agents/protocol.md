@@ -215,3 +215,20 @@ Nothing else changes: the cells, contexts, prompts, seeds, outcomes, hypotheses 
 **Known and accepted:**
 - Over-taking is defined as more than 0.06 t above the allowance, as in L1. So a catch up to 0.06 t over is "checked, no fine", although the rules text says any excess is fined. This is rare; it is reported, not changed.
 - The E1 prompt reads "1 tonnes". The prompts are frozen, so this is not changed.
+
+### Amendment 4 (2026-10-07 ~20:15Z, during the Mistral pilot; no Mistral full-run game had been played)
+
+**What was seen before this change:**
+- Gemma finished its 100 games, and its lane started the `mistral-large-4` pilot.
+- In the first 6 pilot calls, Mistral Large 4 used about 400–750 tokens per comprehension answer and **5,600–6,400 tokens per decision**, nearly all hidden reasoning. Each decision took 70–90 s. The other models use about 800 tokens per call.
+- At that rate one game takes about 3.5 hours and about 1 M tokens. A full run would need about 100 M tokens, five times the 20 M cap, and about two weeks of one lane.
+- To get these numbers, the timing and token counts of those 6 pilot calls were read. Their answers were visible in the same rows. Pilot games are not part of the results.
+
+**Changes:**
+1. **The fourth family's model is `mistral-large-3:675b`** (`mistral-large-3:675b-cloud` in the runner), Mistral's previous flagship on Ollama Cloud. It has no hidden reasoning and answered a test call in under 1 s on 2026-10-07.
+   - The choice is based on cost and speed only, measured before any Mistral full-run game.
+   - It passes the same pilot gate first, with the same frozen prompts, cells, contexts and seeds.
+   - Its replies come wrapped in code fences, which Amendment 1's parsing already handles.
+2. **Mistral Large 4** is stopped at its pilot, and its pilot calls are kept in `claude_l2_pilot_v2/mistral-large-4_cloud`. It is reported as not run, because it would exceed the token cap.
+3. Mistral remains an addition. Claim 6 is still judged on gpt-oss, gemma4 and nemotron.
+4. To stop the expensive pilot at once, the running jobs were cancelled. The lanes restarted from their next unfinished game.
