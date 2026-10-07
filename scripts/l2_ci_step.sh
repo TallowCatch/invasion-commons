@@ -5,6 +5,7 @@
 set -u
 MODE="$1"; STORE="$2"; MAXMIN="${3:-330}"
 next() { echo "$1" > "$STORE/NEXT"; }  # tells the workflow what to do next: done | wait | now
+rm -f "$STORE/NEXT"  # a job that crashes leaves no NEXT, so it does not start another job
 MODELS=("gpt-oss:120b-cloud" "gemma4:31b-cloud" "nemotron-3-super:cloud")
 start=$(date +%s)
 run() { PYTHONPATH=. python -m experiments.oversight.run_l2_llm_agents "$@"; }
