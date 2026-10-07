@@ -179,3 +179,39 @@ Nothing else changes: the cells, contexts, prompts, seeds, outcomes and hypothes
 3. **Splitting a model by context.** A unit that covers only some contexts writes its own log, manifest, STATUS and DONE files (suffix `_ctxLO-HI`), so parallel jobs never write the same file. The token cap (20 M per model) counts all of a model's logs. A model is complete when all 110 of its games exist. Within a unit the order is unchanged (contexts outer, cells inner), and every game is identical to what a single job would run, because seeds depend only on the context and cell.
 
 Nothing else changes: the cells, contexts, prompts, seeds, outcomes, hypotheses and the claim-6 rule for the three frozen families are unchanged.
+
+### Amendment 3 (2026-10-07 ~16:25Z, after an independent code review; before any outcome comparison)
+
+**What was seen before this change:**
+- An independent review of the code against this protocol was done blind: it computed no outcomes.
+- A mechanical check of the 24 finished gpt-oss games looked only at the mechanics, not at over-taking by cell:
+  - fines match audits and catches exactly, and EM has no fines;
+  - rule-followers never over-take, and catches stay in range;
+  - the audit rate is 0.18 against 1/6, and the audit draws are identical across cells within a context;
+  - there are 0 invalid first-try answers, 0 fallbacks, and a mean comprehension score of 3 of 3.
+- While reading the file format, the summary fields of one game were seen: gpt-oss, E0, context 0, where the lake collapsed. That game's setting matches the pilot game already reported above.
+- No cell was compared with another.
+
+**Fault found (an interface fault, handled as rule 5 says):**
+- The EM cell tells the agent "the reviewer records by how much you went over and lowers your later allowances". The code records a caught over-take only as S4's share-of-the-cut, d = (catch − allowance)/(request − allowance).
+- That share is undefined when the reviewer made no cut (allowance = request), so the caught over-take is silently dropped.
+- An LLM can also catch more than it requested, giving d > 1. After clipping, d = 1 sets that agent's allowance to 0 for the rest of the game.
+- So, in some states, EM does not do what its prompt says.
+- S4's simulated cheaters always caught between the allowance and the request, so the rule never met these cases there.
+
+**Changes:**
+1. **EM is held back from the main run** (`--skip-cells EM`). The other 10 cells are unaffected and continue in `claude_l2_v1`.
+   - The two gpt-oss EM games already saved stay in `claude_l2_v1`, as a kept failed run. They are not analysed, and their outcomes have not been looked at.
+   - A corrected memory rule will be fixed in a later amendment, before any EM game is run again. EM then runs for every model in a new directory, `claude_l2_em_v2`.
+2. **Job safety (no effect on any game):**
+   - No new game starts in the last 35 minutes of a job, so a slow game is never killed by the 350-minute job timeout.
+   - Game files are written atomically.
+   - A log line cut off by a killed job is skipped, so it cannot crash later jobs.
+3. **Blinding:** the public job log no longer prints each game's over-take rate or final stock.
+4. **Analysis fixes (decided before any outcome comparison):**
+   - The H3 bootstrap now counts each resampled context as often as it is drawn, as the other tests already did. The share of steps breaking the MSY limit is pooled over steps, as this protocol's pooling rule says.
+   - Each model gets its own generator, seeded 20261019, so a model's intervals do not depend on which other models exist.
+
+**Known and accepted:**
+- Over-taking is defined as more than 0.06 t above the allowance, as in L1. So a catch up to 0.06 t over is "checked, no fine", although the rules text says any excess is fined. This is rare; it is reported, not changed.
+- The E1 prompt reads "1 tonnes". The prompts are frozen, so this is not changed.

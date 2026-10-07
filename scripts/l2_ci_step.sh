@@ -4,7 +4,9 @@
 # STORE_DIR holds the l2-results branch: claude_l2_v1/<model>/..., claude_l2_pilot_v2/<model>/..., gates.json
 # Amendment 2 (Ollama Pro, 3 models at a time): three lanes run in parallel, each working through its own list of
 # units in order. A unit is a model (all 10 contexts) or MODEL@LO-HI (only those contexts; files get the suffix _ctxLO-HI).
-# No unit appears in two lanes, so parallel jobs never write the same file. Rebalancing = editing the lists below.
+# No unit appears in two lanes, so parallel jobs never write the same file. Rebalancing = editing the lists below
+# between jobs (never while a lane is running, or two lanes could run the same game).
+# Amendment 3: the memory cell EM is held back from this run until its interface fault is fixed.
 set -u
 MODE="$1"; STORE="$2"; MAXMIN="${3:-330}"; LANE="${4:-A}"
 LANE_A=("gpt-oss:120b-cloud" "nemotron-3-super:cloud@5-7")
@@ -64,8 +66,9 @@ for u in "${UNITS[@]}"; do
     update_gates; gate "$m"; g=$?
   fi
   [ "$g" -ne 0 ] && { echo "skip $u: pilot gate not passed (gates.json)"; continue; }
-  [ "$(left)" -le 10 ] && { echo "time limit reached"; next now; exit 0; }
-  args=(full --model "$m" --out "$STORE/claude_l2_v1/$slug" --max-minutes "$(left)")
+  # no new game starts in the last 35 minutes, so a slow game (nemotron ~23 min) ends before the 350-minute job timeout
+  [ "$(left)" -le 40 ] && { echo "time limit reached"; next now; exit 0; }
+  args=(full --model "$m" --out "$STORE/claude_l2_v1/$slug" --max-minutes "$(( $(left) - 35 ))" --skip-cells EM)
   [ -n "$ctx" ] && args+=(--contexts "$ctx")
   run "${args[@]}"; code=$?
   case $code in

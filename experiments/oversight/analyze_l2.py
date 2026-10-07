@@ -47,7 +47,7 @@ def analyse_model(d, rng):
                            msy_break=float(np.mean([s["msy_break"] for s in e["steps"]])), collapsed=e["collapsed"],
                            comprehension=np.mean([v for v in e["comprehension"].values() if v is not None] or [np.nan]),
                            fallbacks=e["fallbacks"]) for e in eps])
-    calls = [json.loads(x) for f in sorted(d.glob("calls*.jsonl")) for x in open(f)]  # one log per job lane (Amendment 2)
+    calls = [c for f in sorted(d.glob("calls*.jsonl")) for c in l2.read_log(f)]  # one log per job lane (Amendment 2)
     first = [c for c in calls if c["phase"] != "comprehension" and c["attempt"] == 0]
     cells = {}
     for cell in l2.CELLS:
@@ -60,6 +60,12 @@ def analyse_model(d, rng):
     rate = lambda cells_, cs: A[A.cell.isin(cells_) & A.context.isin(cs)].over.mean() if len(cs) else np.nan
     def rate_b(cells_, cs):  # bootstrap-friendly: weight resampled contexts by multiplicity
         parts = [A[(A.cell.isin(cells_)) & (A.context == c)].over for c in cs]
+        parts = [p for p in parts if len(p)]
+        return pd.concat(parts).mean() if parts else np.nan
+    # share of steps breaking the MSY limit, pooled over steps, each resampled context counted as often as it is drawn
+    S = pd.DataFrame([dict(context=e["context"], cell=e["cell"], b=s["msy_break"]) for e in eps for s in e["steps"]])
+    def msy_b(cell, cs):
+        parts = [S[(S.cell == cell) & (S.context == c)].b for c in cs]
         parts = [p for p in parts if len(p)]
         return pd.concat(parts).mean() if parts else np.nan
     e0 = A[(A.cell == "E0") & (A.over == 1)]
@@ -77,8 +83,7 @@ def analyse_model(d, rng):
         out["H2_E36_minus_E0"] = boot(lambda cs: rate_b(["E36"], cs) - rate_b(["E0"], cs), ctx, rng)
     if {"EM", "E0"} <= set(cells):
         out["H3_EM_overtake"] = cells["EM"]["overtake_rate"]
-        out["H3_EM_minus_E0_msy_break"] = boot(lambda cs: E[(E.cell == "EM") & E.context.isin(cs)].msy_break.mean()
-                                                - E[(E.cell == "E0") & E.context.isin(cs)].msy_break.mean(), ctx, rng)
+        out["H3_EM_minus_E0_msy_break"] = boot(lambda cs: msy_b("EM", cs) - msy_b("E0", cs), ctx, rng)
     if "S0" in cells:
         out["H4_S0_overtake"] = cells["S0"]["overtake_rate"]
     if {"P0", "P36", "E0", "E36"} <= set(cells):
@@ -105,8 +110,9 @@ def main():
     ap.add_argument("--run", default="results/runs/claude_l2_v1")
     a = ap.parse_args()
     run = Path(a.run)
-    rng = np.random.default_rng(SEED)
-    res = [r for r in (analyse_model(d, rng) for d in sorted(p for p in run.iterdir() if p.is_dir())) if r]
+    # a fresh generator per model, so one model's intervals do not depend on which other models exist
+    res = [r for r in (analyse_model(d, np.random.default_rng(SEED)) for d in sorted(p for p in run.iterdir() if p.is_dir()))
+           if r]
     complete = {r["model"]: r["n_episodes"] == len(l2.CELLS) * len(l2.CONTEXTS) for r in res}
     # claim 6 counts only the three frozen families; Mistral (Amendment 2) is reported beside them
     primary = [r for r in res if r["model"] in {m.replace(":", "_").replace(".", "_") for m in l2.MODELS}]

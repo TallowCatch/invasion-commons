@@ -53,3 +53,11 @@ def test_split_lanes_keep_separate_files_and_share_the_token_count(tmp_path):
     assert not (tmp_path / "calls.jsonl").exists()
     assert json.loads((tmp_path / "STATUS_ctx1-1").read_text())["tokens"] > json.loads(
         (tmp_path / "STATUS_ctx0-0").read_text())["tokens"]
+
+
+def test_a_cut_off_last_log_line_does_not_stop_the_run(tmp_path):
+    assert l2.run(L.FakeClient(), tmp_path, ("E0",), (0,), "fake", horizon=2) == "done"
+    with open(tmp_path / "calls.jsonl", "a") as f:
+        f.write('{"phase": "catch", "prompt_tok')  # a job killed mid-write
+    assert l2.run(L.FakeClient(), tmp_path, ("E0", "E36"), (0,), "fake", horizon=2) == "done"
+    assert not list((tmp_path / "episodes").glob("*.tmp"))

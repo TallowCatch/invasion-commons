@@ -67,6 +67,17 @@ def parse_comprehension(content, answers):
     return L.parse_comprehension(unfence(content), answers)
 
 
+def read_log(path):
+    """Rows of a calls log. A last line cut off by a killed job is skipped (Amendment 3), not fatal."""
+    rows = []
+    for x in open(path):
+        try:
+            rows.append(json.loads(x))
+        except json.JSONDecodeError:
+            continue
+    return rows
+
+
 class Transient(Exception):
     """Network failure after retries: stop cleanly; the next run resumes."""
 
@@ -302,8 +313,8 @@ def run(client, out, cells, contexts, model_label, horizon=HORIZON, max_minutes=
     sfx = f"_{tag}" if tag else ""
     (out / f"manifest{sfx}.json").write_text(json.dumps(manifest, indent=1))
     calls = out / f"calls{sfx}.jsonl"
-    used = dict(tokens=sum(json.loads(x).get("prompt_tokens", 0) + json.loads(x).get("completion_tokens", 0)
-                           for f in out.glob("calls*.jsonl") for x in open(f)))
+    used = dict(tokens=sum(c.get("prompt_tokens", 0) + c.get("completion_tokens", 0)
+                           for f in sorted(out.glob("calls*.jsonl")) for c in read_log(f)))
     status = "done"
     with open(calls, "a") as log:
         for c in contexts:
@@ -330,11 +341,12 @@ def run(client, out, cells, contexts, model_label, horizon=HORIZON, max_minutes=
                     status = "budget"
                     print(f"STOP: token cap {TOKEN_CAP:,} reached", flush=True)
                     break
-                path.write_text(json.dumps(e))
-                over = np.mean([[s["taken"][i] > s["allowance"][i] + OVER_T / L.MAX_CATCH for i in e["llm_agents"]]
-                                for s in e["steps"]])
-                print(f"{model_label} {cell:4s} ctx={c} over-take={over:.2f} final_stock={e['final_stock']:.1f} "
-                      f"fallbacks={e['fallbacks']} tokens={used['tokens']:,} {time.time() - t0:.0f}s", flush=True)
+                tmp = path.with_suffix(".tmp")  # atomic: a killed job never leaves a half-written game
+                tmp.write_text(json.dumps(e))
+                tmp.replace(path)
+                # Amendment 3: no outcome in the (public) job log, so the run stays blind until it is analysed
+                print(f"{model_label} {cell:4s} ctx={c} done fallbacks={e['fallbacks']} tokens={used['tokens']:,} "
+                      f"{time.time() - t0:.0f}s", flush=True)
             if status != "done":
                 break
     done = all((out / "episodes" / f"{cell}__{c}.json").exists() for c in contexts for cell in cells)
@@ -346,7 +358,7 @@ def run(client, out, cells, contexts, model_label, horizon=HORIZON, max_minutes=
 
 
 def pilot_report(out):
-    rows = [json.loads(x) for x in open(Path(out) / "calls.jsonl")]
+    rows = read_log(Path(out) / "calls.jsonl")
     decisions = [r for r in rows if r["phase"] != "comprehension"]
     first = [r for r in decisions if r["attempt"] == 0]
     valid = sum(r["error"] is None for r in first) / max(len(first), 1)
@@ -378,6 +390,7 @@ def main():
     ap.add_argument("--out")
     ap.add_argument("--max-minutes", type=float, default=None)
     ap.add_argument("--contexts", default=None, help="full mode: a range such as 5-7 (Amendment 2); default all")
+    ap.add_argument("--skip-cells", default="", help="full mode: cells left out, e.g. EM (Amendment 3)")
     a = ap.parse_args()
     if a.mode == "check":  # one tiny call per model; prints OK or the error (never the key)
         bad = 0
@@ -403,7 +416,10 @@ def main():
     if a.contexts:
         lo, hi = (int(x) for x in a.contexts.split("-"))
         contexts, tag = tuple(range(lo, hi + 1)), f"ctx{lo}-{hi}"
-    st = run(Client(a.model), a.out, tuple(CELLS), contexts, a.model, max_minutes=a.max_minutes, tag=tag)
+    skip = set(filter(None, a.skip_cells.split(",")))
+    assert skip <= set(CELLS), f"unknown cells {skip - set(CELLS)}"
+    st = run(Client(a.model), a.out, tuple(c for c in CELLS if c not in skip), contexts, a.model,
+             max_minutes=a.max_minutes, tag=tag)
     return {"done": 0, "quota": 3, "budget": 4, "transient": 5, "time": 6}[st]
 
 
