@@ -6,6 +6,19 @@ set -u
 MODE="$1"; STORE="$2"; MAXMIN="${3:-330}"
 next() { echo "$1" > "$STORE/NEXT"; }  # tells the workflow what to do next: done | wait | now
 rm -f "$STORE/NEXT"  # a job that crashes leaves no NEXT, so it does not start another job
+# Save progress to the l2-results branch every 20 minutes while the job runs (run mode only), so it is visible early.
+if [ "$MODE" = "run" ] && [ -d "$STORE/.git" ]; then
+  (
+    git -C "$STORE" config user.name "l2-runner"
+    git -C "$STORE" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+    while sleep 1200; do
+      git -C "$STORE" add -A && git -C "$STORE" commit -q -m "L2 progress (in job) $(date -u +%Y-%m-%dT%H:%MZ)" \
+        && git -C "$STORE" push -q origin HEAD:l2-results || true
+    done
+  ) &
+  SAVER=$!
+  trap 'kill $SAVER 2>/dev/null' EXIT
+fi
 MODELS=("gpt-oss:120b-cloud" "gemma4:31b-cloud" "nemotron-3-super:cloud")
 start=$(date +%s)
 run() { PYTHONPATH=. python -m experiments.oversight.run_l2_llm_agents "$@"; }
