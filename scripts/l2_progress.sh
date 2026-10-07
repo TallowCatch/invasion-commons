@@ -17,7 +17,7 @@ for m in gpt-oss_120b-cloud gemma4_31b-cloud nemotron-3-super_cloud; do
   n=$(git ls-tree -r --name-only $R | grep -c "^claude_l2_v1/$m/episodes/")
   st=$(git show "$R:claude_l2_v1/$m/STATUS" 2>/dev/null | python3 -c 'import sys,json
 try:
-  d=json.load(sys.stdin); print(f"{d[\"status\"]}, {d[\"tokens\"]/1e6:.1f}M tokens")
+  d=json.load(sys.stdin); print("%s, %.1fM tokens" % (d["status"], d["tokens"] / 1e6))
 except Exception: print("not started")')
   printf "  %-24s %3d / 110 games   %s\n" "$m" "$n" "$st"
 done

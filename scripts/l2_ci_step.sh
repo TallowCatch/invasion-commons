@@ -4,6 +4,7 @@
 # STORE_DIR holds the l2-results branch: claude_l2_v1/<model>/..., claude_l2_pilot_v2/<model>/..., gates.json
 set -u
 MODE="$1"; STORE="$2"; MAXMIN="${3:-330}"
+next() { echo "$1" > "$STORE/NEXT"; }  # tells the workflow what to do next: done | wait | now
 MODELS=("gpt-oss:120b-cloud" "gemma4:31b-cloud" "nemotron-3-super:cloud")
 start=$(date +%s)
 run() { PYTHONPATH=. python -m experiments.oversight.run_l2_llm_agents "$@"; }
@@ -21,7 +22,7 @@ for m in "gemma4:31b-cloud" "nemotron-3-super:cloud"; do
   slug="${m//[:.]/_}"
   if [ ! -f "$STORE/claude_l2_pilot_v2/$slug/pilot_gate.json" ]; then
     run pilot --model "$m" --out "$STORE/claude_l2_pilot_v2/$slug"; code=$?
-    [ "$code" -eq 3 ] && { echo "usage limit during pilot; next scheduled job resumes"; exit 0; }
+    [ "$code" -eq 3 ] && { echo "usage limit during pilot; next job resumes"; next wait; exit 0; }
   fi
 done
 # Gate record (protocol rule: >= 95% valid first-try answers and mean comprehension >= 2 of 3).
@@ -50,13 +51,14 @@ sys.exit(0 if g.get(sys.argv[2]) is True else 1)
 PY
   [ -f "$STORE/claude_l2_v1/$slug/DONE" ] && { echo "$m complete"; continue; }
   left=$(( MAXMIN - ($(date +%s) - start) / 60 ))
-  [ "$left" -le 10 ] && { echo "time limit reached"; exit 0; }
+  [ "$left" -le 10 ] && { echo "time limit reached"; next now; exit 0; }
   run full --model "$m" --out "$STORE/claude_l2_v1/$slug" --max-minutes "$left"; code=$?
   case $code in
     0) echo "$m complete"; continue ;;
-    3) echo "usage limit reached; next scheduled job resumes"; exit 0 ;;
-    5|6) echo "stopped (code $code); next scheduled job resumes"; exit 0 ;;
-    *) echo "$m failed with code $code"; exit "$code" ;;
+    3) echo "usage limit reached; next job resumes after a wait"; next wait; exit 0 ;;
+    5|6) echo "stopped (code $code); next job resumes"; next now; exit 0 ;;
+    *) echo "$m failed with code $code"; next done; exit "$code" ;;
   esac
 done
 echo "all gated models complete"
+next done
