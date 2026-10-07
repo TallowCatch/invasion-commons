@@ -21,7 +21,8 @@ part=sys.argv[1].split("STATUS")[-1].lstrip("_") or "all contexts"
 try:
   d=json.load(sys.stdin); print("%s: %s, %.1fM tokens;" % (part, d["status"], d["tokens"] / 1e6))
 except Exception: pass' "$f"; done | tr '\n' ' ')
-  [ -z "$st" ] && { [ "$n" -gt 0 ] && st="in progress" || st="not started"; }
+  calls=$(git ls-tree -r --name-only $R | grep -c "^claude_l2_v1/$m/calls")
+  [ -z "$st" ] && { [ "$n" -gt 0 ] || [ "$calls" -gt 0 ] && st="in progress" || st="not started"; }
   printf "  %-24s %3d / 100 games   %s\n" "$m" "$n" "$st"
 done
 echo
