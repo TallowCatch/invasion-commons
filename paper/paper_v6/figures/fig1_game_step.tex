@@ -1,0 +1,30 @@
+% Figure 1: one step of the audited commons game (TikZ, vector). Input inside a figure environment.
+% Colours: agents grey, reviewer blue, audits orange (same mapping as the data figures).
+\begin{tikzpicture}[
+    font=\footnotesize,
+    >={Stealth[length=2.2mm]},
+    box/.style={draw=#1!70!black, fill=#1!8, rounded corners=2pt, align=center, inner sep=4pt, minimum height=11mm, text width=24mm},
+    lab/.style={font=\scriptsize, align=center, text=black!70},
+    flow/.style={->, thick, draw=black!65},
+    fb/.style={->, thick, draw=audit!80!black, dashed},
+  ]
+  \colorlet{agentc}{black!55}
+  \colorlet{revc}{rev}
+  % ---- row of the step
+  \node[box=agentc] (req) {\textbf{1. Requests}\\[1pt] each of 6 agents asks\\ for a share $p_i$};
+  \node[box=agentc, right=6mm of req] (rep) {\textbf{2. Reports}\\[1pt] honest: $r_i=p_i$\\ under-report: $r_i<p_i$};
+  \node[box=revc, right=6mm of rep, text width=32mm] (rv) {\textbf{3. Reviewer}\\[1pt] predicts the resource\\ with its model; picks one\\ shared cut $\lambda\in\{1,\tfrac34,\tfrac12,\tfrac14,0\}$\\ that meets its target};
+  \node[box=agentc, right=6mm of rv] (ex) {\textbf{4. Harvest}\\[1pt] allowance $a_i=\lambda p_i$;\\ a cheater takes\\ more than $a_i$};
+  \node[box=green!45!black, below=9mm of ex, text width=28mm, minimum height=17mm] (res) {\textbf{5. Resource}\\[1pt] regrows, with random\\ weather; spills onto\\ neighbours (\textsc{Forest})};
+  \node[box=audit, below=9mm of rv, text width=31mm, minimum height=17mm] (au) {\textbf{Audits} (rate $q$)\\[1pt] spot-check a few agents;\\ a catch leads to a fine $F$,\\ memory of the lie, or both};
+  % ---- arrows
+  \draw[flow] (req) -- (rep);
+  \draw[flow] (rep) -- (rv);
+  \draw[flow] (rv) -- (ex);
+  \draw[flow] (ex) -- (res);
+  \draw[flow] (res.south) -- ++(0,-4mm) -| (req.south) node[pos=0.75, lab, right] {next step\\ ($T=80$ steps)};
+  \draw[fb] ([xshift=3mm]ex.south west) -- ([xshift=-3mm]au.north east) node[midway, lab, left=0.5mm] {inspect};
+  \draw[fb] (au.north) -- (rv.south) node[midway, lab, left=1mm] {memory};
+  % ---- target annotation
+  \node[lab, above=1.5mm of rv] {target: safety line, or productive target (MSY)};
+\end{tikzpicture}

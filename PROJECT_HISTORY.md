@@ -113,6 +113,14 @@ test against the same fixed reviewer protocol.
 | **C1** (5 Oct) | Does the reviewer ranking hold in a third game, where harm comes from *combining* two reagents? | Yes. Joint approved **0.3%** of risky requests, optimistic local **100%**. A fair-share quota cut **82–89%** of safe requests in *both* games, so its failure is not specific to compositional harm. Targeting audits by report size backfired: **+3.4 points** more unsafe steps than random audits. | 2 of 4 supported. |
 | **L1 pilot** (6 Oct) | Can a language model (gpt-oss:120b) act as a fisher in this simulator? Does it over-take? | The interface works: **100%** valid answers in 1,968 calls, about **$0.41** in total. The model **never** over-took unless the rules said it could. One sentence of permission raised over-taking to **23%** with no checks, and random checks with a large fine cut it to **0%**. 3 contexts per cell, so descriptive only. | Pilot; proposes L2. |
 
+**7 Oct: paper exhibits.**
+- Built for claims 1–5, following how the closest papers present their results.
+- In `paper/paper_v6/`:
+  - a TikZ protocol diagram;
+  - 5 multi-panel figures with 95% intervals;
+  - 2 booktabs tables.
+- Rebuild with `experiments/oversight/make_paper_exhibits.py`.
+
 ### What we now believe, and how confident we are
 
 1. **With true inputs and a known model, joint review is near-exact, and

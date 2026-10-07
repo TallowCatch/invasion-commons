@@ -1,0 +1,38 @@
+% Paper exhibits with draft captions. Every number in a caption is read from saved run tables
+% (experiments/oversight/make_paper_exhibits.py and the per-study results notes).
+% Plain-language rule: every technical term used here is defined in the Key terms table.
+
+\begin{table}[H]
+  \centering\small
+  \caption{\textbf{Key terms.} The words used in the figures and tables, in plain language.}
+  \label{tab:glossary}
+  \input{tables/table0_glossary.tex}
+\end{table}
+
+\begin{table}[H]
+  \centering\small
+  \caption{\textbf{The three games.} Following GovSim (\textsc{Fishery}, \textsc{Pasture}, \textsc{Pollution}), each game is named after its resource. All three follow the step in Figure~\ref{fig:step}; they differ in how agents' actions add up to harm. In \textsc{River}, two pollutants do little damage alone and much more together, like the synergistic chemical mixtures of ecotoxicology (Cedergreen 2014).}
+  \label{tab:games}
+  \resizebox{\textwidth}{!}{\input{tables/table1_games.tex}}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig2_reviewer.pdf}
+  \caption{\textbf{What the reviewer aims for, and what it knows, decide how well it protects the resource.} Top row, \textsc{Fishery}: (a)~fish stock over one run when the reviewer sees all requests (4 greedy agents; line: middle run, band: 80\% of 64 populations). With only the safety line, the stock is fished down to just above 10; with the MSY target it stays near 70. (b)~Total harvest in six settings (``4g 0.7'' = 4 greedy agents, regrowth 0.7; $^\dagger$ the pilot setting). The MSY target gives more wherever the safety line limits anything (1,394 against 544 in the pilot setting). (c)~Share of runs in which the stock collapsed when the reviewer's model is wrong: 41\% (regrowth overestimated) and 78\% (an unknown tipping point) with the safety line, 0\% with the MSY target. Bottom row, \textsc{Forest}: (d)~risky requests let through and (e)~safe requests blocked, when one part of the reviewer's model is wrong. The direction of the error decides the mistake: thinking regrowth is faster lets 82\% of risky requests through; thinking it slower blocks 42\% of safe ones. The cautious local reviewer blocks most safe requests in every case. (f)~A joint reviewer that learns the model while running lets through 16\% of risky requests early and 2.5\% late. Error bars: 95\% intervals.}
+  \label{fig:reviewer}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig3_audits.pdf}
+  \caption{\textbf{What makes audits work: memory, an expected fine above the gain, and unpredictable targets.} (a)~Under-reporters in nine settings (one random audit per step, no fines). Auditing without memory barely reduces harm; remembering each caught lie removes most of it. $^*$\textsc{Fishery}: steps above the MSY limit; \textsc{Forest}: steps below the safety line. (b)~\textsc{Fishery}: each cheater's gain from cheating, on new runs, against the expected fine per step. Curves for audit rates from 1/6 to 0.02, and for audits that miss three cheats in four, fall on top of each other; every group stops between 0.30 and 0.40, near the break-even of 0.36. (c)~Cheaters' gain as the audit rate rises, under five audit rules (fine 6; bands: 95\% intervals). A fine stops cheating from an audit rate of 0.10. Memory alone leaves about half the gain. Tightening everyone's cut to allow for known cheaters makes cheating pay more than with no audits. (d)~Harvest per honest agent at the same audit rate (1/6) and fine (24): random audits stop cheating; predictable audits (every agent on every sixth step) leave honest agents worse off than no audits (28.8 against 40.9). (e)~\textsc{River} and an additive control, two under-reporters, one audit per step with memory: auditing the largest report gives more unsafe steps than auditing at random (3.4 points more in \textsc{River}, 95\% interval 1.8--5.3), because under-reporters keep their own reports small. Noticed after the run; experiment T1 tests it in all three games.}
+  \label{fig:audits}
+\end{figure}
+
+\begin{table}[H]
+  \centering\small
+  \caption{\textbf{Audit rules compared} (\textsc{Fishery}, MSY target, 64 new populations). Cheaters' extra harvest: how much more the four cheaters get than if they complied, over 80 steps. Harvest per honest agent: what each honest agent gets. Checks per step include the extra checks that ``memory + extra checks'' spends watching known cheaters. Bold: best in column.}
+  \label{tab:regimes}
+  \resizebox{\textwidth}{!}{\input{tables/table2_regimes.tex}}
+\end{table}
