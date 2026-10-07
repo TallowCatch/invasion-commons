@@ -1,8 +1,10 @@
-# Experiment L2 (language-model agents) run remotely on GitHub Actions, in hourly chunks.
-# Protocol: notes/claude_audit_20261005/studies/L2_llm_agents/protocol.md (Amendment 1), on branch
-# claude/r1-s1-oversight-experiments. Results are committed to the l2-results branch after every job.
-# Each run-mode job starts the next one when it stops (after a 45-minute wait at the usage limit).
-# Needs the Ollama API key as repository secret OLLAMA_API_KEY (or SCALABLE_OVERSIGHT). Modes: check (one tiny call per model), pilot (gates), run (full L2).
+# Experiment L2 (language-model agents) run remotely on GitHub Actions.
+# Protocol: notes/claude_audit_20261005/studies/L2_llm_agents/protocol.md (Amendments 1-2), on branch
+# claude/r1-s1-oversight-experiments. Results are committed to the l2-results branch every 20 minutes and after every job.
+# Amendment 2 (Ollama Pro allows 3 cloud models at a time): three lanes A, B, C run in parallel; which models each lane
+# runs is set in scripts/l2_ci_step.sh. Each lane's job starts that lane's next job when it stops (after a 45-minute
+# wait at the usage limit); the hourly schedule is only a backup.
+# Needs the Ollama API key as repository secret OLLAMA_API_KEY (or SCALABLE_OVERSIGHT). Modes: check (one tiny call per model), run.
 name: L2 LLM agents (remote run)
 
 on:
@@ -11,13 +13,13 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "check | pilot | run"
+        description: "check | run"
         required: true
         default: "check"
-
-concurrency:
-  group: l2-llm-agents
-  cancel-in-progress: false
+      lane:
+        description: "all | A | B | C"
+        required: true
+        default: "all"
 
 permissions:
   contents: write
@@ -27,10 +29,18 @@ jobs:
   l2:
     runs-on: ubuntu-latest
     timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        lane: ${{ fromJSON(((inputs.mode || 'run') == 'check' && '["A"]') || ((inputs.lane || 'all') == 'all' && '["A","B","C"]') || format('["{0}"]', inputs.lane)) }}
+    concurrency:
+      group: l2-lane-${{ matrix.lane }}
+      cancel-in-progress: false
     env:
       OLLAMA_HOST: https://ollama.com
       OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY || secrets.SCALABLE_OVERSIGHT }}
-      MODE: ${{ github.event.inputs.mode || 'run' }}
+      MODE: ${{ inputs.mode || 'run' }}
+      LANE: ${{ matrix.lane }}
       CODE_REF: claude/r1-s1-oversight-experiments
     steps:
       - uses: actions/checkout@v4
@@ -51,22 +61,17 @@ jobs:
           else
             mkdir store && git -C store init -q -b l2-results && git -C store remote add origin "$url"
           fi
-      - name: Run one chunk of L2
-        run: bash scripts/l2_ci_step.sh "$MODE" store 330
+      - name: Run one chunk of L2 (lane ${{ matrix.lane }})
+        run: bash scripts/l2_ci_step.sh "$MODE" store 330 "$LANE"
       - name: Commit progress to l2-results
         if: always()
-        run: |
-          cd store
-          git config user.name "l2-runner"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git commit -q -m "L2 progress ($MODE) $(date -u +%Y-%m-%dT%H:%MZ)"; then git push -q origin l2-results; else echo "nothing new"; fi
-      - name: Start the next job (the hourly schedule is only a backup)
+        run: bash scripts/l2_save.sh store "L2 progress (lane $LANE)"
+      - name: Start this lane's next job
         if: success() && env.MODE == 'run'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          next=$(cat store/NEXT 2>/dev/null || echo none)
+          next=$(cat NEXT 2>/dev/null || echo none)
           echo "next: $next"
           if [ "$next" = "wait" ]; then echo "usage limit: waiting 45 minutes"; sleep 2700; fi
-          if [ "$next" = "wait" ] || [ "$next" = "now" ]; then gh workflow run l2-llm-agents.yml --ref main -f mode=run; fi
+          if [ "$next" = "wait" ] || [ "$next" = "now" ]; then gh workflow run l2-llm-agents.yml --ref main -f mode=run -f lane="$LANE"; fi
