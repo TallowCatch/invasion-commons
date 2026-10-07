@@ -1,7 +1,7 @@
 # Experiment L2 (language-model agents) run remotely on GitHub Actions, in hourly chunks.
 # Protocol: notes/claude_audit_20261005/studies/L2_llm_agents/protocol.md (Amendment 1), on branch
 # claude/r1-s1-oversight-experiments. Results are committed to the l2-results branch after every job.
-# Needs the repository secret OLLAMA_API_KEY. Modes: check (one tiny call per model), pilot (gates), run (full L2).
+# Needs the Ollama API key as repository secret OLLAMA_API_KEY (or SCALABLE_OVERSIGHT). Modes: check (one tiny call per model), pilot (gates), run (full L2).
 name: L2 LLM agents (remote run)
 
 on:
@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: 350
     env:
       OLLAMA_HOST: https://ollama.com
-      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY || secrets.SCALABLE_OVERSIGHT }}
       MODE: ${{ github.event.inputs.mode || 'run' }}
       CODE_REF: claude/r1-s1-oversight-experiments
     steps:
