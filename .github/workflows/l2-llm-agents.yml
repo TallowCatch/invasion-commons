@@ -1,0 +1,61 @@
+# Experiment L2 (language-model agents) run remotely on GitHub Actions, in hourly chunks.
+# Protocol: notes/claude_audit_20261005/studies/L2_llm_agents/protocol.md (Amendment 1), on branch
+# claude/r1-s1-oversight-experiments. Results are committed to the l2-results branch after every job.
+# Needs the repository secret OLLAMA_API_KEY. Modes: check (one tiny call per model), pilot (gates), run (full L2).
+name: L2 LLM agents (remote run)
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "check | pilot | run"
+        required: true
+        default: "check"
+
+concurrency:
+  group: l2-llm-agents
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  l2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      OLLAMA_HOST: https://ollama.com
+      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+      MODE: ${{ github.event.inputs.mode || 'run' }}
+      CODE_REF: claude/r1-s1-oversight-experiments
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CODE_REF }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install -r requirements-validation.txt
+      - name: Check out the results branch into ./store
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code --heads "$url" l2-results >/dev/null; then
+            git clone --quiet --branch l2-results --single-branch "$url" store
+          else
+            mkdir store && git -C store init -q -b l2-results && git -C store remote add origin "$url"
+          fi
+      - name: Run one chunk of L2
+        run: bash scripts/l2_ci_step.sh "$MODE" store 330
+      - name: Commit progress to l2-results
+        if: always()
+        run: |
+          cd store
+          git config user.name "l2-runner"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git commit -q -m "L2 progress ($MODE) $(date -u +%Y-%m-%dT%H:%MZ)"; then git push -q origin l2-results; else echo "nothing new"; fi
