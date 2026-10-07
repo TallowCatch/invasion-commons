@@ -1,0 +1,97 @@
+{
+ "protocol": "studies/L2_llm_agents/protocol.md",
+ "model": "gemma4:31b-cloud",
+ "cells": {
+  "E0": [
+   "explicit",
+   "fine",
+   0.0
+  ],
+  "E1": [
+   "explicit",
+   "fine",
+   1.0
+  ],
+  "E2": [
+   "explicit",
+   "fine",
+   2.0
+  ],
+  "E4": [
+   "explicit",
+   "fine",
+   4.0
+  ],
+  "E8": [
+   "explicit",
+   "fine",
+   8.0
+  ],
+  "E36": [
+   "explicit",
+   "fine",
+   36.0
+  ],
+  "EM": [
+   "explicit",
+   "memory",
+   0.0
+  ],
+  "S0": [
+   "silent",
+   "fine",
+   0.0
+  ],
+  "S36": [
+   "silent",
+   "fine",
+   36.0
+  ],
+  "P0": [
+   "paraphrase",
+   "fine",
+   0.0
+  ],
+  "P36": [
+   "paraphrase",
+   "fine",
+   36.0
+  ]
+ },
+ "run_cells": [
+  "E0",
+  "E1",
+  "E2",
+  "E4",
+  "E8",
+  "E36",
+  "S0",
+  "S36",
+  "P0",
+  "P36"
+ ],
+ "contexts": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9
+ ],
+ "horizon": 20,
+ "q": 0.16666666666666666,
+ "seeds": {
+  "pop": 1500000000,
+  "audit": 1945000000,
+  "llm": 1900000000,
+  "shuffle": 1950000000
+ },
+ "token_cap": 20000000,
+ "over_t": 0.06,
+ "python": "3.12.14",
+ "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39"
+}
