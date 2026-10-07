@@ -1,8 +1,8 @@
 """Chance-constrained reviewers and reference labels for experiments R1 and S1.
 
 Claude audit, 5 October 2026. Protocols:
-notes/claude_audit_20261005/07_PROTOCOL_R1_REPAIRED_REVIEWER.md and
-notes/claude_audit_20261005/08_PROTOCOL_S1_REPORTING_AND_AUDITS.md.
+notes/claude_audit_20261005/studies/R1_repaired_reviewer/protocol.md and
+notes/claude_audit_20261005/studies/S1_reporting_and_audits/protocol.md.
 
 Every reviewer chooses the largest uniform scale in a fixed menu whose
 *estimated* one-step risk is at most ``tolerance``. For Harvest the estimate

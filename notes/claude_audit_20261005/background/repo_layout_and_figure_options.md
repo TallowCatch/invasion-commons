@@ -97,7 +97,7 @@ others.
 
 | Figure | x-axis | Problem | Fix |
 | --- | --- | --- | --- |
-| Paper `fig03_capability_gap` | "Capability gap Δc" | **Serious.** Δc adds up ranks of unrelated settings, and file 01 Phase 3 shows the actor ranking ran backwards. The lines suggest a smooth trend along a scale that does not exist. | Drop it. If needed, show overseer settings as separate panels or groups. |
+| Paper `fig03_capability_gap` | "Capability gap Δc" | **Serious.** Δc adds up ranks of unrelated settings, and the project story Phase 3 shows the actor ranking ran backwards. The lines suggest a smooth trend along a scale that does not exist. | Drop it. If needed, show overseer settings as separate panels or groups. |
 | Paper `fig08_reviewer_decisions` | inspected requests k = 0, 3, 6 | **Moderate.** k is a real count, but only 3 values were run. The lines and shaded bands imply that k = 1, 2, 4, 5 were measured. The Harvest drop between 3 and 6 is guesswork. | Plot the 3 points with error bars and no connecting lines (or faint dotted ones), and label k as "tested values". |
 | Progress `fig2_fishery_target` | k = 0, 3, 6 | **Mild.** Same issue as fig08. Here the story is the gap between the target lines, not the slope. | Plot points only, or a grouped dot plot by target × fill. |
 | Progress `fig3_limited_checking` | trade-off plane, path through k | **Acceptable.** The path is labelled with k. | Keep it. Say that points between the markers were not tested. |
@@ -177,7 +177,7 @@ A table-figure with one row per claim. Columns:
 - untested.
 
 Supervisors can see at a glance what is solid. The source is the "honesty
-labels" already in files 04, 09, 10 and 12.
+labels" already in the what-we-learned note, R1 results, S1 results and S1b/S2 results.
 
 ### Possible, but say clearly what it is
 
@@ -198,8 +198,8 @@ result.
 
 | Idea | Why not yet |
 | --- | --- |
-| Any "capability gap" or "stronger actor" axis | No working actor-strength ladder exists (file 01, 6b and 6e). |
-| A deterrence-threshold curve (cheating against fine) | Only fines 0, 6, 12 and 24 were run. The threshold near 2 comes from post-hoc arithmetic. Wait for the finer grid in file 04, Update 2. |
+| Any "capability gap" or "stronger actor" axis | No working actor-strength ladder exists (the project story, 6b and 6e). |
+| A deterrence-threshold curve (cheating against fine) | Only fines 0, 6, 12 and 24 were run. The threshold near 2 comes from post-hoc arithmetic. Wait for the finer grid in the what-we-learned note, Update 2. |
 | Deterrence in Harvest | Cheating never paid there, so there is nothing to deter. |
 | "Audit memory helps" | A reviewer that remembers caught lies has not been tested. |
 | Limited-checking or audit-rate *curves* | Only k = 0, 3, 6 and 1–2 audits were run. Show them as points, not curves. |
@@ -231,7 +231,7 @@ This reads saved files only and takes about an hour of work.
 ## Amendment, 5 October 2026 (later the same day)
 
 **C, D and E are now built** as `fig7_fishery_stock_over_time`, `fig8_s1_per_context`
-and `fig9_s1b_paired` (see `13_FIGURES.md`).
+and `fig9_s1b_paired` (see `figures_guide.md`).
 
 **Two changes from the plan above:**
 - **D became a count per arm, not a dot strip.** The Harvest values are
@@ -266,7 +266,7 @@ and `fig9_s1b_paired` (see `13_FIGURES.md`).
   old → new table.
   - References were rewritten in all code, tests, workflows, `scripts/`,
     notebooks, the top-level README, `CLAUDE_HANDOFF.md`, the paper READMEs,
-    and files 00 and 13 of this folder.
+    and the audit-folder README and figures guide of this folder.
   - The protocol and results notes were left as written, because they are
     records.
   - Checks after the move:

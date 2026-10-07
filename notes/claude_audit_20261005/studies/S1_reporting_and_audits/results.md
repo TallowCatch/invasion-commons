@@ -1,6 +1,6 @@
 # Results S1: self-reports, audits and agents who misreport
 
-- **Protocol:** `08_PROTOCOL_S1_REPORTING_AND_AUDITS.md`, frozen
+- **Protocol:** `studies/S1_reporting_and_audits/protocol.md`, frozen
   2026-10-04T23:58Z. It has one amendment: a fine was added to the sanction
   after the smoke run and before the full run.
 - **Run:** `results/runs/claude_s1_reporting_audit_v1`, which took 235 seconds
@@ -9,7 +9,7 @@
   `.../analysis/`.
 
 Every number below is **verified** from the run data. An independent
-check-through (file 05, §8) corrected several statements in an earlier draft
+check-through (the verification log, §8) corrected several statements in an earlier draft
 of this file. Explanations marked **[post hoc]** were not tested.
 
 ## 1. Question
@@ -27,7 +27,7 @@ some of it. This experiment asks four things:
 
 ## 2. How it relates to scalable oversight and AI control
 
-All terms are from `06_LITERATURE_LEDGER.md`. This is an **analogy, not an
+All terms are from `literature_ledger.md`. This is an **analogy, not an
 equivalence**. The ledger's cautions apply: our actors are simple fixed
 rules, our audit rates (17–33% of reports per step) are far higher than the
 2% in Greenblatt et al. (2023/24, arXiv:2312.06942), and we compute no
@@ -339,7 +339,7 @@ What this means:
 - the MSY target in Fishery.
 
 **Next concrete steps** (each takes a few CPU minutes; see the update in
-file 04):
+the what-we-learned note):
 
 1. **S1-ablation** (do this first, to separate the mechanisms):
    - audits that correct beliefs but never sanction;

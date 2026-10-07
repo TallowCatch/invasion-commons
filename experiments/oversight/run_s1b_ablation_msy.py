@@ -1,6 +1,6 @@
 """Experiment S1b: Part A (audit ablation) and Part B (S1 Fishery under the MSY target).
 
-Protocol: notes/claude_audit_20261005/11_PROTOCOL_S1B_S2_ABLATION_AND_DETERRENCE.md
+Protocol: notes/claude_audit_20261005/studies/S1b_S2_ablation_and_deterrence/protocol.md
 Run:  PYTHONPATH=. python -m experiments.oversight.run_s1b_ablation_msy --profile smoke|full --out DIR
 """
 from __future__ import annotations

@@ -4,10 +4,10 @@
 
 This is a local protocol, not a public preregistration. It is not edited
 after results exist; changes go under "Amendments". It builds on the results
-of R1 and S1 (files 09 and 10), which were already known when it was
+of R1 and S1 (the R1 results and S1 results), which were already known when it was
 written.
 
-Terms follow `06_LITERATURE_LEDGER.md`. The comparison to AI control
+Terms follow `literature_ledger.md`. The comparison to AI control
 (Greenblatt et al. 2023/24) and to inspection games (Avenhaus et al. 2002) is
 an analogy. Our actors are fixed rules plus a one-parameter search, and our
 audit rates are far above the 2% used in AI control.
@@ -206,4 +206,4 @@ non-compliance) and *d* = *d** (adaptive). New seed bases:
   bases as S1" contradicts the seed table in this same file, which the code
   follows (850M/860M/870M). The seed table is what was run.
 - **Hypothesis A-H2.** It turned out to be true by construction. Under
-  exclusion, the belief switch has no effect (see file 12, Part A).
+  exclusion, the belief switch has no effect (see the S1b/S2 results, Part A).

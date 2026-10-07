@@ -1,6 +1,6 @@
 """Experiment S1: self-reports, audits and agents who misreport (Claude audit, October 2026).
 
-Protocol: notes/claude_audit_20261005/08_PROTOCOL_S1_REPORTING_AND_AUDITS.md
+Protocol: notes/claude_audit_20261005/studies/S1_reporting_and_audits/protocol.md
 Run:  PYTHONPATH=. python -m experiments.oversight.run_s1_reporting_audit --profile smoke|full --out DIR
 """
 from __future__ import annotations
@@ -45,7 +45,7 @@ class Overseer:
     """Applies one protocol: who is audited, who is caught, what the reviewer believes."""
 
     def __init__(self, protocol, n, misreporters, d, context, game, belief=True, sanction="excl+fine"):
-        # belief/sanction factors added for the S1b ablation (protocol file 11); defaults reproduce S1.
+        # belief/sanction factors added for the S1b ablation (S1b/S2 protocol); defaults reproduce S1.
         if sanction not in ("excl+fine", "fine", "none"):
             raise ValueError(sanction)
         self.belief, self.sanction = belief, sanction

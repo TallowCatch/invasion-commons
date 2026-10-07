@@ -4,9 +4,9 @@
 
 This is a local protocol, not a public preregistration. It is not edited after
 results exist; changes go under "Amendments". It builds on the results of S1b,
-S2 and S3 (files 12 and 16), which were already known when it was written.
+S2 and S3 (the S1b/S2 results and S3 results), which were already known when it was written.
 
-Terms follow `06_LITERATURE_LEDGER.md`:
+Terms follow `literature_ledger.md`:
 - "audit rate" corresponds to an *audit budget* (Greenblatt et al. 2023/24);
 - "audit cost" corresponds to *costly state verification* (Townsend 1979,
   doi:10.1016/0022-0531(79)90031-0, metadata depth only).
@@ -16,12 +16,12 @@ These are analogies.
 ## Why the main test uses cheating, not misreporting
 
 In S1b, misreporting never paid, even with no sanction at all (A-H3
-falsified, file 12). A search for the best lie against a reviewer with
+falsified, the S1b/S2 results). A search for the best lie against a reviewer with
 memory would therefore almost certainly return "do not lie" and teach
 little.
 
 In the S2/S3 non-compliance model, hidden over-extraction **does** pay
-privately in Fishery: +28.5 per cheater with no checks (file 16). So the
+privately in Fishery: +28.5 per cheater with no checks (the S3 results). So the
 main test (Part A) asks whether memory still helps against cheaters who
 choose their strategy knowing the reviewer remembers. Part B is a small
 check that misreporting still does not pay once the reviewer has memory.

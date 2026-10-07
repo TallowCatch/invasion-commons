@@ -1,6 +1,6 @@
 # Results R1: the reviewer experiment, repaired
 
-- **Protocol:** `07_PROTOCOL_R1_REPAIRED_REVIEWER.md`, frozen 2026-10-04T23:57Z
+- **Protocol:** `studies/R1_repaired_reviewer/protocol.md`, frozen 2026-10-04T23:57Z
   before the run, with no amendments.
 - **Run:** `results/runs/claude_r1_repaired_reviewer_v1`. It took 171
   seconds on one CPU and produced 3,648 episode records.
@@ -8,7 +8,7 @@
   in `.../analysis/`.
 
 Every number below is **verified**: it was computed by those scripts from
-the run's saved data. An independent check (file 05, §8) corrected some
+the run's saved data. An independent check (the verification log, §8) corrected some
 statements in an earlier draft of this file. Engineering checks passed before the full run:
 - unit tests 4/4;
 - the smoke run reproduced byte-for-byte;
@@ -16,7 +16,7 @@ statements in an earlier draft of this file. Engineering checks passed before th
 
 ## 1. Question
 
-Once the design weak points from file 03 are fixed, what do the three
+Once the design weak points from the design-issues note are fixed, what do the three
 reviewers actually trade off? The two quantities are:
 - **unsafe approvals:** letting through a request whose chance of making the
   system unsafe next step is above 5%;
@@ -167,7 +167,7 @@ With a calibrated chance constraint, the result in Harvest is:
 - the optimistic local rule lets through 1 in 8 risky requests.
 
 That is the same ordering as in Fishery. This **confirms the post hoc
-re-analysis** (file 02 §6b) on fresh data, with a protocol written before
+re-analysis** (the September reviewer write-up §6b) on fresh data, with a protocol written before
 the run.
 
 **True by construction:** joint review with full inspection uses the same
@@ -205,7 +205,7 @@ picture:
 - **The target decides the level of long-run harvest.** At full inspection
   the same reviewer harvests 1,393 under the MSY target and 555 under the
   old line: +838 [+800, +865]. That holds whatever the fill. This tests and
-  supports the post hoc explanation in file 02 §6d, with the prediction
+  supports the post hoc explanation in the September reviewer write-up §6d, with the prediction
   fixed in the protocol.
 - **The reversal needs two ingredients together:**
   - the old line, **and**

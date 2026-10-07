@@ -1,6 +1,6 @@
 # What we have learned, and what should come next
 
-## Update 4, 5 October 2026: after S4 (protocol file 17, results file 18, figure 14)
+## Update 4, 5 October 2026: after S4 (S4 protocol, S4 results, figure 14)
 
 1. **Memory alone reduces harm but does not deter.** Against cheaters who know the reviewer remembers, a reviewer with memory but no fine reduced the harm without stopping the cheating.
    - At the highest audit rate tested, cheaters kept 41% of their gain.
@@ -13,7 +13,7 @@
 
 The three decisions for Ameer and the supervisors are unchanged.
 
-## Update 3, 5 October 2026: after S3 (protocol file 15, results file 16, figures 10–13)
+## Update 3, 5 October 2026: after S3 (S3 protocol, S3 results, figures 10–13)
 
 1. **Where deterrence starts.** Unpredictable audits plus a flat fine stopped the cheaters at almost exactly the expected-penalty break-even.
    - The break-even is e ≈ 0.36 per agent-step, where e = audit rate × detection × fine.
@@ -33,7 +33,7 @@ The three decisions for Ameer and the supervisors are unchanged.
 
 The three decisions for Ameer and the supervisors are unchanged: the definition of harm, which paper, and the main game.
 
-## Update 2, 5 October 2026: after S1b and S2 (file 12, figures in file 13; checked independently, see file 05 §10)
+## Update 2, 5 October 2026: after S1b and S2 (the S1b/S2 results, figures in the figures guide; checked independently, see the verification log §10)
 
 1. **With a reviewer that has no memory, one or two audit results per step
    barely improved its decisions.**
@@ -66,11 +66,11 @@ The three decisions for Ameer and the supervisors are unchanged: the definition 
 Steps 1 and 3 of the plan below have now been run, each with a protocol
 frozen before the run:
 
-- R1: `07_PROTOCOL_R1_REPAIRED_REVIEWER.md` → `09_RESULTS_R1_REPAIRED_REVIEWER.md`;
-- S1: `08_PROTOCOL_S1_REPORTING_AND_AUDITS.md` → `10_RESULTS_S1_REPORTING_AND_AUDITS.md`.
+- R1: `studies/R1_repaired_reviewer/protocol.md` → `studies/R1_repaired_reviewer/results.md`;
+- S1: `studies/S1_reporting_and_audits/protocol.md` → `studies/S1_reporting_and_audits/results.md`.
 
 **What changed in our understanding** (wording checked by an independent
-review; see file 05 §8):
+review; see the verification log §8):
 
 1. **Finding 4 below is confirmed on fresh data (R1).**
    - With a calibrated 5% chance constraint, Harvest joint review is nearly
@@ -123,7 +123,7 @@ review; see file 05 §8):
 - **Supervisors:** agree the definition of harm with Yali and Edward. R1
   gives evidence for a productive-level target.
 - **Literature:** read Becker 1968, Allingham & Sandmo 1972 and Varian 1990
-  in full before citing them in the paper (see `06_LITERATURE_LEDGER.md`).
+  in full before citing them in the paper (see `literature_ledger.md`).
 
 The original analysis from before R1 and S1 follows, unchanged.
 

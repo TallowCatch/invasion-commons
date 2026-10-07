@@ -4,9 +4,9 @@
 
 This is a local protocol, not a public preregistration. It is not edited after
 results exist; changes go under "Amendments". It builds on the results of S1,
-S1b and S2 (files 10 and 12), which were already known when it was written.
+S1b and S2 (the S1 results and S1b/S2 results), which were already known when it was written.
 
-Terms follow `06_LITERATURE_LEDGER.md`:
+Terms follow `literature_ledger.md`:
 - "audit rate" corresponds to an *audit budget* in AI control (Greenblatt et al.
   2023/24, arXiv:2312.06942);
 - "expected fine" is the expected-penalty idea usually attributed to Becker
@@ -83,7 +83,7 @@ over-took. This allows the threshold to be predicted from the data.
 ### Prediction made now, from S2
 
 - Held out, unchecked cheating gained about 109 per group of 4 cheaters
-  (file 12), which is about 27 per cheater.
+  (the S1b/S2 results), which is about 27 per cheater.
 - The cheater over-takes on at most 80 steps, so the expected fine is
   e × (number of over-take steps).
 - A risk-neutral cheater should therefore switch to complying once

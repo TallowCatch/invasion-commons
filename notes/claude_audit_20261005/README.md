@@ -5,7 +5,7 @@ what they found, what is wrong with their design, and what to do next. It was
 written after reading the repository, re-checking the committed data, and
 re-analysing the saved results of the most recent experiment.
 
-**No new experiments were run.** Some analyses here are *post hoc*: they were
+**When first written, no new experiments had been run** (the studies listed below came after). Some analyses here are *post hoc*: they were
 computed on already-saved data after the results were known. Such analyses are
 labelled **[post hoc]**. They can suggest what is going on, but they are not
 confirmation, because the decision to look was made after seeing the outcome.
@@ -14,44 +14,44 @@ Source state: branch `codex/harvest-oversight-gap-stagea`, commit `8812f4f`.
 Your local copy was on the same commit. I could not open a shell on your
 computer, so I could not check whether you have uncommitted local changes.
 
-## Files
+## How this folder is organised
 
-| File | What it contains |
+**The running tracker for the whole project is `PROJECT_HISTORY.md`** at the
+repository root. Its October section lists every experiment in this folder
+with its key numbers. Start there.
+
+| Path | What it contains |
 | --- | --- |
-| `01_PROJECT_STORY.md` | Each experiment from February to September, in order: question, what was done, result, what it means. |
-| `02_REVIEWER_EXPERIMENT_EXPLAINED.md` | The most recent and most important experiment, with my re-analysis of its data. |
-| `03_DESIGN_ISSUES.md` | Problems in how the experiments were designed (not how the paper is worded), ranked by impact, each with evidence and a fix. |
-| `04_WHAT_WE_LEARNED_AND_NEXT.md` | What the evidence supports overall, and a concrete plan for what to do next. |
-| `05_VERIFICATION_LOG.md` | What I checked, reran or could not check, and how to repeat it. |
-| `06_LITERATURE_LEDGER.md` | Verified sources, the terms they use, and how our terms map onto them (scalable oversight, AI control, inspection games, deterrence, commons). |
-| `07_PROTOCOL_R1_REPAIRED_REVIEWER.md` | Protocol for R1, frozen before the run. |
-| `08_PROTOCOL_S1_REPORTING_AND_AUDITS.md` | Protocol for S1, frozen before the run, with one amendment made before the full run. |
-| `09_RESULTS_R1_REPAIRED_REVIEWER.md` | R1 results: calibrated reviewers, limited checking, and the Fishery target test. |
-| `10_RESULTS_S1_REPORTING_AND_AUDITS.md` | S1 results: misreporting, audits, peer reports and collusion. |
-| `11_PROTOCOL_S1B_S2_ABLATION_AND_DETERRENCE.md` | Protocol for S1b (audit ablation, Fishery MSY) and S2 (private-gain cheating, deterrence), frozen before the runs. |
-| `12_RESULTS_S1B_S2_ABLATION_AND_DETERRENCE.md` | S1b and S2 results. |
-| `13_FIGURES.md` and `figures/` | Fourteen figures (PDF and PNG), including two schematics, with one-line takeaways. |
-| `15_PROTOCOL_S3_THRESHOLD_TIMING_MEMORY.md` | Protocol for S3 (deterrence threshold, imperfect audits, timed cheating, reviewer memory), frozen before the run, with one pre-run amendment. |
-| `16_RESULTS_S3_THRESHOLD_TIMING_MEMORY.md` | S3 results. |
-| `17_PROTOCOL_S4_ADAPTIVE_CHEATERS_MEMORY_AUDIT_COST.md` | Protocol for S4 (cheaters who adapt to a reviewer with memory; cost per audit), frozen before the run. |
-| `18_RESULTS_S4_ADAPTIVE_CHEATERS_MEMORY_AUDIT_COST.md` | S4 results. |
-| `14_REPO_LAYOUT_AND_FIGURE_OPTIONS.md` | Repository layout and a safe cleanup order; which line graphs mislead; candidate figures ranked by readiness. |
-| `scripts/` | The two re-analysis scripts and their outputs, so every new number here can be reproduced. |
+| `studies/<ID>_<name>/protocol.md` | The plan for one experiment, frozen before it ran. Amendments are appended, never edited. |
+| `studies/<ID>_<name>/results.md` | What came out, in the same structure every time. |
+| `what_we_learned_and_next.md` | Running log of conclusions, newest update first. |
+| `propositions.md` | Results that are arithmetic, stated once with their conditions. |
+| `verification_log.md` | Every check that was run, and how to repeat it. |
+| `figures_guide.md`, `figures/` | All figures, with one-line takeaways and a suggested talk order. |
+| `literature_ledger.md` | Verified sources and how our terms map onto theirs. |
+| `background/` | The original 5 October audit: project story, September reviewer re-analysis, design issues, caveats assessment, repo-layout note. |
+| `runs/` | Small copies of each run's analysis tables and manifests. |
+| `scripts/` | The audit's re-analysis scripts. |
 
-Experiment code and data in the repository:
+**Studies so far:** R1, S1, S1b/S2, S3, S4, R2, S5, C1 and the L1 pilot.
 
-- shared reviewer code: `fishery_sim/calibrated_oversight.py`;
-- runners and analyses: `experiments/oversight/claude_oversight_common.py`,
-  `experiments/oversight/run_r1_repaired_reviewer.py`,
-  `experiments/oversight/run_s1_reporting_audit.py`,
-  `experiments/oversight/analyze_r1_repaired_reviewer.py`,
-  `experiments/oversight/analyze_s1_reporting_audit.py`;
-- tests: `tests/test_claude_calibrated_oversight.py`;
-- raw runs and analysis tables: `results/runs/claude_r1_repaired_reviewer_v1/`
-  and `results/runs/claude_s1_reporting_audit_v1/`.
+### Old file numbers
 
-Suggested reading order: the updates at the top of 04, the figures (13), then 09 and 10 (the
-new experiments), then 02, 03 and 01 for background.
+Files were renamed on 7 October 2026 (content unchanged). Older text, commit
+messages and frozen protocols may still cite the old numbers:
+
+| Old | New | Old | New |
+| --- | --- | --- | --- |
+| 00 | `README.md` | 14 | `background/repo_layout_and_figure_options.md` |
+| 01 | `background/project_story.md` | 15, 16 | `studies/S3_threshold_timing_memory/` |
+| 02 | `background/september_reviewer_experiment.md` | 17, 18 | `studies/S4_adaptive_cheaters_audit_cost/` |
+| 03 | `background/design_issues.md` | 19, 23 | `studies/R2_robustness_and_reviewer_model/` |
+| 04 | `what_we_learned_and_next.md` | 20, 25 | `studies/S5_stronger_attackers/` |
+| 05 | `verification_log.md` | 21, 24 | `studies/C1_compositional_harm/` |
+| 06 | `literature_ledger.md` | 22 | `propositions.md` |
+| 07, 09 | `studies/R1_repaired_reviewer/` | 26, 27 | `studies/L1_llm_actor_pilot/` |
+| 08, 10 | `studies/S1_reporting_and_audits/` | CAVEATS | `background/caveats_assessment.md` |
+| 11, 12 | `studies/S1b_S2_ablation_and_deterrence/` | 13 | `figures_guide.md` |
 
 ## The bottom line in five sentences
 

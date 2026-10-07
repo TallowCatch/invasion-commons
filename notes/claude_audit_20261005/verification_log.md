@@ -54,7 +54,7 @@ in the repository:
 - the actor-pressure pilot;
 - Clean Up.
 
-They are quoted from your notes and labelled "(notes only)" in file 01.
+They are quoted from your notes and labelled "(notes only)" in the project story.
 
 ## 4. New post hoc analyses (scripts in `scripts/`)
 
@@ -104,10 +104,10 @@ code without reusing my scripts. It confirmed:
 
 - the margin re-analysis, with an independent re-implementation of the
   safety predicate;
-- every table in file 02;
+- every table in the September reviewer write-up;
 - the closed-loop statistics;
 - the code citations;
-- every "(verified)" number in file 01.
+- every "(verified)" number in the project story.
 
 It also found errors and overstatements, which are now corrected:
 
@@ -226,7 +226,7 @@ PYTHONPATH=. python -m experiments.make_progress_figures
 **Confirmed.** Every table value, interval and verdict, as well as the gate
 results and run sizes.
 
-**Corrected in file 12, figures 5 and 6, file 13 and the file 04 update:**
+**Corrected in the S1b/S2 results, figures 5 and 6, the figures guide and the the what-we-learned note update:**
 
 - **A-H2.** It is true by construction, because under exclusion the belief
   switch does nothing.
@@ -255,7 +255,7 @@ results and run sizes.
 
 ## 11. S3 (5 October 2026)
 
-**Order of work.** The protocol (file 15) was committed as `087d392` before any S3 code existed. The runner, tests and Amendment 1 were committed as `7c6494d` before any full run.
+**Order of work.** The protocol (the S3 protocol) was committed as `087d392` before any S3 code existed. The runner, tests and Amendment 1 were committed as `7c6494d` before any full run.
 
 **Engineering gates:**
 - `pytest -q tests` passes: 254 passed, 11 skipped, including 6 new S3 tests.
@@ -277,11 +277,11 @@ results and run sizes.
 - a pandas index mismatch, which gave NaN for the no-check gain;
 - the column name `mode` clashing with `DataFrame.mode`, which made the Part D selections empty.
 
-**Re-checked by hand from the condition table:** the table values and the "two thirds of the gap" figure in file 16, and the usefulness-loss values in the Figure 13 caption.
+**Re-checked by hand from the condition table:** the table values and the "two thirds of the gap" figure in the S3 results, and the usefulness-loss values in the Figure 13 caption.
 
 ## 12. S4 (5 October 2026)
 
-**Order of work.** The protocol (file 17) was committed as `5da1d9e` before any code. The runner and tests were committed as `2836785` after the gates and before the full runs.
+**Order of work.** The protocol (the S4 protocol) was committed as `5da1d9e` before any code. The runner and tests were committed as `2836785` after the gates and before the full runs.
 
 **Gates:**
 - `pytest -q tests`: 258 passed, 11 skipped, including 4 new S4 tests.

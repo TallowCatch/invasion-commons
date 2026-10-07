@@ -1,6 +1,6 @@
 """Experiment R1: the reviewer experiment, repaired (Claude audit, October 2026).
 
-Protocol: notes/claude_audit_20261005/07_PROTOCOL_R1_REPAIRED_REVIEWER.md
+Protocol: notes/claude_audit_20261005/studies/R1_repaired_reviewer/protocol.md
 Run:  PYTHONPATH=. python -m experiments.oversight.run_r1_repaired_reviewer --profile smoke|full --out DIR
 """
 from __future__ import annotations

@@ -1,6 +1,6 @@
 # Results S4: adaptive cheaters against a reviewer with memory, and a cost per audit
 
-**Protocol:** `17_PROTOCOL_S4_ADAPTIVE_CHEATERS_MEMORY_AUDIT_COST.md`, frozen at 2026-10-05T11:38Z (commit `5da1d9e`) before any S4 code existed. The runner and tests were committed as `2836785` after gates 1–5 passed and before the full runs. There are no amendments.
+**Protocol:** `studies/S4_adaptive_cheaters_audit_cost/protocol.md`, frozen at 2026-10-05T11:38Z (commit `5da1d9e`) before any S4 code existed. The runner and tests were committed as `2836785` after gates 1–5 passed and before the full runs. There are no amendments.
 
 **Runs:**
 - `results/runs/claude_s4_part{A,B}_v1/`: one full run each (A 25 s, B 7 s).

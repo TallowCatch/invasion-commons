@@ -10,12 +10,12 @@ generated.
 
 **Already known when this was written:** the outcomes of the 23 September
 confirmation (`budgeted_reviewer_confirmation_v1`) and the post hoc
-re-analysis in file 02. R1 is motivated by those, so it is a **repair and
+re-analysis in the September reviewer write-up. R1 is motivated by those, so it is a **repair and
 replication with new seeds**, not an independent discovery.
 
 ## 1. Question
 
-With the measurement problems from file 03 fixed, how do the three reviewers
+With the measurement problems from the design-issues note fixed, how do the three reviewers
 compare on two things?
 
 - **Unsafe approvals:** letting through a joint request whose one-step risk
@@ -25,7 +25,7 @@ compare on two things?
 And does changing the safety *target* in Fishery remove the long-run
 reversal, where better information led to less total harvest?
 
-Literature terms, from `06_LITERATURE_LEDGER.md`:
+Literature terms, from `literature_ledger.md`:
 
 - We call the per-step rate of approving a risky joint request the
   **unsafe approval rate**. In the AI-control literature (Greenblatt et al.
@@ -40,14 +40,14 @@ Literature terms, from `06_LITERATURE_LEDGER.md`:
 
 ## 2. What changes from the 23 September design
 
-| Weak point (file 03) | R1 change |
+| Weak point (the design-issues note) | R1 change |
 | --- | --- |
 | A1: oversized Harvest weather allowance | **All reviewers use a chance constraint.** Each one approves the largest scale whose *estimated* one-step risk is ≤ 5%. The estimate comes from 400 simulated weather draws applied to that reviewer's own prediction. The rule covers both safety conditions; there is no fixed buffer. |
 | B3: unseen requests assumed to be the maximum | **Fill is a factor.** Either `max` (the old rule, 1.0) or `previous` (that agent's request from the previous step, which is observed after the fact; 1.0 at step 0). |
 | B4: borderline cases dropped | **More reference draws.** Labels use 4,000 draws for the open-loop cases and 2,000 for the closed-loop cases (Wilson 95% interval at the 5% threshold). Unresolved counts are reported. |
 | A5: only open-loop scoring | **Closed-loop scoring added.** Every step a reviewer actually faces in closed loop is also labelled and scored. |
 | A2: Fishery safety line far below the productive level | **Fishery target is a factor.** Either `one_step` (next stock ≥ 10, the old line) or `msy` (at least 50 left after harvest, i.e. K/2). The reference label uses the same target as the reviewer. |
-| A4: bounded-local reviewer description | Unchanged on purpose, for comparability. As before, it bounds all other agents. The coupled local reviewer is not rerun: it is algebraically identical to joint (file 02). |
+| A4: bounded-local reviewer description | Unchanged on purpose, for comparability. As before, it bounds all other agents. The coupled local reviewer is not rerun: it is algebraically identical to joint (the September reviewer write-up). |
 
 Kept from the original design:
 
@@ -117,7 +117,7 @@ Outcomes 1 and 2 are computed both open loop and closed loop.
     at k = 6 is higher than under `one_step` at k = 6, and does not fall
     as k rises (k = 6 ≥ k = 0 − 2%).
   - Falsifier: either fails.
-  - Note: this tests the post hoc explanation from file 02 §6d.
+  - Note: this tests the post hoc explanation from the September reviewer write-up §6d.
 - **H4 (safety in closed loop).**
   - Prediction: joint and bounded local have a fixed-horizon unsafe fraction
     ≤ 1% in both games, and optimistic local in Fishery has more than 10%.

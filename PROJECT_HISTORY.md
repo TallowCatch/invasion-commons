@@ -1,10 +1,18 @@
 # Project history: from commons governance to scalable oversight
 
-Updated 23 September 2026. This is a research history, not a list of every
-code commit. Dates through June come from Git; later dates come from dated
-experiment notes. A feature being implemented does not mean that its proposed
-scientific claim has been demonstrated. The linked closeouts and the current
-manuscript take precedence over older plans and promotional descriptions.
+**This is the project's running tracker.** It records each piece of work: what
+was done, why, and what came out, with numbers. Update it whenever an
+experiment finishes.
+- Last updated: 7 October 2026.
+- February to September are summarised in the timeline below.
+- The October experiment series has its own section, with every number
+  verified against saved run files.
+
+This is a research history, not a list of every code commit. Dates through
+June come from Git; later dates come from dated experiment notes. A feature
+being implemented does not mean that its proposed scientific claim has been
+demonstrated. The linked closeouts and the current manuscript take precedence
+over older plans and promotional descriptions.
 
 ## The question in plain language
 
@@ -69,6 +77,96 @@ test against the same fixed reviewer protocol.
 | 23 Sep | Ran a predeclared fresh-seed confirmation in selected Fishery and Harvest settings: 1,920 episodes, 11,249 original proposals and 101,241 matched reviewer decisions. | Test the immediate decision trade-off on new population contexts after piloting the protocol. | In these settings, joint review spared safe requests relative to a conservative local rule without approving more resolved-risky requests. An optimistic local rule exposed a different trade-off and was competitive in Harvest. Immediate safe decisions did **not** automatically improve long-run stock or return. This is conditional on two pilot-selected settings. |
 | 22-23 Sep | Built a native adapter and attempted policy admission for SocialJax Clean Up. Stopped the transfer after the chosen policies/starting state did not produce the required reachable, useful safe/risky comparison. | Try a genuinely different mechanism: agents may need to clean a shared area before others can benefit. A third game is useful only if it supplies meaningful oversight decisions. | Adapter and tests exist; **Clean Up is not a validated third result**. More game rows would not fix the missing policy/outcome coverage. |
 | 23 Sep | Ran a bounded Harvest actor-search pilot: nested 1/8/32-candidate search chose one entrant, then fixed reviewers inspected 0/3/6 requests from new partner populations. | Test the missing link between strategy-generation resources and reviewer decisions without changing the reviewer at the same time. | Search changed held-out payoff unevenly, but no-review failure was often saturated and all reviewers rejected the resolved-risky requests in four contexts. This is a useful negative design check, **not** a validated rising-capability oversight result. |
+
+## October 2026: the oversight experiment series
+
+**Where it lives.**
+- Notes: `notes/claude_audit_20261005/`.
+- Code: `experiments/oversight/`.
+- Raw runs: `results/runs/claude_*` (git-ignored). Small tables are copied
+  under `notes/claude_audit_20261005/runs/`.
+
+**How each experiment is run.** Each one has its own folder,
+`notes/claude_audit_20261005/studies/<ID>_<name>/`, holding:
+- `protocol.md`, written and committed **before** any code ran;
+- `results.md`, which follows the same structure every time.
+
+**How to read the numbers.**
+- Intervals are 95% paired context-bootstrap intervals.
+- A *context* is one freshly generated population of 6 agents. Every study
+  uses 64 test contexts and 80 steps unless stated.
+- Fishery uses the productive-level (MSY) target from S1b on.
+
+### What was run and what came out
+
+| ID (date) | Question | What came out | Verdict on its hypotheses |
+| --- | --- | --- | --- |
+| **Audit** (5 Oct) | Re-check the 23 Sept confirmation. | Harvest results were driven by a weather buffer 3.6× larger than needed. With a buffer sized correctly, joint review cut **0 of 3,687** safe requests, not 2,521 **[post hoc]**. | Led to R1. |
+| **R1** (5 Oct) | Repair the reviewer comparison and test the Fishery safety target. | **Harvest:** joint review approved 0.6% of risky requests and cut 0.2% of safe ones. Optimistic local approved **12.6%** of risky requests; bounded local cut **90%** of safe ones. **Fishery:** the MSY target gave **1,393 against 555** total harvest [difference +838, interval +800 to +865]. "More information gave less harvest" only appeared under the old line *and* when unseen requests were assumed to be the maximum. | Confirmed on fresh seeds. |
+| **S1** (5 Oct) | What if agents under-report and the reviewer trusts reports? | Unsafe actions rose: **Harvest 0.35% → 3.0%**, **Fishery 0% → 24.8%** (the stock collapsed in 61 of 64 contexts). Audits and neighbour reports brought this back to about 0%, but **by excluding caught cheaters**, not by better decisions. Lying paid only in Fishery with colluding neighbours (+110). | Mixed; see results. |
+| **S1b** (5 Oct) | Do audits help by correcting the reviewer or by removing the cheater? | A reviewer with no memory, using 1–2 audit results per step, barely improved: **Harvest 1.9% → 1.7%** of steps unsafe. Exclusion produced the safety. | Belief-correction hypothesis falsified. |
+| **S2** (5 Oct) | Does checking deter cheaters who gain privately by taking more than allowed? | With no checks, harvest per honest agent fell **106 → 45** (Fishery). One random audit per step plus any fine **≥ 6** stopped cheating. In Harvest, cheating never paid. | Supported in Fishery; untestable in Harvest. |
+| **S3** (5 Oct) | Where exactly does deterrence start? What about imperfect audits, timed cheaters, and a reviewer with memory? | **Threshold:** cheaters stop at expected fine per agent-step **e ≈ 0.30–0.40**, against a predicted break-even of **0.356**, for audit rates from 1/6 down to 0.02 and audits that miss up to ¾ of cheats. **Known schedule:** worse than no checks (honest agents **28.8 against 40.9**; the stock collapsed in 12 of 64 contexts). **Memory:** Fishery **69% → 1.5%** of steps unsafe (fixed liars) and **75% → 32%** (noisy liars); Harvest **1.74% → 0.98%** (0.61% when everyone is honest). | 8 supported, 2 falsified (one only partly), 1 empty by construction. |
+| **S4** (5 Oct) | Does memory still help against cheaters who know the reviewer remembers? What if audits cost something? | Memory alone **does not deter**. Cheaters kept 41% of their gain even at the highest audit rate. In 98% of caught-cheater steps the shrunken allowance was already at its floor of 0 **[post hoc]**. **Memory + fine** deterred at audit rate **0.05 instead of 0.10**, and gave the most harvest once audits cost something. Misreporting still did not pay against memory. | 6 of 7 supported; 1 falsified by a 0.04% near-tie. |
+| **R2** (5 Oct) | Do the findings hold in 8 never-piloted settings? What if the reviewer's model is wrong? | **Memory** was safer in **9 of 9** testable settings. The **MSY target** won in 5 of 6; the exception is a setting where the one-step line never binds. **Wrong model:** joint review's risky approvals rose from **0.9% to 26%** (weather noise underestimated by half) and **82%** (regrowth overestimated by 25%). A reviewer that learned the model recovered within about 60 steps. Under a hidden collapse point, the old line collapsed **78%** of contexts and MSY **0%**. | Mostly supported. The deterrence formula as written failed; it matched once measured correctly **[post hoc]**. |
+| **S5** (5 Oct) | Do the conclusions survive stronger attackers (per-agent, state-dependent, PPO)? Do two new memory rules fix S4's floor? | Fines plus random audits still deterred at **q ≥ 0.10**. **memory_cap** (check a caught agent every step) cut the gain to **7%** of no checks, but used **4.1 audits per step**, against 0.6 for a fine. **memory_cut** (tighten the shared cut) protected the stock but was unfair: cheaters gained **more** than with no checks (142 against 113), and honest agents got **36** each against 104. Richer search mostly produced cheaters competing with each other, not a stronger team. | H1 and H3 supported; H2 split (memory_cut failed, memory_cap passed); H4 not supported. |
+| **C1** (5 Oct) | Does the reviewer ranking hold in a third game, where harm comes from *combining* two reagents? | Yes. Joint approved **0.3%** of risky requests, optimistic local **100%**. A fair-share quota cut **82–89%** of safe requests in *both* games, so its failure is not specific to compositional harm. Targeting audits by report size backfired: **+3.4 points** more unsafe steps than random audits. | 2 of 4 supported. |
+| **L1 pilot** (6 Oct) | Can a language model (gpt-oss:120b) act as a fisher in this simulator? Does it over-take? | The interface works: **100%** valid answers in 1,968 calls, about **$0.41** in total. The model **never** over-took unless the rules said it could. One sentence of permission raised over-taking to **23%** with no checks, and random checks with a large fine cut it to **0%**. 3 contexts per cell, so descriptive only. | Pilot; proposes L2. |
+
+### What we now believe, and how confident we are
+
+1. **With true inputs and a known model, joint review is near-exact, and
+   local rules err in fixed directions.** Confidence: high.
+   - Shown in R1 and C1.
+   - Largely arithmetic (see `propositions.md`, P5).
+   - **It breaks with a wrong model (R2).** This is now the main weakness of
+     the "joint review" story.
+2. **The safety target matters as much as the information.** The MSY target
+   beat the old line wherever the resource was under pressure (R1, R2).
+3. **Random audits plus a fine deter at the expected-penalty break-even.**
+   - Shown in S3, S5 and R2.
+   - Mostly arithmetic (P1).
+   - A **known schedule** cannot deter (P2).
+4. **Memory improves decisions without sanctions, but does not deter (P4).**
+   - Memory plus a fine needs half the audit rate.
+   - Robust across settings (R2).
+   - Its effect is about half as large when lies vary.
+5. **Making a stronger attacker is still unsolved.** Richer search and PPO did
+   not give a validated ladder of attacker strength (S5, and the September
+   actor pilots).
+6. **LLM actors are feasible and cheap.** Whether they cheat depends heavily
+   on how the rules are worded (L1 pilot).
+
+### Open decisions (for Ameer, Yali and Edward)
+
+- **Definition of harm:** keep MSY? The evidence supports it.
+- **Which paper:**
+  - a short paper on monitor design with honest agents;
+  - or a full paper on misreporting, costly checking and deterrence.
+  - The notes recommend the full paper.
+- **Main game:** Harvest, with Fishery as a sanity check? Most deterrence
+  results are Fishery-only, because cheating never paid in Harvest.
+
+### Next steps already proposed
+
+- **L2:** LLM actors across a fine grid, with two model families. About $6;
+  see the L1 results.
+- **A coordinated group attacker** with per-agent strategies (S5 gap).
+- **A reviewer that hedges against uncertainty in its own model** (R2 gap).
+- **A direct test** of report-based against signal-based audit targeting (C1
+  conjecture).
+
+### Where the October files are
+
+| Item | Path (in `notes/claude_audit_20261005/`) |
+| --- | --- |
+| Per-study protocol and results | `studies/<ID>_<name>/protocol.md` and `results.md` |
+| Arithmetic results stated once | `propositions.md` |
+| Running "what we learned" log | `what_we_learned_and_next.md` |
+| Every check that was run | `verification_log.md` |
+| Figures, with one-line takeaways | `figures_guide.md`, `figures/` |
+| Sources and terms | `literature_ledger.md` |
+| Background (September audit, design issues, caveats) | `background/` |
 
 ## Why these games, specifically?
 
@@ -146,6 +244,8 @@ are still custom research environments rather than a broad external suite.
   live LLM-agent safety, or a five-game benchmark.
 
 ## Where this leaves the first paper
+
+*Written 23 September. The October series above changes the picture: see "What we now believe" and "Open decisions" there.*
 
 The present paper can make a **specific, defensible contribution**: define a
 repeated multi-agent resource-use oversight problem, show why local/global

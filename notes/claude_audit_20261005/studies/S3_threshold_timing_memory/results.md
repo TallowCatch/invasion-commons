@@ -1,6 +1,6 @@
 # Results S3: the deterrence threshold, imperfect audits, timed cheating, and a reviewer with memory
 
-**Protocol:** `15_PROTOCOL_S3_THRESHOLD_TIMING_MEMORY.md`. It was frozen at 2026-10-05T11:20Z and committed as `087d392` before any S3 code existed. Amendment 1 was added after the engineering gates and before any full run.
+**Protocol:** `studies/S3_threshold_timing_memory/protocol.md`. It was frozen at 2026-10-05T11:20Z and committed as `087d392` before any S3 code existed. Amendment 1 was added after the engineering gates and before any full run.
 
 **Runs:**
 - `results/runs/claude_s3_part{A,B,C,D}_v1/`, one full run each, with no reruns.
@@ -243,7 +243,7 @@ The pattern was the same with 1 random audit or 1 targeted audit per step in Har
 
 The most informative next run combines memory with adaptive liars, who choose their lie knowing the reviewer remembers. It also adds a cost per audit, so audit rate becomes a real trade-off. Both reuse the S3 code: a protocol and about 10 CPU minutes.
 
-The decisions listed in file 04 still belong to Ameer and the supervisors:
+The decisions listed in the what-we-learned note still belong to Ameer and the supervisors:
 - the definition of harm;
 - which paper;
 - which game is the main one.

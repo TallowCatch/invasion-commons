@@ -206,7 +206,7 @@ What this means:
   true risk is about 3.8–5.0%, but the 128-draw label called them risky.
   They reflect label noise at the 5% line, not a gap in the allowance.
 - **Caveats.**
-  - This is post hoc, so it must be redone prospectively (see file 04).
+  - This is post hoc, so it must be redone prospectively (see the what-we-learned note).
   - A prospective design should still protect both safety conditions, but
     with an allowance sized to the actual risk.
   - The 0.282 allowance also approves 662 of the 923 "unresolved" cases.

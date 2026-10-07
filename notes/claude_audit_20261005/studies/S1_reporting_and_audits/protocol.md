@@ -19,7 +19,7 @@ how much to lie *knowing* the checking rule?
 
 ## 2. How this maps onto the literature
 
-All terms are taken from `06_LITERATURE_LEDGER.md`.
+All terms are taken from `literature_ledger.md`.
 
 | S1 element | Literature term | Source |
 | --- | --- | --- |

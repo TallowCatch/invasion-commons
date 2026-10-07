@@ -1,6 +1,6 @@
 """Experiment S3: deterrence threshold, imperfect audits, timed cheating, reviewer memory (Claude audit, October 2026).
 
-Protocol: notes/claude_audit_20261005/15_PROTOCOL_S3_THRESHOLD_TIMING_MEMORY.md
+Protocol: notes/claude_audit_20261005/studies/S3_threshold_timing_memory/protocol.md
 
 Parts A-C reuse the S2 non-compliance model in Fishery (MSY target): a cheater with level d takes
 a_i + d * (p_i - a_i); audits check actual extraction afterwards and charge a flat fine per catch.

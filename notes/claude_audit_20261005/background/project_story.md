@@ -7,7 +7,7 @@ Each entry gives:
 - what came out;
 - what it means.
 
-Design problems are summarised here, with details in `03_DESIGN_ISSUES.md`.
+Design problems are summarised here, with details in `background/design_issues.md`.
 
 **Verification status.** Most raw results before September live in
 git-ignored `results/` folders and are not in the repository.
@@ -323,7 +323,7 @@ already call it a negative design check, correctly.
 
 ## Phase 7: The fresh-seed reviewer confirmation (23 September 2026)
 
-This is the main current evidence; see `02_REVIEWER_EXPERIMENT_EXPLAINED.md`.
+This is the main current evidence; see `background/september_reviewer_experiment.md`.
 
 - **Reported result.** Joint review cuts fewer safe requests than a deliberately
   conservative local rule, without approving more risky ones. A local rule

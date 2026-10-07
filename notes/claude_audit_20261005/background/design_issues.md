@@ -41,7 +41,7 @@ Severity:
     - joint review's unnecessary restrictions fall from 2,521/3,687 to 0;
     - the optimistic local reviewer approves 95/1,368 risky requests
       instead of 0.
-  - The result is sensitive to the allowance; the full range is in file 02
+  - The result is sensitive to the allowance; the full range is in the September reviewer write-up
     §6b. For example, at 0.35 joint restricts 21 safe requests and the
     optimistic local reviewer approves 42 risky ones.
 - **Why it matters.** The Harvest headline numbers mostly measure the
@@ -107,7 +107,7 @@ Severity:
   - a reviewer that does not know the model exactly;
   - agents that respond to the reviewer.
 
-  See file 04.
+  See the what-we-learned note.
 
 ### A4. "Bounded local" discards most of the inspected information (partly acknowledged)
 
@@ -162,7 +162,7 @@ Severity:
   Without that, the scalable-oversight link is only motivation.
 - **Fix.** Add reports that can be false, audits that cost something, and
   actors that choose their behaviour knowing the reviewer protocol. See
-  file 04.
+  the what-we-learned note.
 
 ### B2. The reviewer knows the exact game rules (acknowledged)
 

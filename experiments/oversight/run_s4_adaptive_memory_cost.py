@@ -1,6 +1,6 @@
 """Experiment S4: adaptive cheaters against a reviewer with memory, and a cost per audit (Claude audit, October 2026).
 
-Protocol: notes/claude_audit_20261005/17_PROTOCOL_S4_ADAPTIVE_CHEATERS_MEMORY_AUDIT_COST.md
+Protocol: notes/claude_audit_20261005/studies/S4_adaptive_cheaters_audit_cost/protocol.md
 
 Part A: S2/S3 non-compliance in Fishery (MSY target) with Bernoulli audits under four regimes (none, fine,
 memory, fine+memory). Memory gives a caught agent a targeted allowance so that its expected take is the planned

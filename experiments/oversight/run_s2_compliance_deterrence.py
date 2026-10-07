@@ -1,6 +1,6 @@
 """Experiment S2: allowances, hidden non-compliance, ex-post audits and fines (Claude audit, October 2026).
 
-Protocol: notes/claude_audit_20261005/11_PROTOCOL_S1B_S2_ABLATION_AND_DETERRENCE.md (Part C)
+Protocol: notes/claude_audit_20261005/studies/S1b_S2_ablation_and_deterrence/protocol.md (Part C)
 
 Each step: agents report their requests truthfully; the reviewer (calibrated joint chance constraint)
 sets allowances a_i = scale * r_i assuming compliance. Honest agents take a_i. A non-complying agent with

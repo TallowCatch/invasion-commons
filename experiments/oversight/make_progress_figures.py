@@ -157,7 +157,7 @@ def fig4():
     fig.suptitle("S1: acting on unverified reports is unsafe; checks restore safety (mainly by excluding cheaters)",
                  x=0.01, ha="left", fontsize=10, color=INK)
     caption(fig, "64 test contexts per game, d = 0.5. Caught agents were excluded for 6 steps and fined 12; in the arms near 0%, "
-                 "the reviewer never needed to cut a request, so safety came from exclusion, not better decisions (file 10, §5b).")
+                 "the reviewer never needed to cut a request, so safety came from exclusion, not better decisions (S1 results, §5b).")
     fig.tight_layout()
     save(fig, "fig4_s1_protocols")
 

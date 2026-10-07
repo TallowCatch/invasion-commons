@@ -1,4 +1,4 @@
-"""Analysis for S3 (protocol file 15). Paired context bootstrap, 4,000 resamples, seed 20261008.
+"""Analysis for S3 (S3 protocol). Paired context bootstrap, 4,000 resamples, seed 20261008.
 
 Run:  PYTHONPATH=. python -m experiments.oversight.analyze_s3 --runs results/runs
 Writes results/runs/claude_s3_part{A,B,C,D}_v1/analysis/ and a combined s3_summary.json under part A.

@@ -1,6 +1,6 @@
 # Results S1b and S2: what audits actually do, and how fixed-level cheaters respond to audits plus fines
 
-**Protocol.** `11_PROTOCOL_S1B_S2_ABLATION_AND_DETERRENCE.md`, frozen at
+**Protocol.** `studies/S1b_S2_ablation_and_deterrence/protocol.md`, frozen at
 2026-10-05T00:35Z, before these runs. The deviations from it are listed
 under "Departures from the protocol" below.
 
@@ -15,7 +15,7 @@ The analysis is in `experiments/analyze_s1b_s2.py`. Figures come from
 `experiments/make_progress_figures.py` (`figures/fig5`, `fig6`).
 
 An independent check corrected several statements in an earlier draft of
-this file (see file 05 §10). Every number below is **verified** from the run
+this file (see the verification log §10). Every number below is **verified** from the run
 data. Explanations marked **[post hoc]** were not tested.
 
 **Two measures of "unsafe"** appear below. Each table says which one it uses.
@@ -254,7 +254,7 @@ et al. 2002, full text checked).
 ## Departures from the protocol, and further caveats
 
 - **Seeds.** File 11 says S2 training reuses "the same separate bases as
-  S1". The code and file 11's own seed table use new bases
+  S1". The code and the S1b/S2 protocol's own seed table use new bases
   (850M/860M/870M). This is harmless and noted here.
 - **Gate C.** It was checked by comparing totals for `allow`, `rand2` and
   `peer` with everyone complying. The frozen wording asks for "the same

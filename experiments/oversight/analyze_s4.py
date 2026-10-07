@@ -1,4 +1,4 @@
-"""Analysis for S4 (protocol file 17). Paired context bootstrap, 4,000 resamples, seed 20261009.
+"""Analysis for S4 (S4 protocol). Paired context bootstrap, 4,000 resamples, seed 20261009.
 
 Run:  PYTHONPATH=. python -m experiments.oversight.analyze_s4 --runs results/runs
 """
