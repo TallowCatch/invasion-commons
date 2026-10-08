@@ -20,6 +20,16 @@ budget when agents can hide what they take from a shared resource.*
 | 5 | How audits are aimed matters: audits must be unpredictable and reach every agent; a known schedule or a fixed report-based aim leaves agents unchecked | S3 Part C, **T1** (Fishery, River; 25% of liars ever caught under report-aiming) | tested |
 | 6 | LLM agents follow the same logic: those that over-take stop only when the expected fine exceeds their gain | L1 pilot, **L2** (H1 in 3 of 3 frozen families; 0% over-taking at e = 6 t, 51–92% at e ≤ 1.33 t for gpt-oss and Nemotron) | tested (memory cell H3 running) |
 
+**Novelty (checked 8 Oct 2026, `novelty/README.md`):**
+- The principles behind every claim are known, from Becker, Harrington, inspection games, fisheries practice and Okamoto et al. 2026 for LLMs. The paper claims the combination, not the principles.
+- Use the contribution wording in `novelty/README.md`.
+- New and ours:
+  - the threshold predicted in advance (5 of 5);
+  - "a tighter shared cut makes cheating pay";
+  - report-aimed audits losing coverage;
+  - the LLM dose–response in a commons, set against each model's measured gain.
+- Claim 6 needs the threshold-location experiment to be clearly ours.
+
 ## The only remaining experiments
 
 Each one gets a protocol frozen before the code, one full run and a results
