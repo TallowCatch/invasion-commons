@@ -413,7 +413,125 @@ def fig4_llm():
     save(fig, "fig4_llm_agents")
 
 
+# ------------------------------------------------------------------ Figure 5: the spine. Cheating against e/g, simulated and LLM agents
+def _llm_relative(model, g):
+    """Over-taking relative to the no-fine cell E0, against e/g, for every explicit fine (L2, and L3 when it exists)."""
+    pc = pd.read_csv(NOTES / "claude_l2_v1" / "l2_context_cells.csv")
+    sub = pc[pc.model == model]
+    l3 = NOTES / "claude_l3_v1" / "l3_context_cells.csv"
+    if l3.exists():
+        sub = pd.concat([sub, pd.read_csv(l3).query("model == @model")])
+    fines = {**E_FINE, "E12": 12, "E18": 18, "E24": 24, "E30": 30}
+    base = sub[sub.cell == "E0"].set_index("context")
+    rng = np.random.default_rng(20261019)
+    out = []
+    for cell, f in sorted(fines.items(), key=lambda kv: kv[1]):
+        c = sub[sub.cell == cell].set_index("context")
+        if len(c) == 0:
+            continue
+        ctx = np.array(sorted(set(c.index) & set(base.index)))
+        def ratio(cs):
+            num = np.sum(c.loc[cs, "overtake_rate"] * c.loc[cs, "agent_steps"]) / np.sum(c.loc[cs, "agent_steps"])
+            den = np.sum(base.loc[cs, "overtake_rate"] * base.loc[cs, "agent_steps"]) / np.sum(base.loc[cs, "agent_steps"])
+            return num / den
+        draws = [ratio(rng.choice(ctx, len(ctx))) for _ in range(4000)]
+        out.append(((f / 6) / g, ratio(ctx), np.percentile(draws, 2.5), np.percentile(draws, 97.5), cell in ("E12", "E18", "E24", "E30")))
+    return out
+
+
+def fig5_spine():
+    r3 = json.loads((NOTES / "claude_r3_v1" / "r3_summary.json").read_text())["cells"]
+    summ = {r["model"]: r for r in json.loads((NOTES / "claude_l2_v1" / "l2_summary.json").read_text())["models"]}
+    fig, ax = plt.subplots(figsize=(TEXTW * 0.62, 2.6))
+    ax.axvspan(1, 2.05, color=GRID, alpha=0.6, lw=0, zorder=0)
+    ax.axvline(1, color=INK2, lw=0.7, ls=(0, (3, 2)), zorder=1)
+    first = True
+    for c in r3:
+        if not c.get("testable"):
+            continue
+        d = {float(k): v for k, v in c["d_star_by_e_over_g"].items()}
+        xs = sorted(d)
+        ys = [d[x] / d[0.0] if d[0.0] else np.nan for x in xs]
+        ax.step(xs, ys, where="post", color=LIGHT, lw=1.0, zorder=2, label="Simulated cheaters (5 settings, R3)" if first else None)
+        first = False
+    for m in ("gpt-oss_120b-cloud", "nemotron-3-super_cloud"):
+        lab, col, mk = LLM[m]
+        pts = _llm_relative(m, summ[m]["g_tonnes"])
+        for x, y, lo, hi, new in pts:
+            ax.errorbar(x, y, yerr=[[max(y - lo, 0)], [max(hi - y, 0)]], fmt=mk, color=col, ms=3.8, lw=0.8, capsize=1.2,
+                        mfc="white" if new else col, zorder=3)
+        ax.plot([], [], mk, color=col, ms=3.8, label=lab.split(" (")[0] + " (LLM)")
+    ax.set_xlim(-0.05, 2.05)
+    ax.set_ylim(-0.05, 1.8)
+    ax.set_xlabel("Expected fine ÷ the agent's gain from one over-take (e/g)")
+    ax.set_ylabel("Cheating, relative to no fine")
+    ax.text(1.03, 1.7, "fine outweighs\nthe gain", fontsize=6.4, color=INK2, va="top")
+    ax.legend(loc="center", bbox_to_anchor=(0.32, 0.3), fontsize=6.4, handlelength=1.6)
+    ax.grid(axis="x", visible=False)
+    save(fig, "fig5_spine")
+
+
+# ------------------------------------------------------------------ Appendix figure A1: post hoc behaviour of the LLM agents (L2)
+def figA1_llm_behaviour():
+    ph = json.loads((NOTES / "claude_l2_v1" / "l2_posthoc.json").read_text())
+    ms = ("gpt-oss_120b-cloud", "nemotron-3-super_cloud")
+    fig, (a, b) = plt.subplots(1, 2, figsize=(TEXTW, 2.3))
+    labels = ["fine < gain", "no fine"] * len(ms)
+    series = []
+    for key, name, col in (("not_checked", "Over-take not checked", LIGHT), ("caught", "Over-take caught", INK2)):
+        v, lo, hi = [], [], []
+        for m in ms:
+            for cond in ("fine_below_gain", "checked_no_fine"):
+                r = ph[m]["after_overtake_next_round"][cond][key]
+                k = round(r["rate"] * r["n"])
+                l, h = wilson(k, r["n"])
+                v.append(100 * r["rate"]); lo.append(100 * l); hi.append(100 * h)
+        series.append((name, col, np.array(v), (np.array(lo), np.array(hi))))
+    grouped(a, labels, series, ylim=(0, 100))
+    for k, m in enumerate(ms):
+        a.text(2 * k + 0.5, -0.2, LLM[m][0].split(" (")[0], transform=a.get_xaxis_transform(), ha="center", va="top",
+               fontsize=7)
+    a.set_ylabel("Over-takes again next round (%)")
+    a.legend(loc="upper right", ncol=2, fontsize=6, handlelength=1.0, columnspacing=0.8)
+    title(a, "a", "Being caught does not change the next round")
+    bins = np.arange(0, 6.51, 0.5)
+    for m in ms:
+        lab, col, _ = LLM[m]
+        x = ph[m]["overtake_size"]["catches_t"]
+        b.hist(x, bins=bins, histtype="step", color=col, lw=1.2, density=True,
+               label=f"{lab.split(' (')[0]}: {100 * ph[m]['overtake_size']['share_at_max']:.0f}% at 6 t")
+    b.set_xlabel("Catch on an over-take round (t)")
+    b.set_ylabel("Density")
+    b.legend(loc="upper left", fontsize=6.4)
+    title(b, "b", "Over-takes are all-out (flat fine)")
+    fig.tight_layout(w_pad=1.5)
+    save(fig, "figA1_llm_behaviour")
+
+
+# ------------------------------------------------------------------ Table 3: positioning against prior work (from novelty/README.md)
+def table3_positioning():
+    Y, N, P = r"\checkmark", "--", r"(\checkmark)"
+    cols = ["LLM agents", "Several agents", "Renewable resource", "Random audits", "3+ fine levels", "Memory",
+            "Predicted threshold"]
+    rows = [
+        (r"Enforcement economics$^{a}$", [N, P, N, Y, Y, Y, N]),
+        (r"AI control$^{b}$", [Y, N, N, P, N, N, N]),
+        (r"Makins et al.\ 2026", [Y, Y, N, N, N, N, N]),
+        (r"Gans \& Holden 2026", [N, N, N, Y, N, N, N]),
+        (r"GovSim (Piatti et al.\ 2024)", [Y, Y, Y, N, N, N, N]),
+        (r"Ye \& Steinhardt 2026", [Y, Y, P, N, N, P, N]),
+        (r"Okamoto et al.\ 2026", [Y, N, N, P, N, N, N]),
+        (r"\textbf{This work}", [Y, Y, Y, Y, Y, Y, Y]),
+    ]
+    head = " & ".join([""] + [r"\rotatebox{60}{" + c + "}" for c in cols]) + r" \\"
+    body = "\n".join(" & ".join([r] + v) + r" \\" for r, v in rows[:-1])
+    tex = "\n".join([r"\begin{tabular}{l" + "c" * len(cols) + "}", r"\toprule", head, r"\midrule", body, r"\midrule",
+                     " & ".join([rows[-1][0]] + rows[-1][1]) + r" \\", r"\bottomrule", r"\end{tabular}"])
+    TAB.mkdir(parents=True, exist_ok=True)
+    (TAB / "table3_positioning.tex").write_text(tex + "\n")
+
+
 if __name__ == "__main__":
-    for f in (fig2_reviewer, fig3_audits, fig4_llm, table2_regimes):
+    for f in (fig2_reviewer, fig3_audits, fig4_llm, fig5_spine, figA1_llm_behaviour, table2_regimes, table3_positioning):
         f()
         print("done", f.__name__)

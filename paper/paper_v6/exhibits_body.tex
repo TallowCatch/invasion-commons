@@ -37,6 +37,27 @@
   \label{fig:llm}
 \end{figure}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.66\textwidth]{figures/fig5_spine.pdf}
+  \caption{\textbf{Programmed and language-model agents stop cheating at the same point: when the expected fine outweighs their own gain.} The horizontal axis is the expected fine divided by the agent's gain from one step of over-taking, $e/g$, measured with no fine; to the right of the dashed line, cheating does not pay. Grey: the cheating level chosen by simulated cheaters in five \textsc{Fishery} settings (R3), relative to their level with no audits; the threshold was predicted before the search. Markers: how often gpt-oss and Nemotron over-take at each fine, relative to no fine (filled: L2; open: L3, whose fines were chosen to fall between $e/g = 0.4$ and $1.1$ and whose stopping point was predicted in advance). Error bars: 95\% intervals over populations.}
+  \label{fig:spine}
+\end{figure}
+
+\begin{table}[H]
+  \centering\small
+  \caption{\textbf{How this work relates to the closest prior work.} $^{a}$Becker 1968; Harrington 1988; inspection games (Avenhaus et al.\ 2002). $^{b}$Greenblatt et al.\ 2023. Random audits: audits at random with stated odds. Memory: later treatment depends on past offences. Predicted threshold: the fine at which cheating stops is predicted before it is tested. For this work: in simulation (R3, 5 of 5 settings) and, for language models, in L3. \checkmark: yes; (\checkmark): partly (Greenblatt et al.: an audit budget, not stated odds; Ye \& Steinhardt: a fishery is one of three environments, and memory tracks the reliability of reporters; Okamoto et al.: audit likelihood given in words, one fine on each side of break-even; inspection games: an inspector and one inspectee, or a few). Sources and the depth checked are listed in the novelty notes of the repository.}
+  \label{tab:positioning}
+  \input{tables/table3_positioning.tex}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/figA1_llm_behaviour.pdf}
+  \caption{\textbf{Appendix, post hoc: how the language-model agents over-take} (L2, gpt-oss and Nemotron; analyses chosen after the results were seen). (a)~After over-taking, the chance of over-taking again in the next round barely depends on whether the agent was caught, with a fine below its gain or with no fine. Audits are independent, so a rational agent should not change; people often comply less right after an audit (the ``bomb-crater'' effect; Mittone 2006; Kastlunger et al.\ 2009). (b)~When they over-take, they mostly take the 6~t maximum: under a flat fine nothing deters taking more once over (no marginal deterrence; Stigler 1970). Error bars: 95\% Wilson intervals over agent-rounds, which are not independent; descriptive only.}
+  \label{fig:a1}
+\end{figure}
+
 \begin{table}[H]
   \centering\small
   \caption{\textbf{Audit rules compared} (\textsc{Fishery}, MSY target, 64 new populations). Cheaters' extra harvest: how much more the four cheaters get than if they complied, over 80 steps. Harvest per honest agent: what each honest agent gets. Checks per step include the extra checks that ``memory + extra checks'' spends watching known cheaters. Bold: best in column.}

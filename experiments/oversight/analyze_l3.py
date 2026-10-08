@@ -37,12 +37,14 @@ def main():
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     out = {}
-    rows = []
+    rows, pcs = [], []
     for m in MODELS:
         eps = [json.loads(p.read_text()) for d in (Path(a.l2) / m, Path(a.l3) / m) if (d / "episodes").exists()
                for p in sorted((d / "episodes").glob("*.json"))]
         eps = [e for e in eps if e["cell"] in FINES]
         A = pd.DataFrame([r for e in eps for r in a2.agent_steps(e)])
+        pcs.append(A[A.cell.isin(("E12", "E18", "E24", "E30"))].groupby(["cell", "context"])
+                   .agg(overtake_rate=("over", "mean"), agent_steps=("over", "size")).reset_index().assign(model=m))
         rng = np.random.default_rng(a2.SEED)
         ctx = np.array(sorted(A.context.unique()))
 
@@ -75,6 +77,7 @@ def main():
     Path(a.out).mkdir(parents=True, exist_ok=True)
     (Path(a.out) / "l3_summary.json").write_text(json.dumps(summary, indent=1, default=float))
     pd.DataFrame(rows).to_csv(Path(a.out) / "l3_curve.csv", index=False)
+    pd.concat(pcs).to_csv(Path(a.out) / "l3_context_cells.csv", index=False)  # for Figure 5
     print(json.dumps({m: dict(F_star=r["F_star"], complete=r["complete"], verdicts=r["verdicts"]) for m, r in out.items()},
                      indent=1), "\nclaim 6 wording:", summary["claim6_wording"])
 
