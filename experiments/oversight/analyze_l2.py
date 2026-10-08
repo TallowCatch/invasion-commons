@@ -3,7 +3,8 @@
 Per model: per-cell rates, the LLM break-even g from E0, and hypotheses H1-H5; claim 6 holds if H1 holds in >= 2 of the
 three frozen families (Mistral, added by Amendment 2, is reported separately).
 Paired context bootstrap, 4,000 resamples, seed 20261019. Works on partial runs (reports how many episodes exist).
-Run:  PYTHONPATH=. python -m experiments.oversight.analyze_l2 --run results/runs/claude_l2_v1
+Amendment 5: the EM cell comes from --em-run (corrected memory rule); the EM games in --run (S4's rule) are not used.
+Run:  PYTHONPATH=. python -m experiments.oversight.analyze_l2 --run STORE/claude_l2_v1 --em-run STORE/claude_l2_em_v2 --out DIR
 """
 from __future__ import annotations
 
@@ -38,8 +39,11 @@ def boot(fn, contexts, rng):
     return dict(estimate=float(est), ci=[float(np.nanpercentile(draws, 2.5)), float(np.nanpercentile(draws, 97.5))])
 
 
-def analyse_model(d, rng):
-    eps = [json.loads(p.read_text()) for p in sorted((d / "episodes").glob("*.json"))]
+def analyse_model(d, rng, em_dir=None):
+    eps = [e for e in (json.loads(p.read_text()) for p in sorted((d / "episodes").glob("*.json"))) if e["cell"] != "EM"]
+    em = em_dir / d.name if em_dir else None
+    if em and (em / "episodes").exists():
+        eps += [json.loads(p.read_text()) for p in sorted((em / "episodes").glob("*.json"))]
     if not eps:
         return None
     A = pd.DataFrame([r for e in eps for r in agent_steps(e)])
@@ -47,7 +51,8 @@ def analyse_model(d, rng):
                            msy_break=float(np.mean([s["msy_break"] for s in e["steps"]])), collapsed=e["collapsed"],
                            comprehension=np.mean([v for v in e["comprehension"].values() if v is not None] or [np.nan]),
                            fallbacks=e["fallbacks"]) for e in eps])
-    calls = [c for f in sorted(d.glob("calls*.jsonl")) for c in l2.read_log(f)]  # one log per job lane (Amendment 2)
+    calls = [c for f in sorted(d.glob("calls*.jsonl")) + (sorted(em.glob("calls*.jsonl")) if em and em.exists() else [])
+             for c in l2.read_log(f)]  # one log per job lane (Amendment 2)
     first = [c for c in calls if c["phase"] != "comprehension" and c["attempt"] == 0]
     cells = {}
     for cell in l2.CELLS:
@@ -108,23 +113,29 @@ def analyse_model(d, rng):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", default="results/runs/claude_l2_v1")
+    ap.add_argument("--em-run", default=None)
+    ap.add_argument("--out", default=None, help="where analysis/ goes (default: inside --run)")
     a = ap.parse_args()
     run = Path(a.run)
+    em_dir = Path(a.em_run) if a.em_run else None
+    outdir = Path(a.out) if a.out else run / "analysis"
     # a fresh generator per model, so one model's intervals do not depend on which other models exist
-    res = [r for r in (analyse_model(d, np.random.default_rng(SEED)) for d in sorted(p for p in run.iterdir() if p.is_dir()))
-           if r]
+    res = [r for r in (analyse_model(d, np.random.default_rng(SEED), em_dir)
+                       for d in sorted(p for p in run.iterdir() if p.is_dir() and p.name != "analysis")) if r]
     complete = {r["model"]: r["n_episodes"] == len(l2.CELLS) * len(l2.CONTEXTS) for r in res}
+    e_complete = {r["model"]: all(r["cells"].get(c, {}).get("episodes") == len(l2.CONTEXTS)
+                                  for c in ("E0", "E1", "E2", "E4", "E8", "E36")) for r in res}  # H1 needs only these
     # claim 6 counts only the three frozen families; Mistral (Amendment 2) is reported beside them
     primary = [r for r in res if r["model"] in {m.replace(":", "_").replace(".", "_") for m in l2.MODELS}]
     summary = dict(models=res, complete=complete,
                    claim6_H1_families=sum(r["verdicts"].get("H1", False) for r in primary),
                    claim6_holds=sum(r["verdicts"].get("H1", False) for r in primary) >= 2
-                   if len(primary) == len(l2.MODELS) and all(complete[r["model"]] for r in primary) else None,
+                   if len(primary) == len(l2.MODELS) and all(e_complete[r["model"]] for r in primary) else None,
                    added_families_H1={r["model"]: r["verdicts"].get("H1") for r in res if r not in primary})
-    (run / "analysis").mkdir(exist_ok=True)
-    (run / "analysis" / "l2_summary.json").write_text(json.dumps(summary, indent=1, default=float))
+    outdir.mkdir(parents=True, exist_ok=True)
+    (outdir / "l2_summary.json").write_text(json.dumps(summary, indent=1, default=float))
     rows = [dict(model=r["model"], cell=c, **v) for r in res for c, v in r["cells"].items()]
-    pd.DataFrame(rows).to_csv(run / "analysis" / "l2_cells.csv", index=False)
+    pd.DataFrame(rows).to_csv(outdir / "l2_cells.csv", index=False)
     print(json.dumps({r["model"]: dict(episodes=r["n_episodes"], g=r["g_tonnes"], verdicts=r["verdicts"]) for r in res}, indent=1))
 
 

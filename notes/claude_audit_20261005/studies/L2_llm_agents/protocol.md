@@ -233,7 +233,7 @@ Nothing else changes: the cells, contexts, prompts, seeds, outcomes, hypotheses 
 3. Mistral remains an addition. Claim 6 is still judged on gpt-oss, gemma4 and nemotron.
 4. To stop the expensive pilot at once, the running jobs were cancelled. The lanes restarted from their next unfinished game.
 
-### Amendment 5 (2026-10-08 ~09:40Z, after the 10 other cells finished; before any analysis of them)
+### Amendment 5 (2026-10-08 ~09:15Z, after the 10 other cells finished; before any analysis of them)
 
 **What was seen before this change:**
 - All 400 games of the 10 non-EM cells had finished: 100 per model, for gpt-oss, gemma4, nemotron and mistral-large-3.
@@ -258,3 +258,31 @@ Nothing else changes: the cells, contexts, prompts, seeds, outcomes, hypotheses 
 - H3 uses EM from `claude_l2_em_v2` and E0 from `claude_l2_v1`.
 - The EM games in `claude_l2_v1`, made under S4's rule, are not used.
 - Everything else in the analysis is unchanged.
+
+### Amendment 6 (2026-10-08 ~09:30Z, found while running the analysis)
+
+**What happened:** the call logs of the main run (`claude_l2_v1`) are incomplete.
+
+| Model | Calls logged | Calls expected (about) |
+| --- | ---: | ---: |
+| gemma4 | 1,806 | 16,400 |
+| gpt-oss | 5,770 | 16,400 |
+| mistral-large-3 | 1,481 | 16,400 |
+| nemotron | 1,336 | 16,400 |
+
+**Cause:**
+- When two lanes saved at once, `l2_save.sh` rebased the store in place. That rewrote the log files on disk.
+- The runner keeps each log open, so its later lines went to a file that no longer existed. After a job's first rebase, its log lines were lost.
+- Game files were not affected. Each game is written once, as a new file, when it ends.
+
+**What is affected:**
+- **Not affected:** all outcomes and hypotheses, which come from the game files, and the per-game counts of fallbacks, re-prompts and comprehension, which are stored in each game.
+- **Affected:**
+  - Most saved answer texts are lost, including the models' stated reasons.
+  - The per-call token totals are incomplete. The STATUS token counts are kept in memory by each job, so they are close to the true values but undercount somewhat.
+- **Reporting rule:** valid-answer rates are reported from the game files, where a re-prompt means an invalid first answer. Token use is reported as approximate.
+
+**Fix:**
+- The save step never touches the files being written. It copies the files a job changed (found with `git status`, which only reads) into a separate clone, and commits and pushes from there.
+- A test with two live writers and simultaneous pushes kept 400 of 400 lines in both logs.
+- The EM stage was stopped after 8 minutes, before any in-job save, so its logs are complete. It restarted with the fixed save step.
