@@ -232,3 +232,29 @@ Nothing else changes: the cells, contexts, prompts, seeds, outcomes, hypotheses 
 2. **Mistral Large 4** is stopped at its pilot, and its pilot calls are kept in `claude_l2_pilot_v2/mistral-large-4_cloud`. It is reported as not run, because it would exceed the token cap.
 3. Mistral remains an addition. Claim 6 is still judged on gpt-oss, gemma4 and nemotron.
 4. To stop the expensive pilot at once, the running jobs were cancelled. The lanes restarted from their next unfinished game.
+
+### Amendment 5 (2026-10-08 ~09:40Z, after the 10 other cells finished; before any analysis of them)
+
+**What was seen before this change:**
+- All 400 games of the 10 non-EM cells had finished: 100 per model, for gpt-oss, gemma4, nemotron and mistral-large-3.
+- Only the counts of finished games and their token totals were looked at. No analysis had been run, and no outcome had been looked at.
+
+**The corrected memory rule (EM).**
+- When an agent is checked and has caught more than 0.06 t above its allowance, the reviewer records the excess in tonnes: catch minus allowance.
+- From then on, that agent's allowance is its usual allowance minus the mean of its recorded excesses, and never below 0:
+
+  a′ = max(0, scale · request − mean recorded excess).
+
+- This is what the EM prompt already says: "the reviewer records by how much you went over and lowers your later allowances to make up for it". It keeps S4's idea that the reviewer cuts a known over-taker's allowance by the amount it is expected to take back. It now works when nothing was cut, and when a catch exceeds the request.
+- There are still no fines in EM. The prompts are unchanged.
+- The rule is set in the runner (`MEMORY_RULE = "tonnes"`) and saved in every EM game and manifest. A test replays it from the saved steps.
+
+**How EM runs:**
+- 10 contexts × 4 models = 40 games, in the new directory `claude_l2_em_v2`, with the same seeds and contexts as before. EM games are therefore still paired by context with the other cells.
+- The jobs run as the "em" stage of the same workflow. Nemotron is split over two lanes; gpt-oss, gemma4 and mistral share the third.
+- The EM games run after the other cells, so they were played about one day later on the same Ollama Cloud models. This is noted when the results are reported.
+
+**Analysis:**
+- H3 uses EM from `claude_l2_em_v2` and E0 from `claude_l2_v1`.
+- The EM games in `claude_l2_v1`, made under S4's rule, are not used.
+- Everything else in the analysis is unchanged.

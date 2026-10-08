@@ -48,6 +48,10 @@ API_NAMES = {"gpt-oss:120b-cloud": "gpt-oss:120b", "gemma4:31b-cloud": "gemma4:3
              "nemotron-3-super:cloud": "nemotron-3-super",  # names on https://ollama.com/api (Amendment 1)
              "mistral-large-4:cloud": "mistral-large-4",  # fourth family (Amendment 2); replaced, too slow (Amendment 4)
              "mistral-large-3:675b-cloud": "mistral-large-3:675b"}  # fourth family, an addition (Amendment 4)
+# EM memory rule. "tonnes" (Amendment 5): a caught over-take is recorded as tonnes above the allowance, and later
+# allowances are lowered by the agent's mean recorded excess. "share" is S4's share-of-the-cut rule, used for the EM games
+# in claude_l2_v1 and set aside there (Amendment 3: it drops over-takes when nothing was cut).
+MEMORY_RULE = "tonnes"
 OVER_T = 0.06  # tonnes above the allowance that count as over-taking (L1: 0.01 of the 6 t maximum)
 
 
@@ -255,8 +259,10 @@ def episode(client, context, cell, log, used, horizon=HORIZON):
         allowance = scale * req
         if consequence == "memory":
             for i in llm_agents:
-                if record[i]:
+                if record[i] and MEMORY_RULE == "share":
                     allowance[i] = targeted_allowance(scale, float(np.mean(record[i])), req[i])
+                elif record[i]:
+                    allowance[i] = max(0.0, allowance[i] - float(np.mean(record[i])))
         taken = allowance.copy()
         for i in llm_agents:
             v, n = ask(client, system, L.catch_prompt(t, horizon, state.stock, req[i], allowance[i]), "catch_tonnes",
@@ -276,9 +282,14 @@ def episode(client, context, cell, log, used, horizon=HORIZON):
             fines[caught] += fine
         else:
             for i in np.flatnonzero(caught):
-                d_obs = observed_overtake(taken[i], allowance[i], req[i])
-                if d_obs is not None and i in record:
-                    record[i].append(min(1.0, d_obs))
+                if i not in record:
+                    continue
+                if MEMORY_RULE == "share":
+                    d_obs = observed_overtake(taken[i], allowance[i], req[i])
+                    if d_obs is not None:
+                        record[i].append(min(1.0, d_obs))
+                else:
+                    record[i].append(float(taken[i] - allowance[i]))  # excess, in fractions of the 6 t maximum
         future, payoffs, _ = transition(cfg, state, taken)
         pay += payoffs
         for i in llm_agents:
@@ -296,7 +307,7 @@ def episode(client, context, cell, log, used, horizon=HORIZON):
     return dict(**base, wording=wording, consequence=consequence, fine=fine, llm_agents=llm_agents, comprehension=comp,
                 steps=steps, payoff=pay.tolist(), fines=fines.tolist(), honest_harvest=float(pay[honest].mean()),
                 llm_net=float((pay - fines)[llm_agents].mean()), final_stock=state.stock, collapsed=bool(state.collapsed),
-                fallbacks=fallbacks, reprompts=reprompts)
+                fallbacks=fallbacks, reprompts=reprompts, memory_rule=MEMORY_RULE if consequence == "memory" else None)
 
 
 def run(client, out, cells, contexts, model_label, horizon=HORIZON, max_minutes=None, tag=None):
@@ -310,6 +321,7 @@ def run(client, out, cells, contexts, model_label, horizon=HORIZON, max_minutes=
     (out / "episodes").mkdir(parents=True, exist_ok=True)
     manifest = dict(protocol="studies/L2_llm_agents/protocol.md", model=model_label, cells=CELLS, run_cells=list(cells),
                     contexts=list(contexts), horizon=horizon, q=Q, seeds=SEEDS, token_cap=TOKEN_CAP, over_t=OVER_T,
+                    memory_rule=MEMORY_RULE,
                     python=sys.version.split()[0], platform=platform.platform())
     sfx = f"_{tag}" if tag else ""
     (out / f"manifest{sfx}.json").write_text(json.dumps(manifest, indent=1))
@@ -392,6 +404,7 @@ def main():
     ap.add_argument("--max-minutes", type=float, default=None)
     ap.add_argument("--contexts", default=None, help="full mode: a range such as 5-7 (Amendment 2); default all")
     ap.add_argument("--skip-cells", default="", help="full mode: cells left out, e.g. EM (Amendment 3)")
+    ap.add_argument("--cells", default="", help="full mode: only these cells, e.g. EM (Amendment 5); default all")
     a = ap.parse_args()
     if a.mode == "check":  # one tiny call per model; prints OK or the error (never the key)
         bad = 0
@@ -419,7 +432,9 @@ def main():
         contexts, tag = tuple(range(lo, hi + 1)), f"ctx{lo}-{hi}"
     skip = set(filter(None, a.skip_cells.split(",")))
     assert skip <= set(CELLS), f"unknown cells {skip - set(CELLS)}"
-    st = run(Client(a.model), a.out, tuple(c for c in CELLS if c not in skip), contexts, a.model,
+    only = set(filter(None, a.cells.split(","))) or set(CELLS)
+    assert only <= set(CELLS), f"unknown cells {only - set(CELLS)}"
+    st = run(Client(a.model), a.out, tuple(c for c in CELLS if c not in skip and c in only), contexts, a.model,
              max_minutes=a.max_minutes, tag=tag)
     return {"done": 0, "quota": 3, "budget": 4, "transient": 5, "time": 6}[st]
 

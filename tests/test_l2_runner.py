@@ -61,3 +61,24 @@ def test_a_cut_off_last_log_line_does_not_stop_the_run(tmp_path):
         f.write('{"phase": "catch", "prompt_tok')  # a job killed mid-write
     assert l2.run(L.FakeClient(), tmp_path, ("E0", "E36"), (0,), "fake", horizon=2) == "done"
     assert not list((tmp_path / "episodes").glob("*.tmp"))
+
+
+def test_tonnes_memory_rule_replays_from_the_saved_steps(tmp_path):
+    """Amendment 5: later allowance = max(0, scale * request - mean recorded excess), also when nothing was cut."""
+    assert l2.MEMORY_RULE == "tonnes"
+    l2.run(L.FakeClient(over=1.0), tmp_path, ("EM",), (0, 1, 2), "fake", horizon=20)
+    eps = [json.loads(p.read_text()) for p in (tmp_path / "episodes").glob("*.json")]
+    lowered = 0
+    for e in eps:
+        assert e["memory_rule"] == "tonnes" and e["fines"] == [0.0] * 6
+        record = {i: [] for i in e["llm_agents"]}
+        for s in e["steps"]:
+            for i in e["llm_agents"]:
+                base = s["scale"] * s["requests"][i]
+                want = max(0.0, base - sum(record[i]) / len(record[i])) if record[i] else base
+                assert abs(s["allowance"][i] - want) < 1e-9
+                lowered += s["allowance"][i] < base - 1e-9
+            for i in e["llm_agents"]:
+                if s["caught"][i]:
+                    record[i].append(s["taken"][i] - s["allowance"][i])
+    assert lowered > 0

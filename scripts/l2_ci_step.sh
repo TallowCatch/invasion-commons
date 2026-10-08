@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # One GitHub Actions job of experiment L2 (protocol: notes/claude_audit_20261005/studies/L2_llm_agents/protocol.md, Amendments 1-2).
-# Usage: bash scripts/l2_ci_step.sh check|run STORE_DIR MAX_MINUTES LANE
+# Usage: bash scripts/l2_ci_step.sh check|run STORE_DIR MAX_MINUTES LANE [STAGE]
+# STAGE main (default): the 10 cells other than EM, in claude_l2_v1. STAGE em: the EM cell with the corrected memory rule
+# (Amendment 5), in claude_l2_em_v2.
 # STORE_DIR holds the l2-results branch: claude_l2_v1/<model>/..., claude_l2_pilot_v2/<model>/..., gates.json
 # Amendment 2 (Ollama Pro, 3 models at a time): three lanes run in parallel, each working through its own list of
 # units in order. A unit is a model (all 10 contexts) or MODEL@LO-HI (only those contexts; files get the suffix _ctxLO-HI).
@@ -8,10 +10,17 @@
 # between jobs (never while a lane is running, or two lanes could run the same game).
 # Amendment 3: the memory cell EM is held back from this run until its interface fault is fixed.
 set -u
-MODE="$1"; STORE="$2"; MAXMIN="${3:-330}"; LANE="${4:-A}"
+MODE="$1"; STORE="$2"; MAXMIN="${3:-330}"; LANE="${4:-A}"; STAGE="${5:-main}"
 LANE_A=("gpt-oss:120b-cloud" "nemotron-3-super:cloud@5-7")
 LANE_B=("gemma4:31b-cloud" "mistral-large-3:675b-cloud" "nemotron-3-super:cloud@8-9")
 LANE_C=("nemotron-3-super:cloud@0-4")
+OUTBASE="claude_l2_v1"; CELLARGS=(--skip-cells EM)
+if [ "$STAGE" = "em" ]; then  # Amendment 5: EM only, nemotron (slow) split over two lanes
+  LANE_A=("nemotron-3-super:cloud@0-4")
+  LANE_B=("nemotron-3-super:cloud@5-9")
+  LANE_C=("gpt-oss:120b-cloud" "gemma4:31b-cloud" "mistral-large-3:675b-cloud")
+  OUTBASE="claude_l2_em_v2"; CELLARGS=(--cells EM)
+fi
 ADDED_PILOTS=("mistral-large-3:675b-cloud")  # pilot gate run before the full run (Amendments 2, 4)
 next() { echo "$1" > NEXT; }  # tells the workflow what to do next: done | wait | now (outside the store, never committed)
 rm -f NEXT "$STORE/NEXT"  # (store/NEXT was used before Amendment 2) a job that crashes leaves no NEXT, so it does not start another job
@@ -19,7 +28,7 @@ run() { PYTHONPATH=. python -m experiments.oversight.run_l2_llm_agents "$@"; }
 if [ "$MODE" = "check" ]; then run check; exit $?; fi
 # Save progress to the l2-results branch every 20 minutes while the job runs, so it is visible early.
 if [ -d "$STORE/.git" ]; then
-  ( while sleep 1200; do bash scripts/l2_save.sh "$STORE" "L2 progress (lane $LANE, in job)"; done ) &
+  ( while sleep 1200; do bash scripts/l2_save.sh "$STORE" "L2 progress ($STAGE, lane $LANE, in job)"; done ) &
   SAVER=$!
   trap 'kill $SAVER 2>/dev/null' EXIT
 fi
@@ -57,7 +66,7 @@ for u in "${UNITS[@]}"; do
   m="${u%@*}"; ctx=""; sfx=""
   [ "$u" != "$m" ] && { ctx="${u#*@}"; sfx="_ctx$ctx"; }
   slug="${m//[:.]/_}"
-  [ -f "$STORE/claude_l2_v1/$slug/DONE$sfx" ] && { echo "$u complete"; continue; }
+  [ -f "$STORE/$OUTBASE/$slug/DONE$sfx" ] && { echo "$u complete"; continue; }
   gate "$m"; g=$?
   if [ "$g" -eq 2 ] && [[ " ${ADDED_PILOTS[*]} " == *" $m "* ]]; then
     echo "pilot gate for $m"
@@ -68,7 +77,7 @@ for u in "${UNITS[@]}"; do
   [ "$g" -ne 0 ] && { echo "skip $u: pilot gate not passed (gates.json)"; continue; }
   # no new game starts in the last 35 minutes, so a slow game (nemotron ~23 min) ends before the 350-minute job timeout
   [ "$(left)" -le 40 ] && { echo "time limit reached"; next now; exit 0; }
-  args=(full --model "$m" --out "$STORE/claude_l2_v1/$slug" --max-minutes "$(( $(left) - 35 ))" --skip-cells EM)
+  args=(full --model "$m" --out "$STORE/$OUTBASE/$slug" --max-minutes "$(( $(left) - 35 ))" "${CELLARGS[@]}")
   [ -n "$ctx" ] && args+=(--contexts "$ctx")
   run "${args[@]}"; code=$?
   case $code in
@@ -78,5 +87,5 @@ for u in "${UNITS[@]}"; do
     *) echo "$u failed with code $code"; next done; exit "$code" ;;
   esac
 done
-echo "lane $LANE complete"
+echo "lane $LANE ($STAGE) complete"
 next done
