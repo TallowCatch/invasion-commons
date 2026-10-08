@@ -1,0 +1,62 @@
+\begin{thebibliography}{8}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Conitzer and Oesterheld(2023)]{conitzer2023foundations}
+Vincent Conitzer and Caspar Oesterheld.
+\newblock Foundations of cooperative ai.
+\newblock \emph{Proceedings of the AAAI Conference on Artificial Intelligence},
+  37\penalty0 (13):\penalty0 15359--15367, 2023.
+\newblock \doi{10.1609/aaai.v37i13.26791}.
+
+\bibitem[Evans et~al.(2025)Evans, Bratton, and Ag{\"u}era~y
+  Arcas]{evans2025agentic}
+Richard Evans, Benjamin Bratton, and Blaise Ag{\"u}era~y Arcas.
+\newblock Agentic ai and the next intelligence explosion.
+\newblock \emph{arXiv preprint arXiv:2504.18530}, 2025.
+\newblock URL \url{https://arxiv.org/abs/2504.18530}.
+
+\bibitem[Gordon(1954)]{gordon1954common}
+H.~Scott Gordon.
+\newblock The economic theory of a common-property resource: The fishery.
+\newblock \emph{Journal of Political Economy}, 62\penalty0 (2):\penalty0
+  124--142, 1954.
+
+\bibitem[Guo et~al.(2025)]{socialjax2025}
+Zihao Guo et~al.
+\newblock Socialjax: An evaluation suite for multi-agent reinforcement learning
+  in sequential social dilemmas.
+\newblock \emph{arXiv preprint arXiv:2503.14576}, 2025.
+\newblock URL \url{https://arxiv.org/abs/2503.14576}.
+
+\bibitem[Leibo et~al.(2017)Leibo, Zambaldi, Lanctot, Marecki, and
+  Graepel]{leibo2017multiagent}
+Joel~Z. Leibo, Vinicius Zambaldi, Marc Lanctot, Janusz Marecki, and Thore
+  Graepel.
+\newblock Multi-agent reinforcement learning in sequential social dilemmas.
+\newblock \emph{arXiv preprint arXiv:1702.03037}, 2017.
+\newblock URL \url{https://arxiv.org/abs/1702.03037}.
+
+\bibitem[Leibo et~al.(2021)]{meltingpot2021}
+Joel~Z. Leibo et~al.
+\newblock Scalable evaluation of multi-agent reinforcement learning with
+  melting pot.
+\newblock \emph{arXiv preprint arXiv:2107.06857}, 2021.
+\newblock URL \url{https://arxiv.org/abs/2107.06857}.
+
+\bibitem[Ostrom(1990)]{ostrom1990governing}
+Elinor Ostrom.
+\newblock \emph{Governing the Commons: The Evolution of Institutions for
+  Collective Action}.
+\newblock Cambridge University Press, 1990.
+
+\bibitem[Scott(1955)]{scott1955fishery}
+Anthony Scott.
+\newblock The fishery: The objectives of sole ownership.
+\newblock \emph{Journal of Political Economy}, 63\penalty0 (2):\penalty0
+  116--124, 1955.
+
+\end{thebibliography}

@@ -1,0 +1,206 @@
+name: Harvest Threshold Replay
+
+on:
+  push:
+    branches:
+      - codex/harvest-oversight-gap-stagea
+    paths:
+      - ".github/threshold_replay_request.json"
+  workflow_dispatch:
+    inputs:
+      group_size:
+        description: "Logical threshold shards per job"
+        required: false
+        default: "6"
+        type: string
+      max_groups:
+        description: "Optional cap for partial runs; leave empty for full grid"
+        required: false
+        default: ""
+        type: string
+      python_version:
+        description: "Python version"
+        required: false
+        default: "3.11"
+        type: string
+      n_runs:
+        description: "Runs per condition"
+        required: false
+        default: "5"
+        type: string
+      generations:
+        description: "Generations per run"
+        required: false
+        default: "15"
+        type: string
+      seeds_per_generation:
+        description: "Training seeds per generation"
+        required: false
+        default: "32"
+        type: string
+      test_seeds_per_generation:
+        description: "Test seeds per generation"
+        required: false
+        default: "32"
+        type: string
+      run_name_suffix:
+        description: "Optional suffix for smoke or partial runs"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  define-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+      run_name: ${{ steps.build.outputs.run_name }}
+      output_root: ${{ steps.build.outputs.output_root }}
+      merged_prefix: ${{ steps.build.outputs.merged_prefix }}
+      summary_csv: ${{ steps.build.outputs.summary_csv }}
+      analysis_prefix: ${{ steps.build.outputs.analysis_prefix }}
+      total_groups: ${{ steps.build.outputs.total_groups }}
+      total_cells: ${{ steps.build.outputs.total_cells }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        shell: bash
+        env:
+          REQUEST_FILE: .github/threshold_replay_request.json
+          GROUP_SIZE: ${{ github.event.inputs.group_size || '' }}
+          MAX_GROUPS: ${{ github.event.inputs.max_groups || '' }}
+          N_RUNS: ${{ github.event.inputs.n_runs || '' }}
+          GENERATIONS: ${{ github.event.inputs.generations || '' }}
+          SEEDS_PER_GENERATION: ${{ github.event.inputs.seeds_per_generation || '' }}
+          TEST_SEEDS_PER_GENERATION: ${{ github.event.inputs.test_seeds_per_generation || '' }}
+          RUN_NAME_SUFFIX: ${{ github.event.inputs.run_name_suffix || '' }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import os
+          from pathlib import Path
+
+          from experiments.threshold_replay_shards import github_threshold_matrix_payload
+
+          request_path = Path(os.environ.get("REQUEST_FILE", ""))
+          request = json.loads(request_path.read_text()) if request_path.exists() else {}
+
+          def pick(name, default=""):
+              env_value = os.environ.get(name.upper(), "").strip()
+              if env_value:
+                  return env_value
+              return request.get(name, default)
+
+          group_size = int(pick("group_size", 6))
+          max_groups_text = str(pick("max_groups", "")).strip()
+          max_groups = int(max_groups_text) if max_groups_text and max_groups_text != "None" else None
+          run_name_suffix = str(pick("run_name_suffix", "")).strip()
+          overrides = {}
+          for key, caster in {
+              "n_runs": int,
+              "generations": int,
+              "seeds_per_generation": int,
+              "test_seeds_per_generation": int,
+          }.items():
+              value = pick(key, "")
+              if value != "" and value is not None:
+                  overrides[key] = caster(value)
+
+          payload = github_threshold_matrix_payload(
+              group_size=group_size,
+              max_groups=max_groups,
+              overrides=overrides,
+              run_name_suffix=run_name_suffix,
+          )
+
+          print(f"matrix={json.dumps(payload['matrix'], separators=(',', ':'))}")
+          print(f"run_name={payload['run_name']}")
+          print(f"output_root={payload['output_root']}")
+          print(f"merged_prefix={payload['merged_prefix']}")
+          print(f"summary_csv={payload['summary_csv']}")
+          print(f"analysis_prefix={payload['analysis_prefix']}")
+          print(f"total_groups={payload['total_groups']}")
+          print(f"total_cells={payload['total_cells']}")
+          PY
+
+  run-shards:
+    needs: define-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.define-matrix.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ github.event.inputs.python_version || '3.11' }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pandas matplotlib tqdm
+
+      - name: Run shard group
+        env:
+          SHARDS_JSON: ${{ matrix.shards_json }}
+        run: |
+          python -m experiments.run_threshold_replay_shard_group \
+            --shards-json "$SHARDS_JSON" \
+            --output-root "${{ needs.define-matrix.outputs.output_root }}"
+
+      - name: Upload shard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: threshold-replay-${{ matrix.group_slug }}
+          path: |
+            ${{ needs.define-matrix.outputs.output_root }}/
+
+  aggregate:
+    needs: [define-matrix, run-shards]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ github.event.inputs.python_version || '3.11' }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pandas matplotlib tqdm
+
+      - name: Download shard artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: threshold-replay-*
+          path: downloaded
+          merge-multiple: false
+
+      - name: Merge threshold replay shards
+        run: |
+          python -m experiments.merge_threshold_replay_shards \
+            --input-dir downloaded \
+            --merged-prefix "${{ needs.define-matrix.outputs.merged_prefix }}" \
+            --summary-csv "${{ needs.define-matrix.outputs.summary_csv }}"
+
+      - name: Analyze threshold replay grid
+        run: |
+          python -m experiments.analyze_threshold_replay_grid \
+            --input-csv "${{ needs.define-matrix.outputs.summary_csv }}" \
+            --output-prefix "${{ needs.define-matrix.outputs.analysis_prefix }}"
+
+      - name: Upload merged artifact bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.define-matrix.outputs.run_name }}-bundle
+          path: |
+            ${{ needs.define-matrix.outputs.merged_prefix }}_runs.csv
+            ${{ needs.define-matrix.outputs.merged_prefix }}_generation_history.csv
+            ${{ needs.define-matrix.outputs.merged_prefix }}_strategy_history.csv
+            ${{ needs.define-matrix.outputs.merged_prefix }}_agent_history.csv
+            ${{ needs.define-matrix.outputs.summary_csv }}
+            ${{ needs.define-matrix.outputs.analysis_prefix }}_pair_summary.csv
+            ${{ needs.define-matrix.outputs.analysis_prefix }}_winner_summary.csv
+            ${{ needs.define-matrix.outputs.analysis_prefix }}_condition_summary.csv
+            ${{ needs.define-matrix.outputs.analysis_prefix }}_summary.md
+            ${{ needs.define-matrix.outputs.analysis_prefix }}_table.tex

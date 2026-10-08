@@ -1,0 +1,34 @@
+{
+  "status": "curated_summary_and_episode_outcomes",
+  "independent_contexts_per_game": 64,
+  "source_completion_sha256": "38c024bd04c2740a976c54e2af64e91c9fea79672a73bfd8211e4ebbee479ef0",
+  "source_manifest_sha256": "09896627ade84f269b84158b803ee70e484d30f68e72df3adab58693f5522022",
+  "tables": {
+    "context_decision_counts.csv": {
+      "sha256": "0ae5ce23a37d0fb62f829cd9c36107e0f8ce913d02fcd9eee80334f2c2f0e4b3",
+      "rows": 1152
+    },
+    "primary_decision_quality.csv": {
+      "sha256": "111614c8592bdb71312dfcbb92fa7b27ce1be1aa74f1a2cd7fb8b672b6596162",
+      "rows": 18
+    },
+    "outcomes.csv": {
+      "sha256": "48256dbdf504161f4d3882eb5810702f5f60776662d03e06d13be0774fd05c79",
+      "rows": 20
+    },
+    "episodes.csv": {
+      "sha256": "d9618fe227b0af11980a764872bc0e1729a6d6001bef3e36b50febbe3ef9cb08",
+      "rows": 1920
+    }
+  },
+  "derived_tables": {
+    "longrun_context_differences.csv": {
+      "sha256": "a2bbd2af0d64b538d15ad725d0be04b3f65b1a9e8ac89e527e53e95b3357d064",
+      "rows": 768
+    },
+    "longrun_paired_summary.csv": {
+      "sha256": "847b3b538434873180156db6a65f8565a3d34316c97dc8c54b3a08d4720b1dfc",
+      "rows": 12
+    }
+  }
+}

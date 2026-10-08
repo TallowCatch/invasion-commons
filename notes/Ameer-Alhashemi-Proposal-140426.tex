@@ -1,0 +1,218 @@
+\documentclass[10pt]{article}
+\usepackage[margin=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage[square,authoryear]{natbib}
+\usepackage{hyperref}
+\usepackage{setspace}
+
+\setstretch{1.0}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
+\setlength{\bibsep}{1pt}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
+
+\title{\vspace{-1em}Governance Under Adversarial Pressure and Imperfect Oversight}
+\author{Ameer Alhashemi}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-2.4em}
+
+\section{Research problem and motivation}
+
+The research problem addressed in this proposal is how governance arrangements perform when multi-agent systems are exposed to adversarial pressure, changing populations, and imperfect oversight. This is an institutional problem as much as a technical one. A rule can appear effective when populations are stable and strategic behaviour is familiar, yet perform poorly once stronger entrants appear, once private incentives diverge from system-wide welfare, or once monitoring and enforcement become limited. These conditions are common in interactive systems. They therefore provide a more demanding and more informative basis for evaluating governance than fixed-population settings with ideal implementation.
+
+Renewable commons provide a useful starting point because they make this institutional problem observable in a controlled form. In a common-pool setting, behaviour that is individually advantageous can still damage the shared system unless the governing rules are well designed. The proposed programme therefore begins with two benchmark environments. Fishery Commons provides a minimal setting for comparing central interventions such as sanctions, quotas, and closures under repeated strategic turnover. Harvest Commons extends the same question to a richer spatial setting with local renewable patches, neighbourhood spillovers, communication, side-payments, and alternative governance architectures. This progression allows the research to move from signal design to broader institutional design while keeping the task analytically clear.
+
+Within this setting, the central empirical issue is whether governance rankings remain stable once the benchmark is evaluated under stronger strategic pressure and more realistic implementation limits. The proposal studies this issue by comparing local-only, central-only, and hybrid governance across literature-backed scenario families and explicit oversight frictions. The aim is to identify which arrangements remain robust as strategic pressure rises and as oversight quality deteriorates.
+
+The proposal also addresses a second issue that becomes important once strategic turnover is taken seriously. Commons benchmarks capture adversarial adaptation well, but they often leave agents broadly symmetric in what they are able to do. Differences in aggressiveness or search strength matter, yet the benchmark still stops short of modelling settings in which stronger systems can systematically outrun weaker overseers. Recent work on scalable oversight argues that this limitation is important if the broader goal is to understand governance under capability mismatch \citep{bowman2022, engels2025}. Recent work on LLM-generated populations makes the complementary point that collective outcomes can degrade when model-generated strategies spread through large populations \citep{willis2025, willis2026}. For that reason, this proposal treats governance under adversarial pressure as the immediate problem and governance under measurable capability imbalance as the natural next extension of the same research programme.
+
+The core thesis contribution is a benchmark family for governance under strategic turnover. Its first contribution is to identify how governance rankings change under adversarial pressure and imperfect oversight in renewable commons. Its later contribution is to carry the same evaluation logic into settings with measurable capability imbalance.
+
+\section{Relevant literature and research gap}
+
+The starting point for this proposal is the long-standing literature on common-pool resources and institutional design. The core problem is well known: open access and weak institutions allow individually beneficial behaviour to degrade a shared resource \citep{gordon1954, scott1955, ostrom1990}. Subsequent work has shown that institutional performance depends on how monitoring is organised, how incentives are structured, how much authority is retained locally, and how local and higher-level actors interact \citep{hilborn2005, gutierrez2011, ostrom1993, ostrom1994, villamayor2020, nagendra2012}. These studies provide a substantive basis for comparing local, central, and mixed governance arrangements. They also suggest that there is unlikely to be a single governance form that performs best in every setting.
+
+This proposal also draws on the literature on sequential social dilemmas and multi-agent learning. That literature has shown that collective outcomes depend on temporally extended interaction, partner composition, and generalisation across held-out social settings \citep{leibo2017, meltingpot2021, socialjax2025}. It also provides the benchmark setting in which reinforcement-learning methods such as PPO are commonly evaluated \citep{schulman2017}. What remains less developed in this line of work is the question of institutional robustness under changing populations. Standard MARL evaluations usually compare learning procedures in fixed environments. They are less often designed to study how governance rules perform when stronger entrants repeatedly appear, when institutions differ in structure, or when implementation frictions are built directly into the environment.
+
+Related work in AI has also made clear that individually competent or individually aligned agents do not automatically generate good collective outcomes once strategic interaction is taken seriously \citep{conitzer2023}. This gives further support to the focus of the proposal. If system-level outcomes depend on interaction structure, then governance architecture has to be studied directly rather than treated as background context.
+
+The recent literature on scalable oversight develops this concern further. \citet{bowman2022} argue that oversight should be studied in tasks where the overseer is meaningfully weaker than the system being supervised, and where assistance can be measured rather than assumed. \citet{engels2025} extend this by examining how oversight performance changes as the capability gap widens. For the present proposal, the methodological implication is straightforward. A convincing benchmark should capture strategic pressure among roughly symmetric agents and should also extend to settings in which stronger systems can exploit or outrun weaker overseers.
+
+Recent work on LLM-generated populations adds another relevant development. \citet{willis2025} show that language models can generate full strategies with systematic cooperative or aggressive biases, and that prompt design affects the balance between those behaviours. \citet{willis2026} show that large populations of model-generated strategies can converge toward poor equilibria, especially when cultural evolution amplifies successful exploitative types. These results make changing populations substantively important for the present proposal, because governance and oversight may need to operate in settings where strategies are generated, selected, and spread at scale.
+
+Taken together, these literatures identify a clear research gap. There is strong theoretical and empirical motivation for studying governance in interactive systems, there is growing evidence that model-generated populations can behave badly at scale, and there is a well-developed argument that oversight should be analysed under capability mismatch. What remains underdeveloped is a benchmark line that links adversarial turnover, institutional comparison, imperfect oversight, and measurable capability imbalance in one experimental framework.
+
+\section{Research questions, hypotheses, and formal framing}
+
+\textbf{Research questions.}
+
+\textbf{RQ1.} Which governance architecture is most robust under repeated adversarial turnover in renewable commons?
+
+\textbf{RQ2.} How stable are those governance rankings once literature-backed scenario differences and explicit oversight frictions are introduced?
+
+\textbf{RQ3.} How far do those findings carry over to model-generated populations and, later, to measurable capability imbalance?
+
+\textbf{Hypotheses and formal framing.}
+
+My first hypothesis is that architectures with a central component will remain more robust than purely local governance as capability imbalance grows. My second hypothesis is that the ordering between hybrid and central-only oversight will depend on the setting and on practical oversight frictions, rather than being fixed. My third hypothesis is that model-generated populations will move more quickly toward poor collective outcomes when more capable exploitative strategies can spread faster than oversight can detect and contain them.
+
+To formalize the problem, I model the environment as an $N$-agent partially observed Markov game
+\[
+\mathcal{G}=\langle \mathcal{S}, \{\mathcal{O}_i,\mathcal{A}_i\}_{i=1}^N, T, \{r_i\}_{i=1}^N, H, g, \phi \rangle,
+\]
+where $\mathcal{S}$ is the state space, $\mathcal{O}_i$ and $\mathcal{A}_i$ are the observation and action spaces of agent $i$, $T$ is the transition kernel, $r_i$ is the individual reward, $H$ is the horizon, $g$ is the governance architecture, and $\phi$ collects implementation frictions such as imperfect monitoring, delay, and budget limits. Let $c_i$ denote the task-relevant capability of agent $i$, and let $o_i$ denote the effective capability of the oversight mechanism applied to that agent. A simple way to express the core challenge is through the capability gap
+\[
+\Delta_i = c_i - o_i.
+\]
+In the first capability-imbalance study, $c_i$ will be operationalized as the actor's search or planning budget before acting, while $o_i$ will be operationalized as the overseer's inspection budget before intervention. This keeps the capability gap measurable and directly tied to performance.
+When $\Delta_i$ grows, the agent has more scope to exploit, conceal, or dominate. To capture the idea that capability can accumulate into system influence, let $p_i^t$ denote the normalized power share of agent $i$ at time $t$,
+\[
+p_i^t = \frac{\exp(\alpha c_i + \beta \ell_i^t)}{\sum_{j=1}^N \exp(\alpha c_j + \beta \ell_j^t)},
+\]
+where $\ell_i^t$ is an accumulated leverage term. In the commons benchmark, this term will be instantiated using cumulative effective extraction, retained resource access, and successful avoidance of intervention. In the capability-imbalance extension, it will be instantiated using cumulative action advantage, successful plan execution, and uncorrected impact on the shared outcome. Let $R_t$ denote system risk, including ecological collapse, harmful shortcutting, or concentration of influence. The proposal studies how governance architecture $g \in \{\text{local}, \text{central}, \text{hybrid}\}$ changes the relation
+\[
+R_t = f(s_t, a_t, p_1^t,\dots,p_N^t,\Delta_1,\dots,\Delta_N,g,\phi),
+\]
+and how population composition evolves across generations. If $x_t(k)$ denotes the population share of strategy family $k$ at generation $t$, then the turnover dynamics can be written as
+\[
+x_{t+1} = F(x_t,\Pi_t,g,\phi,\Delta),
+\]
+where $\Pi_t$ is the induced performance profile of the competing strategies under the current governance regime. The proposal therefore studies one-shot performance and the way governance changes evolutionary selection.
+
+The optimization problem can then be written as choosing a governance architecture to maximize long-run system quality while limiting failure and power concentration:
+\[
+\max_{g \in \mathcal{G}_{\text{arch}}} J(g)
+=
+\mathbb{E}\!\left[\sum_{t=1}^{H}\gamma^{t-1}\bigl(W_t-\lambda C_t\bigr)\right]
+\]
+subject to
+\[
+\Pr(F_H=1\mid g,\phi,\Delta)\le \varepsilon
+\qquad\text{and}\qquad
+\mathbb{E}\!\left[\max_i p_i^H\right]\le \rho,
+\]
+where $W_t$ is welfare, $C_t$ is governance burden, $F_H$ is terminal failure, $\varepsilon$ is an acceptable failure threshold, and $\rho$ is an acceptable power-concentration threshold. This framing makes explicit that the intended contribution concerns governance under strategic turnover, unequal capability, and bounded oversight.
+
+\section{Methodology}
+
+The first deliverable of the PhD is a Harvest-based benchmark comparing local-only, central-only, and hybrid governance under repeated strategic turnover, held-out scenario variation, and imperfect oversight. Fishery Commons is retained as a supporting precursor for central-intervention design in a simpler renewable-resource setting. Harvest Commons is the main substrate because it allows local spillovers, communication, side-payments, and alternative governance architectures to be studied in one environment. Both environments are evaluated under repeated strategic turnover rather than against one fixed policy population, because the proposal is concerned with robustness under changing strategic pressure.
+
+Several policy classes are used in order to avoid tying the argument to one narrow representation of behaviour. Interpretable threshold-style policies provide transparent baselines. Search-based injectors, including mutation, adversarial heuristics, and search over mutations, provide increasingly strong non-LLM entrants. Learned-policy validation is introduced through PPO-based reinforcement learning in multi-agent commons settings, so that the main governance patterns can also be checked against policies learned by RL rather than only policies specified by hand. These learned-policy experiments are included as a robustness check on the main qualitative conclusions.
+
+The main evaluation rule for the first benchmark is ecological robustness under held-out conditions. Governance architectures will be ranked first by failure probability, then by resource health, and then by welfare. Governance burden will be reported as a trade-off metric. This ranking rule is intended to make the benchmark decision criterion explicit and stable across scenario families.
+
+The next component is the LLM bridge within Harvest. Here the proposal uses structured JSON strategy generation and strategy-bank sampling so that model-generated policies remain inspectable and comparable. This representation is restrictive by design: it narrows the policy class enough to make analysis possible while still allowing meaningful variation in extraction, restraint, reciprocity, compliance, and side-payment behaviour. The first set of experiments will vary the proportion of exploitative model-generated strategies in the population and examine whether the governance rankings observed in the non-LLM benchmark are preserved. The second set of experiments will allow model-labelled strategy families to spread or decline over generations, thereby testing whether governance can contain the diffusion of more exploitative strategic types. This module is included to test whether the main governance findings survive model-generated populations. It is not the primary contribution of the thesis.
+
+The longer-term extension is a benchmark in which capability imbalance is built directly into the task. Following \citet{bowman2022} and \citet{engels2025}, the important requirement is that the gap between actor and overseer should be measurable and relevant to performance. In the first version of this extension, capability will be varied through search or planning budget for actors and inspection budget for overseers. The same governance comparison used in the proposed benchmarks, namely local-only, central-only, and hybrid arrangements, can then be applied in a setting where stronger systems may accumulate disproportionate influence. The main outcomes in this part of the programme are long-run welfare, robustness, failure probability, concentration of influence, and the rate at which exploitative or high-capability strategy families spread through the population.
+
+\paragraph{Time plan.} Year one delivers the core commons benchmark. This stage covers Fishery as the supporting signal-design study and Harvest as the main architecture benchmark, including the architecture comparison, attacker ladder, scenario presets, oversight-friction study, and first paper-length benchmark result with code and figures. Year two delivers the first bounded extension inside the same framework. It adds model-generated strategy banks, population-mix sweeps, and turnover experiments to test whether the year-one governance rankings remain stable when strategies are generated and selected differently. Year three delivers the capability-imbalance extension and final thesis integration. This stage introduces measurable asymmetry through actor planning or search budget versus overseer inspection budget, compares oversight arrangements under that gap, and integrates the full set of studies into the thesis.
+
+\section{Why this university / research group / training program}
+
+King's College London provides an excellent environment for this project because of its active research in Cooperative AI, multi-agent learning, and human-centred evaluation. The proposed work aligns well with research on robust interaction outcomes in mixed-motive settings and with benchmark-style evaluation across held-out environments and partner populations \citep{meltingpot2021, socialjax2025}. The Cooperative AI Lab is therefore a strong fit for this PhD because the group focuses on cooperation under uncertainty and rigorous evaluation protocols, which matches the central aims of this proposal. I can contribute by developing the commons benchmark line as a reusable research asset for the lab and by running systematic held-out evaluations across environments, governance conditions, and population compositions in a way that produces comparable and reproducible results.
+
+My background aligns well with these research topics. My master's project, REDNET-ML, involved building an end-to-end machine learning pipeline for environmental risk mapping, which strengthened my experience with noisy real-world data, evaluation design, and interpretable outputs under uncertainty. Academically, modules in AI, machine learning, human-computer interaction, and game theory gave me grounding in incentives, strategic interaction, and human-facing system design. My research assistant and technical roles strengthened literature synthesis, controlled experimentation, and careful reporting. Together, these experiences position me to implement and evaluate the proposed benchmark family and to contribute reliable experimental infrastructure that fits the lab's research direction.
+
+\small
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem[Bowman et~al.(2022)Bowman, Hyun, Perez, Chen, Pettit, Heiner, Lukošiūtė, Askell, Jones, Chen et~al.]{bowman2022}
+Samuel~R. Bowman, Jeeyoon Hyun, Ethan Perez, Edwin Chen, Craig Pettit, Scott Heiner, Kamilė Lukošiūtė, Amanda Askell, Andy Jones, Anna Chen, et~al.
+\newblock Measuring progress on scalable oversight for large language models.
+\newblock {\em arXiv preprint arXiv:2211.03540}, 2022.
+
+\bibitem[Conitzer and Oesterheld(2023)]{conitzer2023}
+Vincent Conitzer and Caspar Oesterheld.
+\newblock Foundations of cooperative {AI}.
+\newblock {\em Proceedings of the AAAI Conference on Artificial Intelligence}, 37(13):15359--15367, 2023.
+
+\bibitem[Engels et~al.(2025)Engels, Baek, Kantamneni, and Tegmark]{engels2025}
+Joshua Engels, David~D. Baek, Subhash Kantamneni, and Max Tegmark.
+\newblock Scaling laws for scalable oversight.
+\newblock {\em arXiv preprint arXiv:2504.18530}, 2025.
+
+\bibitem[Gordon(1954)]{gordon1954}
+H.~Scott Gordon.
+\newblock The economic theory of a common-property resource: The fishery.
+\newblock {\em Journal of Political Economy}, 62(2):124--142, 1954.
+
+\bibitem[Gutiérrez et~al.(2011)Gutiérrez, Hilborn, and Defeo]{gutierrez2011}
+Nicolás~L. Gutiérrez, Ray Hilborn, and Omar Defeo.
+\newblock Leadership, social capital and incentives promote successful fisheries.
+\newblock {\em Nature}, 470(7334):386--389, 2011.
+
+\bibitem[Hilborn et~al.(2005)Hilborn, Orensanz, and Parma]{hilborn2005}
+Ray Hilborn, José~M. Orensanz, and Ana~M. Parma.
+\newblock Institutions, incentives and the future of fisheries.
+\newblock {\em Philosophical Transactions of the Royal Society B}, 360(1453):47--57, 2005.
+
+\bibitem[Leibo et~al.(2017)Leibo, Zambaldi, Lanctot, Marecki, and Graepel]{leibo2017}
+Joel~Z. Leibo, Vinicius Zambaldi, Marc Lanctot, Janusz Marecki, and Thore Graepel.
+\newblock Multi-agent reinforcement learning in sequential social dilemmas.
+\newblock {\em arXiv preprint arXiv:1702.03037}, 2017.
+
+\bibitem[Leibo et~al.(2021)]{meltingpot2021}
+Joel~Z. Leibo et~al.
+\newblock Scalable evaluation of multi-agent reinforcement learning with melting pot.
+\newblock {\em arXiv preprint arXiv:2107.06857}, 2021.
+
+\bibitem[Guo et~al.(2025)]{socialjax2025}
+Zihao Guo et~al.
+\newblock SocialJax: An evaluation suite for multi-agent reinforcement learning in sequential social dilemmas.
+\newblock {\em arXiv preprint arXiv:2503.14576}, 2025.
+
+\bibitem[Nagendra and Ostrom(2012)]{nagendra2012}
+Harini Nagendra and Elinor Ostrom.
+\newblock Polycentric governance of multifunctional forested landscapes.
+\newblock {\em International Journal of the Commons}, 6(2):104--133, 2012.
+
+\bibitem[Ostrom(1990)]{ostrom1990}
+Elinor Ostrom.
+\newblock {\em Governing the Commons: The Evolution of Institutions for Collective Action}.
+\newblock Cambridge University Press, 1990.
+
+\bibitem[Ostrom and Gardner(1993)]{ostrom1993}
+Elinor Ostrom and Roy Gardner.
+\newblock Coping with asymmetries in the commons: Self-governing irrigation systems can work.
+\newblock {\em Journal of Economic Perspectives}, 7(4):93--112, 1993.
+
+\bibitem[Ostrom et~al.(1994)Ostrom, Lam, and Lee]{ostrom1994}
+Elinor Ostrom, Wai-Fung Lam, and Myungsook Lee.
+\newblock The performance of self-governing irrigation systems in Nepal.
+\newblock {\em Human Systems Management}, 13(3):197--207, 1994.
+
+\bibitem[Scott(1955)]{scott1955}
+Anthony Scott.
+\newblock The fishery: The objectives of sole ownership.
+\newblock {\em Journal of Political Economy}, 63(2):116--124, 1955.
+
+\bibitem[Schulman et~al.(2017)Schulman, Wolski, Dhariwal, Radford, and Klimov]{schulman2017}
+John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov.
+\newblock Proximal policy optimization algorithms.
+\newblock {\em arXiv preprint arXiv:1707.06347}, 2017.
+
+\bibitem[Villamayor-Tomas(2020)]{villamayor2020}
+Sergio Villamayor-Tomas.
+\newblock Robust irrigation system institutions: A global comparison.
+\newblock {\em Global Environmental Change}, 2020.
+
+\bibitem[Willis et~al.(2025)Willis, Du, and Leibo]{willis2025}
+Richard Willis, Yali Du, and Joel~Z. Leibo.
+\newblock Will systems of {LLM} agents lead to cooperation: An investigation into a social dilemma.
+\newblock In {\em Proceedings of AAMAS 2025}, pages 2786--2788, 2025.
+
+\bibitem[Willis et~al.(2026)Willis, Zhao, Du, and Leibo]{willis2026}
+Richard Willis, Jianing Zhao, Yali Du, and Joel~Z. Leibo.
+\newblock Evaluating collective behaviour of hundreds of {LLM} agents.
+\newblock {\em arXiv preprint arXiv:2602.16662}, 2026.
+
+\end{thebibliography}
+\normalsize
+
+\end{document}

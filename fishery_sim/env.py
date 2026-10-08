@@ -9,6 +9,7 @@ class StepResult:
     payoffs: np.ndarray
     collapsed: bool
     below_threshold_count: int
+    fines: np.ndarray | None = None
     sanction_total: float = 0.0
     num_violations: int = 0
     requested_harvest_total: float = 0.0
@@ -123,6 +124,7 @@ class FisheryEnv:
                 stock=self.stock,
                 harvests=harvests,
                 payoffs=np.zeros(self.n_agents),
+                fines=np.zeros(self.n_agents),
                 collapsed=True,
                 below_threshold_count=self.below_count,
             )
@@ -198,6 +200,7 @@ class FisheryEnv:
             stock=self.stock,
             harvests=harvests,
             payoffs=payoffs,
+            fines=fines,
             collapsed=self.collapsed,
             below_threshold_count=self.below_count,
             sanction_total=sanction_total,

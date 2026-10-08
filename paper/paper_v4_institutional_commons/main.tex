@@ -1,0 +1,35 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage[square,authoryear]{natbib}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\captionsetup{font=small,justification=justified,singlelinecheck=false}
+
+\title{Institutional Robustness in Sequential Commons}
+\author{Ameer Alhashemi}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Recent work on scalable oversight studies how a weaker overseer can evaluate or assist a stronger system, while existing commons benchmarks study cooperation and governance in shared-resource dilemmas. This paper studies an adjacent question in a sequential commons setting: which governance architectures remain robust when stronger adversarial strategies repeatedly enter the population and oversight is imperfect? The empirical sequence combines a Fishery Commons signal-design component with a Harvest Commons architecture component. Fishery ranks central interventions under repeated adversarial strategy injection, with adaptive quotas emerging as the strongest signal in the medium tier. Harvest compares local-only, central-only, and hybrid governance under stronger search-based pressure, with hybrid governance ranking first in the confirmatory architecture matrix. The paper then evaluates Harvest under three literature-backed scenario archetypes and two oversight regimes that include imperfect detection, delayed enforcement, limited targeting capacity, and governance budget cost. The architecture ranking varies across scenarios. Hybrid governance ranks first throughout the community-irrigation scenario and under ideal forest co-management, whereas top-down-only governance ranks first in constrained forest co-management and in the higher-pressure regulated-fishery setting. The results indicate that governance rankings are sensitive to scenario structure and implementation constraints once adversarial turnover and bounded oversight are made explicit.
+\end{abstract}
+
+\input{sections/introduction}
+\input{sections/methods}
+\input{sections/results}
+\input{sections/discussion}
+
+\clearpage
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}

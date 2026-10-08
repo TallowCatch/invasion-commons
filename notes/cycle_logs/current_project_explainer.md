@@ -3,9 +3,11 @@
 ## Mini version of what was done
 - Strengthened the Fishery Commons study so it now shows not only that governance helps, but which central governance signals hold up under stronger strategic pressure.
 - Added more mechanism logging, more partner mixes, more pressure settings, and stronger non-LLM injectors for Fishery Commons.
+- Added a learned-policy PPO validation in Fishery Commons and found that adaptive quotas remain the strongest central signal outside the hand-written threshold-strategy family.
 - Built an initial orchard-style second substrate, then reframed it as Harvest Commons because that fit the sequential-commons benchmark story better.
 - Ran early fixed-composition Harvest comparisons to see whether top-down, bottom-up, and hybrid governance could separate at all.
 - Realized that Harvest needed the same invasion logic as Fishery Commons, so upgraded it to a proper population-turnover study with injectors, held-out regimes, and high-power sweeps.
+- Added a narrow learned-policy PPO validation in Harvest Commons and found that hybrid still improves local ecological control relative to top-down-only control in `medium_h1`, with only a small welfare cost.
 - Added remote GitHub Actions workflows so the heavy Harvest invasion matrix could run off the laptop, then pulled the merged artifacts back into `results/`.
 - Updated the paper so Fishery Commons is the first study, Harvest Commons is the second study, and the old fixed-composition Harvest work is treated as pilot evidence rather than the main result.
 
@@ -111,7 +113,7 @@ The first study lives mostly in:
 - [fishery_sim/env.py](/Users/ameerfiras/invasion-commons/invasion-commons/fishery_sim/env.py)
 - [experiments/run_study1b.py](/Users/ameerfiras/invasion-commons/invasion-commons/experiments/run_study1b.py)
 
-It now has two layers.
+It now has two invasion layers plus one learned-policy validation layer.
 
 ### Layer 1: matched baseline
 This is the older `paper_v1` logic.
@@ -144,6 +146,18 @@ That is the part that gives the stronger result:
 - temporary closures remain a strong fallback in hostile populations,
 - monitoring with sanctions helps but does not suppress aggressive extraction as strongly as the more forceful top-down policies.
 
+### Layer 3: learned-policy validation
+This is the new PPO self-play check in the same medium fishery tier.
+
+It asks a narrower question:
+- if you stop using only hand-written threshold strategies,
+- and train a shared policy directly,
+- does the governance ranking still point to the same winner?
+
+The answer is yes:
+- `adaptive_quota` beats `none` on held-out collapse, stock, and welfare,
+- and it also outperforms `monitoring_sanctions` and `temporary_closure` in the direct governance follow-up under the same PPO protocol.
+
 ## What the second study does now
 The second study now lives mainly in:
 - [fishery_sim/harvest.py](/Users/ameerfiras/invasion-commons/invasion-commons/fishery_sim/harvest.py)
@@ -152,7 +166,7 @@ The second study now lives mainly in:
 - [experiments/run_harvest_invasion.py](/Users/ameerfiras/invasion-commons/invasion-commons/experiments/run_harvest_invasion.py)
 - [experiments/run_harvest_invasion_matrix.py](/Users/ameerfiras/invasion-commons/invasion-commons/experiments/run_harvest_invasion_matrix.py)
 
-This is the important correction: the second study is no longer just a fixed set of hand-written agent types. It now has the same population-turnover idea as the first study.
+This is the important correction: the second study is no longer just a fixed set of hand-written agent types. It now has the same population-turnover idea as the first study, and it now also has a narrow learned-policy validation layer.
 
 That means Harvest Commons now has:
 1. a strategy population,
@@ -224,6 +238,7 @@ Stronger Study 1b result:
 - adaptive quotas are the strongest overall top-down signal in the medium fishery tier,
 - temporary closures remain competitive in more hostile partner mixes,
 - mechanism logging shows why sanctions are weaker than stronger top-down interventions.
+- a PPO self-play validation on `medium_v1` reproduces the same ordering, with `adaptive_quota` beating `none` and also outperforming the other governed conditions on held-out collapse, stock, and welfare.
 
 ### Second study: Harvest Commons
 Pilot result:
@@ -233,6 +248,7 @@ High-power result:
 - hybrid governance wins most Stage C decision-critical cells,
 - it usually improves patch health and reduces neighborhood overharvest relative to top-down-only control,
 - the welfare effect is mixed and depends on social mix and task difficulty.
+- a medium-tier PPO validation also points in the same direction, with `hybrid` improving patch health and reducing aggression and neighborhood overharvest relative to `top_down_only`, though with a small welfare cost.
 
 That is an important point: the second study is not saying hybrid governance is always best on every metric. It is saying that under real invasion pressure, hybrid governance usually buys better local ecological control, but not always at zero cost.
 
@@ -257,8 +273,10 @@ If you need one tight explanation, use this:
 You can safely claim:
 - the project moved from simple emergence to stability under invasion pressure,
 - Fishery Commons identifies which top-down signals work best,
+- the leading Fishery signal is not only a threshold-strategy artifact because the learned-policy validation also favors adaptive quotas,
 - Harvest Commons now uses the same invasion logic and shows that governance architecture matters,
-- hybrid governance often improves local ecological control in the second substrate.
+- hybrid governance often improves local ecological control in the second substrate,
+- and that direction is supported not only by the main invasion matrix but also by a narrower medium-tier Harvest PPO validation.
 
 You should avoid claiming:
 - that hybrid governance universally dominates,

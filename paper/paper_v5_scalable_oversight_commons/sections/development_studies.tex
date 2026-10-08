@@ -1,0 +1,23 @@
+\section{Earlier Population Study}\label{app:population-study}
+Stage A contains 360 run rows: two stress settings, three generation settings, three oversight presets, four packages, and five runs per cell. Each has six users and 15 generations, with 32 training seeds and 32 test seeds in each of four held-out regimes per generation. The following averages combine generations and test regimes.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lrrrrr}
+\toprule
+Package & Unsafe (\%) & LPGF (\%) & Health & Return/step & Burden/episode\\
+\midrule
+None & 19.41 & 2.06 & 11.42 & 14.75 & 0.00\\
+Local coordination & 13.92 & 1.18 & 11.62 & 14.68 & 0.00\\
+Uniform-cap package & 6.13 & 2.35 & 14.22 & 12.34 & 2.10\\
+Hybrid package & 4.10 & 1.24 & 14.33 & 12.52 & 2.05\\
+\bottomrule
+\end{tabular}
+\caption{Descriptive Stage A averages. Cap packages preserve more resource on average but reduce per-step net return. Inactive-overseer copies for none/local do not supply independent replicates. LPGF orders the packages differently from resource health.}
+\end{table}
+
+The comparisons establish package-level differences. They combine direct intervention and the populations selected under that intervention. Slow regrowth produces the largest mean unsafe rate without oversight, 28.31\%, compared with 15.90--16.88\% in the other held-out regimes.
+
+The earlier scalar gap combined distinct treatments. Low generation with weak oversight and high generation with strong oversight both receive gap zero, but their high-stress hybrid unsafe rates are 9.15\% and approximately zero. We retain separate factors in the supplementary plot. None/local outcomes are exactly invariant to the unused overseer presets.
+
+The completed threshold replay contains 9,000 rows across 25 cutoff pairs. Resource health, return, and burden are identical within the same underlying run across those pairs: the cutoffs relabel trajectories rather than change intervention. This supports diagnostic sensitivity analysis, not additional independent resource-protection replications. The archived illustrative case contains 29 LPGF steps, all following an already-unsafe state; it supports persistence, not approved onset.

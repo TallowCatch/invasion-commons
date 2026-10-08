@@ -1,0 +1,56 @@
+\section{Methods}
+
+\subsection{Benchmark Components}
+
+The paper combines two benchmark components.
+
+Fishery Commons provides the signal-design component. It is a minimal renewable commons with one shared stock, per-agent harvest actions, regeneration, and collapse dynamics. The Fishery experiments compare no governance, monitoring with sanctions, adaptive quotas, and temporary closures under repeated adversarial strategy injection. The matched baseline uses two injector families: mutation and live model-generated JSON strategies produced through Ollama with qwen2.5:3b-instruct. This component ranks central interventions under escalating strategic pressure.
+
+Harvest Commons provides the architecture component. Harvest extends the commons problem from one global stock to local renewable patches with local interaction, optional communication, and optional side-payments. The architecture space includes a no-governance baseline together with bottom-up-only, top-down-only, and hybrid governance. The Harvest experiments restore the full architecture spectrum, run a high-power comparison under a strong search-based adversary, add welfare-incidence logging, and organize non-LLM attackers into a capability ladder. The attacker ladder uses four injector families in increasing order of strength: random, mutation, adversarial heuristic, and search over mutations.
+
+\subsection{Scenario Archetypes}
+
+Three scenario presets are used. The regulated-fishery preset represents centralized monitoring, quotas, and enforcement under ecological uncertainty \citep{hilborn2005, gutierrez2011}. The community-irrigation preset represents local rule enforcement and user monitoring in self-governing irrigation systems \citep{ostrom1993, ostrom1994, villamayor2020}. The forest-co-management preset represents mixed local stewardship and higher-level intervention in polycentric forest governance \citep{nagendra2012}. The parameter values define benchmark archetypes drawn from those institutional settings. They distinguish recognizable governance forms within Harvest without numerically reproducing any individual case.
+
+\begin{table}[t]
+  \centering
+  \caption{Scenario preset values used in the institutional-friction extension.}
+  \label{tab:scenario_presets}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.08}
+  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}>{\centering\arraybackslash}p{3.0cm}c>{\centering\arraybackslash}p{2.1cm}cccc@{}}
+    \toprule
+    Scenario & Tier & Mix & Regen. & Spill. & Comm & Credit \\
+    \midrule
+    Regulated fishery & Med. & Balanced & 0.70 & 0.10 & Off & Off \\
+    Community irrigation & Med. & Balanced & 0.64 & 0.15 & On & Off \\
+    Forest co-management & Hard & Adv. heavy & 0.56 & 0.22 & On & On \\
+    \bottomrule
+  \end{tabular*}
+\end{table}
+
+\subsection{Governance Architecture and Oversight Frictions}
+
+Harvest remains the main environment for the institutional-friction extension. The governance conditions are none, bottom-up only, top-down only, and hybrid. The extension keeps those conditions fixed and adds four oversight frictions: detection recall, enforcement delay, maximum targeted share, and governance budget cost. Two regimes are compared. The ideal regime reproduces frictionless governance. The constrained regime introduces incomplete detection, one-round delays, capped targeting capacity, and a per-intervention budget cost. These frictions are applied through the government agent in the top-down-only and hybrid governance conditions. Bottom-up-only remains the decentralized baseline for cases with no central intervention.
+
+\begin{table}[t]
+  \centering
+  \caption{Oversight-regime values used in the institutional-friction extension.}
+  \label{tab:oversight_regimes}
+  \small
+  \renewcommand{\arraystretch}{1.08}
+  \begin{tabularx}{\linewidth}{@{}>{\centering\arraybackslash}p{2.1cm}>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X@{}}
+    \toprule
+    Regime & Detection recall & Delay rounds & Max target share & Budget cost \\
+    \midrule
+    Ideal & 1.0 & 0 & 1.0 & 0.00 \\
+    Constrained & 0.7 & 1 & 0.5 & 0.02 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection{Extension Scope}
+
+The extension evaluates bottom-up-only, top-down-only, and hybrid governance across the three scenario presets and two oversight regimes. The full design spans thirty-six evaluated cells and one hundred and eighty run-level replicates.
+
+Architectures are ranked within each experimental cell by lexicographic order on three aggregate outcomes: lower garden failure, then higher patch health, then higher welfare. A garden-failure event occurs when more than half of the local patches remain below four resource units for five consecutive steps. This ranking rule is used throughout the Harvest architecture analysis.

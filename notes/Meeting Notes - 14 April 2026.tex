@@ -1,0 +1,86 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{parskip}
+\usepackage{float}
+
+\captionsetup{font=small,justification=justified,singlelinecheck=false}
+
+\title{Meeting Notes - 14 April 2026}
+\author{Ameer Alhashemi}
+\date{14 April 2026}
+
+\begin{document}
+\maketitle
+
+\section*{A. Recap From The Last Meeting}
+
+At the last meeting, the main discussion was about where the project had reached and what the next stage should become. Up to that point, the work had already moved beyond a simple claim that governance helps. The Fishery work had shown that central interventions can be ranked under repeated strategic turnover, and the Harvest work had shown that governance architecture matters under stronger pressure. In particular, the main Harvest result showed that governance with both a local and a central layer could perform very strongly under sustained stress. The project therefore already had a strong benchmark result, but the question in the meeting was how to make the direction clearer, stronger, and more meaningful as a PhD line of work.
+
+Edward's feedback pushed the project toward a more explicit institutional framing. The key message from his comments was that the earlier paper should be treated as a completed baseline rather than being endlessly rewritten. He wanted the next stage to centre Harvest rather than chronology, and to ask a clearer question about institutional robustness under strategic pressure. That meant restoring the full set of governance conditions, broadening the architecture comparison, showing where different arrangements weaken as pressure rises, and making the welfare trade-off more interpretable by showing who bears the cost of stronger governance. In other words, the project needed to become more clearly about governance design and less about one narrow experimental comparison.
+
+Yali's feedback pushed the project in a different but related direction. Her main concern was that the work should point more clearly toward a real deployment problem rather than remaining entirely inside a stylised commons benchmark. The message was not that the commons work was useless or that it should be abandoned. The message was that the next stage should connect more clearly to settings where AI systems interact, vary in capability, and may create harmful outcomes if oversight is weak. That is why she pointed toward work on LLM populations and collective behaviour, and why the discussion shifted from only strategic pressure to the broader issue of capability imbalance and oversight.
+
+After that meeting, I looked closely at four papers in order to understand how they should change the project. Two of them were from the Willis, Du, and Leibo line. The first paper, \textit{Will Systems of LLM Agents Lead to Cooperation: An Investigation into a Social Dilemma}, studies how language models generate whole strategies in an iterated social dilemma. The main lesson from that paper is that model-generated strategies can differ in systematic ways depending on the model and the prompting setup, and those differences affect collective outcomes. For my work, that paper matters because it supports the idea of treating LLM-generated strategies as a serious object of study rather than asking models only for single actions.
+
+The second paper, \textit{Evaluating Collective Behaviour of Hundreds of LLM Agents}, scales that idea up from individual strategies to large populations. Its main result is that the collective behaviour of model-generated populations can become socially worse under some conditions, and that cultural evolution can drive populations toward poor equilibria. For my work, this paper matters because it provides the clearest motivation for the next step after the current benchmark line. It shows why it is not enough to know how one strategy behaves in isolation. What matters is how whole populations evolve and what kind of institutions remain stable when more exploitative types spread.
+
+The other two papers changed the methodological framing. \textit{Measuring Progress on Scalable Oversight for Large Language Models} argues that if oversight is the real problem, then the task should contain a genuine and measurable gap between the thing doing the work and the thing overseeing it. It is not enough to discuss oversight in the abstract. The paper's core methodological lesson is that oversight should be studied in settings where the overseer is meaningfully weaker in task-relevant ways, and where oversight performance can be measured directly. \textit{Scaling Laws for Scalable Oversight} pushes this idea further by asking how oversight success changes as the capability gap grows. The key lesson from that paper is that the relevant question is not only whether an oversight structure works at one level, but how it weakens as the supervised system becomes stronger than the overseer.
+
+Taken together, these papers shifted how I interpret my own project. The current commons benchmark already has two strong ingredients: changing populations and governance architectures under stress. What it does not yet have strongly enough is a capability gap inside the system itself. In the current commons environments, agents mainly differ in strategy, aggressiveness, and adaptation, but they are still fairly symmetric in what they are able to do. The scalable-oversight papers therefore sharpen the next challenge. If I want the project to move closer to oversight, I need a setting where capability differences create real asymmetry in influence, and where the governance layer is trying to keep that asymmetry from turning into harmful system-level power.
+
+This does not mean that the commons line was a mistake. In fact, the current manuscript shows that it was a productive foundation. The latest paper draft, \textit{Institutional Robustness in Sequential Commons}, now presents a coherent story. It carries forward the earlier Fishery result that central interventions can be ranked under repeated strategic turnover. It carries forward the stronger Harvest result that local-only, central-only, and hybrid governance differ sharply under stronger search-based pressure, with hybrid performing best in the main confirmatory matrix. It then adds a new extension with three literature-backed scenario families and two oversight regimes. The scenario families are regulated fishery, community irrigation, and forest co-management. The oversight regimes are ideal and constrained, where the constrained setting introduces incomplete detection, delayed enforcement, limited targeting, and governance cost.
+
+The latest manuscript therefore shows a meaningful progression. The earlier Harvest line gave a strong baseline result in favour of hybrid governance. The new extension then shows that this result depends on scenario structure and implementation quality. Hybrid remains strongest in community irrigation and under ideal forest co-management, but top-down-only becomes strongest in constrained forest co-management and in the higher-pressure regulated fishery setting. The paper therefore no longer says that one arrangement simply wins everywhere. Instead, it says that governance architecture matters, a central component remains very important for ecological protection, and the ranking between hybrid and top-down-only depends on the setting and on practical oversight limits.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{../paper/paper_v4_institutional_commons/figures/harvest_architecture_stageC_architecture.png}
+  \caption{Baseline Harvest architecture result from the completed benchmark line. This is the strongest finished non-LLM result in the project. It shows the large confirmatory Harvest comparison in which hybrid governance ranks first across all eight main decision cells.}
+\end{figure}
+
+That is where the project stands now. The current paper is strongest as a completed benchmark line on governance in renewable commons under strategic pressure. The meeting with Edward and Yali clarified that the next step should not just be another small variation on Harvest. The next step should be the LLM bridge and, beyond that, a setting where capability imbalance is built into the task more directly. The existing strategy-bank and turnover infrastructure already points in that direction. The immediate bridge is to test whether the governance conclusions still hold when populations are sampled from model-generated strategy banks. The deeper next-stage question is how to study governance or oversight when stronger systems can accumulate more influence than weaker overseers can easily control.
+
+In simple terms, the last meeting changed the project in two ways. Edward helped tighten the current benchmark paper into a clearer institutional-governance result. Yali helped clarify that the longer-term direction should move toward scalable oversight and capability imbalance, using the current commons work as a foundation rather than as the final destination.
+
+\section*{B. Current Progress Since That Meeting}
+
+Since that meeting, the most important progress is that the Harvest benchmark line has been completed in a much stronger form. The full governance space was restored, the stronger Harvest architecture study was run, the pressure ladder was added, the welfare-incidence analysis was added, and the latest manuscript was rewritten around those results. On top of that, the institutional-friction extension was completed, which introduced the three literature-backed scenario families and the two oversight regimes. This made the paper's main conclusion more realistic and more defensible.
+
+The main empirical position now is clear. Governance matters under strategic pressure. Systems with a central component are consistently stronger ecologically than local-only governance. Hybrid governance gave the strongest baseline result in the main Harvest benchmark. Once scenario structure and imperfect oversight were added, the ranking between hybrid and top-down-only became setting-dependent. This gives the project a strong benchmark contribution even before the LLM bridge becomes the main evidence chain.
+
+The bridge to LLM populations has also become clearer conceptually, even though it is not yet the centre of the finished paper. The current codebase already includes structured JSON strategy generation, strategy-bank loading, and turnover-related infrastructure. That means the next step is not a vague idea. It is an available extension path. The key outstanding move is to use that infrastructure to test whether governance conclusions survive when the population is made up of model-generated strategies and, after that, whether governance can slow or prevent the spread of exploitative strategy families over time.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.88\linewidth]{../paper/paper_v4_institutional_commons/figures/institutional_friction_winner_map.png}
+  \caption{Summary of the newer institutional-friction extension. This figure shows that the ranking between hybrid and top-down-only governance changes across scenario families and oversight settings, which is the main new result in the current manuscript.}
+\end{figure}
+
+\section*{C. Points To Discuss In The Meeting}
+
+The first point to discuss is how the current paper should be positioned. My view is that it should be treated as the completed benchmark line on governance in renewable commons under strategic pressure. It has a clear result, a clear extension, and a clear limitation. The result is strong. The limitation is that the strongest finished evidence is still on the non-LLM side. The question for discussion is whether this is now ready to be treated as a paper chapter in its own right.
+
+The second point is what exactly the LLM bridge should look like. One option is to stay inside Harvest and run the strategy-bank governance map and then the turnover study. That would preserve continuity with the current line and connect directly to the Willis papers. A second option is to treat the current paper as the end of the commons benchmark chapter and move the next project into a new oversight setting where capability imbalance is more explicit from the start. The choice depends on whether we want the next step to be a bridge from the current work or a more decisive move into scalable oversight.
+
+The third point is how to define capability imbalance in a way that is methodologically meaningful. The scalable-oversight papers suggest that this cannot be just a label difference. The gap has to matter in the task itself. So one question for discussion is whether capability differences should come from model class, from tool access, from planning depth, from hidden information, or from some other system feature that creates a real asymmetry in influence.
+
+The fourth point is how much of the next-stage work should remain in commons form. One reading of the meeting is that the commons line should continue, but in a redesigned form where capability imbalance matters much more. Another reading is that the next project should move into a more direct oversight environment while carrying over the same governance logic. This is probably the most important strategic question going forward.
+
+\section*{D. Problem Definition For The Next Stage}
+
+The current project asks which governance arrangements remain robust in shared-resource systems when strategic pressure increases and oversight is imperfect. The next-stage version of that question may need to be sharper. A stronger formulation would be: how does governance or oversight break when the systems being governed become more capable than the systems overseeing them, and which arrangements keep that capability imbalance from producing harmful collective outcomes?
+
+That formulation keeps the core of the current project, which is robustness under pressure, but shifts the focus from strategy change alone to capability imbalance and system influence.
+
+\section*{E. Methodology Direction For The Next Stage}
+
+Methodologically, the next stage should retain what already works in the current project. The project already has changing populations, multiple governance arrangements, stress-testing under stronger entrants, and explicit trade-offs between robustness and burden. What needs to change is the underlying task design. The next environment should contain a measurable capability gap between actor and overseer, and that gap should affect the system outcome in a direct way.
+
+If the next stage stays close to the current line, the most natural progression is to begin with the LLM strategy-bank bridge inside Harvest. If the next stage moves more strongly toward scalable oversight, then the task itself should be redesigned around supervision and capability imbalance. In either case, the common methodological principle is the same: governance should be evaluated under changing populations, unequal capability, and explicit implementation limits.
+
+\end{document}

@@ -1,0 +1,112 @@
+name: Harvest Threshold Aggregate
+
+on:
+  push:
+    branches:
+      - codex/harvest-oversight-gap-stagea
+    paths:
+      - ".github/threshold_aggregate_request.json"
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Workflow run id containing threshold-replay shard artifacts"
+        required: true
+        type: string
+      output_name:
+        description: "Output name stem for recovered merged files"
+        required: false
+        default: "harvest_oversight_gap_threshold_replay_full_grid_recovered"
+        type: string
+      python_version:
+        description: "Python version"
+        required: false
+        default: "3.11"
+        type: string
+
+jobs:
+  aggregate-existing-shards:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ github.event.inputs.python_version || '3.11' }}
+
+      - id: config
+        name: Resolve aggregate request
+        shell: bash
+        env:
+          REQUEST_FILE: .github/threshold_aggregate_request.json
+          INPUT_SOURCE_RUN_ID: ${{ github.event.inputs.source_run_id || '' }}
+          INPUT_OUTPUT_NAME: ${{ github.event.inputs.output_name || '' }}
+          INPUT_PYTHON_VERSION: ${{ github.event.inputs.python_version || '' }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import os
+          from pathlib import Path
+
+          request_path = Path(os.environ["REQUEST_FILE"])
+          request = json.loads(request_path.read_text()) if request_path.exists() else {}
+
+          def pick(env_name: str, request_name: str, default: str = "") -> str:
+              value = os.environ.get(env_name, "").strip()
+              if value:
+                  return value
+              return str(request.get(request_name, default)).strip()
+
+          source_run_id = pick("INPUT_SOURCE_RUN_ID", "source_run_id")
+          output_name = pick(
+              "INPUT_OUTPUT_NAME",
+              "output_name",
+              "harvest_oversight_gap_threshold_replay_full_grid_recovered",
+          )
+          if not source_run_id:
+              raise SystemExit("source_run_id is required for aggregate recovery")
+          print(f"source_run_id={source_run_id}")
+          print(f"output_name={output_name}")
+          PY
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pandas matplotlib tqdm
+
+      - name: Download existing threshold shard artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download "${{ steps.config.outputs.source_run_id }}" \
+            --pattern "threshold-replay-*" \
+            --dir downloaded
+
+      - name: Merge threshold replay summaries
+        run: |
+          python -m experiments.merge_threshold_replay_shards \
+            --input-dir downloaded \
+            --merged-prefix "results/runs/threshold_replay/curated/${{ steps.config.outputs.output_name }}" \
+            --summary-csv "results/runs/showcase/curated/${{ steps.config.outputs.output_name }}.csv" \
+            --summary-only
+
+      - name: Analyze threshold replay grid
+        run: |
+          python -m experiments.analyze_threshold_replay_grid \
+            --input-csv "results/runs/showcase/curated/${{ steps.config.outputs.output_name }}.csv" \
+            --output-prefix "results/runs/showcase/curated/${{ steps.config.outputs.output_name }}"
+
+      - name: Upload recovered aggregate bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.config.outputs.output_name }}-bundle
+          path: |
+            results/runs/threshold_replay/curated/${{ steps.config.outputs.output_name }}_runs.csv
+            results/runs/showcase/curated/${{ steps.config.outputs.output_name }}.csv
+            results/runs/showcase/curated/${{ steps.config.outputs.output_name }}_pair_summary.csv
+            results/runs/showcase/curated/${{ steps.config.outputs.output_name }}_winner_summary.csv
+            results/runs/showcase/curated/${{ steps.config.outputs.output_name }}_condition_summary.csv
+            results/runs/showcase/curated/${{ steps.config.outputs.output_name }}_summary.md
+            results/runs/showcase/curated/${{ steps.config.outputs.output_name }}_table.tex

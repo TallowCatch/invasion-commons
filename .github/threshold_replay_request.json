@@ -1,0 +1,9 @@
+{
+  "group_size": 6,
+  "max_groups": null,
+  "n_runs": 5,
+  "generations": 15,
+  "seeds_per_generation": 32,
+  "test_seeds_per_generation": 32,
+  "run_name_suffix": ""
+}

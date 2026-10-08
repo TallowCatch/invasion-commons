@@ -34,6 +34,169 @@ HARVEST_PARTNER_MIX_PRESETS: dict[str, dict[str, float]] = {
 }
 
 
+HARVEST_GOVERNANCE_FRICTION_REGIMES: dict[str, dict[str, float | int]] = {
+    "ideal": {
+        "detection_recall": 1.0,
+        "enforcement_delay_rounds": 0,
+        "max_target_share": 1.0,
+        "governance_budget_cost": 0.0,
+    },
+    "constrained": {
+        "detection_recall": 0.7,
+        "enforcement_delay_rounds": 1,
+        "max_target_share": 0.5,
+        "governance_budget_cost": 0.02,
+    },
+}
+
+
+HARVEST_ACTOR_CAPABILITY_PRESETS: dict[str, dict[str, float | int | str]] = {
+    "low_actor": {
+        "label": "Low actor capability",
+        "rank": 0,
+        "injector_mode": "mutation",
+        "adversarial_pressure": 0.3,
+        "search_candidates": 0,
+        "search_eval_horizon": 0,
+    },
+    "medium_actor": {
+        "label": "Medium actor capability",
+        "rank": 1,
+        "injector_mode": "search_mutation",
+        "adversarial_pressure": 0.3,
+        "search_candidates": 6,
+        "search_eval_horizon": 30,
+    },
+    "high_actor": {
+        "label": "High actor capability",
+        "rank": 2,
+        "injector_mode": "search_mutation",
+        "adversarial_pressure": 0.3,
+        "search_candidates": 12,
+        "search_eval_horizon": 60,
+    },
+}
+
+
+HARVEST_OVERSEER_CAPABILITY_PRESETS: dict[str, dict[str, float | int | str]] = {
+    "weak_overseer": {
+        "label": "Weak overseer capability",
+        "rank": 0,
+        "detection_recall": 0.5,
+        "enforcement_delay_rounds": 2,
+        "max_target_share": 0.33,
+        "governance_budget_cost": 0.04,
+    },
+    "limited_overseer": {
+        "label": "Limited overseer capability",
+        "rank": 1,
+        "detection_recall": 0.7,
+        "enforcement_delay_rounds": 1,
+        "max_target_share": 0.5,
+        "governance_budget_cost": 0.02,
+    },
+    "strong_overseer": {
+        "label": "Strong overseer capability",
+        "rank": 2,
+        "detection_recall": 1.0,
+        "enforcement_delay_rounds": 0,
+        "max_target_share": 1.0,
+        "governance_budget_cost": 0.0,
+    },
+    "recall_limited_only": {
+        "label": "Recall-limited overseer",
+        "rank": 1,
+        "detection_recall": 0.5,
+        "enforcement_delay_rounds": 0,
+        "max_target_share": 1.0,
+        "governance_budget_cost": 0.0,
+    },
+    "delay_limited_only": {
+        "label": "Delay-limited overseer",
+        "rank": 1,
+        "detection_recall": 1.0,
+        "enforcement_delay_rounds": 2,
+        "max_target_share": 1.0,
+        "governance_budget_cost": 0.0,
+    },
+    "capacity_limited_only": {
+        "label": "Capacity-limited overseer",
+        "rank": 1,
+        "detection_recall": 1.0,
+        "enforcement_delay_rounds": 0,
+        "max_target_share": 0.33,
+        "governance_budget_cost": 0.0,
+    },
+    "cost_limited_only": {
+        "label": "Cost-limited overseer",
+        "rank": 1,
+        "detection_recall": 1.0,
+        "enforcement_delay_rounds": 0,
+        "max_target_share": 1.0,
+        "governance_budget_cost": 0.04,
+    },
+}
+
+
+HARVEST_SCENARIO_PRESETS: dict[str, dict[str, object]] = {
+    "regulated_fishery": {
+        "label": "Regulated fishery",
+        "institutional_archetype": "Centralized quota-setting, monitoring, and enforcement",
+        "tier": "medium_h1",
+        "partner_mix": "balanced",
+        "cfg_overrides": {
+            "neighbor_externality": 0.10,
+            "communication_enabled": False,
+            "side_payments_enabled": False,
+        },
+        "default_friction_regime": "constrained",
+        "preferred_governance_comparison": ["top_down_only", "hybrid"],
+        "citations": [
+            "Hilborn, Orensanz, and Parma (2005), Institutions, incentives and the future of fisheries.",
+            "Gutierrez, Hilborn, and Defeo (2011), Leadership, social capital and incentives promote successful fisheries.",
+        ],
+        "notes": "Regulator-facing renewable commons with meaningful monitoring and enforcement capacity.",
+    },
+    "community_irrigation": {
+        "label": "Community irrigation",
+        "institutional_archetype": "Locally monitored and self-governed irrigation management",
+        "tier": "medium_h1",
+        "partner_mix": "balanced",
+        "cfg_overrides": {
+            "regen_rate": 0.64,
+            "neighbor_externality": 0.15,
+            "communication_enabled": True,
+            "side_payments_enabled": False,
+        },
+        "default_friction_regime": "constrained",
+        "preferred_governance_comparison": ["bottom_up_only", "hybrid"],
+        "citations": [
+            "Ostrom and Gardner (1993), Coping with asymmetries in the commons.",
+            "Ostrom, Lam, and Lee (1994), The performance of self-governing irrigation systems in Nepal.",
+            "Villamayor-Tomas (2020), Robust irrigation system institutions: A global comparison.",
+        ],
+        "notes": "User participation, local monitoring, and rights to organize are central to performance.",
+    },
+    "forest_co_management": {
+        "label": "Forest co-management",
+        "institutional_archetype": "Polycentric stewardship with local management and higher-level intervention",
+        "tier": "hard_h1",
+        "partner_mix": "adversarial_heavy",
+        "cfg_overrides": {
+            "neighbor_externality": 0.22,
+            "communication_enabled": True,
+            "side_payments_enabled": True,
+        },
+        "default_friction_regime": "constrained",
+        "preferred_governance_comparison": ["top_down_only", "hybrid"],
+        "citations": [
+            "Nagendra and Ostrom (2012), Polycentric governance of multifunctional forested landscapes.",
+        ],
+        "notes": "Mixed governance setting where neither pure centralization nor pure decentralization is sufficient.",
+    },
+}
+
+
 def get_harvest_tier_preset(name: str) -> dict[str, float]:
     if name not in HARVEST_TIER_PRESETS:
         raise ValueError(f"Unknown Harvest Commons tier '{name}'.")
@@ -46,11 +209,59 @@ def get_harvest_partner_mix_preset(name: str) -> dict[str, float]:
     return dict(HARVEST_PARTNER_MIX_PRESETS[name])
 
 
+def get_harvest_governance_friction_regime(name: str) -> dict[str, float | int]:
+    if name not in HARVEST_GOVERNANCE_FRICTION_REGIMES:
+        raise ValueError(f"Unknown Harvest governance friction regime '{name}'.")
+    return dict(HARVEST_GOVERNANCE_FRICTION_REGIMES[name])
+
+
+def get_harvest_actor_capability_preset(name: str) -> dict[str, float | int | str]:
+    if name not in HARVEST_ACTOR_CAPABILITY_PRESETS:
+        raise ValueError(f"Unknown Harvest actor capability preset '{name}'.")
+    return dict(HARVEST_ACTOR_CAPABILITY_PRESETS[name])
+
+
+def get_harvest_overseer_capability_preset(name: str) -> dict[str, float | int | str]:
+    if name not in HARVEST_OVERSEER_CAPABILITY_PRESETS:
+        raise ValueError(f"Unknown Harvest overseer capability preset '{name}'.")
+    return dict(HARVEST_OVERSEER_CAPABILITY_PRESETS[name])
+
+
+def harvest_capability_gap(actor_level: str, overseer_level: str) -> int:
+    actor = get_harvest_actor_capability_preset(actor_level)
+    overseer = get_harvest_overseer_capability_preset(overseer_level)
+    return int(actor["rank"]) - int(overseer["rank"])
+
+
+def get_harvest_scenario_preset(name: str) -> dict[str, object]:
+    if name not in HARVEST_SCENARIO_PRESETS:
+        raise ValueError(f"Unknown Harvest Commons scenario '{name}'.")
+    preset = dict(HARVEST_SCENARIO_PRESETS[name])
+    preset["cfg_overrides"] = dict(preset.get("cfg_overrides", {}))
+    preset["preferred_governance_comparison"] = list(preset.get("preferred_governance_comparison", []))
+    preset["citations"] = list(preset.get("citations", []))
+    return preset
+
+
 def make_harvest_cfg_for_tier(name: str, **overrides: float | int | bool) -> HarvestCommonsConfig:
     cfg_dict = asdict(HarvestCommonsConfig())
     cfg_dict.update(get_harvest_tier_preset(name))
     cfg_dict.update(overrides)
     return HarvestCommonsConfig(**cfg_dict)
+
+
+def make_harvest_cfg_for_scenario(
+    scenario_name: str,
+    *,
+    n_agents: int = 6,
+    seed: int = 0,
+    **overrides: float | int | bool,
+) -> HarvestCommonsConfig:
+    preset = get_harvest_scenario_preset(scenario_name)
+    cfg_overrides = dict(preset["cfg_overrides"])
+    cfg_overrides.update({"n_agents": n_agents, "seed": seed})
+    cfg_overrides.update(overrides)
+    return make_harvest_cfg_for_tier(str(preset["tier"]), **cfg_overrides)
 
 
 def get_harvest_regime_pack(tier_name: str) -> list[dict[str, dict[str, float]]]:
