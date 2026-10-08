@@ -105,6 +105,8 @@ R1 and S1 copy the structure of the AI-control trusted-monitoring setup in a non
 
 ## Added 8 October 2026 (for the definition of harm: below the MSY level)
 
+**Not used in the paper (decided 8 Oct).** Harm is defined from the games' own regrowth (half capacity), and the metrics copy GovSim and Perolat et al. 2017 (see `runs/social_metrics/README.md`). The regulatory sources below and the TMDL entry are kept only as background.
+
 | Source | Identifier | Depth checked | Used for | What it does NOT support |
 | --- | --- | --- | --- | --- |
 | UN Convention on the Law of the Sea (1982), Art. 61(3) | UNCLOS Art. 61; commentary: Harrison & Morgera (2017), strathprints.strath.ac.uk/63127 | Secondary (search summary of the commentary; treaty text not yet read) | Legal basis for MSY as the management standard: measures "designed to maintain or restore populations of harvested species at levels which can produce the maximum sustainable yield, as qualified by relevant environmental and economic factors" | The "as qualified by" clause means MSY is not an absolute target in law. Read the treaty text before quoting. |

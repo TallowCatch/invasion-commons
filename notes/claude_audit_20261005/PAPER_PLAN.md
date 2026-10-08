@@ -53,6 +53,15 @@ Anything not needed for claims 1–6 goes here:
 - LLM free-text talk and collusion;
 - the Act 1 governance studies (appendix only).
 
+## Outcome measures (decided 8 Oct 2026)
+
+- **Harm** is the resource below half capacity, where it regrows fastest. The same rule applies in all three games: Fishery 50 of 100, Forest 10 of 20 per plot, River 50 of 100.
+- **Also reported,** copying GovSim and Perolat et al. 2017:
+  - efficiency (harvest ÷ maximum sustainable harvest);
+  - equality (1 − Gini);
+  - survival.
+- **No real-world regulatory references.** See `runs/social_metrics/README.md`.
+
 ## Final list (frozen 8 Oct 2026)
 
 - The last runs are L2's memory cell (EM) and L3 (threshold location). Nothing is added after them.
