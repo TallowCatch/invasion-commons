@@ -70,3 +70,10 @@ So the prediction is the same for both models: **F = 12, 18 and 24 (e = 2, 3 and
 - All results are reported.
 
 ## Amendments
+
+### Note 1 (2026-10-08 ~12:00Z, while L3 was running): partial L3 outcomes were seen
+
+- A new script (`social_metrics.py`) computes efficiency, equality and sustainability for every LLM game in the store. It picked up the L3 games finished by then: gpt-oss 13 of 40, Nemotron 4 of 40.
+- Their per-cell means (efficiency, equality, sustainability, survival) were printed and seen. Sustainability is closely related to the over-take rate.
+- Nothing about L3 was changed. Its cells, prompts, analysis code (`analyze_l3.py`, committed before any L3 game) and hypotheses are as frozen, and L3 runs to completion as planned.
+- The partial numbers are not interpreted. Only the complete run is analysed.
