@@ -9,7 +9,8 @@
   - Gemma over-took in 5–10% of steps, almost always by catching its request after a cut. That looks like ignoring the cut, not cheating **[post hoc]**.
 - **A design error was found after the results.** The "silent" cell S0 still describes a check with a fine of 0 t, which itself says over-taking is free. So S0 does not replicate L1's silent cell, and H4 failed for 3 models.
 - **Infrastructure:** 400 games, 0 fallbacks in 62,152 decisions. The call logs were partly lost (Amendment 6); outcomes are unaffected.
-- **Next:** EM with the corrected memory rule (running; then H3). Optionally, a finer fine grid between F = 8 and 36 t to locate the threshold.
+- **Memory without fines (EM, corrected rule):** over-taking fell to 20% (gpt-oss) and 33% (Nemotron) but did not stop. Steps breaking the MSY limit fell from over 90% to 20–40%, and no lake collapsed. H3 (P4) holds in 2 of 3 families.
+- **Next:** L3, the last experiment, which locates the threshold with a prediction frozen in advance.
 
 ## Update 5, 7 October 2026: after R3 and T1 (studies/R3_breakeven_confirmation, studies/T1_audit_targeting)
 

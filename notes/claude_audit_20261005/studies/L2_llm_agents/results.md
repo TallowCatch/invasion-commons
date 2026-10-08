@@ -1,4 +1,4 @@
-# Results L2: language-model fishers stop over-taking only when the expected fine exceeds their gain
+# Results L2: language-model fishers stop over-taking only when the expected fine exceeds their gain; memory without fines cuts the harm but not the over-taking
 
 **Protocol:** `protocol.md` in this folder.
 - Frozen 2026-10-07T11:50Z, with Amendments 1–6. All amendments were made before any outcome comparison.
@@ -15,7 +15,7 @@
 - Hypothesis tests and cell rates are **verified**, recomputed from the saved games by `analyze_l2.py`.
 - Intervals are 95% paired context-bootstrap intervals (4,000 resamples, seed 20261019).
 - Numbers marked **[post hoc]** come from checks chosen after the results were seen. They describe; they do not test.
-- **The memory cell (EM) is still running** (Amendment 5), so H3 is not reported yet.
+- The memory cell (EM) was run with the corrected rule (Amendment 5). Its 40 games finished 2026-10-08 11:09Z, with complete call logs.
 
 ## Question
 
@@ -34,7 +34,7 @@ In Fishery, four of the six fishers are language-model (LLM) agents. Each round,
   - E0–E36: explicit rules with fines 0, 1, 2, 4, 8 and 36 t. "Explicit" means the rules say "you can choose to catch more than your allowance".
   - S0 and S36: the same rules without that sentence ("silent").
   - P0 and P36: the explicit rules in different words ("paraphrase", shown as "Reworded" in Figure 4).
-  - EM: no fine, but a reviewer that remembers (running).
+  - EM: no fine, but a reviewer that remembers by how many tonnes a caught agent went over, and lowers its later allowances by that much.
 - **Over-taking:** catching more than 0.06 t above the allowance.
 - **Unit and size:**
   - The independent unit is the context, and the same 10 contexts are used in every cell.
@@ -84,11 +84,25 @@ In Fishery, four of the six fishers are language-model (LLM) agents. Each round,
 | **H2:** E36 below E0 | **holds**: −55.3 [−58.1, −51.9] | **holds**: −64.8 [−69.0, −60.5] | **holds**: −2.0 [−3.9, −0.4] | fails (0 = 0) |
 | **H4:** S0 below 5% (L1 replication) | **fails**: 36.9% | **fails**: 43.3% | **fails**: 8.5% | holds: 0% |
 | **H5:** wording does not change the fine effect | **fails**: P0−P36 = 75.0 [72.6, 77.6] against E0−E36 = 55.3 [51.9, 58.0]; same sign, but the intervals do not overlap | **holds**: 59.2 [56.6, 61.9] against 64.8 [60.5, 69.0] | **fails**: −0.3 [−1.4, 0.5] against 2.0 [0.4, 3.8] | trivially true (all zero) |
-| H3 (memory) | running | running | running | running |
+| **H3 (P4):** under memory without fines, over-taking stays above 5% **and** steps breaking the MSY limit fall below E0 | **holds**: over-taking 20.0%; MSY-break share −72.1 points [−75.8, −68.9] | **holds**: 33.3%; −56.5 [−67.5, −45.5] | **fails**: 5.1%; −1.0 [−2.5, 0.0] | fails (no over-taking) |
 
 In every model, only E36 had e ≥ g, so H1 compares E36 with E0–E8.
 
-**Claim 6 (pre-stated rule: H1 holds in at least 2 of the 3 frozen families): holds, in 3 of 3.** The verdict does not depend on Gemma: gpt-oss and Nemotron alone make 2 of 3.
+**Claim 6 (pre-stated rule: H1 holds in at least 2 of the 3 frozen families): holds, in 3 of 3.** The verdict does not depend on Gemma: gpt-oss and Nemotron alone make 2 of 3. **H3 holds in 2 of 3** (gpt-oss and Nemotron).
+
+**The memory cell (EM): no fines, and the reviewer lowers a caught agent's later allowances by its mean recorded excess** (verified):
+
+| | gpt-oss | Nemotron | Gemma | Mistral |
+| --- | ---: | ---: | ---: | ---: |
+| Over-taking, E0 (no fine, no memory) | 55.3% | 64.8% | 6.5% | 0% |
+| **Over-taking, EM (memory, no fine)** | **20.0%** | **33.3%** | 5.1% | 0% |
+| Over-taking, E36 (fine above the gain) | 0% | 0% | 4.5% | 0% |
+| Steps breaking the MSY limit: E0 → EM | 91.5% → **19.5%** | 95.9% → **39.5%** | 6.0% → 5.0% | 0% → 0% |
+| Catch per rule-follower (t): E0 → EM | 8.1 → **29.4** | 9.4 → **31.6** | 36.6 → 36.2 | 36.3 → 36.2 |
+| Lakes collapsed: E0 → EM | 5 → 0 | 1 → 0 | 0 → 0 | 0 → 0 |
+
+- **What P4 predicts:** memory removes most of the harm but does not stop over-taking. For the two models that over-take on purpose, that is what happened. Over-taking continued in 20–33% of steps, but the MSY limit was broken far less often, rule-followers kept most of their catch, and no lake collapsed.
+- **Over-taking also fell, by about half.** It went from 55% to 20% for gpt-oss and from 65% to 33% for Nemotron **[post hoc observation]**. In S4 the simulated liars did not reduce their lying. So LLM agents seem to respond partly to having their allowance lowered, even with no fine. This was not a hypothesis and is reported as an observation. One caution: over-taking is measured against the lowered allowance, so the two cells are not identical measures.
 
 ## Post hoc checks (descriptive only)
 
@@ -149,8 +163,8 @@ In every model, only E36 had e ≥ g, so H1 compares E36 with E0–E8.
 
 - **High confidence.** For the two LLM families that over-take strategically, the deterrence threshold P1 predicts appears in real model behaviour. Fines below the agents' gain do nothing, or make things worse; a fine above it stops over-taking completely. This is claim 6.
 - **Moderate confidence.** LLM families differ more in whether they over-take at all than in how they respond to fines. One family never over-takes, one barely follows cuts, and two over-take strategically.
+- **Moderate confidence.** Memory without fines removes most of the harm but does not stop over-taking. This is P4, and H3 holds for gpt-oss and Nemotron.
 - **Untested:**
-  - the exact threshold location;
-  - memory without fines (H3, running);
+  - the exact threshold location (L3);
   - whether a small fine increases over-taking through a "price" reading.
-- **Next step:** finish EM, which is about 2 hours of running at no extra cost, then report H3. A finer fine grid between F = 8 and F = 36 (e = 1.33 to 6), for gpt-oss and Nemotron, would locate the threshold. That would be about 60 games, roughly 5 hours, under a new protocol.
+- **Next step:** L3 (`studies/L3_llm_threshold/`), the last experiment, tests the threshold location with a prediction frozen in advance. Running since 2026-10-08 11:09Z.
