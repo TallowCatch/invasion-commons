@@ -1,6 +1,7 @@
 # Experiment L2 (language-model agents) run remotely on GitHub Actions.
 # Protocol: notes/claude_audit_20261005/studies/L2_llm_agents/protocol.md (Amendments 1-2), on branch
 # claude/r1-s1-oversight-experiments. Results are committed to the l2-results branch every 20 minutes and after every job.
+# Stage em (Amendment 5) runs the corrected memory cell into claude_l2_em_v2.
 # Amendment 2 (Ollama Pro allows 3 cloud models at a time): three lanes A, B, C run in parallel; which models each lane
 # runs is set in scripts/l2_ci_step.sh. Each lane's job starts that lane's next job when it stops (after a 45-minute
 # wait at the usage limit); the hourly schedule is only a backup.
@@ -20,6 +21,10 @@ on:
         description: "all | A | B | C"
         required: true
         default: "all"
+      stage:
+        description: "main (10 cells) | em (the memory cell, Amendment 5)"
+        required: false
+        default: "main"
 
 permissions:
   contents: write
@@ -34,13 +39,14 @@ jobs:
       matrix:
         lane: ${{ fromJSON(((inputs.mode || 'run') == 'check' && '["A"]') || ((inputs.lane || 'all') == 'all' && '["A","B","C"]') || format('["{0}"]', inputs.lane)) }}
     concurrency:
-      group: l2-lane-${{ matrix.lane }}
+      group: l2-lane-${{ inputs.stage || 'main' }}-${{ matrix.lane }}
       cancel-in-progress: false
     env:
       OLLAMA_HOST: https://ollama.com
       OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY || secrets.SCALABLE_OVERSIGHT }}
       MODE: ${{ inputs.mode || 'run' }}
       LANE: ${{ matrix.lane }}
+      STAGE: ${{ inputs.stage || 'main' }}
       CODE_REF: claude/r1-s1-oversight-experiments
     steps:
       - uses: actions/checkout@v4
@@ -62,10 +68,10 @@ jobs:
             mkdir store && git -C store init -q -b l2-results && git -C store remote add origin "$url"
           fi
       - name: Run one chunk of L2 (lane ${{ matrix.lane }})
-        run: bash scripts/l2_ci_step.sh "$MODE" store 330 "$LANE"
+        run: bash scripts/l2_ci_step.sh "$MODE" store 330 "$LANE" "$STAGE"
       - name: Commit progress to l2-results
         if: always()
-        run: bash scripts/l2_save.sh store "L2 progress (lane $LANE)"
+        run: bash scripts/l2_save.sh store "L2 progress ($STAGE, lane $LANE)"
       - name: Start this lane's next job
         if: success() && env.MODE == 'run'
         env:
@@ -74,4 +80,4 @@ jobs:
           next=$(cat NEXT 2>/dev/null || echo none)
           echo "next: $next"
           if [ "$next" = "wait" ]; then echo "usage limit: waiting 45 minutes"; sleep 2700; fi
-          if [ "$next" = "wait" ] || [ "$next" = "now" ]; then gh workflow run l2-llm-agents.yml --ref main -f mode=run -f lane="$LANE"; fi
+          if [ "$next" = "wait" ] || [ "$next" = "now" ]; then gh workflow run l2-llm-agents.yml --ref main -f mode=run -f lane="$LANE" -f stage="$STAGE"; fi
