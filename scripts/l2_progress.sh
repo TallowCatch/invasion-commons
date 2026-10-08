@@ -26,5 +26,17 @@ except Exception: pass' "$f"; done | tr '\n' ' ')
   printf "  %-24s %3d / 100 games   %s\n" "$m" "$n" "$st"
 done
 echo
+count() { git ls-tree -r --name-only $R | grep -c "^$1/$2/episodes/"; }
+echo "Memory cell EM, corrected rule (10 games per model, Amendment 5):"
+for m in gpt-oss_120b-cloud gemma4_31b-cloud nemotron-3-super_cloud mistral-large-3_675b-cloud; do
+  printf "  %-26s %3d / 10 games\n" "$m" "$(count claude_l2_em_v2 $m)"
+done
+echo
+echo "L3 threshold test (40 games per model: fines 12, 18, 24, 30 t):"
+for m in gpt-oss_120b-cloud nemotron-3-super_cloud; do
+  n=$(count claude_l3_v1 $m); [ "$n" -eq 0 ] && st="starts after EM" || st=""
+  printf "  %-26s %3d / 40 games   %s\n" "$m" "$n" "$st"
+done
+echo
 echo "Recent GitHub Actions runs:"
 gh run list --workflow l2-llm-agents.yml --limit 8 2>/dev/null || echo "  (install/sign in to gh to see runs)"
