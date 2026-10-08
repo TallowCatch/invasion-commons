@@ -22,9 +22,9 @@
   \draw[flow] (rep) -- (rv);
   \draw[flow] (rv) -- (ex);
   \draw[flow] (ex) -- (res);
-  \draw[flow] (res.south) -- ++(0,-4mm) -| (req.south) node[pos=0.75, lab, right] {next step\\ ($T=80$ steps)};
+  \draw[flow] (res.south) -- ++(0,-4mm) -| (req.south) node[pos=0.75, lab, right] {next round\\ ($T$ rounds)};
   \draw[fb] ([xshift=3mm]ex.south west) -- ([xshift=-3mm]au.north east) node[midway, lab, left=0.5mm] {inspect};
   \draw[fb] (au.north) -- (rv.south) node[midway, lab, left=1mm] {memory};
   % ---- target annotation
-  \node[lab, above=1.5mm of rv] {target: safety line, or productive target (MSY)};
+  \node[lab, above=1.5mm of rv] {target: one-step safety line, or half capacity (MSY level)};
 \end{tikzpicture}
