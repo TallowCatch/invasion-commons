@@ -87,6 +87,6 @@
  },
  "token_cap": 20000000,
  "over_t": 0.06,
- "python": "3.12.14",
+ "python": "3.12.15",
  "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39"
 }
