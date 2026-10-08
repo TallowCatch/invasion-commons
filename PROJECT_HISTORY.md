@@ -151,13 +151,43 @@ test against the same fixed reviewer protocol.
    - Families differ in *whether* they over-take: Mistral Large 3 never did; Gemma mostly ignored cuts.
    - Confidence: high for the threshold's direction; the grid does not locate it between e = 1.33 and 6 t.
 
+### FINAL LIST (frozen 8 October 2026): nothing is added after this
+
+Ameer decided to stop adding experiments. Everything not on this list is parked for a later paper.
+
+**Runs, which are the last ones:**
+1. **L2 memory cell (EM):** 40 games with the corrected memory rule. Running; finishes about 11:30Z on 8 Oct.
+2. **L3, threshold location:** fines of 12, 18, 24 and 30 t for gpt-oss and Nemotron, 80 games. The prediction was frozen before any code (`studies/L3_llm_threshold/protocol.md`). It starts automatically when EM finishes and should be done by about 18:30Z on 8 Oct.
+
+**After the runs, writing only:**
+3. Add H3 (EM) to `studies/L2_llm_agents/results.md`.
+4. Write `studies/L3_llm_threshold/results.md`, and put the 10-fine curve in Figure 4(a).
+5. Read the primary sources marked "read before quoting" in `novelty/README.md` and the ledger: Becker, Harrington, UNCLOS/UNFSA, Sutinen & Andersen, Segerson.
+6. Draft the paper in `paper/paper_v6`: introduction, related work (from `novelty/README.md`), methods, results with Figures 2–4, and limitations.
+7. Supervisor review, then the venue: an AAAI-27 workshop and arXiv (about 20 Nov), then ICML 2027 (about 22 Jan).
+8. Freeze the repository: README, data bundle, tests, tag.
+
+**Parked (not this paper):**
+- a true "silent, no checks" LLM cell, to fix H4's design error;
+- why a small fine raises over-taking;
+- more LLM families (DeepSeek and others);
+- a coordinated group attacker;
+- a hedging reviewer;
+- capability ladders;
+- deterrence in Forest;
+- the Act 1 governance studies.
+
+**Decided (8 Oct):**
+- Harm means falling below the MSY level (UNCLOS Art. 61(3); UNFSA Annex II).
+- The paper is the full paper (claims 1–6).
+- Mistral Large 3 is kept as the added fourth family.
+
+**Still open:** the main game (Fishery is proposed) and the venue. Both need supervisor sign-off.
+
 ### Open decisions (for Ameer, Yali and Edward)
 
-- **Definition of harm:** keep MSY? The evidence supports it.
-- **Which paper:**
-  - a short paper on monitor design with honest agents;
-  - or a full paper on misreporting, costly checking and deterrence.
-  - The notes recommend the full paper.
+- ~~Definition of harm~~: decided 8 Oct, MSY.
+- ~~Which paper~~: decided 8 Oct, the full paper on misreporting, costly checking and deterrence.
 - **Main game:** Harvest, with Fishery as a sanity check? Most deterrence
   results are Fishery-only, because cheating never paid in Harvest.
 

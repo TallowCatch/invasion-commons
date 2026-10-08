@@ -53,6 +53,11 @@ Anything not needed for claims 1–6 goes here:
 - LLM free-text talk and collusion;
 - the Act 1 governance studies (appendix only).
 
+## Final list (frozen 8 Oct 2026)
+
+- The last runs are L2's memory cell (EM) and L3 (threshold location). Nothing is added after them.
+- The rest is writing. See "FINAL LIST" in `PROJECT_HISTORY.md`.
+
 ## Phases
 
 1. Confirm: R3 and T1.
