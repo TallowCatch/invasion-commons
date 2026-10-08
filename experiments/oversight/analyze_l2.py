@@ -53,7 +53,6 @@ def analyse_model(d, rng, em_dir=None):
                            fallbacks=e["fallbacks"]) for e in eps])
     calls = [c for f in sorted(d.glob("calls*.jsonl")) + (sorted(em.glob("calls*.jsonl")) if em and em.exists() else [])
              for c in l2.read_log(f)]  # one log per job lane (Amendment 2)
-    first = [c for c in calls if c["phase"] != "comprehension" and c["attempt"] == 0]
     cells = {}
     for cell in l2.CELLS:
         a, e = A[A.cell == cell], E[E.cell == cell]
@@ -75,8 +74,13 @@ def analyse_model(d, rng, em_dir=None):
         return pd.concat(parts).mean() if parts else np.nan
     e0 = A[(A.cell == "E0") & (A.over == 1)]
     g = float(e0.above.mean()) if len(e0) else None
-    out = dict(model=d.name, n_episodes=len(eps), valid_first_try=sum(c["error"] is None for c in first) / max(len(first), 1),
-               tokens=sum(c.get("prompt_tokens", 0) + c.get("completion_tokens", 0) for c in calls), g_tonnes=g, cells=cells)
+    # Amendment 6: the main run's call logs are incomplete, so validity comes from the game files
+    # (a re-prompt means an invalid first answer; each step has a request and a catch per LLM agent)
+    decisions = sum(2 * len(e["llm_agents"]) * len(e["steps"]) for e in eps)
+    out = dict(model=d.name, n_episodes=len(eps), valid_first_try=1 - sum(e["reprompts"] for e in eps) / max(decisions, 1),
+               fallbacks=int(sum(e["fallbacks"] for e in eps)), decisions=int(decisions),
+               tokens_in_logs=sum(c.get("prompt_tokens", 0) + c.get("completion_tokens", 0) for c in calls),
+               g_tonnes=g, cells=cells)
     fine_cells = [c for c in ("E0", "E1", "E2", "E4", "E8", "E36") if c in cells]
     if g is not None and fine_cells:
         hi = [c for c in fine_cells if l2.CELLS[c][2] / 6 >= g]
@@ -107,6 +111,11 @@ def analyse_model(d, rng, em_dir=None):
         p, e = out["H5_P0_minus_P36"], out["H5_E0_minus_E36"]
         v["H5"] = np.sign(p["estimate"]) == np.sign(e["estimate"]) and not (p["ci"][1] < e["ci"][0] or e["ci"][1] < p["ci"][0])
     out["verdicts"] = {k: bool(x) for k, x in v.items()}
+    # per model, cell and context (the independent unit), for figures with context-bootstrap intervals
+    pc = A.groupby(["cell", "context"]).agg(overtake_rate=("over", "mean"), agent_steps=("over", "size")).reset_index()
+    pe = E.groupby(["cell", "context"]).agg(honest=("honest", "mean"), msy_break=("msy_break", "mean"),
+                                            final_stock=("final_stock", "mean")).reset_index()
+    out["_per_context"] = pc.merge(pe, on=["cell", "context"]).assign(model=d.name)
     return out
 
 
@@ -133,9 +142,10 @@ def main():
                    if len(primary) == len(l2.MODELS) and all(e_complete[r["model"]] for r in primary) else None,
                    added_families_H1={r["model"]: r["verdicts"].get("H1") for r in res if r not in primary})
     outdir.mkdir(parents=True, exist_ok=True)
-    (outdir / "l2_summary.json").write_text(json.dumps(summary, indent=1, default=float))
+    pd.concat([r.pop("_per_context") for r in res]).to_csv(outdir / "l2_context_cells.csv", index=False)
     rows = [dict(model=r["model"], cell=c, **v) for r in res for c, v in r["cells"].items()]
     pd.DataFrame(rows).to_csv(outdir / "l2_cells.csv", index=False)
+    (outdir / "l2_summary.json").write_text(json.dumps(summary, indent=1, default=float))
     print(json.dumps({r["model"]: dict(episodes=r["n_episodes"], g=r["g_tonnes"], verdicts=r["verdicts"]) for r in res}, indent=1))
 
 

@@ -1,5 +1,16 @@
 # What we have learned, and what should come next
 
+## Update 6, 8 October 2026: after L2 (studies/L2_llm_agents)
+
+- **Claim 6 holds.** In Fishery, with audits at 1/6, gpt-oss and Nemotron over-took in 51–92% of steps for every expected fine from 0 to 1.33 t, and in 0% at 6 t. That is the only tested fine above their measured one-step gain of about 4.5–4.7 t. H1 holds in all 3 frozen families.
+- **Fines below the gain are useless, and small ones can backfire.** At fines of 1–2 t, over-taking rose above the no-fine level, even before any lake collapsed **[post hoc]**. The harm was large: under Nemotron, 5 to 10 of 10 lakes collapsed at every fine from 1 to 8 t.
+- **Families differ in whether they over-take, not in how they respond.**
+  - Mistral Large 3 never over-took, in 16,000 decisions.
+  - Gemma over-took in 5–10% of steps, almost always by catching its request after a cut. That looks like ignoring the cut, not cheating **[post hoc]**.
+- **A design error was found after the results.** The "silent" cell S0 still describes a check with a fine of 0 t, which itself says over-taking is free. So S0 does not replicate L1's silent cell, and H4 failed for 3 models.
+- **Infrastructure:** 400 games, 0 fallbacks in 62,152 decisions. The call logs were partly lost (Amendment 6); outcomes are unaffected.
+- **Next:** EM with the corrected memory rule (running; then H3). Optionally, a finer fine grid between F = 8 and 36 t to locate the threshold.
+
 ## Update 5, 7 October 2026: after R3 and T1 (studies/R3_breakeven_confirmation, studies/T1_audit_targeting)
 
 1. **The break-even threshold is confirmed prospectively.** The gain per cheating step was computed before any search, and deterrence started within one grid step of it in all 5 testable Fishery settings (R3). This settles claim 4.

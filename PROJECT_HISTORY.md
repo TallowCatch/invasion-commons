@@ -114,6 +114,7 @@ test against the same fixed reviewer protocol.
 | **L1 pilot** (6 Oct) | Can a language model (gpt-oss:120b) act as a fisher in this simulator? Does it over-take? | The interface works: **100%** valid answers in 1,968 calls, about **$0.41** in total. The model **never** over-took unless the rules said it could. One sentence of permission raised over-taking to **23%** with no checks, and random checks with a large fine cut it to **0%**. 3 contexts per cell, so descriptive only. | Pilot; proposes L2. |
 | **R3** (7 Oct) | Does deterrence start at the break-even in every Fishery setting, with the gain per cheating step fixed **before** the search? | Yes: in **5 of 5** testable settings the threshold fell within one grid step of the prediction. The predicted thresholds range from 0.19 to 1.20. The sixth setting gives cheating no gain, so it is not testable. | 2 of 3 supported; 1 badly posed (the gain is zero at exactly the break-even). |
 | **T1** (7 Oct) | Do audits aimed at the largest report miss under-reporters, in all three games? | Aiming at the largest report was worse than random in **Fishery** (+89 points of harm) and **River** (+3.2), with no difference in **Forest**. The reason is **coverage**, not hiding: the aim keeps auditing the same agent, so only **25%** of liars were ever caught in Fishery, against 100% at random **[post hoc diagnostic]**. In Forest, aiming at the plot doing worst against prediction was best: harm fell to **26%** of the no-audit level, against 65% at random. | 2 of 3 supported; the mechanism hypothesis was falsified and revised. |
+| **L2** (7–8 Oct) | Do language-model fishers stop over-taking once the expected fine exceeds their gain? 4 models × 10 cells × 10 contexts (400 games, on Ollama Cloud). | gpt-oss and Nemotron over-took in **51–92%** of steps for every expected fine from 0 to 1.33 t, and in **0%** at 6 t, the only cell above their measured gain (**4.5–4.7 t**). A small fine (1–2 t) *raised* over-taking **[post hoc]**. Gemma over-took little (5–10%), almost all by keeping its request after a cut **[post hoc]**; Mistral Large 3 never over-took. 0 fallbacks in 62,152 decisions. H4 (L1 replication) failed because S0 still describes a free check (design error). Memory cell (EM) rerun with a corrected rule. | Claim 6 holds (H1 in 3 of 3 frozen families); H3 pending. |
 
 **7 Oct: paper exhibits.**
 - Built for claims 1–5, following how the closest papers present their results.
@@ -145,8 +146,10 @@ test against the same fixed reviewer protocol.
 5. **Making a stronger attacker is still unsolved.** Richer search and PPO did
    not give a validated ladder of attacker strength (S5, and the September
    actor pilots).
-6. **LLM actors are feasible and cheap.** Whether they cheat depends heavily
-   on how the rules are worded (L1 pilot).
+6. **LLM agents follow the break-even rule, when they over-take on purpose (L2).**
+   - gpt-oss and Nemotron stopped completely only when the expected fine (6 t) exceeded their gain (about 4.5 t). Fines below it did nothing, or made things worse.
+   - Families differ in *whether* they over-take: Mistral Large 3 never did; Gemma mostly ignored cuts.
+   - Confidence: high for the threshold's direction; the grid does not locate it between e = 1.33 and 6 t.
 
 ### Open decisions (for Ameer, Yali and Edward)
 
@@ -160,7 +163,7 @@ test against the same fixed reviewer protocol.
 
 ### Next steps already proposed
 
-- **L2, the last experiment (running since 7 Oct):** LLM fishers across a fine grid, 110 games per model. Three frozen families (gpt-oss, gemma4, nemotron) decide claim 6; Mistral (`mistral-large-4`) is added as a fourth family and reported beside them. It runs on GitHub Actions with Ollama Pro, in three parallel lanes (protocol Amendments 1–2). Check progress with `bash scripts/l2_progress.sh`.
+- **L2:** done for 10 of 11 cells (results in `studies/L2_llm_agents/results.md`, Figure 4). The memory cell (EM) is running with the corrected rule (Amendment 5); then H3 is added. A finer fine grid between e = 1.33 and 6 t would locate the threshold.
 - **A coordinated group attacker** with per-agent strategies (S5 gap).
 - **A reviewer that hedges against uncertainty in its own model** (R2 gap).
 - **A direct test** of report-based against signal-based audit targeting (C1

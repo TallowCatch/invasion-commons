@@ -321,7 +321,99 @@ def table2_regimes():
     (TAB / "table2_regimes.tex").write_text("\n".join(lines) + "\n")
 
 
+# ------------------------------------------------------------------ Figure 4: language-model fishers under audits (claim 6, L2)
+LLM = {"gpt-oss_120b-cloud": ("gpt-oss-120b (OpenAI)", BLUE, "o"),
+       "nemotron-3-super_cloud": ("Nemotron 3 Super (NVIDIA)", ORANGE, "s"),
+       "gemma4_31b-cloud": ("Gemma 4 31B (Google)", AQUA, "D"),
+       "mistral-large-3_675b-cloud": ("Mistral Large 3 (added)", VIOLET, "^")}
+E_CELLS = ["E0", "E1", "E2", "E4", "E8", "E36"]
+E_FINE = {"E0": 0, "E1": 1, "E2": 2, "E4": 4, "E8": 8, "E36": 36}
+
+
+def _boot_pooled(df, col, w=None, b=4000, seed=20261019):
+    """Mean over contexts (weighted by agent-steps when w is given) and a 95% context-bootstrap interval."""
+    rng = np.random.default_rng(seed)
+    v = df[col].to_numpy(float)
+    ww = df[w].to_numpy(float) if w else np.ones(len(v))
+    est = np.sum(v * ww) / np.sum(ww)
+    idx = rng.integers(0, len(v), size=(b, len(v)))
+    draws = np.sum(v[idx] * ww[idx], axis=1) / np.sum(ww[idx], axis=1)
+    return est, np.percentile(draws, 2.5), np.percentile(draws, 97.5)
+
+
+def fig4_llm():
+    d = NOTES / "claude_l2_v1"
+    pc = pd.read_csv(d / "l2_context_cells.csv")
+    summ = {r["model"]: r for r in json.loads((d / "l2_summary.json").read_text())["models"]}
+    em_ok = "EM" in set(pc.cell)
+    fig, axs = plt.subplots(2, 2, figsize=(TEXTW, 4.9))
+    (a, b), (c, dd) = axs
+    x = np.arange(len(E_CELLS))
+    off = np.linspace(-0.24, 0.24, len(LLM))
+    for k, (m, (lab, col, mk)) in enumerate(LLM.items()):
+        sub = pc[pc.model == m]
+        for ax, colname, w, scale in ((a, "overtake_rate", "agent_steps", 100), (b, "honest", None, 1)):
+            pts = [_boot_pooled(sub[sub.cell == e], colname, w) for e in E_CELLS]
+            est, lo, hi = (np.array(t) * scale for t in zip(*pts))
+            ax.errorbar(x + off[k], est, yerr=[est - lo, hi - est], fmt=mk, color=col, ms=3.6, lw=0.8, capsize=1.2,
+                        label=lab, mfc=col if m != "mistral-large-3_675b-cloud" else "white")
+    for ax in (a, b):
+        ax.set_xticks(x)
+        ax.set_xticklabels([f"{E_FINE[e]}\n({E_FINE[e] / 6:.2g})" for e in E_CELLS])
+        ax.set_xlabel("Fine F, t (expected fine e = F/6, t)", fontsize=7)
+        ax.grid(axis="x", visible=False)
+        ax.axvspan(4.5, 5.5, color=GRID, alpha=0.7, zorder=0, lw=0)
+    gs = [summ[m]["g_tonnes"] for m in ("gpt-oss_120b-cloud", "nemotron-3-super_cloud") if summ.get(m)]
+    a.text(5, 72, f"e $\\geq$ g\n(g = {min(gs):.1f}–\n{max(gs):.1f} t)", ha="center", va="bottom", fontsize=6, color=INK2)
+    a.set_ylim(-3, 103)
+    a.set_ylabel("Over-taking (% of agent-steps)")
+    title(a, "a", "Over-taking stops once e exceeds the gain g")
+    b.set_ylabel("Catch per rule-following fisher (t)")
+    b.set_ylim(0, 40)
+    title(b, "b", "Harm to the rule-followers")
+    h, l = a.get_legend_handles_labels()
+    fig.legend(h, l, loc="upper center", bbox_to_anchor=(0.5, 1.0), ncol=4, fontsize=6.6, handletextpad=0.2,
+               columnspacing=1.0)
+    # (c) wording: fine 0 against fine 36 under explicit, silent and paraphrased rules
+    groups = [("E0", "E36", "Explicit"), ("S0", "S36", "Silent"), ("P0", "P36", "Reworded")]
+    labels = ["F = 0", "F = 36"] * len(groups)
+    series = []
+    for m, (lab, col, mk) in LLM.items():
+        sub = pc[pc.model == m]
+        pts = [_boot_pooled(sub[sub.cell == cell], "overtake_rate", "agent_steps") for g0, g36, _ in groups for cell in (g0, g36)]
+        est, lo, hi = (100 * np.array(t) for t in zip(*pts))
+        series.append((lab, col, est, (lo, hi)))
+    grouped(c, labels, series, ylim=(0, 100))
+    c.set_ylabel("Over-taking (% of agent-steps)")
+    for k, (_, _, g) in enumerate(groups):  # wording names under each pair of fine levels
+        c.text(2 * k + 0.5, -0.17, g, transform=c.get_xaxis_transform(), ha="center", va="top", fontsize=7)
+    title(c, "c", "Same pattern under other wordings")
+    # (d) what an over-take looks like (post hoc), or the memory cell once it has run
+    ph = json.loads((d / "l2_posthoc.json").read_text())
+    kinds = [("caught more than it requested", "Caught more than\nit requested", INK2),
+             ("kept its request after a cut", "Kept its request\nafter a cut", LIGHT)]
+    ms = [m for m in LLM if ph.get(m, {}).get("overtake_steps")]
+    left = np.zeros(len(ms))
+    for key, lab, col in kinds:
+        v = np.array([100 * ph[m]["overtake_kind_share"].get(key, 0) for m in ms])
+        dd.barh(np.arange(len(ms)), v, left=left, color=col, label=lab.replace("\n", " "), height=0.6)
+        left += v
+    dd.barh(np.arange(len(ms)), 100 - left, left=left, color=GRID, label="Other", height=0.6)
+    dd.set_yticks(np.arange(len(ms)))
+    dd.set_yticklabels([LLM[m][0].split(" (")[0] for m in ms], fontsize=6.6)
+    dd.invert_yaxis()
+    dd.set_xlim(0, 100)
+    dd.set_xlabel("Share of over-take steps (%)")
+    dd.grid(axis="y", visible=False)
+    for i, m in enumerate(ms):
+        dd.text(101, i, f"n = {ph[m]['overtake_steps']:,}", va="center", fontsize=6, color=INK2)
+    dd.legend(loc="upper left", bbox_to_anchor=(-0.02, -0.22), ncol=3, fontsize=6.2, handletextpad=0.3, columnspacing=0.8)
+    title(dd, "d", "What an over-take is (post hoc)")
+    fig.subplots_adjust(left=0.09, right=0.93, top=0.89, bottom=0.13, hspace=0.62, wspace=0.42)
+    save(fig, "fig4_llm_agents")
+
+
 if __name__ == "__main__":
-    for f in (fig2_reviewer, fig3_audits, table2_regimes):
+    for f in (fig2_reviewer, fig3_audits, fig4_llm, table2_regimes):
         f()
         print("done", f.__name__)

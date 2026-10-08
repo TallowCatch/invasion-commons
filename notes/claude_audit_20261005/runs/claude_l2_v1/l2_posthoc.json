@@ -1,0 +1,77 @@
+{
+ "gemma4_31b-cloud": {
+  "early_overtake_rate": {
+   "E0": 0.0,
+   "E1": 0.0,
+   "E2": 0.0,
+   "E4": 0.0,
+   "E8": 0.0,
+   "E36": 0.0,
+   "S0": 0.0,
+   "S36": 0.0,
+   "P0": 0.0,
+   "P36": 0.0
+  },
+  "overtake_kind_share": {
+   "kept its request after a cut": 0.9887005649717514,
+   "caught more than it requested": 0.011299435028248588
+  },
+  "overtake_steps": 531
+ },
+ "gpt-oss_120b-cloud": {
+  "early_overtake_rate": {
+   "E0": 0.525,
+   "E1": 0.88,
+   "E2": 0.91,
+   "E4": 0.78,
+   "E8": 0.49,
+   "E36": 0.0,
+   "S0": 0.28,
+   "S36": 0.0,
+   "P0": 0.65,
+   "P36": 0.0
+  },
+  "overtake_kind_share": {
+   "caught more than it requested": 0.604289544235925,
+   "kept its request after a cut": 0.2871313672922252,
+   "other": 0.10857908847184987
+  },
+  "overtake_steps": 3730
+ },
+ "mistral-large-3_675b-cloud": {
+  "early_overtake_rate": {
+   "E0": 0.0,
+   "E1": 0.0,
+   "E2": 0.0,
+   "E4": 0.0,
+   "E8": 0.0,
+   "E36": 0.0,
+   "S0": 0.0,
+   "S36": 0.0,
+   "P0": 0.0,
+   "P36": 0.0
+  },
+  "overtake_kind_share": {},
+  "overtake_steps": 0
+ },
+ "nemotron-3-super_cloud": {
+  "early_overtake_rate": {
+   "E0": 0.605,
+   "E1": 0.815,
+   "E2": 0.825,
+   "E4": 0.725,
+   "E8": 0.7,
+   "E36": 0.0,
+   "S0": 0.3,
+   "S36": 0.0,
+   "P0": 0.655,
+   "P36": 0.0
+  },
+  "overtake_kind_share": {
+   "caught more than it requested": 0.6787043931496649,
+   "kept its request after a cut": 0.2952345495160089,
+   "other": 0.026061057334326135
+  },
+  "overtake_steps": 2686
+ }
+}

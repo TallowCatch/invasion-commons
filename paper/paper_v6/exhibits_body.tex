@@ -30,6 +30,13 @@
   \label{fig:audits}
 \end{figure}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig4_llm_agents.pdf}
+  \caption{\textbf{Language-model fishers stop over-taking only when the expected fine exceeds their gain.} \textsc{Fishery}, MSY target, 20 rounds; four of six fishers are language models, audited with probability 1/6 per round; 10 populations per cell. (a)~Share of the models' rounds in which they caught more than their allowance, against the fine $F$ (expected fine $e = F/6$). gpt-oss and Nemotron over-take in 51--92\% of rounds for every $e$ up to 1.33~t and in 0\% at $e = 6$~t, the only tested fine above their measured gain from one round of over-taking ($g$ = 4.5--4.7~t, shaded). Gemma over-takes little at every fine; Mistral Large 3 (an added fourth family, open triangles) never over-takes. (b)~What the two rule-following fishers catch over the 20 rounds: below the threshold, over-taking leaves them 3--24~t, against 32--37~t at $e = 6$~t. (c)~The same comparison when the rules leave out the sentence that over-taking is allowed (silent) or say it in other words (reworded): a 36~t fine stops over-taking under every wording. (d)~What an over-take step is (post hoc): gpt-oss and Nemotron mostly catch more than they asked for, while Gemma almost only keeps its request after the reviewer cut it. Error bars: 95\% intervals over populations.}
+  \label{fig:llm}
+\end{figure}
+
 \begin{table}[H]
   \centering\small
   \caption{\textbf{Audit rules compared} (\textsc{Fishery}, MSY target, 64 new populations). Cheaters' extra harvest: how much more the four cheaters get than if they complied, over 80 steps. Harvest per honest agent: what each honest agent gets. Checks per step include the extra checks that ``memory + extra checks'' spends watching known cheaters. Bold: best in column.}
