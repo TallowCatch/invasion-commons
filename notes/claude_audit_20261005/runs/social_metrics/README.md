@@ -53,3 +53,5 @@
 - **Fines below the gain** give either short-run over-harvest (efficiency near 1, stock below half capacity in over 80% of rounds) or collapse.
 - **Cheating also makes outcomes less equal:** equality is 0.67–0.75 without deterrence, against 0.81 with it.
 - **Memory** keeps the stock at or above half capacity in 61–81% of rounds with no efficiency loss.
+
+**C1 River at half capacity** (`c1_half_capacity.csv`, from C1's saved per-round rows): see the addendum in `studies/C1_compositional_harm/results.md`. Part B's ordering is unchanged. Part A keeps the 30 line, because its reviewers were built for it.

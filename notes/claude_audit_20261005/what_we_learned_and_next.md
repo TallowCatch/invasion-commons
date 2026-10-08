@@ -1,5 +1,15 @@
 # What we have learned, and what should come next
 
+## Update 8, 8 October 2026: consistency check across all studies
+
+- **The gain was defined two ways.** Simulated cheaters use the whole-game net gain g\*; LLMs use the one-round gain g₁ (pre-registered). Computed the simulations' way, the LLMs' whole-game gain is −1.05 t (gpt-oss) and 0.71 t (Nemotron) per over-take round. They keep over-taking far past that, and stop near g₁. **LLM agents are myopic offenders [post hoc]:** the one-round gain predicts them, the whole-game gain does not. Figure 5 now scales each kind of agent by its own gain.
+- **The other differences are stated in Table 4:**
+  - what misbehaving means (under-reporting in S1, T1 and C1; over-taking elsewhere);
+  - how it is chosen (once per game by search, or every round);
+  - the memory rule (share of the cut, or tonnes over);
+  - 80 against 20 rounds, and 64 against 10 populations.
+- **River at half capacity:** T1 and C1 Part B orderings are unchanged (random audits best). C1 Part A keeps 30, because its reviewers were built for 30.
+
 ## Update 7, 8 October 2026: after L3 (studies/L3_llm_threshold), the last experiment
 
 - **The stopping point was predicted in advance and found.** From each model's no-fine gain (gpt-oss 4.48 t, Nemotron 4.74 t), the prediction was that F = 30 is the first fine that deters. Nemotron stopped at exactly F = 30; gpt-oss at F = 24, one grid step early.

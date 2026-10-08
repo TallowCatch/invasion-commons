@@ -1,0 +1,15 @@
+game,part,arm,reviewer,rounds,below_30,below_50
+add,A,joint,joint,5120,0.003515625,0.804296875
+add,A,local_bounded,local_bounded,5120,0.0,0.0638671875
+add,A,local_optimistic,local_optimistic,5120,0.133203125,0.826171875
+add,A,quota,quota,5120,0.0,0.4783203125
+add,B,random,joint,5120,0.0162109375,0.8037109375
+add,B,targeted,joint,5120,0.0322265625,0.814453125
+add,B,trust,joint,5120,0.0978515625,0.8193359375
+comp,A,joint,joint,5120,0.0013671875,0.369140625
+comp,A,local_bounded,local_bounded,5120,0.0,0.205078125
+comp,A,local_optimistic,local_optimistic,5120,0.2009765625,0.533984375
+comp,A,quota,quota,5120,0.0,0.179296875
+comp,B,random,joint,5120,0.0267578125,0.3873046875
+comp,B,targeted,joint,5120,0.0609375,0.4357421875
+comp,B,trust,joint,5120,0.19296875,0.530078125

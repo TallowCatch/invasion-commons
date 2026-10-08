@@ -148,8 +148,8 @@ test against the same fixed reviewer protocol.
    not give a validated ladder of attacker strength (S5, and the September
    actor pilots).
 6. **LLM agents follow the break-even rule, when they over-take on purpose (L2, L3).**
-   - The fine at which gpt-oss and Nemotron stop is predictable from their own no-fine gain, within one grid step (exact for Nemotron).
-   - They are easier to deter than a risk-neutral agent: over-taking falls from about 0.4 g and is mostly gone before g.
+   - The fine at which gpt-oss and Nemotron stop is predictable from their own **one-round** gain, within one grid step (exact for Nemotron).
+   - **They are myopic offenders [post hoc]:** their whole-game gain from over-taking is small or negative (gpt-oss −1.05 t, Nemotron 0.71 t per over-take round), yet they keep over-taking until the fine outweighs the one-round gain. They ignore the long-run cost of a depleted stock.
    - Families differ in *whether* they over-take: Mistral Large 3 never did; Gemma mostly ignored cuts.
    - Confidence: high for the stopping point; why deterrence starts early is untested.
 
@@ -178,6 +178,8 @@ Ameer decided to stop adding experiments. Everything not on this list is parked 
 - capability ladders;
 - deterrence in Forest;
 - the Act 1 governance studies.
+
+**Consistency check (8 Oct):** Table 4 in `paper/paper_v6` lists every study's settings. Two definitions differ by design: the gain (whole-game g\* for programmed cheaters, one-round g₁ for LLMs, see L3 results) and the memory rule (S4's share-of-cut rule, L2's tonnes rule). River harm was re-measured at half capacity for T1 and C1 Part B; C1 Part A keeps 30, its reviewers' own goal.
 
 **Decided (8 Oct):**
 - Harm means falling below the MSY level (UNCLOS Art. 61(3); UNFSA Annex II).

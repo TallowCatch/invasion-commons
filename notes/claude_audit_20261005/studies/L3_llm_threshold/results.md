@@ -55,6 +55,23 @@ Lakes collapsed under Nemotron: 4, 1, 0, 0 of 10.
 
 **Social metrics** (`runs/social_metrics/`, as GovSim and Perolat et al. 2017 define them). At F = 24–36, efficiency is 0.99 of the maximum sustainable harvest for both models, equality 0.79–0.82, and the stock is at or above half capacity in 81–100% of rounds. At F = 12, efficiency is 0.85–1.00, equality 0.67–0.78, and the stock is at or above half capacity in only 6–19% of rounds.
 
+## Post hoc consistency check: which gain predicts the LLMs?
+
+The simulations (R3) define the gain as the cheaters' **whole-game** net gain over complying, per round of cheating (g\*). L2 and L3 pre-registered the **one-round** gain for the LLMs (g₁: extra tonnes in the round). The two were computed the same way from L2's games, using E36, where nobody over-takes, as the compliant baseline, paired by context (`l2_posthoc.py`, `whole_game_gain`):
+
+| Model | One-round gain g₁ (pre-registered) | Net gain over complying, per LLM agent per game | Whole-game gain g\* per over-take round |
+| --- | ---: | ---: | ---: |
+| gpt-oss | 4.48 t | −10.4 t (negative in 7 of 10 contexts) | **−1.05 t** |
+| Nemotron | 4.74 t | +9.1 t (negative in 2 of 10) | **0.71 t** |
+
+- **Read against the whole-game gain**, the LLMs over-take far past the point where it pays:
+  - over-taking loses gpt-oss fish over the game, yet it over-takes in 51–92% of rounds at fines up to 8 t;
+  - Nemotron's whole-game break-even is e = 0.71 t (F ≈ 4 t), yet it over-takes in 56% of rounds at F = 12 t.
+- **Read against the one-round gain**, they stop close to the predicted point.
+- So **the one-round gain predicts when they stop, and the whole-game gain does not.** The LLM agents weigh this round's gain against this round's expected fine, and ignore the cost of a depleted stock in later rounds. That is myopic, short-sighted offending **[post hoc reading]**.
+- The simulated cheaters choose one level for the whole game, and stop at their whole-game gain (R3). Figure 5 therefore scales each kind of agent by the gain it acts on.
+- **This changes how "deterred early" should be read.** Relative to the one-round gain, the LLMs cut back from about 0.4 g₁. Relative to the gain that actually matters over the game, they are deterred late, not early.
+
 ## What it means
 
 **What it shows:**
@@ -83,6 +100,6 @@ Lakes collapsed under Nemotron: 4, 1, 0, 0 of 10.
 ## What we now believe
 
 - **High confidence.** For LLM agents that over-take on purpose, the expected fine at which they stop is predictable from their own no-fine behaviour, to within one grid step (about 0.2 g).
-- **Moderate confidence.** LLMs are easier to deter than a risk-neutral best responder: deterrence begins at about 0.4 g and is mostly complete before g.
+- **Moderate confidence (post hoc).** LLM agents are myopic offenders: the one-round gain, not the whole-game gain, predicts the fine at which they stop. Relative to the one-round gain they cut back from about 0.4 g₁; relative to the whole-game gain they over-take far past break-even.
 - **Untested:** why; whether the same holds in Forest or River; and whether fines that grow with the excess (marginal deterrence) would shift the curve.
 - **Next:** none. This was the last experiment. The next step is writing.

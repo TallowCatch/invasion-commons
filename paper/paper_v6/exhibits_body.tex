@@ -39,8 +39,8 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.66\textwidth]{figures/fig5_spine.pdf}
-  \caption{\textbf{Programmed and language-model agents stop cheating at the same point: when the expected fine outweighs their own gain.} The horizontal axis is the expected fine divided by the agent's gain from one step of over-taking, $e/g$, measured with no fine; to the right of the dashed line, cheating does not pay. Grey: the cheating level chosen by simulated cheaters in five \textsc{Fishery} settings (R3), relative to their level with no audits; the threshold was predicted before the search. Markers: how often gpt-oss and Nemotron over-take at each fine, relative to no fine (filled: L2; open: L3, whose fines fall between $e/g = 0.4$ and $1.1$ and whose stopping point was predicted in advance). The language models stop close to $e/g = 1$, but unlike the simulated best-responders they start to cut back from about $e/g = 0.4$: they are easier to deter than a risk-neutral agent. Error bars: 95\% intervals over populations.}
+  \includegraphics[width=\textwidth]{figures/fig5_spine.pdf}
+  \caption{\textbf{Each kind of agent stops cheating when the expected fine outweighs the gain it acts on.} Shaded: the expected fine exceeds the gain on the horizontal axis. (a)~Simulated cheaters choose one cheating level for the whole game, so they are scaled by their whole-game net gain $g^*$ (gain over complying, per round of cheating). In five \textsc{Fishery} settings they stop at $e/g^* = 1.0$--$1.2$, as predicted before the search (R3). (b)~Language-model agents decide every round, and are scaled by their one-round gain $g_1$ (extra tonnes in that round), measured with no fine. They stop close to $e/g_1 = 1$: the stopping fine predicted from $g_1$ before L3 ran was exact for Nemotron and one grid step early for gpt-oss. They begin to cut back from about $e/g_1 = 0.4$. Measured by the whole-game gain, they keep cheating far past the point where it pays. Over-taking loses gpt-oss fish over the game ($g^* < 0$), and Nemotron's whole-game break-even (dotted) lies at $e/g_1 = 0.15$. They act on the gain of the round, not of the game. Filled: L2; open: L3. Error bars: 95\% intervals over populations.}
   \label{fig:spine}
 \end{figure}
 
@@ -49,6 +49,13 @@
   \caption{\textbf{How this work relates to the closest prior work.} $^{a}$Becker 1968; Harrington 1988; inspection games (Avenhaus et al.\ 2002). $^{b}$Greenblatt et al.\ 2023. Random audits: audits at random with stated odds. Memory: later treatment depends on past offences. Predicted threshold: the fine at which cheating stops is predicted before it is tested. For this work: in simulation (R3, 5 of 5 settings) and, for language models, in L3. \checkmark: yes; (\checkmark): partly (Greenblatt et al.: an audit budget, not stated odds; Ye \& Steinhardt: a fishery is one of three environments, and memory tracks the reliability of reporters; Okamoto et al.: audit likelihood given in words, one fine on each side of break-even; inspection games: an inspector and one inspectee, or a few). Sources and the depth checked are listed in the novelty notes of the repository.}
   \label{tab:positioning}
   \input{tables/table3_positioning.tex}
+\end{table}
+
+\begin{table}[H]
+  \centering\small
+  \caption{\textbf{The settings of every study, side by side.} All simulations: 80 rounds and 64 new populations. Language-model studies: 20 rounds and 10 populations. Audits are random, with probability 1/6 per agent and round (T1 and C1: one audit per round). Statistics: paired bootstrap over populations, 4,000 resamples. $^a$\textsc{Fishery}: stock below 50 after fishing; \textsc{Forest}: more than a 5\% chance that mean plot health falls below 10 (both half capacity); R1 also reports the old one-step line (stock $\geq 10$), which the \textsc{Fishery} parts of S1 and S1b used. $^b$Chosen by search to maximise the cheaters' payoff over the whole game on training populations. $^c$S4 and S5 cut a caught agent's allowance by the share of the cut it took back; L2 cuts it by its mean tonnes over the allowance. $^d$\textsc{Fishery} and \textsc{Forest} as in $^a$; \textsc{River}: quality below 30 (pre-registered) and below 50 (re-measured). $^e$Part A compares reviewers built for the 30 line, so 30 is kept; Part B is also reported at 50.}
+  \label{tab:settings}
+  \resizebox{\textwidth}{!}{\input{tables/table4_settings.tex}}
 \end{table}
 
 \begin{figure}[H]

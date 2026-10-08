@@ -90,3 +90,13 @@ unsafe steps than random audits [1.8, 5.3].
 - The quota rule counts a request as "restricted" if any one agent is cut.
   That makes its usefulness loss look large. On average it kept 81% of the
   requested total.
+
+
+## Addendum (8 Oct 2026, post hoc): River harm at half capacity
+
+The paper now uses one harm line from the games' own regrowth: half capacity. In River that is quality below 50, against the pre-registered 30. C1's saved per-round rows were re-measured (`social_metrics.py`, `c1_half_capacity.csv`).
+
+- **Part B** (two under-reporters, one audit per round with memory, joint reviewer), comparing audit arms under one reviewer. The 50 line is a fair comparison here.
+  - Compositional game, share of rounds below 50: trust 53.0%, targeted 43.6%, random **38.7%**. At the 30 line: 19.3%, 6.1%, 2.7%. **The ordering is unchanged:** targeted audits are worse than random.
+  - Additive game: 81.9%, 81.4%, 80.4%. There is almost no difference at 50, because the joint reviewer keeps quality near the 30 line in this game.
+- **Part A** compares reviewers built to keep quality above 30 with a 5% chance. Judging them at 50 would score them against a goal they were not given, which is the mistake R1 is about. Part A therefore keeps 30 as its harm line. The 50 column (joint 36.9%, local_bounded 20.5%, quota 17.9%, local_optimistic 53.4% in the compositional game) is for information only. A reviewer that aims at 50 was not run.

@@ -449,35 +449,51 @@ def _llm_relative(model, g):
 
 
 def fig5_spine():
+    """Two kinds of agent, each scaled by its own gain (consistency fix, 8 Oct): (a) simulated cheaters choose one cheating
+    level for the whole game, so they are scaled by their whole-game net gain g* (R3); (b) LLM agents decide each round,
+    and are scaled by their one-round gain g1 (pre-registered in L2/L3). Panel (b) also marks where each model's
+    whole-game break-even lies on that axis (post hoc, l2_posthoc.json)."""
     r3 = json.loads((NOTES / "claude_r3_v1" / "r3_summary.json").read_text())["cells"]
     summ = {r["model"]: r for r in json.loads((NOTES / "claude_l2_v1" / "l2_summary.json").read_text())["models"]}
-    fig, ax = plt.subplots(figsize=(TEXTW * 0.62, 2.6))
-    ax.axvspan(1, 2.05, color=GRID, alpha=0.6, lw=0, zorder=0)
-    ax.axvline(1, color=INK2, lw=0.7, ls=(0, (3, 2)), zorder=1)
+    ph = json.loads((NOTES / "claude_l2_v1" / "l2_posthoc.json").read_text())
+    fig, (a, b) = plt.subplots(1, 2, figsize=(TEXTW, 2.5), sharey=True)
+    for ax in (a, b):
+        ax.axvspan(1, 2.05, color=GRID, alpha=0.6, lw=0, zorder=0)
+        ax.axvline(1, color=INK2, lw=0.7, ls=(0, (3, 2)), zorder=1)
+        ax.set_xlim(-0.05, 2.05)
+        ax.grid(axis="x", visible=False)
     first = True
     for c in r3:
         if not c.get("testable"):
             continue
         d = {float(k): v for k, v in c["d_star_by_e_over_g"].items()}
         xs = sorted(d)
-        ys = [d[x] / d[0.0] if d[0.0] else np.nan for x in xs]
-        ax.step(xs, ys, where="post", color=LIGHT, lw=1.0, zorder=2, label="Simulated cheaters (5 settings, R3)" if first else None)
+        a.step(xs, [d[x] / d[0.0] for x in xs], where="post", color=LIGHT, lw=1.0, zorder=2,
+               label="5 Fishery settings (R3)" if first else None)
         first = False
+    a.set_xlabel("Expected fine ÷ whole-game gain (e/g*)")
+    a.set_ylabel("Cheating, relative to no fine")
+    a.legend(loc="upper right", fontsize=6.2, frameon=True, framealpha=0.9, edgecolor="none")
+    title(a, "a", "Simulated cheaters (decide once per game)")
     for m in ("gpt-oss_120b-cloud", "nemotron-3-super_cloud"):
         lab, col, mk = LLM[m]
-        pts = _llm_relative(m, summ[m]["g_tonnes"])
-        for x, y, lo, hi, new in pts:
-            ax.errorbar(x, y, yerr=[[max(y - lo, 0)], [max(hi - y, 0)]], fmt=mk, color=col, ms=3.8, lw=0.8, capsize=1.2,
-                        mfc="white" if new else col, zorder=3)
-        ax.plot([], [], mk, color=col, ms=3.8, label=lab.split(" (")[0] + " (LLM)")
-    ax.set_xlim(-0.05, 2.05)
-    ax.set_ylim(-0.05, 1.8)
-    ax.set_xlabel("Expected fine ÷ the agent's gain from one over-take (e/g)")
-    ax.set_ylabel("Cheating, relative to no fine")
-    ax.text(1.03, 1.7, "fine outweighs\nthe gain", fontsize=6.4, color=INK2, va="top")
-    ax.legend(loc="center", bbox_to_anchor=(0.76, 0.76), fontsize=6.2, handlelength=1.4, frameon=True, framealpha=0.9,
-              edgecolor="none")
-    ax.grid(axis="x", visible=False)
+        g1 = summ[m]["g_tonnes"]
+        for x, y, lo, hi, new in _llm_relative(m, g1):
+            b.errorbar(x, y, yerr=[[max(y - lo, 0)], [max(hi - y, 0)]], fmt=mk, color=col, ms=3.6, lw=0.8, capsize=1.2,
+                       mfc="white" if new else col, zorder=3)
+        b.plot([], [], mk, color=col, ms=3.6, label=lab.split(" (")[0])
+        gs = (ph.get(m, {}).get("whole_game_gain") or {}).get("g_star_whole_game")
+        if gs is not None and gs > 0:  # where e = g* falls on the one-round axis
+            b.axvline(gs / g1, color=col, lw=0.8, ls=(0, (1, 1.5)), zorder=1)
+            b.text(gs / g1 + 0.02, 0.62, "Nemotron's\nwhole-game\nbreak-even", fontsize=5.6, color=col, va="top")
+        elif gs is not None:
+            b.text(1.08, 0.5, "gpt-oss: over-taking\nloses fish over the\ngame (g* < 0)", fontsize=5.6, color=col, va="top")
+    b.text(1.03, 1.62, "fine outweighs\nthe one-round gain", fontsize=6, color=INK2, va="top")
+    b.set_xlabel("Expected fine ÷ one-round gain (e/g$_1$)")
+    b.set_ylim(-0.05, 1.8)
+    b.legend(loc="center right", bbox_to_anchor=(1.0, 0.45), fontsize=6.2, frameon=True, framealpha=0.9, edgecolor="none")
+    title(b, "b", "Language-model agents (decide every round)")
+    fig.tight_layout(w_pad=1.2)
     save(fig, "fig5_spine")
 
 
@@ -541,7 +557,26 @@ def table3_positioning():
     (TAB / "table3_positioning.tex").write_text(tex + "\n")
 
 
+# ------------------------------------------------------------------ Table 4: the settings of every study, side by side (consistency)
+def table4_settings():
+    rows = [
+        ("R1, R2", "1--3", "Fishery, Forest", "none (honest); R2: reviewer's model wrong", "--", "--", "half capacity$^a$", "--"),
+        ("S1, S1b", "3", "Forest, Fishery", "programmed: under-report", "one level per game$^b$", "fine, exclusion or none", "half capacity$^a$", "--"),
+        ("S2, S3", "4", "Fishery", "programmed: over-take", "one level per game$^b$", r"fine ($s \le 1$)", "half capacity", "whole-game $g^*$"),
+        ("S4, S5", "3--4", "Fishery", "programmed: over-take, adapting", "one level per game$^b$", "memory$^c$, fine", "half capacity", "whole-game $g^*$"),
+        ("R3", "4", "Fishery (6 settings)", "programmed: over-take", "one level per game$^b$", "fine", "half capacity", r"whole-game $g^*$, predicted"),
+        ("T1", "5", "all three", "programmed: under-report by half", "fixed", "memory, no fine", r"half capacity$^d$", "--"),
+        ("C1", "1, 5", "River", "A: honest; B: under-report", "fixed", "B: memory", r"quality $<30$$^e$", "--"),
+        ("L2", "3, 6", "Fishery", "4 LLMs: over-take", "every round", "fine 0--36 t, or memory$^c$", "half capacity", "one-round $g_1$"),
+        ("L3", "6", "Fishery", "gpt-oss, Nemotron: over-take", "every round", "fine 12--30 t", "half capacity", r"one-round $g_1$, predicted"),
+    ]
+    head = r"Study & Claims & Games & Who misbehaves, and how & How it is chosen & Consequence of a catch & Harm line & Gain used \\"
+    body = "\n".join(" & ".join(r) + r" \\" for r in rows)
+    tex = "\n".join([r"\begin{tabular}{llllllll}", r"\toprule", head, r"\midrule", body, r"\bottomrule", r"\end{tabular}"])
+    (TAB / "table4_settings.tex").write_text(tex + "\n")
+
+
 if __name__ == "__main__":
-    for f in (fig2_reviewer, fig3_audits, fig4_llm, fig5_spine, figA1_llm_behaviour, table2_regimes, table3_positioning):
+    for f in (fig2_reviewer, fig3_audits, fig4_llm, fig5_spine, figA1_llm_behaviour, table2_regimes, table3_positioning, table4_settings):
         f()
         print("done", f.__name__)
