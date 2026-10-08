@@ -545,6 +545,7 @@ def table3_positioning():
         (r"Makins et al.\ 2026", [Y, Y, N, N, N, N, N]),
         (r"Gans \& Holden 2026", [N, N, N, Y, N, N, N]),
         (r"GovSim (Piatti et al.\ 2024)", [Y, Y, Y, N, N, N, N]),
+        (r"Bracale Syrnikov et al.\ 2026", [Y, Y, Y, N, N, N, N]),
         (r"Ye \& Steinhardt 2026", [Y, Y, P, N, N, P, N]),
         (r"Okamoto et al.\ 2026", [Y, N, N, P, N, N, N]),
         (r"\textbf{This work}", [Y, Y, Y, Y, Y, Y, Y]),

@@ -61,6 +61,23 @@ L3 tested the gap named here.
 - Okamoto et al. have one fine on each side of break-even, so they cannot show either result.
 - **Claim 6 can now be stated as:** "the fine at which LLM agents stop over-taking can be predicted from their own no-fine behaviour (within one grid step), and LLMs are easier to deter than a risk-neutral agent."
 
+## Update after the consistency check (8 Oct, about 21:00Z): the "myopic offender" claim
+
+Details: `claim6b_myopic_offenders.md`. Its two key new sources were re-opened by hand: Bracale Syrnikov et al. 2026, and the penseralabs repository.
+
+| Part of the claim | Verdict |
+| --- | --- |
+| LLM agents in a commons are myopic about the shared stock | **Partly shown, close to known.** GovSim ("long-term effects"); Bracale Syrnikov et al. 2026, arXiv:2607.22188, LLM collectives in an energy commons that "behave like impatient optimizers", with no enforcement. Do not claim it as new. |
+| The one-round gain, not the whole-game gain, predicts the fine at which LLM agents stop | **No prior work found.** The theory is standard (Becker; the one-shot deviation principle). What is new is the empirical test. The one-round prediction was made in advance (L3); the comparison with the whole-game gain is post hoc. |
+| Graded deterrence starting at about 0.4 of the one-round gain | **No prior work found** for LLMs. Modest, and seen in two models only. |
+| Size penalties to the one-step gain | **Partly shown:** sizing fines to the gain is standard. The LLM-specific "immediate gain is the one that counts" version was not found. |
+
+**Scooping watch:** penseralabs/becker-agents (re-checked 8 Oct) plans "deterrence curves" for LLM agents, but has no results, paper or preprint. Re-check before submission.
+
+**Final wording for claim 6:**
+- "In a repeated commons with random audits, the fine at which LLM agents stop over-taking can be predicted in advance from their one-round gain: within one grid step for both models, and exactly for one.
+- Their whole-game gain from over-taking is small or negative, yet they over-take until the fine outweighs the one-round gain. As with the myopia reported in LLM commons (Piatti et al. 2024; Bracale Syrnikov et al. 2026), they ignore the cost to the shared stock, and here that myopia sets the deterrence threshold (post hoc)."
+
 ## What this means for the remaining work
 
 - **Claim 6 is the weakest on novelty.** The one thing no prior work has is the threshold located at the model's own measured gain, predicted in advance. The current L2 grid cannot show it: e = 1.33 t gives no deterrence and e = 6 t gives full deterrence. A threshold-location experiment (fines between 8 and 36 t, with the prediction written first) is what makes claim 6 ours.
