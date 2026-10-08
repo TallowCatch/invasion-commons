@@ -22,9 +22,11 @@ if [ "$STAGE" = "em" ]; then  # Amendment 5: EM only, nemotron (slow) split over
   OUTBASE="claude_l2_em_v2"; CELLARGS=(--cells EM)
 fi
 if [ "$STAGE" = "l3" ]; then  # L3 (studies/L3_llm_threshold): fines 12-30 t, gpt-oss and nemotron only
-  LANE_A=("nemotron-3-super:cloud@0-4")
-  LANE_B=("nemotron-3-super:cloud@5-9")
-  LANE_C=("gpt-oss:120b-cloud")
+  # Rebalanced 2026-10-08 12:30Z (Nemotron slower than in L2): lane C takes contexts 4 and 9 after gpt-oss. The jobs
+  # running then (A: 0-4, B: 5-9) cannot reach context 4 or 9 before their time limit (16 games at about 30 min each).
+  LANE_A=("nemotron-3-super:cloud@0-3")
+  LANE_B=("nemotron-3-super:cloud@5-8")
+  LANE_C=("gpt-oss:120b-cloud" "nemotron-3-super:cloud@4-4" "nemotron-3-super:cloud@9-9")
   OUTBASE="claude_l3_v1"; CELLARGS=(--cells E12,E18,E24,E30)
 fi
 ADDED_PILOTS=("mistral-large-3:675b-cloud")  # pilot gate run before the full run (Amendments 2, 4)
