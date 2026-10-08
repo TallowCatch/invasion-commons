@@ -2,7 +2,7 @@
 # One GitHub Actions job of experiment L2 (protocol: notes/claude_audit_20261005/studies/L2_llm_agents/protocol.md, Amendments 1-2).
 # Usage: bash scripts/l2_ci_step.sh check|run STORE_DIR MAX_MINUTES LANE [STAGE]
 # STAGE main (default): the 10 cells other than EM, in claude_l2_v1. STAGE em: the EM cell with the corrected memory rule
-# (Amendment 5), in claude_l2_em_v2.
+# (Amendment 5), in claude_l2_em_v2. STAGE l3: L3 fines 12-30 t, in claude_l3_v1.
 # STORE_DIR holds the l2-results branch: claude_l2_v1/<model>/..., claude_l2_pilot_v2/<model>/..., gates.json
 # Amendment 2 (Ollama Pro, 3 models at a time): three lanes run in parallel, each working through its own list of
 # units in order. A unit is a model (all 10 contexts) or MODEL@LO-HI (only those contexts; files get the suffix _ctxLO-HI).
@@ -20,6 +20,12 @@ if [ "$STAGE" = "em" ]; then  # Amendment 5: EM only, nemotron (slow) split over
   LANE_B=("nemotron-3-super:cloud@5-9")
   LANE_C=("gpt-oss:120b-cloud" "gemma4:31b-cloud" "mistral-large-3:675b-cloud")
   OUTBASE="claude_l2_em_v2"; CELLARGS=(--cells EM)
+fi
+if [ "$STAGE" = "l3" ]; then  # L3 (studies/L3_llm_threshold): fines 12-30 t, gpt-oss and nemotron only
+  LANE_A=("nemotron-3-super:cloud@0-4")
+  LANE_B=("nemotron-3-super:cloud@5-9")
+  LANE_C=("gpt-oss:120b-cloud")
+  OUTBASE="claude_l3_v1"; CELLARGS=(--cells E12,E18,E24,E30)
 fi
 ADDED_PILOTS=("mistral-large-3:675b-cloud")  # pilot gate run before the full run (Amendments 2, 4)
 next() { echo "$1" > NEXT; }  # tells the workflow what to do next: done | wait | now (outside the store, never committed)

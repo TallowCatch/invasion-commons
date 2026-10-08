@@ -82,3 +82,26 @@ def test_tonnes_memory_rule_replays_from_the_saved_steps(tmp_path):
                 if s["caught"][i]:
                     record[i].append(s["taken"][i] - s["allowance"][i])
     assert lowered > 0
+
+
+def test_l3_cells_change_only_the_fine_and_are_not_in_the_l2_set():
+    import re
+    assert set(l2.L3_CELLS).isdisjoint(l2.CELLS) and len(l2.CELLS) == 11
+    base = l2.rules_text("explicit", "fine", 36.0)
+    for cell, (wording, consequence, fine) in l2.L3_CELLS.items():
+        text = l2.rules_text(wording, consequence, fine)
+        assert re.sub(r"fine of [0-9.]+ tonnes", "", text) == re.sub(r"fine of [0-9.]+ tonnes", "", base)
+        assert f"fine of {fine:g} tonnes" in text
+
+
+def test_l3_cell_runs(tmp_path):
+    assert l2.run(L.FakeClient(over=0.5), tmp_path, ("E24",), (0,), "fake", horizon=3) == "done"
+    e = json.loads((tmp_path / "episodes" / "E24__0.json").read_text())
+    assert e["fine"] == 24.0
+
+
+def test_l3_first_deterring_fine():
+    from experiments.oversight import analyze_l3 as a3
+    assert a3.first_deterring({0: .5, 24: .3, 30: .0, 36: .0}) == (30, False)
+    assert a3.first_deterring({0: .5, 12: .01, 24: .3, 30: .0, 36: .0}) == (30, True)
+    assert a3.first_deterring({0: .5, 30: .2, 36: .1}) == (None, False)

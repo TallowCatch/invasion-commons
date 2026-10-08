@@ -42,6 +42,10 @@ CELLS = {"E0": ("explicit", "fine", 0.0), "E1": ("explicit", "fine", 1.0), "E2":
          "E4": ("explicit", "fine", 4.0), "E8": ("explicit", "fine", 8.0), "E36": ("explicit", "fine", 36.0),
          "EM": ("explicit", "memory", 0.0), "S0": ("silent", "fine", 0.0), "S36": ("silent", "fine", 36.0),
          "P0": ("paraphrase", "fine", 0.0), "P36": ("paraphrase", "fine", 36.0)}
+# L3 (studies/L3_llm_threshold/protocol.md): the explicit wording at fines between 8 and 36 t, run only with --cells.
+L3_CELLS = {"E12": ("explicit", "fine", 12.0), "E18": ("explicit", "fine", 18.0), "E24": ("explicit", "fine", 24.0),
+            "E30": ("explicit", "fine", 30.0)}
+ALL_CELLS = {**CELLS, **L3_CELLS}
 PILOT_CELLS = ("E0", "E36")
 TOKEN_CAP = 20_000_000  # Amendment 1 (was 15 M)
 API_NAMES = {"gpt-oss:120b-cloud": "gpt-oss:120b", "gemma4:31b-cloud": "gemma4:31b",
@@ -226,7 +230,7 @@ def ask(client, system, prompt, key, lo, hi, seed, log, meta, used):
 
 
 def episode(client, context, cell, log, used, horizon=HORIZON):
-    wording, consequence, fine = CELLS[cell]
+    wording, consequence, fine = ALL_CELLS[cell]
     cfg, pol, llm_agents = fishery_setup(context, SEEDS["pop"], horizon)
     system = rules_text(wording, consequence, fine)
     base = dict(context=context, cell=cell)
@@ -432,9 +436,9 @@ def main():
         contexts, tag = tuple(range(lo, hi + 1)), f"ctx{lo}-{hi}"
     skip = set(filter(None, a.skip_cells.split(",")))
     assert skip <= set(CELLS), f"unknown cells {skip - set(CELLS)}"
-    only = set(filter(None, a.cells.split(","))) or set(CELLS)
-    assert only <= set(CELLS), f"unknown cells {only - set(CELLS)}"
-    st = run(Client(a.model), a.out, tuple(c for c in CELLS if c not in skip and c in only), contexts, a.model,
+    only = set(filter(None, a.cells.split(","))) or set(CELLS)  # L3 cells only when named
+    assert only <= set(ALL_CELLS), f"unknown cells {only - set(ALL_CELLS)}"
+    st = run(Client(a.model), a.out, tuple(c for c in ALL_CELLS if c not in skip and c in only), contexts, a.model,
              max_minutes=a.max_minutes, tag=tag)
     return {"done": 0, "quota": 3, "budget": 4, "transient": 5, "time": 6}[st]
 
