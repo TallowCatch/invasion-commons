@@ -1,5 +1,15 @@
 # What we have learned, and what should come next
 
+## Update 7, 8 October 2026: after L3 (studies/L3_llm_threshold), the last experiment
+
+- **The stopping point was predicted in advance and found.** From each model's no-fine gain (gpt-oss 4.48 t, Nemotron 4.74 t), the prediction was that F = 30 is the first fine that deters. Nemotron stopped at exactly F = 30; gpt-oss at F = 24, one grid step early.
+- **Deterrence is graded, and it starts well before the gain.** Relative to no fine, over-taking was:
+  - gpt-oss: 0.79 at e/g = 0.45, 0.23 at 0.67, 0.02 at 0.89;
+  - Nemotron: 0.87 at e/g = 0.42, 0.65 at 0.63, 0.12 at 0.84.
+
+  The simulated best-responders switch off in one step at e/g = 1.0–1.2. So LLMs are easier to deter than the risk-neutral prediction. H3 failed for both models. Why is untested: candidate explanations are risk aversion, a gain larger than the model perceives, and a large stated fine read as a signal.
+- **All experiments are finished.** What remains is writing (see "FINAL LIST" in PROJECT_HISTORY.md).
+
 ## Update 6, 8 October 2026: after L2 (studies/L2_llm_agents)
 
 - **Claim 6 holds.** In Fishery, with audits at 1/6, gpt-oss and Nemotron over-took in 51–92% of steps for every expected fine from 0 to 1.33 t, and in 0% at 6 t. That is the only tested fine above their measured one-step gain of about 4.5–4.7 t. H1 holds in all 3 frozen families.

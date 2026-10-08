@@ -115,6 +115,7 @@ test against the same fixed reviewer protocol.
 | **R3** (7 Oct) | Does deterrence start at the break-even in every Fishery setting, with the gain per cheating step fixed **before** the search? | Yes: in **5 of 5** testable settings the threshold fell within one grid step of the prediction. The predicted thresholds range from 0.19 to 1.20. The sixth setting gives cheating no gain, so it is not testable. | 2 of 3 supported; 1 badly posed (the gain is zero at exactly the break-even). |
 | **T1** (7 Oct) | Do audits aimed at the largest report miss under-reporters, in all three games? | Aiming at the largest report was worse than random in **Fishery** (+89 points of harm) and **River** (+3.2), with no difference in **Forest**. The reason is **coverage**, not hiding: the aim keeps auditing the same agent, so only **25%** of liars were ever caught in Fishery, against 100% at random **[post hoc diagnostic]**. In Forest, aiming at the plot doing worst against prediction was best: harm fell to **26%** of the no-audit level, against 65% at random. | 2 of 3 supported; the mechanism hypothesis was falsified and revised. |
 | **L2** (7–8 Oct) | Do language-model fishers stop over-taking once the expected fine exceeds their gain? 4 models × 10 cells × 10 contexts (400 games, on Ollama Cloud). | gpt-oss and Nemotron over-took in **51–92%** of steps for every expected fine from 0 to 1.33 t, and in **0%** at 6 t, the only cell above their measured gain (**4.5–4.7 t**). A small fine (1–2 t) *raised* over-taking **[post hoc]**. Gemma over-took little (5–10%), almost all by keeping its request after a cut **[post hoc]**; Mistral Large 3 never over-took. 0 fallbacks in 62,152 decisions. H4 (L1 replication) failed because S0 still describes a free check (design error). Memory without fines (EM, corrected rule): over-taking stays at 20–33% but MSY-limit breaks fall from over 90% to 20–40%, with no collapses. | Claim 6 holds (H1 in 3 of 3 frozen families); H3 (memory) holds in 2 of 3. |
+| **L3** (8 Oct) | Does each LLM stop over-taking at the fine its own gain predicts? Fines 12–30 t, gpt-oss and Nemotron, 80 games, with the prediction frozen first. | Predicted F = 30 for both. **Nemotron: exactly F = 30. gpt-oss: F = 24**, one grid step early. Deterrence is graded: over-taking falls from about e/g = 0.4 and is at 2–12% of the no-fine level by e/g ≈ 0.85–0.9. That is earlier than a risk-neutral agent would stop (H3 failed for both). 0 fallbacks; comprehension 3 of 3. | Claim 6, by the pre-stated rule: "within one grid step" (exact for Nemotron). |
 
 **7 Oct: paper exhibits.**
 - Built for claims 1–5, following how the closest papers present their results.
@@ -146,10 +147,11 @@ test against the same fixed reviewer protocol.
 5. **Making a stronger attacker is still unsolved.** Richer search and PPO did
    not give a validated ladder of attacker strength (S5, and the September
    actor pilots).
-6. **LLM agents follow the break-even rule, when they over-take on purpose (L2).**
-   - gpt-oss and Nemotron stopped completely only when the expected fine (6 t) exceeded their gain (about 4.5 t). Fines below it did nothing, or made things worse.
+6. **LLM agents follow the break-even rule, when they over-take on purpose (L2, L3).**
+   - The fine at which gpt-oss and Nemotron stop is predictable from their own no-fine gain, within one grid step (exact for Nemotron).
+   - They are easier to deter than a risk-neutral agent: over-taking falls from about 0.4 g and is mostly gone before g.
    - Families differ in *whether* they over-take: Mistral Large 3 never did; Gemma mostly ignored cuts.
-   - Confidence: high for the threshold's direction; the grid does not locate it between e = 1.33 and 6 t.
+   - Confidence: high for the stopping point; why deterrence starts early is untested.
 
 ### FINAL LIST (frozen 8 October 2026): nothing is added after this
 
@@ -157,11 +159,11 @@ Ameer decided to stop adding experiments. Everything not on this list is parked 
 
 **Runs, which are the last ones:**
 1. ~~**L2 memory cell (EM)**~~: done 11:09Z on 8 Oct. H3 holds for gpt-oss and Nemotron.
-2. **L3, threshold location:** fines of 12, 18, 24 and 30 t for gpt-oss and Nemotron, 80 games. The prediction was frozen before any code (`studies/L3_llm_threshold/protocol.md`). Running since 11:09Z on 8 Oct; should be done by about 18:30Z.
+2. ~~**L3, threshold location**~~: done at 18:22Z on 8 Oct. The stopping fine is within one grid step of the prediction (exact for Nemotron); deterrence starts below the gain. **All runs are finished.**
 
 **After the runs, writing only:**
 3. ~~Add H3 (EM) to `studies/L2_llm_agents/results.md`~~: done.
-4. Write `studies/L3_llm_threshold/results.md`, and put the 10-fine curve in Figure 4(a).
+4. ~~Write `studies/L3_llm_threshold/results.md`, and put the 10-fine curve in Figure 4(a)~~: done, with Figure 5 (the spine).
 5. Read the primary sources marked "read before quoting" in `novelty/README.md` and the ledger: Becker, Harrington, UNCLOS/UNFSA, Sutinen & Andersen, Segerson.
 6. Draft the paper in `paper/paper_v6`: introduction, related work (from `novelty/README.md`), methods, results with Figures 2–4, and limitations.
 7. Supervisor review, then the venue: an AAAI-27 workshop and arXiv (about 20 Nov), then ICML 2027 (about 22 Jan).

@@ -43,8 +43,10 @@ def main():
                for p in sorted((d / "episodes").glob("*.json"))]
         eps = [e for e in eps if e["cell"] in FINES]
         A = pd.DataFrame([r for e in eps for r in a2.agent_steps(e)])
+        hon = pd.DataFrame([dict(cell=e["cell"], context=e["context"], honest=e["honest_harvest"]) for e in eps])
         pcs.append(A[A.cell.isin(("E12", "E18", "E24", "E30"))].groupby(["cell", "context"])
-                   .agg(overtake_rate=("over", "mean"), agent_steps=("over", "size")).reset_index().assign(model=m))
+                   .agg(overtake_rate=("over", "mean"), agent_steps=("over", "size")).reset_index()
+                   .merge(hon, on=["cell", "context"]).assign(model=m))
         rng = np.random.default_rng(a2.SEED)
         ctx = np.array(sorted(A.context.unique()))
 

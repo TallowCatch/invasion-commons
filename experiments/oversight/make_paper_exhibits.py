@@ -344,30 +344,39 @@ def _boot_pooled(df, col, w=None, b=4000, seed=20261019):
 def fig4_llm():
     d = NOTES / "claude_l2_v1"
     pc = pd.read_csv(d / "l2_context_cells.csv")
+    l3 = NOTES / "claude_l3_v1" / "l3_context_cells.csv"
+    if l3.exists():
+        pc = pd.concat([pc, pd.read_csv(l3)])
     summ = {r["model"]: r for r in json.loads((d / "l2_summary.json").read_text())["models"]}
     em_ok = "EM" in set(pc.cell)
     fig, axs = plt.subplots(2, 2, figsize=(TEXTW, 4.9))
     (a, b), (c, dd) = axs
-    x = np.arange(len(E_CELLS))
-    off = np.linspace(-0.24, 0.24, len(LLM))
+    cells_all = ["E0", "E1", "E2", "E4", "E8", "E12", "E18", "E24", "E30", "E36"]  # L3 adds E12-E30 for gpt-oss, Nemotron
+    fine_of = {**E_FINE, "E12": 12, "E18": 18, "E24": 24, "E30": 30}
+    x = np.arange(len(cells_all))
+    off = np.linspace(-0.27, 0.27, len(LLM))
     for k, (m, (lab, col, mk)) in enumerate(LLM.items()):
         sub = pc[pc.model == m]
+        have = [c for c in cells_all if (sub.cell == c).any()]
+        xs = np.array([cells_all.index(c) for c in have])
         for ax, colname, w, scale in ((a, "overtake_rate", "agent_steps", 100), (b, "honest", None, 1)):
-            pts = [_boot_pooled(sub[sub.cell == e], colname, w) for e in E_CELLS]
+            pts = [_boot_pooled(sub[sub.cell == c], colname, w) for c in have]
             est, lo, hi = (np.array(t) * scale for t in zip(*pts))
-            ax.errorbar(x + off[k], est, yerr=[est - lo, hi - est], fmt=mk, color=col, ms=3.6, lw=0.8, capsize=1.2,
+            ax.errorbar(xs + off[k], est, yerr=[est - lo, hi - est], fmt=mk, color=col, ms=3.2, lw=0.7, capsize=1.0,
                         label=lab, mfc=col if m != "mistral-large-3_675b-cloud" else "white")
+    gs = {m: summ[m]["g_tonnes"] for m in ("gpt-oss_120b-cloud", "nemotron-3-super_cloud") if summ.get(m)}
     for ax in (a, b):
         ax.set_xticks(x)
-        ax.set_xticklabels([f"{E_FINE[e]}\n({E_FINE[e] / 6:.2g})" for e in E_CELLS])
-        ax.set_xlabel("Fine F, t (expected fine e = F/6, t)", fontsize=7)
+        ax.set_xticklabels([str(fine_of[c]) for c in cells_all], fontsize=6.4)
+        ax.set_xlabel("Fine F (t); expected fine e = F/6", fontsize=7)
         ax.grid(axis="x", visible=False)
-        ax.axvspan(4.5, 5.5, color=GRID, alpha=0.7, zorder=0, lw=0)
-    gs = [summ[m]["g_tonnes"] for m in ("gpt-oss_120b-cloud", "nemotron-3-super_cloud") if summ.get(m)]
-    a.text(5, 72, f"e $\\geq$ g\n(g = {min(gs):.1f}–\n{max(gs):.1f} t)", ha="center", va="bottom", fontsize=6, color=INK2)
+        ax.axvspan(7.5, 9.5, color=GRID, alpha=0.7, zorder=0, lw=0)  # e = 5 and 6: above both models' gain
+        for m, g in gs.items():  # where e = g falls between grid points (6g t lies between F = 24 and 30)
+            ax.axvline(7 + (6 * g - 24) / 6, color=LLM[m][1], lw=0.6, ls=(0, (2, 2)), zorder=1)
+    a.text(8.5, 72, "e > g", ha="center", va="bottom", fontsize=6, color=INK2)
     a.set_ylim(-3, 103)
     a.set_ylabel("Over-taking (% of agent-steps)")
-    title(a, "a", "Over-taking stops once e exceeds the gain g")
+    title(a, "a", "Over-taking ends as e nears the gain g")
     b.set_ylabel("Catch per rule-following fisher (t)")
     b.set_ylim(0, 40)
     title(b, "b", "Harm to the rule-followers")
@@ -466,7 +475,8 @@ def fig5_spine():
     ax.set_xlabel("Expected fine ÷ the agent's gain from one over-take (e/g)")
     ax.set_ylabel("Cheating, relative to no fine")
     ax.text(1.03, 1.7, "fine outweighs\nthe gain", fontsize=6.4, color=INK2, va="top")
-    ax.legend(loc="center", bbox_to_anchor=(0.32, 0.3), fontsize=6.4, handlelength=1.6)
+    ax.legend(loc="center", bbox_to_anchor=(0.76, 0.76), fontsize=6.2, handlelength=1.4, frameon=True, framealpha=0.9,
+              edgecolor="none")
     ax.grid(axis="x", visible=False)
     save(fig, "fig5_spine")
 

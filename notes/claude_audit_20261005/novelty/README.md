@@ -53,6 +53,14 @@ The paper must not present any of these as new.
 | 5 | Partly shown. **New: report-aimed audits lose coverage** (25% of liars ever caught) | "Audits must be unpredictable and reach every agent. Aiming at the largest report keeps auditing the same agent." Discuss Reinganum & Wilde, Kamijo and Ensign et al. 2017. |
 | 6 | Partly shown: Okamoto 2026 | "A dose–response of deterrence for LLM agents in a repeated multi-agent commons, with explicit audit odds, set against each model's measured gain." Present fines backfiring as a replication of Okamoto and Gneezy–Rustichini in a new setting (post hoc), not as a first. Treat the wording effect as a control. |
 
+## Update after L3 (8 Oct, 18:30Z)
+
+L3 tested the gap named here.
+- The fine at which each model stops was predicted from its own no-fine gain. The prediction held exactly for Nemotron and within one grid step for gpt-oss.
+- Deterrence is graded, and it starts at about 0.4 g, earlier than a risk-neutral agent would stop.
+- Okamoto et al. have one fine on each side of break-even, so they cannot show either result.
+- **Claim 6 can now be stated as:** "the fine at which LLM agents stop over-taking can be predicted from their own no-fine behaviour (within one grid step), and LLMs are easier to deter than a risk-neutral agent."
+
 ## What this means for the remaining work
 
 - **Claim 6 is the weakest on novelty.** The one thing no prior work has is the threshold located at the model's own measured gain, predicted in advance. The current L2 grid cannot show it: e = 1.33 t gives no deterrence and e = 6 t gives full deterrence. A threshold-location experiment (fines between 8 and 36 t, with the prediction written first) is what makes claim 6 ours.
