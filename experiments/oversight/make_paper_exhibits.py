@@ -31,9 +31,9 @@ BLUE, ORANGE, AQUA, VIOLET, YELLOW = "#2a78d6", "#eb6834", "#1baf7a", "#4a3aa7",
 INK, INK2, GRID = "#1a1a1a", "#5f5e5a", "#e6e5e1"
 REVIEWER = {"joint": ("Joint", BLUE, "o"), "local_bounded": ("Cautious local", ORANGE, "s"),
             "local_optimistic": ("Optimistic local", AQUA, "D")}
-REGIME = {"none": ("No audits", INK2), "fine": ("Fine", ORANGE), "memory": ("Memory", AQUA),
-          "memory_cap": ("Memory + extra checks", VIOLET), "memory_cut": ("Memory + tighter shared cut", YELLOW),
-          "fine+memory_cut": ("Fine + memory + tighter cut", BLUE)}
+REGIME = {"none": ("No audits", INK2), "fine": ("Fine", ORANGE), "memory": ("Lower allowance for caught agents", AQUA),
+          "memory_cap": ("Check caught agents every round", VIOLET), "memory_cut": ("Lower allowance for all agents", YELLOW),
+          "fine+memory_cut": ("Fine and lower allowance for all agents", BLUE)}
 
 plt.rcParams.update({
     "font.family": "serif", "font.serif": ["Times New Roman", "Times", "STIXGeneral"], "mathtext.fontset": "stix",
@@ -181,17 +181,23 @@ def fig2_reviewer():
 
 # ------------------------------------------------------------------ Figure 3: what makes audits work (claims 3-5)
 def fig3_audits():
+    """Audits with programmed agents (5 panels). Legends: (a) above its axes; (c) in a side column on the left;
+    (e) in a side column on the right (9 Oct 2026 layout). River joins panel (a) from C1 Part B at half capacity."""
     M = pd.read_csv(NOTES / "claude_r2_v1/A_memory.csv")
     S3 = json.loads((NOTES / "claude_s3_partA_v1/s3_summary.json").read_text())
     T = pd.read_csv(NOTES / "claude_s5_v1/s5_cells.csv")
-    C1 = pd.read_csv(NOTES / "claude_c1_v1/c1_closed_loop.csv")
+    RV = pd.read_csv(NOTES / "social_metrics/c1_half_capacity.csv")
     FINE_C, MEM_C, BOTH_C = ORANGE, AQUA, BLUE
-    fig = plt.figure(figsize=(TEXTW, 4.1))
-    gs = fig.add_gridspec(2, 3, height_ratios=[1, 1], hspace=0.75, wspace=0.45)
-    a = fig.add_subplot(gs[0, :2]); b = fig.add_subplot(gs[0, 2])
-    c = fig.add_subplot(gs[1, 0]); d = fig.add_subplot(gs[1, 1]); e = fig.add_subplot(gs[1, 2])
+    fig = plt.figure(figsize=(7.0, 4.3))
+    gs = fig.add_gridspec(2, 5, width_ratios=[0.78, 1, 1, 1, 0.78], height_ratios=[1, 1], hspace=0.62, wspace=0.62,
+                          left=0.04, right=0.99, top=0.9, bottom=0.12)
+    a = fig.add_subplot(gs[0, 0:3]); b = fig.add_subplot(gs[0, 3:5])
+    lc_ax = fig.add_subplot(gs[1, 0]); c = fig.add_subplot(gs[1, 1]); d = fig.add_subplot(gs[1, 2])
+    e = fig.add_subplot(gs[1, 3]); le_ax = fig.add_subplot(gs[1, 4])
+    for ax in (lc_ax, le_ax):
+        ax.axis("off")
 
-    # (a) memory across nine settings
+    # (a) memory across settings: nine programmed settings (R2) and River (C1 Part B, half capacity)
     order = ["fishery_s4_r0.9", "fishery_s4_r0.7", "fishery_s4_r0.5", "fishery_s2_r0.5", "fishery_s2_r0.7",
              "harvest_s4_m1.0", "harvest_s4_m0.85", "harvest_s2_m0.85", "harvest_s2_m1.0"]
     def lab(cell):
@@ -200,75 +206,83 @@ def fig3_audits():
     def harm(cell, mode):
         g = M[(M.cell == cell) & (M["mode"] == mode) & (M.liar == "fixed")].iloc[0]
         return 100 * (g.target_breaking_rate if g.target == "msy" else g.unsafe_fixed)
-    grouped(a, [lab(x) for x in order], [("Trust reports", INK2, [harm(x, "trust") for x in order], None),
-                                         ("Audit, no memory", LIGHT, [harm(x, "memoryless") for x in order], None),
-                                         ("Audit + memory", MEM_C, [harm(x, "memory") for x in order], None)], ylim=(0, 100))
-    a.set_ylim(0, 118); a.set_yticks([0, 25, 50, 75, 100])
-    a.set_ylabel("Harm (% of steps)$^*$"); a.legend(loc="upper right", ncol=3, fontsize=6.4, borderaxespad=0.1)
-    a.plot([4.5, 4.5], [0, 100], color=INK2, lw=0.5)  # divider stays inside the data range, clear of the legend
-    for xc, gname in ((2.0, "Fishery"), (6.5, "Forest")):
+    rv = {arm: 100 * RV[(RV.game == "comp") & (RV.part == "B") & (RV.arm == arm)].below_50.iloc[0] for arm in ("trust", "random")}
+    labels = [lab(x) for x in order] + ["3X\n3Y"]
+    series = [("No audits", INK2, [harm(x, "trust") for x in order] + [rv["trust"]], None),
+              ("Audits without memory", LIGHT, [harm(x, "memoryless") for x in order] + [0.0], None),
+              ("Audits with memory", MEM_C, [harm(x, "memory") for x in order] + [rv["random"]], None)]
+    grouped(a, labels, series, ylim=(0, 100))
+    a.text(9, 2, "not\nrun", ha="center", va="bottom", fontsize=5.2, color=INK2)
+    a.set_ylim(0, 100); a.set_yticks([0, 25, 50, 75, 100])
+    a.set_ylabel("Rounds below harm line (%)")
+    a.legend(loc="lower right", bbox_to_anchor=(1.0, 1.01), ncol=3, fontsize=6.2, frameon=False, borderaxespad=0,
+             handlelength=1.2, columnspacing=1.0)
+    for xv in (4.5, 8.5):
+        a.plot([xv, xv], [0, 100], color=INK2, lw=0.5)
+    for xc, gname in ((2.0, "Fishery"), (6.5, "Forest"), (9.0, "River")):
         a.text(xc, -0.30, gname, transform=a.get_xaxis_transform(), ha="center", va="top", fontsize=6.8, fontweight="bold")
-    title(a, "a", "Memory makes audits work (nine settings, under-reporters)")
+    title(a, "a")
 
-    # (b) predicted break-even against observed threshold (R3 settings + S3 audit-rate / detection variants)
+    # (b) predicted break-even against observed threshold (R3 settings and S3 audit-rate / detection variants)
     R3 = json.loads((NOTES / "claude_r3_v1/cells.json").read_text())
-    pts = [(c["g_star"], c["e_star"]) for c in R3 if c["testable"]]
+    pts = [(c_["g_star"], c_["e_star"]) for c_ in R3 if c_["testable"]]
     g3 = S3["AB"]["A_allow"]["predicted_e_threshold"]
     s3pts = [(g3, S3["AB"][k]["e_star"]) for k in S3["AB"] if k.startswith(("A_q", "B_q"))]
     lo_, hi_ = 0.12, 2.0
     xx = np.geomspace(lo_, hi_, 50)
-    b.fill_between(xx, 0.8 * xx, 1.2 * xx, color=GRID, lw=0, label="±1 grid step")
+    b.fill_between(xx, 0.8 * xx, 1.2 * xx, color=GRID, lw=0, label="Within one grid step")
     b.plot(xx, xx, color=INK2, lw=0.7, ls="--")
-    b.scatter([p[0] for p in s3pts], [p[1] for p in s3pts], s=16, facecolor="white", edgecolor=FINE_C, lw=0.9, zorder=3,
-              label="S3: audit rates, misses")
-    b.scatter([p[0] for p in pts], [p[1] for p in pts], s=18, color=FINE_C, zorder=4, label="R3: five settings")
+    b.scatter([p_[0] for p_ in s3pts], [p_[1] for p_ in s3pts], s=16, facecolor="white", edgecolor=FINE_C, lw=0.9, zorder=3,
+              label="Audit rate or detection varied")
+    b.scatter([p_[0] for p_ in pts], [p_[1] for p_ in pts], s=18, color=FINE_C, zorder=4, label="New settings, predicted first")
     b.set_xscale("log"); b.set_yscale("log"); b.set_xlim(lo_, hi_); b.set_ylim(lo_, hi_)
     b.set_xticks([0.2, 0.5, 1]); b.set_xticklabels(["0.2", "0.5", "1"]); b.set_yticks([0.2, 0.5, 1]); b.set_yticklabels(["0.2", "0.5", "1"])
     b.minorticks_off()
     b.set_xlabel("Predicted break-even $g^*$"); b.set_ylabel("Observed threshold $e^*$")
-    b.legend(fontsize=5.5, loc="lower right", borderaxespad=0.1, handletextpad=0.2)
-    title(b, "b", "Fines deter at break-even")
+    b.legend(fontsize=5.6, loc="lower right", borderaxespad=0.2, handletextpad=0.3)
+    title(b, "b")
 
-    # (c) gain against audit rate, by audit rule
+    # (c) cheaters' gain against audit rate, by audit rule (S5)
     T0 = T[T.tier == "T0"]
-    rules = [("fine", "Fine", FINE_C, "-"), ("memory", "Memory", MEM_C, "-"), ("fine+memory_cut", "Fine + memory", BOTH_C, "-"),
-             ("memory_cap", "Memory + extra checks", VIOLET, "-"), ("memory_cut", "Memory + tighter cut", YELLOW, "-")]
-    for key, lab_, col, ls in rules:
+    rules = [("fine", "Fine", FINE_C), ("memory", "Lower allowance\nfor caught agents", MEM_C),
+             ("memory_cap", "Check caught agents\nevery round", VIOLET), ("memory_cut", "Lower allowance\nfor all agents", YELLOW),
+             ("fine+memory_cut", "Fine and lower\nallowance for all agents", BOTH_C)]
+    for key, lab_, col in rules:
         g = T0[T0.regime == key].sort_values("q")
         c.fill_between(g.q, g.cheater_gain_lo, g.cheater_gain_hi, color=col, alpha=0.14, lw=0)
-        c.plot(g.q, g.cheater_gain, color=col, ls=ls, marker="o", ms=2.4, lw=1.0, label=lab_)
+        c.plot(g.q, g.cheater_gain, color=col, marker="o", ms=2.4, lw=1.0, label=lab_)
     none_gain = float(T0[T0.regime == "none"].cheater_gain.iloc[0])
     c.axhline(none_gain, color=INK2, lw=0.6, ls=":"); c.axhline(0, color=INK2, lw=0.5)
     c.text(0.0205, none_gain + 4, "no audits", fontsize=6.0, color=INK2)
     c.set_xscale("log"); c.set_xticks([0.02, 0.05, 0.1, 1 / 6]); c.set_xticklabels(["0.02", "0.05", "0.10", "1/6"]); c.minorticks_off()
-    c.set_xlabel("Audit rate"); c.set_ylabel("Cheaters' gain (group of 4)")
-    hc, lc = c.get_legend_handles_labels()
-    fig.legend(hc, lc, loc="lower left", bbox_to_anchor=(0.0, -0.06), ncol=3, fontsize=6.3, title="Audit rule (panel c):",
-               title_fontsize=6.3, alignment="left", handlelength=1.4, columnspacing=1.0)
-    title(c, "c", "Which audit rule deters")
+    c.set_xlabel("Audit rate"); c.set_ylabel("Cheaters' gain")
+    hc, lc_ = c.get_legend_handles_labels()
+    lc_ax.legend(hc, lc_, loc="center right", fontsize=6.0, title="Audit rule in (c)", title_fontsize=6.2, frameon=False,
+                 handlelength=1.4, labelspacing=0.9, alignment="left")
+    title(c, "c")
 
-    # (d) predictable against random audits
+    # (d) predictable against random audits (S3 Part C), fine 24
     SC = S3["C"]
     comply = SC["allow"]["comply_honest_per_agent"]
     keys = [("Nobody\ncheats", None, LIGHT, None), ("No\naudits", "allow", INK2, None), ("Random\naudits", "bern_F24", FINE_C, None),
-            ("Predict.\naudits", "periodic6_F24", FINE_C, "////")]
-    for i, (lab_, key, col, hat) in enumerate(keys):
+            ("Fixed\nschedule", "periodic6_F24", FINE_C, "////")]
+    for i_, (lab_, key, col, hat) in enumerate(keys):
         v = comply if key is None else comply + SC[key]["honest_drop"]["estimate"]
         err = None if key is None else [[v - (comply + SC[key]["honest_drop"]["ci"][0])], [(comply + SC[key]["honest_drop"]["ci"][1]) - v]]
-        d.bar(i, v, width=0.68, color="white" if hat else col, edgecolor=col if hat else "white", hatch=hat, lw=0.8,
+        d.bar(i_, v, width=0.68, color="white" if hat else col, edgecolor=col if hat else "white", hatch=hat, lw=0.8,
               yerr=err, capsize=1.2, error_kw=dict(lw=0.6, ecolor=INK))
     d.set_xticks(range(4)); d.set_xticklabels([k[0] for k in keys], fontsize=5.4); d.grid(axis="x", visible=False)
     d.set_ylim(0, 120); d.set_ylabel("Harvest per honest agent")
-    d.text(3, 38, "12/64\ncollapse", ha="center", fontsize=5.8, color=INK2)
-    title(d, "d", "Audit timing (fine 24)")
+    title(d, "d")
 
     # (e) aiming audits (T1): harm left as a share of no-audit harm, three games
     T1 = json.loads((NOTES / "claude_t1_v1/t1_summary.json").read_text())
     cov = json.loads((NOTES / "claude_t1_v1/t1_posthoc_distinct_liars.json").read_text())
-    arms = [("random", "Random", MEM_C, None), ("report", "Largest report", MEM_C, "////"), ("signal", "Signal (Forest)", "#0b6b4a", None)]
+    arms = [("random", "Random agent", MEM_C, None), ("report", "Largest report", MEM_C, "////"),
+            ("signal", "Plot furthest\nbelow forecast", "#0b6b4a", None)]
     games = [("fishery", "Fishery"), ("harvest", "Forest"), ("river", "River")]
     for gi, (g, gl) in enumerate(games):
-        present = [a for a in arms if a[0] in T1[g]["harm_relative_to_trust"]]
+        present = [x for x in arms if x[0] in T1[g]["harm_relative_to_trust"]]
         w = 0.8 / 3
         for k, (arm, al, col, hat) in enumerate(present):
             r = T1[g]["harm_relative_to_trust"][arm]
@@ -281,9 +295,9 @@ def fig3_audits():
     e.set_xticks(range(3)); e.set_xticklabels([x[1] for x in games], fontsize=6.4); e.grid(axis="x", visible=False)
     e.set_ylim(0, 112); e.set_ylabel("Harm left (% of no audits)")
     he, le = e.get_legend_handles_labels()
-    fig.legend(he, le, loc="lower right", bbox_to_anchor=(0.99, -0.06), ncol=3, fontsize=6.3, title="Audit aimed at (panel e):",
-               title_fontsize=6.3, alignment="left", handlelength=1.4, columnspacing=1.0)
-    title(e, "e", "Audit targeting")
+    le_ax.legend(he, le, loc="center left", fontsize=6.0, title="Audit aimed at, in (e)", title_fontsize=6.2, frameon=False,
+                 handlelength=1.4, labelspacing=0.9, alignment="left")
+    title(e, "e")
     save(fig, "fig3_audits")
 
 
@@ -470,30 +484,42 @@ def _llm_relative(model, g):
 
 
 def fig5_spine():
-    """Language-model agents against the expected fine scaled by their one-round gain g1 (single column).
-    Panel (a) of the earlier two-panel version (programmed cheaters against their whole-game gain) duplicated
-    Figure 2(b) and was removed on 9 Oct 2026. Marks where each model's whole-game break-even lies (post hoc)."""
-    summ = {r["model"]: r for r in json.loads((NOTES / "claude_l2_v1" / "l2_summary.json").read_text())["models"]}
+    """Which gain sets the stopping fine (9 Oct 2026 version, grouped bars; distinct from the dose-response in Figure 3).
+    For gpt-oss-120b and Nemotron 3 Super: the whole-game gain g* and the one-round gain g1 (both in tonnes per over-take
+    round, 95% bootstrap intervals over the 10 populations, ratio of sums), and the expected fine at which over-taking
+    stopped in the threshold test (bar at the first deterring grid point; the whisker reaches the last fine that did not
+    deter, so the true threshold lies within it)."""
     ph = json.loads((NOTES / "claude_l2_v1" / "l2_posthoc.json").read_text())
-    fig, b = plt.subplots(figsize=(3.4, 2.5))
-    b.axvspan(1, 2.05, color=GRID, alpha=0.6, lw=0, zorder=0)
-    b.axvline(1, color=INK2, lw=0.7, ls=(0, (3, 2)), zorder=1)
-    b.set_xlim(-0.05, 1.6)
-    b.grid(axis="x", visible=False)
-    for m in ("gpt-oss_120b-cloud", "nemotron-3-super_cloud"):
-        lab, col, mk = LLM[m]
-        g1 = summ[m]["g_tonnes"]
-        for x, y, lo, hi, new in _llm_relative(m, g1):
-            b.errorbar(x, y, yerr=[[max(y - lo, 0)], [max(hi - y, 0)]], fmt=mk, color=col, ms=3.6, lw=0.8, capsize=1.2,
-                       mfc="white" if new else col, zorder=3)
-        b.plot([], [], mk, color=col, ms=3.6, label=lab)
-        gs = (ph.get(m, {}).get("whole_game_gain") or {}).get("g_star_whole_game")
-        if gs is not None and gs > 0:
-            b.axvline(gs / g1, color=col, lw=0.8, ls=(0, (1, 1.5)), zorder=1)
-    b.set_xlabel("Expected fine ÷ one-round gain (e/g$_1$)")
-    b.set_ylabel("Over-taking, relative to no fine")
-    b.set_ylim(-0.05, 1.8)
-    b.legend(loc="upper right", fontsize=6.2, frameon=True, framealpha=0.9, edgecolor="none")
+    l3 = json.loads((NOTES / "claude_l3_v1" / "l3_summary.json").read_text())["models"]
+    grid = [0, 1, 2, 4, 8, 12, 18, 24, 30, 36]
+    rng = np.random.default_rng(20261019)
+    def ratio_ci(num, den):
+        num, den = np.asarray(num, float), np.asarray(den, float)
+        idx = rng.integers(0, len(num), size=(4000, len(num)))
+        dr = num[idx].sum(1) / den[idx].sum(1)
+        return num.sum() / den.sum(), np.percentile(dr, 2.5), np.percentile(dr, 97.5)
+    models = ("gpt-oss_120b-cloud", "nemotron-3-super_cloud")
+    qty = [("Gain over the whole game", LIGHT), ("Gain in one round", INK2), ("Expected fine at which\nover-taking stopped", ORANGE)]
+    fig, ax = plt.subplots(figsize=(3.4, 2.55))
+    w = 0.25
+    for k, m in enumerate(models):
+        wg = ph[m]["whole_game_gain"]
+        gs_ = ratio_ci(wg["net_gain_by_context"], wg["overtake_steps_by_context"])
+        g1 = ratio_ci(wg["g1_excess_by_context"], wg["g1_steps_by_context"])
+        F = l3[m]["F_star"]
+        prev = grid[grid.index(F) - 1]
+        vals = [gs_, g1, (F / 6, prev / 6, F / 6)]
+        for q, ((lab, col), (v, lo, hi)) in enumerate(zip(qty, vals)):
+            x = k + (q - 1) * w
+            ax.bar(x, v, width=w * 0.92, color=col, edgecolor="white", lw=0, label=lab if k == 0 else None,
+                   yerr=[[v - lo], [hi - v]], capsize=1.5, error_kw=dict(lw=0.7, ecolor=INK))
+    ax.axhline(0, color=INK2, lw=0.6)
+    ax.set_xticks(range(len(models)))
+    ax.set_xticklabels([LLM[m][0] for m in models], fontsize=7)
+    ax.set_ylabel("Tonnes per over-take round")
+    ax.set_ylim(-2.2, 7.6)
+    ax.grid(axis="x", visible=False)
+    ax.legend(loc="upper left", fontsize=6.0, frameon=False, handlelength=1.2, labelspacing=0.5)
     fig.tight_layout()
     save(fig, "fig5_spine")
 

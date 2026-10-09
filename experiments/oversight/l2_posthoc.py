@@ -84,7 +84,16 @@ def main():
             G = [byc[("E0", c)]["llm_net"] - byc[("E36", c)]["llm_net"] for c in range(10)]
             nov = [np.mean([sum(s["taken"][i] > s["allowance"][i] + THR for s in byc[("E0", c)]["steps"])
                             for i in byc[("E0", c)]["llm_agents"]]) for c in range(10)]
+            # one-round gain g1 by context: summed tonnes above the allowance, and the number of over-take steps, in E0
+            g1s = []
+            for c in range(10):
+                e0 = byc[("E0", c)]
+                ex = [(s_["taken"][i] - s_["allowance"][i]) * L.MAX_CATCH for s_ in e0["steps"] for i in e0["llm_agents"]
+                      if s_["taken"][i] > s_["allowance"][i] + THR]
+                g1s.append((float(np.sum(ex)), len(ex)))
             wg = dict(net_gain_per_game=float(np.mean(G)), net_gain_by_context=[float(x) for x in G],
+                      overtake_steps_by_context=[float(x) for x in nov], g1_excess_by_context=[x[0] for x in g1s],
+                      g1_steps_by_context=[x[1] for x in g1s],
                       overtake_steps_per_agent=float(np.mean(nov)),
                       g_star_whole_game=float(np.sum(G) / np.sum(nov)) if np.sum(nov) else None)
         n = sum(kind.values())

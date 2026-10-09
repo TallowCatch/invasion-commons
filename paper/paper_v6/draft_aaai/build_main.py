@@ -14,7 +14,7 @@ figs = {
 \end{figure*}''',
  'FIGURE2': r'''\begin{figure*}[t]
   \centering
-  \includegraphics[width=0.82\textwidth]{figures/fig3_audits.pdf}
+  \includegraphics[width=\textwidth]{figures/fig3_audits.pdf}
   \caption{''' + caps['fig2'] + r'''}
   \label{fig:audits}
 \end{figure*}''',
