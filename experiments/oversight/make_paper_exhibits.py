@@ -182,7 +182,7 @@ def fig2_reviewer():
 # ------------------------------------------------------------------ Figure 3: what makes audits work (claims 3-5)
 def fig3_audits():
     """Audits with programmed agents (5 panels). Legends: (a) above its axes; (c) in a side column on the left;
-    (e) in a side column on the right (9 Oct 2026 layout). River joins panel (a) from R4 (a 2x2 grid like Forest's)."""
+    (e) in a side column on the right (9 Oct 2026 layout). Panel (a) uses one 2x2 grid in every game: Fishery from R5, Forest from R2, River from R4."""
     M = pd.read_csv(NOTES / "claude_r2_v1/A_memory.csv")
     S3 = json.loads((NOTES / "claude_s3_partA_v1/s3_summary.json").read_text())
     T = pd.read_csv(NOTES / "claude_s5_v1/s5_cells.csv")
@@ -207,18 +207,24 @@ def fig3_audits():
         return 100 * (g.target_breaking_rate if g.target == "msy" else g.unsafe_fixed)
     R4 = {r["setting"]: r for r in json.loads((NOTES / "claude_r4_v1/r4_summary.json").read_text())["settings"]}
     rv_order = ["4g 1.0", "4g 0.85", "2g 0.85", "2g 1.0"]  # River grid (R4), ordered as Forest
-    labels = [lab(x) for x in order] + [x.replace(" ", "\n") for x in rv_order]
-    series = [("No audits", INK2, [harm(x, "trust") for x in order] + [100 * R4[x]["below50"]["trust"] for x in rv_order], None),
-              ("Audits without memory", LIGHT, [harm(x, "memoryless") for x in order] + [100 * R4[x]["below50"]["memoryless"] for x in rv_order], None),
-              ("Audits with memory", MEM_C, [harm(x, "memory") for x in order] + [100 * R4[x]["below50"]["memory"] for x in rv_order], None)]
+    # Fishery on the same 2x2 grid (R5); Forest from R2; River from R4. Labels: greedy agents, regrowth multiplier.
+    R5 = {r["setting"]: r for r in json.loads((NOTES / "claude_r5_v1/r5_summary.json").read_text())["settings"]}
+    fo_order = [x for x in order if x.startswith("harvest")]
+    labels = [x.replace(" ", "\n") for x in rv_order] + [lab(x) for x in fo_order] + [x.replace(" ", "\n") for x in rv_order]
+    def col_(md, r4key):
+        return ([100 * R5[x]["target_breaking_rate"][md] for x in rv_order] + [harm(x, md) for x in fo_order]
+                + [100 * R4[x]["below50"][r4key] for x in rv_order])
+    series = [("No audits", INK2, col_("trust", "trust"), None),
+              ("Audits without memory", LIGHT, col_("memoryless", "memoryless"), None),
+              ("Audits with memory", MEM_C, col_("memory", "memory"), None)]
     grouped(a, labels, series, ylim=(0, 100))
     a.set_ylim(0, 100); a.set_yticks([0, 25, 50, 75, 100])
     a.set_ylabel("Rounds below harm line (%)")
     a.legend(loc="lower right", bbox_to_anchor=(1.0, 1.01), ncol=3, fontsize=6.2, frameon=False, borderaxespad=0,
              handlelength=1.2, columnspacing=1.0)
-    for xv in (4.5, 8.5):
+    for xv in (3.5, 7.5):
         a.plot([xv, xv], [0, 100], color=INK2, lw=0.5)
-    for xc, gname in ((2.0, "Fishery"), (6.5, "Forest"), (10.5, "River")):
+    for xc, gname in ((1.5, "Fishery"), (5.5, "Forest"), (9.5, "River")):
         a.text(xc, -0.30, gname, transform=a.get_xaxis_transform(), ha="center", va="top", fontsize=6.8, fontweight="bold")
     title(a, "a")
 
@@ -599,6 +605,7 @@ def table4_settings():
         ("T1", "5", "all three", "programmed: under-report by half", "fixed", "memory, no fine", r"half capacity$^d$", "--"),
         ("C1", "1, 5", "River", "A: honest; B: under-report", "fixed", "B: memory", r"quality $<30$$^e$", "--"),
         ("R4", "3", "River (4 settings)", "programmed: under-report by half", "fixed", "memory, or audits without memory", "half capacity", "--"),
+        ("R5", "3", "Fishery (4 settings)", "programmed: under-report by half", "fixed", "memory, or audits without memory", "half capacity", "--"),
         ("L2", "3, 6", "Fishery", "4 LLMs: over-take", "every round", "fine 0--36 t, or memory$^c$", "half capacity", "one-round $g_1$"),
         ("L3", "6", "Fishery", "gpt-oss, Nemotron: over-take", "every round", "fine 12--30 t", "half capacity", r"one-round $g_1$, predicted"),
     ]

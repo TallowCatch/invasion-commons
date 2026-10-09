@@ -32,6 +32,7 @@ R3 & 4 & Fishery (6 settings) & programmed: over-take & one level per game$^b$ &
 T1 & 5 & all three & programmed: under-report by half & fixed & memory, no fine & half capacity$^d$ & -- \\
 C1 & 1, 5 & River & A: honest; B: under-report & fixed & B: memory & quality $<30$$^e$ & -- \\
 R4 & 3 & River (4 settings) & programmed: under-report by half & fixed & memory, or audits without memory & half capacity & -- \\
+R5 & 3 & Fishery (4 settings) & programmed: under-report by half & fixed & memory, or audits without memory & half capacity & -- \\
 L2 & 3, 6 & Fishery & 4 LLMs: over-take & every round & fine 0--36 t, or memory$^c$ & half capacity & one-round $g_1$ \\
 L3 & 6 & Fishery & gpt-oss, Nemotron: over-take & every round & fine 12--30 t & half capacity & one-round $g_1$, predicted \\
 \bottomrule
@@ -170,6 +171,25 @@ Ye \& Steinhardt 2026 & \checkmark & \checkmark & (\checkmark) & -- & -- & (\che
 Okamoto et al.\ 2026 & \checkmark & -- & -- & (\checkmark) & -- & -- & -- \\
 \midrule
 \textbf{This work} & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+
+\end{table}
+\FloatBarrier
+\section*{H\quad Memory on a wider Fishery grid}
+\begin{table}[!ht]
+  \centering\small
+  \caption{Fishery under-reporters on R2's wider grid of regrowth rates: the share of rounds (\%) in which the executed catch breaks the MSY limit, for 64 new populations of 80 rounds. Memory removed most of the harm in all five testable settings; with 2 greedy agents and $r=0.9$, no round broke the limit even without audits, so the setting is not testable. The main text uses the same grid in every game (Figure~2a, R5).}
+  \begin{tabular}{llrrr}
+\toprule
+Greedy agents & Regrowth rate $r$ & No audits & Audits without memory & Audits with memory \\
+\midrule
+4g & 0.9 & 94.8 & 87.5 & 3.7 \\
+4g & 0.7 & 98.7 & 85.7 & 3.1 \\
+4g & 0.5 & 92.9 & 72.1 & 2.7 \\
+2g & 0.5 & 91.9 & 63.0 & 1.6 \\
+2g & 0.7 & 33.3 & 18.6 & 0.3 \\
+2g & 0.9 & 0.0 & 0.0 & 0.0 \\
 \bottomrule
 \end{tabular}
 

@@ -1,0 +1,24 @@
+{
+ "experiment": "R5",
+ "profile": "full",
+ "seeds": {
+  "fishery_pop": 1890000000,
+  "harvest_pop": 1210000000,
+  "weather": 1220000000,
+  "reviewer": 1891000000,
+  "reference": 1892000000,
+  "audit": 1893000000,
+  "train_fishery_pop": 1250000000,
+  "detect": 1246000000,
+  "noisy": 1247000000
+ },
+ "base_r": 0.7,
+ "seconds": 3.6170427799224854,
+ "files": {
+  "episodes.jsonl.gz": "96df5ba8baf5acad7bc8686a0999383b880e99edac8d455861ebd540a44c60df"
+ },
+ "source": {
+  "experiments/oversight/run_r5_fishery_grid.py": "6c8b6c7134559bd27a1d4c47bfdbd0166b6f3e14cea1dd07135c0b2f5d266743",
+  "experiments/oversight/run_r2_robustness_reviewer_model.py": "946d2e47d5a8d9f1c51ea8dd4455787b9864d72f2655acbe2d9756bc462d4250"
+ }
+}
