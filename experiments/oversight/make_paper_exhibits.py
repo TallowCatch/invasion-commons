@@ -341,7 +341,7 @@ def _boot_pooled(df, col, w=None, b=4000, seed=20261019):
     return est, np.percentile(draws, 2.5), np.percentile(draws, 97.5)
 
 
-def fig4_llm():
+def fig4_llm(layout="full"):
     d = NOTES / "claude_l2_v1"
     pc = pd.read_csv(d / "l2_context_cells.csv")
     l3 = NOTES / "claude_l3_v1" / "l3_context_cells.csv"
@@ -349,77 +349,97 @@ def fig4_llm():
         pc = pd.concat([pc, pd.read_csv(l3)])
     summ = {r["model"]: r for r in json.loads((d / "l2_summary.json").read_text())["models"]}
     em_ok = "EM" in set(pc.cell)
-    fig, axs = plt.subplots(2, 2, figsize=(TEXTW, 4.9))
-    (a, b), (c, dd) = axs
-    cells_all = ["E0", "E1", "E2", "E4", "E8", "E12", "E18", "E24", "E30", "E36"]  # L3 adds E12-E30 for gpt-oss, Nemotron
-    fine_of = {**E_FINE, "E12": 12, "E18": 18, "E24": 24, "E30": 30}
-    x = np.arange(len(cells_all))
-    off = np.linspace(-0.27, 0.27, len(LLM))
-    for k, (m, (lab, col, mk)) in enumerate(LLM.items()):
-        sub = pc[pc.model == m]
-        have = [c for c in cells_all if (sub.cell == c).any()]
-        xs = np.array([cells_all.index(c) for c in have])
-        for ax, colname, w, scale in ((a, "overtake_rate", "agent_steps", 100), (b, "honest", None, 1)):
-            pts = [_boot_pooled(sub[sub.cell == c], colname, w) for c in have]
-            est, lo, hi = (np.array(t) * scale for t in zip(*pts))
-            ax.errorbar(xs + off[k], est, yerr=[est - lo, hi - est], fmt=mk, color=col, ms=3.2, lw=0.7, capsize=1.0,
-                        label=lab, mfc=col if m != "mistral-large-3_675b-cloud" else "white")
-    gs = {m: summ[m]["g_tonnes"] for m in ("gpt-oss_120b-cloud", "nemotron-3-super_cloud") if summ.get(m)}
-    for ax in (a, b):
-        ax.set_xticks(x)
-        ax.set_xticklabels([str(fine_of[c]) for c in cells_all], fontsize=6.4)
-        ax.set_xlabel("Fine F (t); expected fine e = F/6", fontsize=7)
-        ax.grid(axis="x", visible=False)
-        ax.axvspan(7.5, 9.5, color=GRID, alpha=0.7, zorder=0, lw=0)  # e = 5 and 6: above both models' gain
-        for m, g in gs.items():  # where e = g falls between grid points (6g t lies between F = 24 and 30)
-            ax.axvline(7 + (6 * g - 24) / 6, color=LLM[m][1], lw=0.6, ls=(0, (2, 2)), zorder=1)
-    a.text(8.5, 72, "e > g", ha="center", va="bottom", fontsize=6, color=INK2)
-    a.set_ylim(-3, 103)
-    a.set_ylabel("Over-taking (% of agent-steps)")
-    title(a, "a", "Over-taking ends as e nears the gain g")
-    b.set_ylabel("Catch per rule-following fisher (t)")
-    b.set_ylim(0, 40)
-    title(b, "b", "Harm to the rule-followers")
-    h, l = a.get_legend_handles_labels()
-    fig.legend(h, l, loc="upper center", bbox_to_anchor=(0.5, 1.0), ncol=4, fontsize=6.6, handletextpad=0.2,
-               columnspacing=1.0)
-    # (c) wording: fine 0 against fine 36 under explicit, silent and paraphrased rules
-    groups = [("E0", "E36", "Explicit"), ("S0", "S36", "Silent"), ("P0", "P36", "Reworded")]
-    labels = ["F = 0", "F = 36"] * len(groups)
-    series = []
-    for m, (lab, col, mk) in LLM.items():
-        sub = pc[pc.model == m]
-        pts = [_boot_pooled(sub[sub.cell == cell], "overtake_rate", "agent_steps") for g0, g36, _ in groups for cell in (g0, g36)]
-        est, lo, hi = (100 * np.array(t) for t in zip(*pts))
-        series.append((lab, col, est, (lo, hi)))
-    grouped(c, labels, series, ylim=(0, 100))
-    c.set_ylabel("Over-taking (% of agent-steps)")
-    for k, (_, _, g) in enumerate(groups):  # wording names under each pair of fine levels
-        c.text(2 * k + 0.5, -0.17, g, transform=c.get_xaxis_transform(), ha="center", va="top", fontsize=7)
-    title(c, "c", "Same pattern under other wordings")
-    # (d) what an over-take looks like (post hoc), or the memory cell once it has run
-    ph = json.loads((d / "l2_posthoc.json").read_text())
-    kinds = [("caught more than it requested", "Caught more than\nit requested", INK2),
-             ("kept its request after a cut", "Kept its request\nafter a cut", LIGHT)]
-    ms = [m for m in LLM if ph.get(m, {}).get("overtake_steps")]
-    left = np.zeros(len(ms))
-    for key, lab, col in kinds:
-        v = np.array([100 * ph[m]["overtake_kind_share"].get(key, 0) for m in ms])
-        dd.barh(np.arange(len(ms)), v, left=left, color=col, label=lab.replace("\n", " "), height=0.6)
-        left += v
-    dd.barh(np.arange(len(ms)), 100 - left, left=left, color=GRID, label="Other", height=0.6)
-    dd.set_yticks(np.arange(len(ms)))
-    dd.set_yticklabels([LLM[m][0].split(" (")[0] for m in ms], fontsize=6.6)
-    dd.invert_yaxis()
-    dd.set_xlim(0, 100)
-    dd.set_xlabel("Share of over-take steps (%)")
-    dd.grid(axis="y", visible=False)
-    for i, m in enumerate(ms):
-        dd.text(101, i, f"n = {ph[m]['overtake_steps']:,}", va="center", fontsize=6, color=INK2)
-    dd.legend(loc="upper left", bbox_to_anchor=(-0.02, -0.22), ncol=3, fontsize=6.2, handletextpad=0.3, columnspacing=0.8)
-    title(dd, "d", "What an over-take is (post hoc)")
-    fig.subplots_adjust(left=0.09, right=0.93, top=0.89, bottom=0.13, hspace=0.62, wspace=0.42)
-    save(fig, "fig4_llm_agents")
+    """layout: "full" (2x2, exhibits preview), "main" (panels a-b, the paper) or "controls" (panels c-d, supplement)."""
+    if layout == "full":
+        fig, axs = plt.subplots(2, 2, figsize=(TEXTW, 4.9))
+        (a, b), (c, dd) = axs
+    elif layout == "main":
+        fig, (a, b) = plt.subplots(1, 2, figsize=(TEXTW, 2.6))
+        c = dd = None
+    else:
+        fig, (c, dd) = plt.subplots(1, 2, figsize=(TEXTW, 2.5))
+        a = b = None
+    lc, ld = ("c", "d") if layout == "full" else ("a", "b")
+    if a is not None:
+        cells_all = ["E0", "E1", "E2", "E4", "E8", "E12", "E18", "E24", "E30", "E36"]  # L3 adds E12-E30 for gpt-oss, Nemotron
+        fine_of = {**E_FINE, "E12": 12, "E18": 18, "E24": 24, "E30": 30}
+        x = np.arange(len(cells_all))
+        off = np.linspace(-0.27, 0.27, len(LLM))
+        for k, (m, (lab, col, mk)) in enumerate(LLM.items()):
+            sub = pc[pc.model == m]
+            have = [c for c in cells_all if (sub.cell == c).any()]
+            xs = np.array([cells_all.index(c) for c in have])
+            for ax, colname, w, scale in ((a, "overtake_rate", "agent_steps", 100), (b, "honest", None, 1)):
+                pts = [_boot_pooled(sub[sub.cell == c], colname, w) for c in have]
+                est, lo, hi = (np.array(t) * scale for t in zip(*pts))
+                ax.errorbar(xs + off[k], est, yerr=[est - lo, hi - est], fmt=mk, color=col, ms=3.2, lw=0.7, capsize=1.0,
+                            label=lab, mfc=col if m != "mistral-large-3_675b-cloud" else "white")
+        gs = {m: summ[m]["g_tonnes"] for m in ("gpt-oss_120b-cloud", "nemotron-3-super_cloud") if summ.get(m)}
+        for ax in (a, b):
+            ax.set_xticks(x)
+            ax.set_xticklabels([str(fine_of[c]) for c in cells_all], fontsize=6.4)
+            ax.set_xlabel("Fine F (t); expected fine e = F/6", fontsize=7)
+            ax.grid(axis="x", visible=False)
+            ax.axvspan(7.5, 9.5, color=GRID, alpha=0.7, zorder=0, lw=0)  # e = 5 and 6: above both models' gain
+            for m, g in gs.items():  # where e = g falls between grid points (6g t lies between F = 24 and 30)
+                ax.axvline(7 + (6 * g - 24) / 6, color=LLM[m][1], lw=0.6, ls=(0, (2, 2)), zorder=1)
+        a.text(8.5, 72, "e > g", ha="center", va="bottom", fontsize=6, color=INK2)
+        a.set_ylim(-3, 103)
+        a.set_ylabel("Over-taking (% of agent-steps)")
+        title(a, "a", "Over-taking ends as e nears the gain g")
+        b.set_ylabel("Catch per rule-following fisher (t)")
+        b.set_ylim(0, 40)
+        title(b, "b", "Harm to the rule-followers")
+        h, l = a.get_legend_handles_labels()
+        fig.legend(h, l, loc="upper center", bbox_to_anchor=(0.5, 1.0), ncol=4, fontsize=6.6, handletextpad=0.2,
+                   columnspacing=1.0)
+    if c is not None:
+        # (c) wording: fine 0 against fine 36 under explicit, silent and paraphrased rules
+        groups = [("E0", "E36", "Explicit"), ("S0", "S36", "Silent"), ("P0", "P36", "Reworded")]
+        labels = ["F = 0", "F = 36"] * len(groups)
+        series = []
+        for m, (lab, col, mk) in LLM.items():
+            sub = pc[pc.model == m]
+            pts = [_boot_pooled(sub[sub.cell == cell], "overtake_rate", "agent_steps") for g0, g36, _ in groups for cell in (g0, g36)]
+            est, lo, hi = (100 * np.array(t) for t in zip(*pts))
+            series.append((lab, col, est, (lo, hi)))
+        grouped(c, labels, series, ylim=(0, 100))
+        c.set_ylabel("Over-taking (% of agent-steps)")
+        for k, (_, _, g) in enumerate(groups):  # wording names under each pair of fine levels
+            c.text(2 * k + 0.5, -0.17, g, transform=c.get_xaxis_transform(), ha="center", va="top", fontsize=7)
+        title(c, lc, "Same pattern under other wordings")
+        # (d) what an over-take looks like (post hoc), or the memory cell once it has run
+        ph = json.loads((d / "l2_posthoc.json").read_text())
+        kinds = [("caught more than it requested", "Caught more than\nit requested", INK2),
+                 ("kept its request after a cut", "Kept its request\nafter a cut", LIGHT)]
+        ms = [m for m in LLM if ph.get(m, {}).get("overtake_steps")]
+        left = np.zeros(len(ms))
+        for key, lab, col in kinds:
+            v = np.array([100 * ph[m]["overtake_kind_share"].get(key, 0) for m in ms])
+            dd.barh(np.arange(len(ms)), v, left=left, color=col, label=lab.replace("\n", " "), height=0.6)
+            left += v
+        dd.barh(np.arange(len(ms)), 100 - left, left=left, color=GRID, label="Other", height=0.6)
+        dd.set_yticks(np.arange(len(ms)))
+        dd.set_yticklabels([LLM[m][0].split(" (")[0] for m in ms], fontsize=6.6)
+        dd.invert_yaxis()
+        dd.set_xlim(0, 100)
+        dd.set_xlabel("Share of over-take steps (%)")
+        dd.grid(axis="y", visible=False)
+        for i, m in enumerate(ms):
+            dd.text(101, i, f"n = {ph[m]['overtake_steps']:,}", va="center", fontsize=6, color=INK2)
+        dd.legend(loc="upper left", bbox_to_anchor=(-0.02, -0.22), ncol=3, fontsize=6.2, handletextpad=0.3, columnspacing=0.8)
+        title(dd, ld, "What an over-take is (post hoc)")
+    if layout == "controls":
+        hs, ls = c.get_legend_handles_labels()
+        fig.legend(hs, ls, loc="upper center", bbox_to_anchor=(0.5, 1.03), ncol=4, fontsize=6.6, handletextpad=0.3)
+        fig.subplots_adjust(left=0.09, right=0.93, top=0.82, bottom=0.3, wspace=0.42)
+        save(fig, "figS_llm_controls")
+    elif layout == "main":
+        fig.subplots_adjust(left=0.08, right=0.98, top=0.8, bottom=0.17, wspace=0.28)
+        save(fig, "fig4_llm_main")
+    else:
+        fig.subplots_adjust(left=0.09, right=0.93, top=0.89, bottom=0.13, hspace=0.62, wspace=0.42)
+        save(fig, "fig4_llm_agents")
 
 
 # ------------------------------------------------------------------ Figure 5: the spine. Cheating against e/g, simulated and LLM agents
@@ -578,6 +598,6 @@ def table4_settings():
 
 
 if __name__ == "__main__":
-    for f in (fig2_reviewer, fig3_audits, fig4_llm, fig5_spine, figA1_llm_behaviour, table2_regimes, table3_positioning, table4_settings):
+    for f in (fig2_reviewer, fig3_audits, fig4_llm, lambda: fig4_llm("main"), lambda: fig4_llm("controls"), fig5_spine, figA1_llm_behaviour, table2_regimes, table3_positioning, table4_settings):
         f()
         print("done", f.__name__)

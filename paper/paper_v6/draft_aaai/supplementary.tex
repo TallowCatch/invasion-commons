@@ -1,0 +1,154 @@
+% Supplementary document (one column; not bound by the main paper's two-column style).
+\documentclass[10pt,letterpaper]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{newtxtext,newtxmath}
+\usepackage{graphicx,booktabs,amsmath,caption,placeins}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\newcommand{\game}[1]{\textsc{#1}}
+\newcommand{\gone}{g_1}
+\newcommand{\gstar}{g^{*}}
+\title{Supplementary Material for\\``Penalties Sized to the Gain: When Do Random Audits Stop AI Agents from Over-Using a Shared Resource?''}
+\author{Anonymous Submission}
+\date{}
+\begin{document}
+\maketitle
+
+\FloatBarrier
+\section*{A\quad Settings of every study}
+\begin{table}[!ht]
+  \centering\small
+  \caption{The settings of every study. All simulations: 80 rounds, 64 new populations. LLM studies: 20 rounds, 10 populations. Audits random with probability $1/6$ per agent and round (T1 and C1: one audit per round). $^a$\game{Fishery}: stock below 50 after fishing; \game{Forest}: more than a 5\% chance that mean plot health falls below 10; R1 also reports the one-step line, which the \game{Fishery} parts of S1 and S1b used. $^b$Chosen by search to maximise the cheaters' payoff over the whole game. $^c$S4 and S5 cut a caught agent's allowance by the share of the cut it took back; L2 by its mean tonnes over. $^d$\game{River}: quality below 30 (pre-registered) and below 50. $^e$Part A compares reviewers built for the 30 line, so 30 is kept.}
+  \label{tab:settings}
+  \resizebox{\textwidth}{!}{\begin{tabular}{llllllll}
+\toprule
+Study & Claims & Games & Who misbehaves, and how & How it is chosen & Consequence of a catch & Harm line & Gain used \\
+\midrule
+R1, R2 & 1--3 & Fishery, Forest & none (honest); R2: reviewer's model wrong & -- & -- & half capacity$^a$ & -- \\
+S1, S1b & 3 & Forest, Fishery & programmed: under-report & one level per game$^b$ & fine, exclusion or none & half capacity$^a$ & -- \\
+S2, S3 & 4 & Fishery & programmed: over-take & one level per game$^b$ & fine ($s \le 1$) & half capacity & whole-game $g^*$ \\
+S4, S5 & 3--4 & Fishery & programmed: over-take, adapting & one level per game$^b$ & memory$^c$, fine & half capacity & whole-game $g^*$ \\
+R3 & 4 & Fishery (6 settings) & programmed: over-take & one level per game$^b$ & fine & half capacity & whole-game $g^*$, predicted \\
+T1 & 5 & all three & programmed: under-report by half & fixed & memory, no fine & half capacity$^d$ & -- \\
+C1 & 1, 5 & River & A: honest; B: under-report & fixed & B: memory & quality $<30$$^e$ & -- \\
+L2 & 3, 6 & Fishery & 4 LLMs: over-take & every round & fine 0--36 t, or memory$^c$ & half capacity & one-round $g_1$ \\
+L3 & 6 & Fishery & gpt-oss, Nemotron: over-take & every round & fine 12--30 t & half capacity & one-round $g_1$, predicted \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\FloatBarrier
+\section*{B\quad Key terms}
+\begin{table}[!ht]\centering\small\caption{Key terms.}
+\begin{tabular}{@{}p{0.24\textwidth}p{0.72\textwidth}@{}}
+\toprule
+Term & Meaning in this paper \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{The game}} \\
+Agent & One of six participants who draw on the shared resource each step (a fisher in \textsc{Fishery}, a forester in \textsc{Forest}, a factory in \textsc{River}). \\
+Greedy agent & An agent whose fixed rule asks for a lot; 2 or 4 of the 6 in most runs. \\
+Request $p_i$ & How much an agent asks to take this step, as a share of its maximum. \\
+Report & What the agent tells the reviewer it wants. An honest report equals the request; an \emph{under-report} (a lie) is smaller. \\
+Allowance & What the reviewer lets an agent take this step: its request times the shared cut. \\
+Over-taking (cheating) & Taking more than the allowance. Nobody sees it unless the agent is audited. \\
+Step, run & One round of requests and harvest; a run is 80 steps. \\
+Population (context) & One randomly generated set of six agents and its random seeds. Results average over 64 of them. \\
+\addlinespace
+\multicolumn{2}{@{}l}{\emph{The reviewer}} \\
+Reviewer & The overseer. It predicts what the requests would do to the resource and approves them or cuts them back. \\
+Shared cut $\lambda$ & One scaling factor (1, $\tfrac34$, $\tfrac12$, $\tfrac14$ or 0) applied to everyone's request. \\
+Model of the resource & The reviewer's equations for how the resource regrows. ``Correct model'' means it knows the true ones. \\
+Joint reviewer & Adds up all six requests before predicting. \\
+Local reviewers & Judge from one agent's request: the \emph{cautious} one assumes everyone else takes as much as the largest request; the \emph{optimistic} one ignores the others. \\
+Safety line & The basic target: the resource must not fall below a danger level next step (Fishery stock 10). \\
+Productive target (MSY) & A stricter target that keeps the stock where it regrows fastest (leave at least half of the maximum), the level behind \emph{maximum sustainable yield}. \\
+\addlinespace
+\multicolumn{2}{@{}l}{\emph{Checking and consequences}} \\
+Audit & A spot check of one agent: the reviewer learns its true request, or what it actually took. \\
+Audit rate $q$ & The chance that a given agent is audited in a given step (the \emph{audit budget}). \\
+Detection rate $s$ & The chance that an audit of a cheater actually catches it. \\
+Fine $F$ & A penalty paid each time an agent is caught. \\
+Expected fine $e=q\,s\,F$ & The average fine an agent faces per step if it cheats. \\
+Break-even $g$ & What one step of cheating gains on average. Cheating stops paying once $e>g$. \\
+Memory & The reviewer remembers how much each caught agent lied or over-took, and corrects for it afterwards. \\
+Audit rule & Which consequences follow a catch: a fine, memory, extra checks on known cheaters, or a tighter cut for everyone. \\
+\addlinespace
+\multicolumn{2}{@{}l}{\emph{Measures}} \\
+Harvest & What agents take from the resource (fish, timber, or discharge capacity). Used only as an outcome, never as a game name. \\
+Harm & The share of steps in which the resource is below the safety line, or above the MSY limit (more taken than the productive target allows). \\
+Collapse & The resource stays below its danger level long enough that the run ends. \\
+Risky request approved & A request that would cross the target, let through unchanged (a missed harm). \\
+Safe request cut & A request that was fine, cut anyway (\emph{usefulness loss}). \\
+Training vs.\ new runs & Cheaters choose their strategy on a few training populations; results are reported on 64 new ones. \\
+95\% interval & The range the result would likely fall in if the 64 populations were redrawn (bootstrap). \\
+\bottomrule
+\end{tabular}
+
+\end{table}
+
+\FloatBarrier
+\section*{C\quad The reviewer's target and model}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/fig2_reviewer.pdf}
+  \caption{What the reviewer aims for and what it knows. Top row, \game{Fishery}: stock over one run under the one-step line and the half-capacity target; total harvest in six settings; collapses when the reviewer's model is wrong. Bottom row, \game{Forest}: risky requests let through and safe requests blocked when part of the reviewer's model is wrong, and a reviewer that learns the model while running. Error bars: 95\% intervals.}
+  \label{fig:reviewer}
+\end{figure}
+
+\begin{table}[!ht]
+  \centering\small
+  \caption{Audit rules compared (\game{Fishery}, half-capacity target, 64 new populations). Bold: best in column.}
+  \label{tab:regimes}
+  \resizebox{0.95\textwidth}{!}{\begin{tabular}{llrrrr}
+\toprule
+Audit rule & Audit rate $q$ & Cheaters' extra harvest [95\% interval] & Harvest per honest agent & Steps over MSY limit (\%) & Checks per step \\
+\midrule
+No audits & --- & 112.8 [106, 120] & 39.5 & 100 & 0.00 \\
+\addlinespace[2pt]
+Fine & 0.10 & \textbf{0.0} & \textbf{104.1} & \textbf{0} & 0.61 \\
+ & 1/6 & \textbf{0.0} & \textbf{104.1} & \textbf{0} & 1.00 \\
+\addlinespace[2pt]
+Memory & 0.10 & 58.4 [49, 68] & 74.5 & 54 & 0.61 \\
+ & 1/6 & 55.1 [46, 65] & 77.1 & 49 & 1.00 \\
+\addlinespace[2pt]
+Memory + extra checks & 0.10 & $-$3.5 [$-$36, 14] & 95.2 & 16 & 3.78 \\
+ & 1/6 & 8.3 [7, 10] & 99.4 & 10 & 4.07 \\
+\addlinespace[2pt]
+Memory + tighter shared cut & 0.10 & 141.7 [136, 147] & 36.0 & 24 & 0.61 \\
+ & 1/6 & 142.3 [137, 148] & 36.0 & 16 & 1.00 \\
+\addlinespace[2pt]
+Fine + memory + tighter cut & 0.10 & \textbf{0.0} & \textbf{104.1} & \textbf{0} & 0.61 \\
+ & 1/6 & \textbf{0.0} & \textbf{104.1} & \textbf{0} & 1.00 \\
+\midrule
+Nobody cheats & --- & 0 & 104.1 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\FloatBarrier
+\section*{D\quad Controls for the LLM study}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figures/figS_llm_controls.pdf}
+  \caption{LLM agents in \game{Fishery}, controls. (a)~A 36\,t fine stops over-taking whether the rules state that over-taking is possible (explicit), omit it (silent), or reword it. The silent cells still mention a check with a fine of 0\,t, so they do not replicate a no-check condition. (b)~What an over-take round is (post hoc): gpt-oss and Nemotron mostly take more than they requested; Gemma almost only keeps its request after the reviewer's cut. Error bars: 95\% intervals over populations.}
+  \label{fig:controls}
+\end{figure}
+
+\FloatBarrier
+\section*{E\quad How the LLM agents over-take (post hoc)}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/figA1_llm_behaviour.pdf}
+  \caption{Post hoc analyses of gpt-oss and Nemotron. (a)~After an over-take, the chance of over-taking again barely depends on whether the agent was caught. (b)~Over-takes are mostly at the 6\,t maximum. Intervals over agent-rounds, which are not independent; descriptive only.}
+  \label{fig:a1}
+\end{figure}
+
+\FloatBarrier
+\section*{F\quad Protocols and reproducibility}
+Each study had a protocol frozen before its code, with hypotheses, falsifiers, sample sizes and analyses; amendments are dated and state what had been seen. The LLM studies used six amendments (an output-parsing fix; remote execution; a held-back and corrected memory cell; the replacement of Mistral Large 4, which used about 6{,}000 hidden-reasoning tokens per decision, by Mistral Large 3; and two infrastructure fixes) and one note that partial results of the threshold test were seen during the run, with nothing changed. Code, protocols, prompts, every game and all analysis scripts will be released.
+
+
+\FloatBarrier
+\end{document}
