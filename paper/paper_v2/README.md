@@ -24,21 +24,21 @@ Regenerate paper_v2 contextual/mechanism artifacts used in the manuscript:
 
 ```bash
 cd /Users/ameerfiras/invasion-commons/invasion-commons
-python -m experiments.generate_paper_v2_artifacts
+python -m experiments.archive.fishery_2026q1.generate_paper_v2_artifacts
 ```
 
 Regenerate the Fishery RL validation figure used in the manuscript:
 
 ```bash
 cd /Users/ameerfiras/invasion-commons/invasion-commons
-python -m experiments.plot_fishery_rl_paper
+python -m experiments.archive.fishery_2026q1.plot_fishery_rl_paper
 ```
 
 Regenerate the polished Fishery baseline forest plot and Harvest tradeoff scatter used in the manuscript:
 
 ```bash
 cd /Users/ameerfiras/invasion-commons/invasion-commons
-python -m experiments.plot_paper_v2_polish_figures
+python -m experiments.archive.fishery_2026q1.plot_paper_v2_polish_figures
 ```
 
 ## Canonical evidence sources

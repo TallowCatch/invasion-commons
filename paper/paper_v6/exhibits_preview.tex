@@ -1,0 +1,29 @@
+% Preview of the paper's exhibits with captions, as they would appear in the paper (Times, 5.5in text width).
+\documentclass[10pt]{article}
+\usepackage[letterpaper, textwidth=5.5in, textheight=9in]{geometry}
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage[font=small, labelfont=bf]{caption}
+\usepackage{microtype}
+\usepackage{float}  % preview only: keep exhibits in reading order
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, fit, backgrounds, calc}
+\definecolor{rev}{HTML}{2A78D6}
+\definecolor{audit}{HTML}{EB6834}
+\definecolor{memc}{HTML}{1BAF7A}
+\begin{document}
+\section*{Exhibits for the paper (preview)}
+
+\begin{figure}[H]
+  \centering
+  \resizebox{\textwidth}{!}{\input{figures/fig1_game_step.tex}}
+  \caption{\textbf{One step of the game.} Six agents ask to take from a shared resource. The reviewer predicts what the requests would do and picks one cut for everyone that meets its target. Agents then harvest, and some may secretly take more than allowed. Audits spot-check a few agents and turn what they find into consequences: a fine, a memory of the lie, or both. Table~\ref{tab:glossary} defines every term.}
+  \label{fig:step}
+\end{figure}
+
+\IfFileExists{exhibits_body.tex}{\input{exhibits_body.tex}}{}
+\end{document}

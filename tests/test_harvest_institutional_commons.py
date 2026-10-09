@@ -4,9 +4,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from experiments.harvest_oversight_reporting import condition_label
-from experiments.harvest_oversight_reporting import scenario_label
-from experiments.summarize_harvest_invasion import _aggregate_with_ci
+from experiments.common.harvest_oversight_reporting import condition_label
+from experiments.common.harvest_oversight_reporting import scenario_label
+from experiments.archive.harvest_2026q2.summarize_harvest_invasion import _aggregate_with_ci
 from fishery_sim.harvest import GovernmentAgent
 from fishery_sim.harvest import harvest_global_safe
 from fishery_sim.harvest import harvest_local_safety_mask

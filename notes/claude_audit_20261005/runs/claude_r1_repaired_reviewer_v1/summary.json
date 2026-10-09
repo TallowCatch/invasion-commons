@@ -1,0 +1,289 @@
+{
+ "H1": {
+  "joint_usefulness_loss": 0.001984126984126984,
+  "joint_unsafe_approval": 0.005555555555555556,
+  "optimistic_unsafe_approval": 0.12638888888888888,
+  "bounded_usefulness_loss": 0.8963293650793651,
+  "counts": {
+   "joint": {
+    "risky": 720,
+    "risky_approved": 4,
+    "safe": 2016,
+    "safe_restricted": 4,
+    "unresolved": 43
+   },
+   "local_bounded": {
+    "risky": 720,
+    "risky_approved": 0,
+    "safe": 2016,
+    "safe_restricted": 1807,
+    "unresolved": 43
+   },
+   "local_optimistic": {
+    "risky": 720,
+    "risky_approved": 91,
+    "safe": 2016,
+    "safe_restricted": 2,
+    "unresolved": 43
+   }
+  },
+  "supported": true
+ },
+ "H2": {
+  "previous": {
+   "joint": 0.10664682539682539,
+   "local_bounded": 0.8978174603174603,
+   "local_optimistic": 0.06944444444444445
+  },
+  "max": {
+   "joint": 0.9642857142857143,
+   "local_bounded": 1.0,
+   "local_optimistic": 0.9206349206349206
+  },
+  "unsafe_previous": {
+   "joint": 0.23472222222222222,
+   "local_bounded": 0.0,
+   "local_optimistic": 0.30277777777777776
+  },
+  "supported": true
+ },
+ "H3": {
+  "mean_total_harvest": {
+   "one_step_k0": 1072.9764862174989,
+   "one_step_k3": 839.8987368826953,
+   "one_step_k6": 554.7984681071416,
+   "msy_k0": 1313.29778763736,
+   "msy_k3": 1359.303428739057,
+   "msy_k6": 1392.917810045226
+  },
+  "mean_stock": {
+   "one_step_k0": 38.09786764537963,
+   "one_step_k3": 27.72583913134587,
+   "one_step_k6": 17.053348497667443,
+   "msy_k0": 78.24099208139236,
+   "msy_k3": 74.77961711854252,
+   "msy_k6": 70.35579887477451
+  },
+  "msy_minus_onestep_k6": {
+   "estimate": 838.1193419380841,
+   "ci": [
+    799.6807882784536,
+    865.396273117593
+   ]
+  },
+  "msy_k6_minus_k0": {
+   "estimate": 79.62002240786575,
+   "ci": [
+    78.09818313619223,
+    81.03826941826549
+   ]
+  },
+  "onestep_k6_minus_k0": {
+   "estimate": -518.1780181103572,
+   "ci": [
+    -540.6649311941217,
+    -489.1614614967181
+   ]
+  },
+  "supported": true
+ },
+ "H4": {
+  "fishery_joint": 0.0,
+  "fishery_local_bounded": 0.0,
+  "fishery_local_optimistic": 0.8597656250000001,
+  "harvest_joint": 0.00546875,
+  "harvest_local_bounded": 0.0,
+  "harvest_local_optimistic": 0.01484375,
+  "fishery_none": 0.8625,
+  "harvest_none": 0.462890625,
+  "supported": true
+ },
+ "harvest_one_step_k6_joint_minus_local_bounded": {
+  "usefulness_loss": {
+   "estimate": -0.8943452380952381,
+   "ci": [
+    -0.9674586104684788,
+    -0.806495310825651
+   ]
+  },
+  "unsafe_approval": {
+   "estimate": 0.005555555555555556,
+   "ci": [
+    0.0012953367875647669,
+    0.011075949367088608
+   ]
+  }
+ },
+ "harvest_one_step_k6_joint_minus_local_optimistic": {
+  "usefulness_loss": {
+   "estimate": 0.000992063492063492,
+   "ci": [
+    -0.0015610243900940396,
+    0.004023169460609746
+   ]
+  },
+  "unsafe_approval": {
+   "estimate": -0.12083333333333333,
+   "ci": [
+    -0.1712476104872707,
+    -0.08508000993797965
+   ]
+  }
+ },
+ "fishery_one_step_k6_joint_minus_local_bounded": {
+  "usefulness_loss": {
+   "estimate": -0.14630681818181818,
+   "ci": [
+    -0.19964664310954064,
+    -0.10310236511456022
+   ]
+  },
+  "unsafe_approval": {
+   "estimate": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "fishery_one_step_k6_joint_minus_local_optimistic": {
+  "usefulness_loss": {
+   "estimate": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  },
+  "unsafe_approval": {
+   "estimate": -1.0,
+   "ci": [
+    -1.0,
+    -1.0
+   ]
+  }
+ },
+ "fishery_msy_k6_joint_minus_local_bounded": {
+  "usefulness_loss": {
+   "estimate": null,
+   "ci": null,
+   "note": "no cases of this class"
+  },
+  "unsafe_approval": {
+   "estimate": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "fishery_msy_k6_joint_minus_local_optimistic": {
+  "usefulness_loss": {
+   "estimate": null,
+   "ci": null,
+   "note": "no cases of this class"
+  },
+  "unsafe_approval": {
+   "estimate": -0.30809399477806787,
+   "ci": [
+    -0.4183614214042188,
+    -0.2168469176323098
+   ]
+  }
+ },
+ "harvest_one_step_k6_longrun_joint_minus_local_bounded": {
+  "total_harvest": {
+   "estimate": 35.494154467597454,
+   "ci": [
+    27.037602677586523,
+    43.66509103916108
+   ]
+  },
+  "mean_health": {
+   "estimate": -0.7038611346689481,
+   "ci": [
+    -0.7603458259402832,
+    -0.6503612029095607
+   ]
+  }
+ },
+ "harvest_one_step_k6_longrun_joint_minus_local_optimistic": {
+  "total_harvest": {
+   "estimate": -1.616971020668668,
+   "ci": [
+    -2.443766537205228,
+    -0.8176958189044045
+   ]
+  },
+  "mean_health": {
+   "estimate": 0.03431101155510102,
+   "ci": [
+    0.025177412743325505,
+    0.043426230751794616
+   ]
+  }
+ },
+ "fishery_one_step_k6_longrun_joint_minus_local_bounded": {
+  "total_harvest": {
+   "estimate": -229.18409231180502,
+   "ci": [
+    -256.4033257611165,
+    -204.4397723789295
+   ]
+  },
+  "mean_health": {
+   "estimate": -8.569145427007344,
+   "ci": [
+    -9.66320092704737,
+    -7.532107264639518
+   ]
+  }
+ },
+ "fishery_one_step_k6_longrun_joint_minus_local_optimistic": {
+  "total_harvest": {
+   "estimate": 329.3234701842989,
+   "ci": [
+    312.0538554712944,
+    341.6520950815302
+   ]
+  },
+  "mean_health": {
+   "estimate": -9.15480035251846,
+   "ci": [
+    -9.916525996384278,
+    -8.342992845089322
+   ]
+  }
+ },
+ "fishery_msy_k6_longrun_joint_minus_local_bounded": {
+  "total_harvest": {
+   "estimate": 48.92781789795467,
+   "ci": [
+    46.49952472089517,
+    51.24148035563754
+   ]
+  },
+  "mean_health": {
+   "estimate": -5.758981250318338,
+   "ci": [
+    -5.97720864929324,
+    -5.539092123391288
+   ]
+  }
+ },
+ "fishery_msy_k6_longrun_joint_minus_local_optimistic": {
+  "total_harvest": {
+   "estimate": 42.56401452652189,
+   "ci": [
+    40.92380784194025,
+    44.32846560486253
+   ]
+  },
+  "mean_health": {
+   "estimate": 12.940827884772112,
+   "ci": [
+    12.73344595375604,
+    13.161363937040953
+   ]
+  }
+ }
+}

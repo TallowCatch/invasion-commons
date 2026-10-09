@@ -1,0 +1,163 @@
+{
+ "settings": [
+  {
+   "setting": "2g 1.0",
+   "greedy": 2,
+   "regrowth": 1.0,
+   "testable": true,
+   "below50": {
+    "trust": 0.3841796875,
+    "memoryless": 0.326171875,
+    "memory": 0.0279296875
+   },
+   "below30": {
+    "trust": 0.037890625,
+    "memoryless": 0.0251953125,
+    "memory": 0.0015625
+   },
+   "memory_minus_memoryless": {
+    "estimate": -0.2982421875,
+    "ci": [
+     -0.32988281249999996,
+     -0.2652294921875
+    ]
+   },
+   "memory_minus_trust": {
+    "estimate": -0.35624999999999996,
+    "ci": [
+     -0.3945361328125,
+     -0.3177685546875
+    ]
+   },
+   "H1": true,
+   "H2": true,
+   "memoryless_share_of_trust_harm_removed": 0.1509913573970513,
+   "liars_caught_share": {
+    "trust": 0.0,
+    "memoryless": 1.0,
+    "memory": 1.0
+   }
+  },
+  {
+   "setting": "2g 0.85",
+   "greedy": 2,
+   "regrowth": 0.85,
+   "testable": true,
+   "below50": {
+    "trust": 0.3490234375,
+    "memoryless": 0.3015625,
+    "memory": 0.02890625
+   },
+   "below30": {
+    "trust": 0.01640625,
+    "memoryless": 0.0107421875,
+    "memory": 0.00078125
+   },
+   "memory_minus_memoryless": {
+    "estimate": -0.27265625,
+    "ci": [
+     -0.303125,
+     -0.24257324218749995
+    ]
+   },
+   "memory_minus_trust": {
+    "estimate": -0.32011718749999996,
+    "ci": [
+     -0.35624999999999996,
+     -0.2833984375
+    ]
+   },
+   "H1": true,
+   "H2": true,
+   "memoryless_share_of_trust_harm_removed": 0.13598209289311686,
+   "liars_caught_share": {
+    "trust": 0.0,
+    "memoryless": 1.0,
+    "memory": 1.0
+   }
+  },
+  {
+   "setting": "4g 1.0",
+   "greedy": 4,
+   "regrowth": 1.0,
+   "testable": true,
+   "below50": {
+    "trust": 0.662109375,
+    "memoryless": 0.58671875,
+    "memory": 0.0494140625
+   },
+   "below30": {
+    "trust": 0.210546875,
+    "memoryless": 0.1419921875,
+    "memory": 0.01484375
+   },
+   "memory_minus_memoryless": {
+    "estimate": -0.5373046875,
+    "ci": [
+     -0.575,
+     -0.49707031250000006
+    ]
+   },
+   "memory_minus_trust": {
+    "estimate": -0.6126953125,
+    "ci": [
+     -0.6515625,
+     -0.5699218749999999
+    ]
+   },
+   "H1": true,
+   "H2": true,
+   "memoryless_share_of_trust_harm_removed": 0.11386430678466083,
+   "liars_caught_share": {
+    "trust": 0.0,
+    "memoryless": 1.0,
+    "memory": 1.0
+   }
+  },
+  {
+   "setting": "4g 0.85",
+   "greedy": 4,
+   "regrowth": 0.85,
+   "testable": true,
+   "below50": {
+    "trust": 0.6609375,
+    "memoryless": 0.5794921875000001,
+    "memory": 0.04765625
+   },
+   "below30": {
+    "trust": 0.1455078125,
+    "memoryless": 0.0841796875,
+    "memory": 0.014062500000000002
+   },
+   "memory_minus_memoryless": {
+    "estimate": -0.5318359374999999,
+    "ci": [
+     -0.5660156249999999,
+     -0.4947265625
+    ]
+   },
+   "memory_minus_trust": {
+    "estimate": -0.61328125,
+    "ci": [
+     -0.651953125,
+     -0.5730419921875
+    ]
+   },
+   "H1": true,
+   "H2": true,
+   "memoryless_share_of_trust_harm_removed": 0.12322695035460973,
+   "liars_caught_share": {
+    "trust": 0.0,
+    "memoryless": 1.0,
+    "memory": 1.0
+   }
+  }
+ ],
+ "supported": true,
+ "profile": {
+  "contexts": 64,
+  "horizon": 80,
+  "reviewer_draws": 400
+ },
+ "target": 50.0
+}

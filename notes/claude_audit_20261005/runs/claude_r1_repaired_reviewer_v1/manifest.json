@@ -1,0 +1,33 @@
+{
+ "experiment": "R1",
+ "profile": "full",
+ "params": {
+  "contexts": 64,
+  "horizon": 80,
+  "closed_draws": 2000,
+  "open_draws": 4000,
+  "reviewer_draws": 400
+ },
+ "seeds": {
+  "fishery_pop": 600000000,
+  "harvest_pop": 610000000,
+  "weather": 620000000,
+  "reviewer": 630000000,
+  "reference": 640000000
+ },
+ "seconds": 170.94117832183838,
+ "n_episodes": 3648,
+ "n_closed": 252400,
+ "n_open": 77598,
+ "files": {
+  "episodes.jsonl.gz": "9d036074b9174ff63c4073d2b3e5f1b9ff49cbc3bf06b2f57d59a12467917bde",
+  "none_rows.jsonl.gz": "b7e48a1f21961296089872bbcb2a6b4f7f612a861e3e464452949a8867a4d0c4",
+  "open_loop_decisions.jsonl.gz": "197a1749ab9f66f6a10119b32e751047d93841280eba638e3e0b6f6ac5f56abc",
+  "closed_loop_decisions.jsonl.gz": "5369c8e9ab1aee70e400b5b210a192b6866dc159a14472f1576f446fe321a129"
+ },
+ "source": {
+  "fishery_sim/calibrated_oversight.py": "27fcea3db0fd795c7814f76eb7346113d6730478e4fa96147ee608122e85e909",
+  "experiments/claude_oversight_common.py": "6df0e104d50b47f01f220b9794e60575688492e2dc7033c088844b0a9053be5a",
+  "experiments/run_r1_repaired_reviewer.py": "ce523ad5f59e586245df2876a8a255c068fea25bf3f4a1464d2f2caadbc4ac19"
+ }
+}

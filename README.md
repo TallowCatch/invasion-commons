@@ -20,7 +20,7 @@ From a clean clone, use Python 3.11 and run:
 ```bash
 python -m pip install -r requirements-validation.txt
 pytest -q tests
-python -m experiments.plot_reviewer_decisions \
+python -m experiments.paper_v5.plot_reviewer_decisions \
   --input-dir paper/paper_v5_scalable_oversight_commons/data \
   --output-dir paper/paper_v5_scalable_oversight_commons/figures
 ```
@@ -42,20 +42,20 @@ The original study asks whether cooperation survives repeated strategy replaceme
 - `fishery_sim/evolution.py`: evolutionary invasion loop and strategy turnover
 - `fishery_sim/llm_adapter.py`: prompt -> JSON policy adapter for LLM strategy injection
 - `fishery_sim/benchmarks.py`: fixed held-out benchmark packs (`easy_v1`, `medium_v1`, `hard_v1`, `heldout_v1`, `mixed_v1`, `harsh_v1`, `harsh_v2`)
-- `experiments/run_single.py`: one rollout sanity check
-- `experiments/run_sweep.py`: seed sweep for fixed population metrics
-- `experiments/run_greedy_sweep.py`: composition tipping-point scan
-- `experiments/run_invasion.py`: multi-generation invasion with train/test regime split
-- `experiments/run_governance_ablation.py`: publishable governance ablation with confidence intervals
-- `experiments/showcase_project.py`: auto-generated narrative report + evidence summary
-- `experiments/check_llm_setup.py`: backend check for replay/ollama/openai JSON policy output
-- `experiments/make_invasion_gif.py`: animated invasion dashboard GIF generator
-- `experiments/make_episode_gif.py`: animated per-step fishery episode GIF generator
-- `experiments/make_governance_comparison_gif.py`: animated side-by-side none vs monitoring+sanctions comparison GIF
-- `experiments/run_visual_governance_pair.py`: one-command matched-seed visual pipeline for slide-ready governance GIFs
-- `experiments/organize_results.py`: buckets results into `curated`, `exploratory`, and `scratch` under each run type
-- `experiments/summarize_tiered_ablation.py`: summarizes tiered (`easy/medium/hard`) governance tables into one report
-- `experiments/summarize_paper_v1.py`: matched-matrix paper evidence pack (deltas, CIs, gate checks, figures, methods/results markdown)
+- `experiments/archive/fishery_2026q1/run_single.py`: one rollout sanity check
+- `experiments/archive/fishery_2026q1/run_sweep.py`: seed sweep for fixed population metrics
+- `experiments/archive/fishery_2026q1/run_greedy_sweep.py`: composition tipping-point scan
+- `experiments/archive/fishery_2026q1/run_invasion.py`: multi-generation invasion with train/test regime split
+- `experiments/archive/fishery_2026q1/run_governance_ablation.py`: publishable governance ablation with confidence intervals
+- `experiments/archive/oneoff/showcase_project.py`: auto-generated narrative report + evidence summary
+- `experiments/archive/oneoff/check_llm_setup.py`: backend check for replay/ollama/openai JSON policy output
+- `experiments/archive/oneoff/make_invasion_gif.py`: animated invasion dashboard GIF generator
+- `experiments/archive/oneoff/make_episode_gif.py`: animated per-step fishery episode GIF generator
+- `experiments/archive/oneoff/make_governance_comparison_gif.py`: animated side-by-side none vs monitoring+sanctions comparison GIF
+- `experiments/archive/oneoff/run_visual_governance_pair.py`: one-command matched-seed visual pipeline for slide-ready governance GIFs
+- `experiments/archive/oneoff/organize_results.py`: buckets results into `curated`, `exploratory`, and `scratch` under each run type
+- `experiments/archive/fishery_2026q1/summarize_tiered_ablation.py`: summarizes tiered (`easy/medium/hard`) governance tables into one report
+- `experiments/archive/fishery_2026q1/summarize_paper_v1.py`: matched-matrix paper evidence pack (deltas, CIs, gate checks, figures, methods/results markdown)
 - `notebooks/02_invasion_benchmark_pack_and_ci.ipynb`: phase-2 reproducibility and reporting notebook
 - `notebooks/04_paper_v1_matched_matrix.ipynb`: paper_v1 reproducibility notebook for matched matrix + CI/gate outputs
 
@@ -69,25 +69,25 @@ conda activate fishery
 Run a single baseline episode:
 
 ```bash
-python -m experiments.run_single
+python -m experiments.archive.fishery_2026q1.run_single
 ```
 
 Run fixed-population sweep:
 
 ```bash
-python -m experiments.run_sweep
+python -m experiments.archive.fishery_2026q1.run_sweep
 ```
 
 Run greedy-composition tipping point sweep:
 
 ```bash
-python -m experiments.run_greedy_sweep
+python -m experiments.archive.fishery_2026q1.run_greedy_sweep
 ```
 
 Run evolutionary invasion pressure test:
 
 ```bash
-python -m experiments.run_invasion \
+python -m experiments.archive.fishery_2026q1.run_invasion \
   --generations 30 \
   --population-size 12 \
   --seeds-per-generation 64 \
@@ -102,7 +102,7 @@ Progress bars are enabled by default for long runs. Use `--no-progress` to disab
 Run held-out train/test regime split:
 
 ```bash
-python -m experiments.run_invasion \
+python -m experiments.archive.fishery_2026q1.run_invasion \
   --train-regen-rate 1.5 \
   --train-obs-noise-std 10 \
   --test-regen-rate 1.1 \
@@ -114,7 +114,7 @@ Run LLM JSON policy injection with a **live model** (requires `OPENAI_API_KEY`):
 
 ```bash
 export OPENAI_API_KEY=...
-python -m experiments.run_invasion \
+python -m experiments.archive.fishery_2026q1.run_invasion \
   --injector-mode llm_json \
   --llm-provider openai \
   --llm-model gpt-4.1-mini \
@@ -131,11 +131,11 @@ ollama serve
 
 ollama pull qwen2.5:3b-instruct
 
-python -m experiments.check_llm_setup \
+python -m experiments.archive.oneoff.check_llm_setup \
   --provider ollama \
   --model qwen2.5:3b-instruct
 
-python -m experiments.run_invasion \
+python -m experiments.archive.fishery_2026q1.run_invasion \
   --injector-mode llm_json \
   --llm-provider ollama \
   --llm-model qwen2.5:3b-instruct \
@@ -149,7 +149,7 @@ pkill -f "ollama serve"
 Compare matched `mutation` vs live Ollama `llm_json` runs:
 
 ```bash
-python -m experiments.summarize_injector_comparison \
+python -m experiments.archive.fishery_2026q1.summarize_injector_comparison \
   --mutation-prefix results/runs/invasion/invasion_step4_match_mutation \
   --llm-prefix results/runs/invasion/invasion_step4_match_ollama_live \
   --output-prefix results/runs/invasion/invasion_step4_match_comparison
@@ -176,7 +176,7 @@ The free path that makes sense for this workload is a **public repo on GitHub Ac
 Run LLM JSON policy injection using replay file (offline deterministic):
 
 ```bash
-python -m experiments.run_invasion \
+python -m experiments.archive.fishery_2026q1.run_invasion \
   --injector-mode llm_json \
   --llm-policy-replay-file experiments/configs/llm_policy_replay.jsonl \
   --benchmark-pack harsh_v1 \
@@ -186,7 +186,7 @@ python -m experiments.run_invasion \
 Governance defense run:
 
 ```bash
-python -m experiments.run_invasion \
+python -m experiments.archive.fishery_2026q1.run_invasion \
   --monitoring-prob 0.8 \
   --quota-fraction 0.08 \
   --base-fine-rate 1.5 \
@@ -198,7 +198,7 @@ python -m experiments.run_invasion \
 Generate governance ablation table (`none` vs `monitoring` vs `monitoring+sanctions`) with confidence intervals:
 
 ```bash
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack heldout_v1 \
   --n-runs 5 \
   --generations 30 \
@@ -217,7 +217,7 @@ Record run lineage metadata for any invasion/ablation run:
 Run full-capacity tiered mutation ablations (`easy`, `medium`, `hard`):
 
 ```bash
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack easy_v1 \
   --n-runs 5 \
   --generations 30 \
@@ -228,7 +228,7 @@ python -m experiments.run_governance_ablation \
   --injector-mode mutation \
   --output-prefix results/runs/ablation/tiered_mutation_easy_v1
 
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack medium_v1 \
   --n-runs 5 \
   --generations 30 \
@@ -239,7 +239,7 @@ python -m experiments.run_governance_ablation \
   --injector-mode mutation \
   --output-prefix results/runs/ablation/tiered_mutation_medium_v1
 
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack hard_v1 \
   --n-runs 5 \
   --generations 30 \
@@ -254,7 +254,7 @@ python -m experiments.run_governance_ablation \
 Run live-Ollama medium-tier governance ablation:
 
 ```bash
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack medium_v1 \
   --n-runs 2 \
   --generations 10 \
@@ -273,7 +273,7 @@ python -m experiments.run_governance_ablation \
 Summarize tier runs:
 
 ```bash
-python -m experiments.summarize_tiered_ablation \
+python -m experiments.archive.fishery_2026q1.summarize_tiered_ablation \
   --ablation-dir results/runs/ablation \
   --output-prefix results/runs/ablation/tiered_ablation_summary
 ```
@@ -281,7 +281,7 @@ python -m experiments.summarize_tiered_ablation \
 Run a matched governance-conditioned injector comparison (`none` vs `monitoring+sanctions`, mutation vs live Ollama):
 
 ```bash
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack heldout_v1 \
   --n-runs 2 \
   --generations 10 \
@@ -295,7 +295,7 @@ python -m experiments.run_governance_ablation \
   --injector-mode mutation \
   --output-prefix results/runs/ablation/governance_match_step4_mutation
 
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack heldout_v1 \
   --n-runs 2 \
   --generations 10 \
@@ -311,7 +311,7 @@ python -m experiments.run_governance_ablation \
   --llm-model qwen2.5:3b-instruct \
   --output-prefix results/runs/ablation/governance_match_step4_ollama_live
 
-python -m experiments.summarize_governance_injector_match \
+python -m experiments.archive.fishery_2026q1.summarize_governance_injector_match \
   --mutation-table results/runs/ablation/governance_match_step4_mutation_table.csv \
   --llm-table results/runs/ablation/governance_match_step4_ollama_live_table.csv \
   --output-prefix results/runs/ablation/governance_match_step4_injector_split
@@ -320,7 +320,7 @@ python -m experiments.summarize_governance_injector_match \
 Run the paper_v1 matched matrix (easy/medium, mutation/live LLM):
 
 ```bash
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack easy_v1 \
   --n-runs 3 \
   --generations 15 \
@@ -336,7 +336,7 @@ python -m experiments.run_governance_ablation \
   --manifest-out results/runs/showcase/curated/paper_v1_mutation_easy_manifest.json \
   --output-prefix results/runs/ablation/paper_v1_mutation_easy_v1
 
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack medium_v1 \
   --n-runs 3 \
   --generations 15 \
@@ -352,7 +352,7 @@ python -m experiments.run_governance_ablation \
   --manifest-out results/runs/showcase/curated/paper_v1_mutation_medium_manifest.json \
   --output-prefix results/runs/ablation/paper_v1_mutation_medium_v1
 
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack easy_v1 \
   --n-runs 3 \
   --generations 15 \
@@ -370,7 +370,7 @@ python -m experiments.run_governance_ablation \
   --manifest-out results/runs/showcase/curated/paper_v1_llm_easy_manifest.json \
   --output-prefix results/runs/ablation/paper_v1_llm_easy_v1
 
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack medium_v1 \
   --n-runs 3 \
   --generations 15 \
@@ -392,7 +392,7 @@ python -m experiments.run_governance_ablation \
 Summarize paper_v1 outputs into figures, tables, gate checks, and meeting-ready markdown:
 
 ```bash
-python -m experiments.summarize_paper_v1 \
+python -m experiments.archive.fishery_2026q1.summarize_paper_v1 \
   --ablation-dir results/runs/ablation \
   --showcase-dir results/runs/showcase \
   --experiment-tag paper_v1
@@ -401,7 +401,7 @@ python -m experiments.summarize_paper_v1 \
 Run targeted high-power medium-tier reruns (`n_runs=5`) for decision-critical collapse evidence:
 
 ```bash
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack medium_v1 \
   --n-runs 5 \
   --generations 15 \
@@ -417,7 +417,7 @@ python -m experiments.run_governance_ablation \
   --manifest-out results/runs/showcase/curated/paper_v1_mutation_medium_manifest.json \
   --output-prefix results/runs/ablation/curated/paper_v1_mutation_medium_v1
 
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack medium_v1 \
   --n-runs 5 \
   --generations 15 \
@@ -439,7 +439,7 @@ python -m experiments.run_governance_ablation \
 Optional appendix-only hard-tier live smoke (`n_runs=1`) to confirm saturation profile:
 
 ```bash
-python -m experiments.run_governance_ablation \
+python -m experiments.archive.fishery_2026q1.run_governance_ablation \
   --benchmark-pack hard_v1 \
   --n-runs 1 \
   --generations 10 \
@@ -461,7 +461,7 @@ python -m experiments.run_governance_ablation \
 Organize results after experiments (recommended):
 
 ```bash
-python -m experiments.organize_results --results-dir results --apply
+python -m experiments.archive.oneoff.organize_results --results-dir results --apply
 ```
 
 Result folder convention:
@@ -473,7 +473,7 @@ Result folder convention:
 Generate showcase report:
 
 ```bash
-python -m experiments.showcase_project \
+python -m experiments.archive.oneoff.showcase_project \
   --ablation-table results/runs/ablation/governance_ablation_table.csv \
   --invasion-generations results/runs/invasion/invasion_baseline_generations.csv \
   --output results/runs/showcase/showcase_report.md
@@ -483,7 +483,7 @@ Generate animated GIFs for demos/slides:
 
 ```bash
 # Optional: generate a less-saturated visual benchmark first
-python -m experiments.run_invasion \
+python -m experiments.archive.fishery_2026q1.run_invasion \
   --generations 10 \
   --seeds-per-generation 24 \
   --test-seeds-per-generation 24 \
@@ -492,11 +492,11 @@ python -m experiments.run_invasion \
   --benchmark-pack heldout_v1 \
   --output-prefix results/runs/invasion/invasion_visual_benchmark
 
-python -m experiments.make_invasion_gif \
+python -m experiments.archive.oneoff.make_invasion_gif \
   --input results/runs/invasion/invasion_visual_benchmark_generations.csv \
   --output results/runs/showcase/invasion_train_vs_heldout_dynamics.gif
 
-python -m experiments.make_episode_gif \
+python -m experiments.archive.oneoff.make_episode_gif \
   --output results/runs/showcase/episode_stock_harvest_dynamics.gif
 ```
 
@@ -505,7 +505,7 @@ Interpretation tip: if every held-out bar is exactly `1.0`, the benchmark pack i
 Generate a SocialJax-style visual comparison pack (matched seeds, moving side-by-side):
 
 ```bash
-python -m experiments.run_visual_governance_pair
+python -m experiments.archive.oneoff.run_visual_governance_pair
 ```
 
 This writes:
@@ -516,7 +516,7 @@ This writes:
 Organize/cleanup historical CSV/MD outputs:
 
 ```bash
-python -m experiments.organize_results --apply
+python -m experiments.archive.oneoff.organize_results --apply
 ```
 
 ## Output Metrics

@@ -1,0 +1,121 @@
+{
+ "settings": [
+  {
+   "setting": "2g 1.0",
+   "greedy": 2,
+   "mult": 1.0,
+   "r": 0.7,
+   "testable": true,
+   "target_breaking_rate": {
+    "trust": 0.4306640625,
+    "memoryless": 0.233984375,
+    "memory": 0.003125
+   },
+   "memory_minus_memoryless": {
+    "estimate": -0.23085937499999998,
+    "ci": [
+     -0.29453613281249996,
+     -0.17050781250000002
+    ]
+   },
+   "memory_minus_trust": {
+    "estimate": -0.42753906250000007,
+    "ci": [
+     -0.538291015625,
+     -0.3148388671875
+    ]
+   },
+   "H1": true,
+   "H2": true,
+   "memoryless_share_of_trust_harm_removed": 0.45668934240362813
+  },
+  {
+   "setting": "2g 0.85",
+   "greedy": 2,
+   "mult": 0.85,
+   "r": 0.595,
+   "testable": true,
+   "target_breaking_rate": {
+    "trust": 0.965234375,
+    "memoryless": 0.653125,
+    "memory": 0.0150390625
+   },
+   "memory_minus_memoryless": {
+    "estimate": -0.6380859375,
+    "ci": [
+     -0.655078125,
+     -0.6205078125000001
+    ]
+   },
+   "memory_minus_trust": {
+    "estimate": -0.9501953125,
+    "ci": [
+     -0.9589892578125001,
+     -0.9398437500000001
+    ]
+   },
+   "H1": true,
+   "H2": true,
+   "memoryless_share_of_trust_harm_removed": 0.3233508700930798
+  },
+  {
+   "setting": "4g 1.0",
+   "greedy": 4,
+   "mult": 1.0,
+   "r": 0.7,
+   "testable": true,
+   "target_breaking_rate": {
+    "trust": 0.984765625,
+    "memoryless": 0.837890625,
+    "memory": 0.02890625
+   },
+   "memory_minus_memoryless": {
+    "estimate": -0.8089843750000001,
+    "ci": [
+     -0.8246142578125001,
+     -0.79296875
+    ]
+   },
+   "memory_minus_trust": {
+    "estimate": -0.955859375,
+    "ci": [
+     -0.9646484375,
+     -0.9462841796875
+    ]
+   },
+   "H1": true,
+   "H2": true,
+   "memoryless_share_of_trust_harm_removed": 0.14914716382387938
+  },
+  {
+   "setting": "4g 0.85",
+   "greedy": 4,
+   "mult": 0.85,
+   "r": 0.595,
+   "testable": true,
+   "target_breaking_rate": {
+    "trust": 0.968359375,
+    "memoryless": 0.79609375,
+    "memory": 0.03046875
+   },
+   "memory_minus_memoryless": {
+    "estimate": -0.765625,
+    "ci": [
+     -0.780078125,
+     -0.7517578125
+    ]
+   },
+   "memory_minus_trust": {
+    "estimate": -0.9378906249999999,
+    "ci": [
+     -0.9523437499999999,
+     -0.91875
+    ]
+   },
+   "H1": true,
+   "H2": true,
+   "memoryless_share_of_trust_harm_removed": 0.1778943122226704
+  }
+ ],
+ "supported": true
+}

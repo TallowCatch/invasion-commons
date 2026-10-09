@@ -8,7 +8,7 @@ import os
 import numpy as np
 import pytest
 
-from experiments.admit_cleanup_policies import SEEDS, TAIL, assess
+from experiments.archive.harvest_2026q2.admit_cleanup_policies import SEEDS, TAIL, assess
 from fishery_sim.cleanup_oversight import CLEAN, CleanupAdapter, CleanupConfig
 from fishery_sim.cleanup_policies import PolicyMemory, decide
 

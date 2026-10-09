@@ -1,0 +1,196 @@
+{
+ "cells": [
+  {
+   "cell": "fishery_s2_r0.5",
+   "n_stress": 2,
+   "regen": 0.5,
+   "g_star": 1.2041466020387133,
+   "d_allow": 1.0,
+   "g_r2_definition": 1.2041466020387133,
+   "testable": true,
+   "e_star": 1.444975922446456,
+   "extended": false,
+   "in_band": true,
+   "e_star_over_g": 1.2000000000000002,
+   "monotone": true,
+   "last_cheating_e_over_g": 1.0,
+   "heldout_gain_per_cheater_at_last_cheating_e": {
+    "estimate": 5.363295350154093,
+    "ci": [
+     -3.238530718135131,
+     13.84952183147142
+    ]
+   },
+   "d_star_by_e_over_g": {
+    "0.0": 1.0,
+    "0.2": 1.0,
+    "0.4": 1.0,
+    "0.6": 1.0,
+    "0.8": 1.0,
+    "1.0": 1.0,
+    "1.2": 0.0,
+    "1.4": 0.0,
+    "1.6": 0.0,
+    "1.8": 0.0,
+    "2.0": 0.0
+   }
+  },
+  {
+   "cell": "fishery_s2_r0.7",
+   "n_stress": 2,
+   "regen": 0.7,
+   "g_star": 0.6108423894780931,
+   "d_allow": 1.0,
+   "g_r2_definition": 0.6108423894780931,
+   "testable": true,
+   "e_star": 0.7330108673737118,
+   "extended": false,
+   "in_band": true,
+   "e_star_over_g": 1.2000000000000002,
+   "monotone": true,
+   "last_cheating_e_over_g": 1.0000000000000002,
+   "heldout_gain_per_cheater_at_last_cheating_e": {
+    "estimate": 0.5658339962322279,
+    "ci": [
+     -0.21869256905011178,
+     1.3616074153949418
+    ]
+   },
+   "d_star_by_e_over_g": {
+    "0.0": 1.0,
+    "0.2": 1.0,
+    "0.4": 1.0,
+    "0.6": 1.0,
+    "0.8": 1.0,
+    "1.0": 1.0,
+    "1.2": 0.0,
+    "1.4": 0.0,
+    "1.6": 0.0,
+    "1.8": 0.0,
+    "2.0": 0.0
+   }
+  },
+  {
+   "cell": "fishery_s2_r0.9",
+   "n_stress": 2,
+   "regen": 0.9,
+   "g_star": 0.0,
+   "d_allow": 0.0,
+   "g_r2_definition": null,
+   "testable": false,
+   "e_star": null,
+   "extended": false
+  },
+  {
+   "cell": "fishery_s4_r0.5",
+   "n_stress": 4,
+   "regen": 0.5,
+   "g_star": 0.28599709983068733,
+   "d_allow": 0.5,
+   "g_r2_definition": 0.28599709983068733,
+   "testable": true,
+   "e_star": 0.3431965197968248,
+   "extended": false,
+   "in_band": true,
+   "e_star_over_g": 1.2,
+   "monotone": true,
+   "last_cheating_e_over_g": 1.0,
+   "heldout_gain_per_cheater_at_last_cheating_e": {
+    "estimate": 0.6932733807415365,
+    "ci": [
+     -0.5294626061585253,
+     1.9058615756892776
+    ]
+   },
+   "d_star_by_e_over_g": {
+    "0.0": 0.5,
+    "0.2": 0.5,
+    "0.4": 0.5,
+    "0.6": 0.5,
+    "0.8": 0.5,
+    "1.0": 0.5,
+    "1.2": 0.0,
+    "1.4": 0.0,
+    "1.6": 0.0,
+    "1.8": 0.0,
+    "2.0": 0.0
+   }
+  },
+  {
+   "cell": "fishery_s4_r0.7",
+   "n_stress": 4,
+   "regen": 0.7,
+   "g_star": 0.3591864038068072,
+   "d_allow": 0.75,
+   "g_r2_definition": 0.3591864038068072,
+   "testable": true,
+   "e_star": 0.4310236845681687,
+   "extended": false,
+   "in_band": true,
+   "e_star_over_g": 1.2000000000000002,
+   "monotone": true,
+   "last_cheating_e_over_g": 1.0,
+   "heldout_gain_per_cheater_at_last_cheating_e": {
+    "estimate": 0.042256604145936905,
+    "ci": [
+     -1.6980108457662635,
+     1.77927522821971
+    ]
+   },
+   "d_star_by_e_over_g": {
+    "0.0": 0.75,
+    "0.2": 0.75,
+    "0.4": 0.75,
+    "0.6": 0.75,
+    "0.8": 0.75,
+    "1.0": 0.75,
+    "1.2": 0.0,
+    "1.4": 0.0,
+    "1.6": 0.0,
+    "1.8": 0.0,
+    "2.0": 0.0
+   }
+  },
+  {
+   "cell": "fishery_s4_r0.9",
+   "n_stress": 4,
+   "regen": 0.9,
+   "g_star": 0.19285418813690033,
+   "d_allow": 0.75,
+   "g_r2_definition": 0.19285418813690033,
+   "testable": true,
+   "e_star": 0.19285418813690033,
+   "extended": false,
+   "in_band": true,
+   "e_star_over_g": 1.0,
+   "monotone": true,
+   "last_cheating_e_over_g": 0.8,
+   "heldout_gain_per_cheater_at_last_cheating_e": {
+    "estimate": 2.041671798108162,
+    "ci": [
+     1.5747702864884996,
+     2.556929557532136
+    ]
+   },
+   "d_star_by_e_over_g": {
+    "0.0": 0.75,
+    "0.2": 0.75,
+    "0.4": 0.75,
+    "0.6": 0.75,
+    "0.8": 0.75,
+    "1.0": 0.0,
+    "1.2": 0.0,
+    "1.4": 0.0,
+    "1.6": 0.0,
+    "1.8": 0.0,
+    "2.0": 0.0
+   }
+  }
+ ],
+ "hypotheses": {
+  "R3_H1_all_in_band": true,
+  "R3_H1_in_band": "5 of 5",
+  "R3_H2_all_positive": false,
+  "R3_H3_all_monotone": true
+ }
+}

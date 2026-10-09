@@ -1,0 +1,43 @@
+\begin{tabular}{@{}p{0.24\textwidth}p{0.72\textwidth}@{}}
+\toprule
+Term & Meaning in this paper \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{The game}} \\
+Agent & One of six participants who draw on the shared resource each step (a fisher in \textsc{Fishery}, a forester in \textsc{Forest}, a factory in \textsc{River}). \\
+Greedy agent & An agent whose fixed rule asks for a lot; 2 or 4 of the 6 in most runs. \\
+Request $p_i$ & How much an agent asks to take this step, as a share of its maximum. \\
+Report & What the agent tells the reviewer it wants. An honest report equals the request; an \emph{under-report} (a lie) is smaller. \\
+Allowance & What the reviewer lets an agent take this step: its request times the shared cut. \\
+Over-taking (cheating) & Taking more than the allowance. Nobody sees it unless the agent is audited. \\
+Step, run & One round of requests and harvest; a run is 80 steps. \\
+Population (context) & One randomly generated set of six agents and its random seeds. Results average over 64 of them. \\
+\addlinespace
+\multicolumn{2}{@{}l}{\emph{The reviewer}} \\
+Reviewer & The overseer. It predicts what the requests would do to the resource and approves them or cuts them back. \\
+Shared cut $\lambda$ & One scaling factor (1, $\tfrac34$, $\tfrac12$, $\tfrac14$ or 0) applied to everyone's request. \\
+Model of the resource & The reviewer's equations for how the resource regrows. ``Correct model'' means it knows the true ones. \\
+Joint reviewer & Adds up all six requests before predicting. \\
+Local reviewers & Judge from one agent's request: the \emph{cautious} one assumes everyone else takes as much as the largest request; the \emph{optimistic} one ignores the others. \\
+Safety line & The basic target: the resource must not fall below a danger level next step (Fishery stock 10). \\
+Productive target (MSY) & A stricter target that keeps the stock where it regrows fastest (leave at least half of the maximum), the level behind \emph{maximum sustainable yield}. \\
+\addlinespace
+\multicolumn{2}{@{}l}{\emph{Checking and consequences}} \\
+Audit & A spot check of one agent: the reviewer learns its true request, or what it actually took. \\
+Audit rate $q$ & The chance that a given agent is audited in a given step (the \emph{audit budget}). \\
+Detection rate $s$ & The chance that an audit of a cheater actually catches it. \\
+Fine $F$ & A penalty paid each time an agent is caught. \\
+Expected fine $e=q\,s\,F$ & The average fine an agent faces per step if it cheats. \\
+Break-even $g$ & What one step of cheating gains on average. Cheating stops paying once $e>g$. \\
+Memory & The reviewer remembers how much each caught agent lied or over-took, and corrects for it afterwards. \\
+Audit rule & Which consequences follow a catch: a fine, memory, extra checks on known cheaters, or a tighter cut for everyone. \\
+\addlinespace
+\multicolumn{2}{@{}l}{\emph{Measures}} \\
+Harvest & What agents take from the resource (fish, timber, or discharge capacity). Used only as an outcome, never as a game name. \\
+Harm & The share of steps in which the resource is below the safety line, or above the MSY limit (more taken than the productive target allows). \\
+Collapse & The resource stays below its danger level long enough that the run ends. \\
+Risky request approved & A request that would cross the target, let through unchanged (a missed harm). \\
+Safe request cut & A request that was fine, cut anyway (\emph{usefulness loss}). \\
+Training vs.\ new runs & Cheaters choose their strategy on a few training populations; results are reported on 64 new ones. \\
+95\% interval & The range the result would likely fall in if the 64 populations were redrawn (bootstrap). \\
+\bottomrule
+\end{tabular}

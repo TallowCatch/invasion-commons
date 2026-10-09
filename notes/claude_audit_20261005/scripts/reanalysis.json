@@ -1,0 +1,199 @@
+{
+ "harvest_margins": {
+  "current_bonferroni_per_patch": 1.005471515923774,
+  "mean_only_5pct": 0.28203364613181386,
+  "zero": 0.0
+ },
+ "harvest_joint_k6_by_margin": {
+  "current_bonferroni_per_patch": {
+   "safe|approve": 1166,
+   "safe|restrict": 2521,
+   "unresolved|restrict": 923,
+   "risky|restrict": 1368
+  },
+  "mean_only_5pct": {
+   "safe|approve": 3687,
+   "unresolved|approve": 662,
+   "risky|restrict": 1364,
+   "unresolved|restrict": 261,
+   "risky|approve": 4
+  },
+  "zero": {
+   "safe|approve": 3687,
+   "unresolved|approve": 923,
+   "risky|approve": 718,
+   "risky|restrict": 650
+  }
+ },
+ "harvest_precise_risk": {
+  "safe": {
+   "n": 3687,
+   "median": 0.0,
+   "frac_below_0p05": 0.9997287767832926,
+   "frac_above_0p5": 0.0,
+   "q10": 0.0,
+   "q90": 0.006000000000000005
+  },
+  "risky": {
+   "n": 1368,
+   "median": 0.34574999999999995,
+   "frac_below_0p05": 0.0029239766081871343,
+   "frac_above_0p5": 0.35964912280701755,
+   "q10": 0.11585000000000002,
+   "q90": 0.9320499999999999
+  },
+  "unresolved": {
+   "n": 923,
+   "median": 0.03249999999999997,
+   "frac_below_0p05": 0.6977248104008668,
+   "frac_above_0p5": 0.0,
+   "q10": 0.009000000000000008,
+   "q90": 0.07845000000000003
+  }
+ },
+ "harvest_cases_total_vs_initially_safe": [
+  10240,
+  5978
+ ],
+ "fishery_cases_total_vs_initially_safe": [
+  1009,
+  757
+ ],
+ "fishery_params": {
+  "r": 0.7,
+  "K": 100,
+  "max_harvest": 6,
+  "collapse_threshold": 10.0,
+  "n": 6,
+  "stock_init": 70,
+  "MSY_total_per_step": 17.5,
+  "MSY_residual_stock": 50.0
+ },
+ "fishery_risky": {
+  "n": 63,
+  "contexts": 63,
+  "steps": [
+   [
+    7,
+    15
+   ],
+   [
+    8,
+    13
+   ],
+   [
+    10,
+    10
+   ],
+   [
+    9,
+    6
+   ],
+   [
+    6,
+    5
+   ],
+   [
+    12,
+    3
+   ],
+   [
+    15,
+    2
+   ],
+   [
+    17,
+    2
+   ]
+  ],
+  "stock_quantiles": [
+   10.461913898035728,
+   12.87410899320081,
+   16.05627183843241,
+   18.408264538023236,
+   21.11020381592296
+  ],
+  "steps_before_last_case": [
+   [
+    4,
+    63
+   ]
+  ]
+ },
+ "fishery_safe_requests_next_stock": {
+  "n": 694,
+  "below_50_MSY_level": 409,
+  "below_30": 139,
+  "below_20": 60,
+  "quantiles": [
+   10.461913898035728,
+   21.649893396351647,
+   45.20568930970011,
+   59.59935292407034,
+   65.59839999677332
+  ]
+ },
+ "fishery_frozen_case_steps": {
+  "mean_cases_per_context": 15.765625,
+  "stock_quantiles": [
+   0.0,
+   10.461913898035728,
+   38.881145067635266,
+   54.34359100551838,
+   70.0
+  ]
+ },
+ "trace_keys": [
+  "allowed_fracs_json",
+  "candidate_evaluations",
+  "component_evaluations",
+  "global_unsafe",
+  "inspected_indices",
+  "mean_patch_health_after",
+  "method",
+  "next_state",
+  "pre_global_safe",
+  "predicted_safe",
+  "prevented_harvest",
+  "realized_harvest",
+  "request_inspections",
+  "requested_fracs_json",
+  "scale",
+  "state",
+  "status",
+  "step",
+  "transmitted_scalars",
+  "verdict",
+  "welfare"
+ ],
+ "fishery_closed_joint_6": {
+  "stock_after_quantiles": [
+   10.765271697696035,
+   13.06366684167294,
+   33.51345322998603
+  ],
+  "mean_scale": 0.432421875,
+  "frac_steps_restricted": 0.864453125,
+  "mean_realized": 6.893765354522307
+ },
+ "fishery_closed_local_bounded_6": {
+  "stock_after_quantiles": [
+   17.860666272802455,
+   21.873783818833935,
+   35.734408833877545
+  ],
+  "mean_scale": 0.60625,
+  "frac_steps_restricted": 0.8814453125,
+  "mean_realized": 9.808845876663527
+ },
+ "fishery_closed_joint_0": {
+  "stock_after_quantiles": [
+   32.23340618319098,
+   37.7379301936527,
+   44.26691279824281
+  ],
+  "mean_scale": 0.77109375,
+  "frac_steps_restricted": 0.7697265625,
+  "mean_realized": 13.550684191461169
+ }
+}

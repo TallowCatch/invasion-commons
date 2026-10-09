@@ -10,8 +10,8 @@ from fishery_sim.harvest_decision_cases import harvest_challenge_cases, validate
 from fishery_sim.harvest_benchmarks import make_harvest_cfg_for_scenario
 from fishery_sim.config import FisheryConfig
 from fishery_sim.oversight_protocol import METHODS, harvest_safe
-from experiments.run_oversight_decision_suite import collect_cases, evaluate_case, fingerprint, label_case
-from experiments.run_matched_oversight import (
+from experiments.archive.harvest_2026q2.run_oversight_decision_suite import collect_cases, evaluate_case, fingerprint, label_case
+from experiments.common.run_matched_oversight import (
     FISHERY_METHODS, make_manifest, digest, read_json, write_json,
 )
 from fishery_sim.oversight_protocol import MonitorSettings

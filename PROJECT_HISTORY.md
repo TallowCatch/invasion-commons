@@ -1,10 +1,18 @@
 # Project history: from commons governance to scalable oversight
 
-Updated 23 September 2026. This is a research history, not a list of every
-code commit. Dates through June come from Git; later dates come from dated
-experiment notes. A feature being implemented does not mean that its proposed
-scientific claim has been demonstrated. The linked closeouts and the current
-manuscript take precedence over older plans and promotional descriptions.
+**This is the project's running tracker.** It records each piece of work: what
+was done, why, and what came out, with numbers. Update it whenever an
+experiment finishes.
+- Last updated: 7 October 2026 (after R3 and T1).
+- February to September are summarised in the timeline below.
+- The October experiment series has its own section, with every number
+  verified against saved run files.
+
+This is a research history, not a list of every code commit. Dates through
+June come from Git; later dates come from dated experiment notes. A feature
+being implemented does not mean that its proposed scientific claim has been
+demonstrated. The linked closeouts and the current manuscript take precedence
+over older plans and promotional descriptions.
 
 ## The question in plain language
 
@@ -69,6 +77,148 @@ test against the same fixed reviewer protocol.
 | 23 Sep | Ran a predeclared fresh-seed confirmation in selected Fishery and Harvest settings: 1,920 episodes, 11,249 original proposals and 101,241 matched reviewer decisions. | Test the immediate decision trade-off on new population contexts after piloting the protocol. | In these settings, joint review spared safe requests relative to a conservative local rule without approving more resolved-risky requests. An optimistic local rule exposed a different trade-off and was competitive in Harvest. Immediate safe decisions did **not** automatically improve long-run stock or return. This is conditional on two pilot-selected settings. |
 | 22-23 Sep | Built a native adapter and attempted policy admission for SocialJax Clean Up. Stopped the transfer after the chosen policies/starting state did not produce the required reachable, useful safe/risky comparison. | Try a genuinely different mechanism: agents may need to clean a shared area before others can benefit. A third game is useful only if it supplies meaningful oversight decisions. | Adapter and tests exist; **Clean Up is not a validated third result**. More game rows would not fix the missing policy/outcome coverage. |
 | 23 Sep | Ran a bounded Harvest actor-search pilot: nested 1/8/32-candidate search chose one entrant, then fixed reviewers inspected 0/3/6 requests from new partner populations. | Test the missing link between strategy-generation resources and reviewer decisions without changing the reviewer at the same time. | Search changed held-out payoff unevenly, but no-review failure was often saturated and all reviewers rejected the resolved-risky requests in four contexts. This is a useful negative design check, **not** a validated rising-capability oversight result. |
+
+## October 2026: the oversight experiment series
+
+**Where it lives.**
+- Notes: `notes/claude_audit_20261005/`.
+- Code: `experiments/oversight/`.
+- Raw runs: `results/runs/claude_*` (git-ignored). Small tables are copied
+  under `notes/claude_audit_20261005/runs/`.
+
+**How each experiment is run.** Each one has its own folder,
+`notes/claude_audit_20261005/studies/<ID>_<name>/`, holding:
+- `protocol.md`, written and committed **before** any code ran;
+- `results.md`, which follows the same structure every time.
+
+**How to read the numbers.**
+- Intervals are 95% paired context-bootstrap intervals.
+- A *context* is one freshly generated population of 6 agents. Every study
+  uses 64 test contexts and 80 steps unless stated.
+- Fishery uses the productive-level (MSY) target from S1b on.
+
+### What was run and what came out
+
+| ID (date) | Question | What came out | Verdict on its hypotheses |
+| --- | --- | --- | --- |
+| **Audit** (5 Oct) | Re-check the 23 Sept confirmation. | Harvest results were driven by a weather buffer 3.6× larger than needed. With a buffer sized correctly, joint review cut **0 of 3,687** safe requests, not 2,521 **[post hoc]**. | Led to R1. |
+| **R1** (5 Oct) | Repair the reviewer comparison and test the Fishery safety target. | **Harvest:** joint review approved 0.6% of risky requests and cut 0.2% of safe ones. Optimistic local approved **12.6%** of risky requests; bounded local cut **90%** of safe ones. **Fishery:** the MSY target gave **1,393 against 555** total harvest [difference +838, interval +800 to +865]. "More information gave less harvest" only appeared under the old line *and* when unseen requests were assumed to be the maximum. | Confirmed on fresh seeds. |
+| **S1** (5 Oct) | What if agents under-report and the reviewer trusts reports? | Unsafe actions rose: **Harvest 0.35% → 3.0%**, **Fishery 0% → 24.8%** (the stock collapsed in 61 of 64 contexts). Audits and neighbour reports brought this back to about 0%, but **by excluding caught cheaters**, not by better decisions. Lying paid only in Fishery with colluding neighbours (+110). | Mixed; see results. |
+| **S1b** (5 Oct) | Do audits help by correcting the reviewer or by removing the cheater? | A reviewer with no memory, using 1–2 audit results per step, barely improved: **Harvest 1.9% → 1.7%** of steps unsafe. Exclusion produced the safety. | Belief-correction hypothesis falsified. |
+| **S2** (5 Oct) | Does checking deter cheaters who gain privately by taking more than allowed? | With no checks, harvest per honest agent fell **106 → 45** (Fishery). One random audit per step plus any fine **≥ 6** stopped cheating. In Harvest, cheating never paid. | Supported in Fishery; untestable in Harvest. |
+| **S3** (5 Oct) | Where exactly does deterrence start? What about imperfect audits, timed cheaters, and a reviewer with memory? | **Threshold:** cheaters stop at expected fine per agent-step **e ≈ 0.30–0.40**, against a predicted break-even of **0.356**, for audit rates from 1/6 down to 0.02 and audits that miss up to ¾ of cheats. **Known schedule:** worse than no checks (honest agents **28.8 against 40.9**; the stock collapsed in 12 of 64 contexts). **Memory:** Fishery **69% → 1.5%** of steps unsafe (fixed liars) and **75% → 32%** (noisy liars); Harvest **1.74% → 0.98%** (0.61% when everyone is honest). | 8 supported, 2 falsified (one only partly), 1 empty by construction. |
+| **S4** (5 Oct) | Does memory still help against cheaters who know the reviewer remembers? What if audits cost something? | Memory alone **does not deter**. Cheaters kept 41% of their gain even at the highest audit rate. In 98% of caught-cheater steps the shrunken allowance was already at its floor of 0 **[post hoc]**. **Memory + fine** deterred at audit rate **0.05 instead of 0.10**, and gave the most harvest once audits cost something. Misreporting still did not pay against memory. | 6 of 7 supported; 1 falsified by a 0.04% near-tie. |
+| **R2** (5 Oct) | Do the findings hold in 8 never-piloted settings? What if the reviewer's model is wrong? | **Memory** was safer in **9 of 9** testable settings. The **MSY target** won in 5 of 6; the exception is a setting where the one-step line never binds. **Wrong model:** joint review's risky approvals rose from **0.9% to 26%** (weather noise underestimated by half) and **82%** (regrowth overestimated by 25%). A reviewer that learned the model recovered within about 60 steps. Under a hidden collapse point, the old line collapsed **78%** of contexts and MSY **0%**. | Mostly supported. The deterrence formula as written failed; it matched once measured correctly **[post hoc]**. |
+| **S5** (5 Oct) | Do the conclusions survive stronger attackers (per-agent, state-dependent, PPO)? Do two new memory rules fix S4's floor? | Fines plus random audits still deterred at **q ≥ 0.10**. **memory_cap** (check a caught agent every step) cut the gain to **7%** of no checks, but used **4.1 audits per step**, against 0.6 for a fine. **memory_cut** (tighten the shared cut) protected the stock but was unfair: cheaters gained **more** than with no checks (142 against 113), and honest agents got **36** each against 104. Richer search mostly produced cheaters competing with each other, not a stronger team. | H1 and H3 supported; H2 split (memory_cut failed, memory_cap passed); H4 not supported. |
+| **C1** (5 Oct) | Does the reviewer ranking hold in a third game, where harm comes from *combining* two reagents? | Yes. Joint approved **0.3%** of risky requests, optimistic local **100%**. A fair-share quota cut **82–89%** of safe requests in *both* games, so its failure is not specific to compositional harm. Targeting audits by report size backfired: **+3.4 points** more unsafe steps than random audits. | 2 of 4 supported. |
+| **L1 pilot** (6 Oct) | Can a language model (gpt-oss:120b) act as a fisher in this simulator? Does it over-take? | The interface works: **100%** valid answers in 1,968 calls, about **$0.41** in total. The model **never** over-took unless the rules said it could. One sentence of permission raised over-taking to **23%** with no checks, and random checks with a large fine cut it to **0%**. 3 contexts per cell, so descriptive only. | Pilot; proposes L2. |
+| **R3** (7 Oct) | Does deterrence start at the break-even in every Fishery setting, with the gain per cheating step fixed **before** the search? | Yes: in **5 of 5** testable settings the threshold fell within one grid step of the prediction. The predicted thresholds range from 0.19 to 1.20. The sixth setting gives cheating no gain, so it is not testable. | 2 of 3 supported; 1 badly posed (the gain is zero at exactly the break-even). |
+| **T1** (7 Oct) | Do audits aimed at the largest report miss under-reporters, in all three games? | Aiming at the largest report was worse than random in **Fishery** (+89 points of harm) and **River** (+3.2), with no difference in **Forest**. The reason is **coverage**, not hiding: the aim keeps auditing the same agent, so only **25%** of liars were ever caught in Fishery, against 100% at random **[post hoc diagnostic]**. In Forest, aiming at the plot doing worst against prediction was best: harm fell to **26%** of the no-audit level, against 65% at random. | 2 of 3 supported; the mechanism hypothesis was falsified and revised. |
+| **L2** (7–8 Oct) | Do language-model fishers stop over-taking once the expected fine exceeds their gain? 4 models × 10 cells × 10 contexts (400 games, on Ollama Cloud). | gpt-oss and Nemotron over-took in **51–92%** of steps for every expected fine from 0 to 1.33 t, and in **0%** at 6 t, the only cell above their measured gain (**4.5–4.7 t**). A small fine (1–2 t) *raised* over-taking **[post hoc]**. Gemma over-took little (5–10%), almost all by keeping its request after a cut **[post hoc]**; Mistral Large 3 never over-took. 0 fallbacks in 62,152 decisions. H4 (L1 replication) failed because S0 still describes a free check (design error). Memory without fines (EM, corrected rule): over-taking stays at 20–33% but MSY-limit breaks fall from over 90% to 20–40%, with no collapses. | Claim 6 holds (H1 in 3 of 3 frozen families); H3 (memory) holds in 2 of 3. |
+| **L3** (8 Oct) | Does each LLM stop over-taking at the fine its own gain predicts? Fines 12–30 t, gpt-oss and Nemotron, 80 games, with the prediction frozen first. | Predicted F = 30 for both. **Nemotron: exactly F = 30. gpt-oss: F = 24**, one grid step early. Deterrence is graded: over-taking falls from about e/g = 0.4 and is at 2–12% of the no-fine level by e/g ≈ 0.85–0.9. That is earlier than a risk-neutral agent would stop (H3 failed for both). 0 fallbacks; comprehension 3 of 3. | Claim 6, by the pre-stated rule: "within one grid step" (exact for Nemotron). |
+| **R4** (9 Oct) | Does memory make audits work in River too, on a grid like Forest's (2g/4g × regrowth 1.0/0.85)? Added at Ameer's request for consistent testing; programmed agents only, $0. | Yes, in **4 of 4** settings: rounds below half capacity fell from 35–66% (no audits) to **3–5%** with memory, while audits without memory removed only 11–15% of the harm. With the reviewer aiming at half capacity, River now matches Fishery and Forest (C1's weaker 53% → 39% came from a reviewer aiming at the 30 line). | Claim 3 now holds in **13 of 13** settings across all three games. |
+| **R5** (9 Oct) | The Fishery memory test on the same 2×2 grid (2g/4g × regrowth multiplier 1.0/0.85) used for Forest and River, so all three games share one design. Programmed agents, $0. | Memory beats audits without memory in **4 of 4** settings: 0.3–3% of rounds breaking the MSY limit, against 23–84% without memory and 43–99% with no audits. R2's wider 5-setting Fishery grid moves to supplementary Table S5. | Claim 3: 12 of 12 settings on the common grid. |
+
+**7 Oct: paper exhibits.**
+- Built for claims 1–5, following how the closest papers present their results.
+- In `paper/paper_v6/`:
+  - a TikZ protocol diagram;
+  - 5 multi-panel figures with 95% intervals;
+  - 2 booktabs tables.
+- Rebuild with `experiments/oversight/make_paper_exhibits.py`.
+
+### What we now believe, and how confident we are
+
+1. **With true inputs and a known model, joint review is near-exact, and
+   local rules err in fixed directions.** Confidence: high.
+   - Shown in R1 and C1.
+   - Largely arithmetic (see `propositions.md`, P5).
+   - **It breaks with a wrong model (R2).** This is now the main weakness of
+     the "joint review" story.
+2. **The safety target matters as much as the information.** The MSY target
+   beat the old line wherever the resource was under pressure (R1, R2).
+3. **Random audits plus a fine deter at the expected-penalty break-even.**
+   - Shown in S3, S5 and R2, and **confirmed prospectively in R3** (5 of 5 settings).
+   - Mostly arithmetic (P1).
+   - A **known schedule** cannot deter (P2).
+   - A **fixed, report-based aim** fails because it leaves most agents unchecked (T1). Audits must reach everyone.
+4. **Memory improves decisions without sanctions, but does not deter (P4).**
+   - Memory plus a fine needs half the audit rate.
+   - Robust across settings (R2).
+   - Its effect is about half as large when lies vary.
+5. **Making a stronger attacker is still unsolved.** Richer search and PPO did
+   not give a validated ladder of attacker strength (S5, and the September
+   actor pilots).
+6. **LLM agents follow the break-even rule, when they over-take on purpose (L2, L3).**
+   - The fine at which gpt-oss and Nemotron stop is predictable from their own **one-round** gain, within one grid step (exact for Nemotron).
+   - **They are myopic offenders [post hoc]:** their whole-game gain from over-taking is small or negative (gpt-oss −1.05 t, Nemotron 0.71 t per over-take round), yet they keep over-taking until the fine outweighs the one-round gain. They ignore the long-run cost of a depleted stock.
+   - Families differ in *whether* they over-take: Mistral Large 3 never did; Gemma mostly ignored cuts.
+   - Confidence: high for the stopping point; why deterrence starts early is untested.
+
+### FINAL LIST (frozen 8 October 2026): nothing is added after this
+
+Ameer decided to stop adding experiments. Everything not on this list is parked for a later paper.
+
+**Runs, which are the last ones:**
+1. ~~**L2 memory cell (EM)**~~: done 11:09Z on 8 Oct. H3 holds for gpt-oss and Nemotron.
+2. ~~**L3, threshold location**~~: done at 18:22Z on 8 Oct. The stopping fine is within one grid step of the prediction (exact for Nemotron); deterrence starts below the gain. **All runs are finished.**
+
+**After the runs, writing only:**
+3. ~~Add H3 (EM) to `studies/L2_llm_agents/results.md`~~: done.
+4. ~~Write `studies/L3_llm_threshold/results.md`, and put the 10-fine curve in Figure 4(a)~~: done, with Figure 5 (the spine).
+5. Read the primary sources marked "read before quoting" in `novelty/README.md` and the ledger: Becker, Harrington, UNCLOS/UNFSA, Sutinen & Andersen, Segerson.
+6. Draft the paper in `paper/paper_v6`: introduction, related work (from `novelty/README.md`), methods, results with Figures 2–4, and limitations.
+7. Supervisor review, then the venue: an AAAI-27 workshop and arXiv (about 20 Nov), then ICML 2027 (about 22 Jan).
+8. Freeze the repository: README, data bundle, tests, tag.
+
+**Added after the freeze (9 Oct, at Ameer's request):** R4 (River) and R5 (Fishery) put all three games on one 2×2 grid for claim 3. Each ran in seconds and cost nothing.
+
+**Parked (not this paper):**
+- **Spillover of over-taking** (supervisor's question, 9 Oct): a post hoc check found about +4–7 points of next-round over-taking per peer that over-took. About half runs through the reviewer's shared cut. A proper test (inserted over-takers; peers' catches visible or not; a defector on Forest's ring network) is parked. See the L2 results addendum.
+- a true "silent, no checks" LLM cell, to fix H4's design error;
+- why a small fine raises over-taking;
+- more LLM families (DeepSeek and others);
+- a coordinated group attacker;
+- a hedging reviewer;
+- capability ladders;
+- deterrence in Forest;
+- the Act 1 governance studies.
+
+**Consistency check (8 Oct):** Table 4 in `paper/paper_v6` lists every study's settings. Two definitions differ by design: the gain (whole-game g\* for programmed cheaters, one-round g₁ for LLMs, see L3 results) and the memory rule (S4's share-of-cut rule, L2's tonnes rule). River harm was re-measured at half capacity for T1 and C1 Part B; C1 Part A keeps 30, its reviewers' own goal.
+
+**Decided (8 Oct):**
+- Harm means falling below the MSY level (UNCLOS Art. 61(3); UNFSA Annex II).
+- The paper is the full paper (claims 1–6).
+- Mistral Large 3 is kept as the added fourth family.
+
+**Still open:** the main game (Fishery is proposed) and the venue. Both need supervisor sign-off.
+
+### Open decisions (for Ameer, Yali and Edward)
+
+- ~~Definition of harm~~: decided 8 Oct, MSY.
+- ~~Which paper~~: decided 8 Oct, the full paper on misreporting, costly checking and deterrence.
+- **Main game:** Harvest, with Fishery as a sanity check? Most deterrence
+  results are Fishery-only, because cheating never paid in Harvest.
+
+### Next steps already proposed
+
+- **L2:** done for 10 of 11 cells (results in `studies/L2_llm_agents/results.md`, Figure 4). The memory cell (EM) is running with the corrected rule (Amendment 5); then H3 is added. A finer fine grid between e = 1.33 and 6 t would locate the threshold.
+- **A coordinated group attacker** with per-agent strategies (S5 gap).
+- **A reviewer that hedges against uncertainty in its own model** (R2 gap).
+- **A direct test** of report-based against signal-based audit targeting (C1
+  conjecture).
+
+### Where the October files are
+
+| Item | Path (in `notes/claude_audit_20261005/`) |
+| --- | --- |
+| Per-study protocol and results | `studies/<ID>_<name>/protocol.md` and `results.md` |
+| Arithmetic results stated once | `propositions.md` |
+| Running "what we learned" log | `what_we_learned_and_next.md` |
+| Every check that was run | `verification_log.md` |
+| Figures, with one-line takeaways | `figures_guide.md`, `figures/` |
+| Sources and terms | `literature_ledger.md` |
+| Background (September audit, design issues, caveats) | `background/` |
 
 ## Why these games, specifically?
 
@@ -146,6 +296,8 @@ are still custom research environments rather than a broad external suite.
   live LLM-agent safety, or a five-game benchmark.
 
 ## Where this leaves the first paper
+
+*Written 23 September. The October series above changes the picture: see "What we now believe" and "Open decisions" there.*
 
 The present paper can make a **specific, defensible contribution**: define a
 repeated multi-agent resource-use oversight problem, show why local/global
