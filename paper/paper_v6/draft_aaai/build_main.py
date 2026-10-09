@@ -1,5 +1,11 @@
 """Assemble main.tex (single source file, as AAAI requires) from body.tex, the preamble in preamble.tex and the
 TikZ/figure sources. Edit body.tex or the captions below, then run:  python3 build_main.py && pdflatex ... """
+import glob, os, shutil
+# The paper reads local copies of the figures (figures/), so refresh them from ../figures on every build.
+for f in glob.glob('figures/*.pdf'):
+    src = os.path.join('..', f)
+    if os.path.exists(src):
+        shutil.copy2(src, f)
 pre = open('preamble.tex').read()
 body = open('body.tex').read()
 tikz = lambda p: open(p).read()

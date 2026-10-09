@@ -491,12 +491,13 @@ def _llm_relative(model, g):
 def fig5_spine():
     """Observed against predicted stopping fine (calibration plot with a 1:1 line, the standard observed-versus-predicted
     form; 9 Oct 2026). x: the expected fine at which over-taking should stop according to a gain; y: the expected fine at
-    which it did stop. Language models: predicted from the one-round gain g1 (filled) and from the whole-game gain g*
-    (open); vertical whiskers span the last fine that did not deter and the first that did; horizontal whiskers are 95%
+    which it did stop. Language models: predicted from the observed one-round excess (filled), the largest available
+    one-round excess of Proposition 1(i) (tinted; post hoc, 9 Oct) and the realised whole-game gain (open); vertical whiskers span the last fine that did not deter and the first that did; horizontal whiskers are 95%
     bootstrap intervals of the gain over the 10 populations. Programmed cheaters (R3, grey): predicted from g*."""
     ph = json.loads((NOTES / "claude_l2_v1" / "l2_posthoc.json").read_text())
     l3 = json.loads((NOTES / "claude_l3_v1" / "l3_summary.json").read_text())["models"]
     R3 = json.loads((NOTES / "claude_r3_v1/cells.json").read_text())
+    rc = json.loads((NOTES / "claude_l2_v1" / "l2_review_checks.json").read_text())
     grid = [0, 1, 2, 4, 8, 12, 18, 24, 30, 36]
     rng = np.random.default_rng(20261019)
     def ratio_ci(num, den):
@@ -516,14 +517,18 @@ def fig5_spine():
         g1 = ratio_ci(wg["g1_excess_by_context"], wg["g1_steps_by_context"])
         gs_ = ratio_ci(wg["net_gain_by_context"], wg["overtake_steps_by_context"])
         F = l3[m]["F_star"]; obs, obs_lo = F / 6, grid[grid.index(F) - 1] / 6
-        for (v, lo, hi), filled in ((g1, True), (gs_, False)):
+        gmax = rc[lab]["largest_available_excess_t"]
+        tint = matplotlib.colors.to_rgba(col, 0.35)
+        for (v, lo, hi), face in ((g1, col), (gs_, "white"), (gmax, tint)):
             ax.errorbar(v, obs, xerr=[[v - lo], [hi - v]], yerr=[[obs - obs_lo], [0]], fmt=mk, color=col, ms=4.2, lw=0.8,
-                        capsize=1.5, mfc=col if filled else "white", zorder=3)
-        ax.annotate("", xy=(g1[0], obs), xytext=(gs_[0], obs), zorder=1,
+                        capsize=1.5, mfc=face, mec=col, zorder=3)
+        ax.annotate("", xy=(gmax[0], obs), xytext=(gs_[0], obs), zorder=1,
                     arrowprops=dict(arrowstyle="-", color=col, lw=0.5, ls=(0, (2, 2))))
         ax.plot([], [], mk, color=col, ms=4.2, label=lab)
-    ax.plot([], [], "o", color=INK2, mfc=INK2, ms=4, label="Predicted from one-round gain")
-    ax.plot([], [], "o", color=INK2, mfc="white", ms=4, label="Predicted from whole-game gain")
+    ax.plot([], [], "o", color=INK2, mfc=INK2, ms=4, label="Predicted from observed one-round excess")
+    ax.plot([], [], "o", color=INK2, mfc=matplotlib.colors.to_rgba(INK2, 0.35), mec=INK2, ms=4,
+            label="Predicted from largest one-round excess")
+    ax.plot([], [], "o", color=INK2, mfc="white", ms=4, label="Predicted from realised whole-game gain")
     ax.set_xlim(*lim); ax.set_ylim(-0.3, 6.2)
     ax.set_xlabel("Predicted stopping fine (expected fine, t)")
     ax.set_ylabel("Observed stopping fine (expected fine, t)")
@@ -606,8 +611,8 @@ def table4_settings():
         ("C1", "1, 5", "River", "A: honest; B: under-report", "fixed", "B: memory", r"quality $<30$$^e$", "--"),
         ("R4", "3", "River (4 settings)", "programmed: under-report by half", "fixed", "memory, or audits without memory", "half capacity", "--"),
         ("R5", "3", "Fishery (4 settings)", "programmed: under-report by half", "fixed", "memory, or audits without memory", "half capacity", "--"),
-        ("L2", "3, 6", "Fishery", "4 LLMs: over-take", "every round", "fine 0--36 t, or memory$^c$", "half capacity", "one-round $g_1$"),
-        ("L3", "6", "Fishery", "gpt-oss, Nemotron: over-take", "every round", "fine 12--30 t", "half capacity", r"one-round $g_1$, predicted"),
+        ("L2", "3, 6", "Fishery", "4 LLMs: over-take", "every round", "fine 0--36 t, or memory$^c$", "half capacity", r"observed one-round excess $\hat g_1$"),
+        ("L3", "6", "Fishery", "gpt-oss, Nemotron: over-take", "every round", "fine 12--30 t", "half capacity", r"observed one-round excess $\hat g_1$, predicted"),
     ]
     head = r"Study & Claims & Games & Who misbehaves, and how & How it is chosen & Consequence of a catch & Harm line & Gain used \\"
     body = "\n".join(" & ".join(r) + r" \\" for r in rows)
