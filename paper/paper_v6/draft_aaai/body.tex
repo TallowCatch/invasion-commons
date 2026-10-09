@@ -1,38 +1,3 @@
-\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
-\usepackage[submission]{aaai2027}  % DO NOT CHANGE THIS
-\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
-\usepackage{graphicx} % DO NOT CHANGE THIS
-\urlstyle{rm} % DO NOT CHANGE THIS
-\def\UrlFont{\rm}  % DO NOT CHANGE THIS
-\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
-\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
-\frenchspacing  % DO NOT CHANGE THIS
-\usepackage{booktabs}
-\usepackage{amsmath,amssymb,amsthm}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta, positioning, fit, backgrounds, calc}
-\definecolor{rev}{HTML}{2A78D6}
-\definecolor{audit}{HTML}{EB6834}
-\definecolor{memc}{HTML}{1BAF7A}
-\pdfinfo{
-/TemplateVersion (2027.1)
-}
-\setcounter{secnumdepth}{2}
-\newtheorem{proposition}{Proposition}
-\newcommand{\game}[1]{\textsc{#1}}
-\newcommand{\gone}{g_1}
-\newcommand{\gstar}{g^{*}}
-
-\title{Predicting the Penalty That Stops AI Agents\\from Over-Using a Shared Resource}
-\author{
-    Anonymous Submission
-}
-\affiliations{
-}
-
-\begin{document}
-\maketitle
-
 \begin{abstract}
 Language-model agents that share a limited resource can take more than their allowance, and an overseer can afford to check only a few of them. We tested when random audits stop such over-use, and whether the penalty that stops a given agent can be predicted before it is deployed. We built an audited commons in which six agents draw on a renewable resource, a reviewer sets each agent's allowance to keep the resource at half capacity, and random audits answer a caught violation with a fine, a memory of the offence, or both. We first used programmed agents in three games, Fishery, Forest and River, and then replaced four of the six fishers with language models from four families in 520 games. With programmed agents, audits reduced harm only through their consequences, and deterrence began where the expected fine equalled the gain from cheating; we predicted this threshold in advance in 5 of 5 new settings. Tightening everyone's allowance to absorb known cheaters made cheating pay more than no audits, and aiming each audit at the largest report caught 25\% of liars, against 100\% under random audits. The two language models that over-took on purpose stopped at the fine we predicted in advance from their one-round gain: exactly for Nemotron 3 Super, and one grid step early for gpt-oss-120b. Over-taking rarely paid over the whole game, yet both models continued until the fine outweighed the gain of the round. A reviewer that remembered past over-takes removed most of the harm without any fine, but did not stop the over-taking. Overseers of language-model agents should therefore set penalties against the immediate gain, keep audits random, and use memory where penalties are unavailable.
 \end{abstract}
@@ -62,105 +27,7 @@ The expected-penalty condition goes back to \citet{becker1968crime} and \citet{a
 \section{Methods}
 \label{sec:setting}
 
-\begin{figure*}[t]
-  \centering
-  \resizebox{0.76\textwidth}{!}{% Figure 1: one step of the audited commons game (TikZ, vector). Input inside a figure environment.
-% Colours: agents grey, reviewer blue, audits orange (same mapping as the data figures).
-\begin{tikzpicture}[
-    font=\footnotesize,
-    >={Stealth[length=2.2mm]},
-    box/.style={draw=#1!70!black, fill=#1!8, rounded corners=2pt, align=center, inner sep=4pt, minimum height=11mm, text width=24mm},
-    lab/.style={font=\scriptsize, align=center, text=black!70},
-    flow/.style={->, thick, draw=black!65},
-    fb/.style={->, thick, draw=audit!80!black, dashed},
-  ]
-  \colorlet{agentc}{black!55}
-  \colorlet{revc}{rev}
-  % ---- row of the step
-  \node[box=agentc] (req) {\textbf{1. Requests}\\[1pt] each of 6 agents asks\\ for a share $p_i$};
-  \node[box=agentc, right=6mm of req] (rep) {\textbf{2. Reports}\\[1pt] honest: $r_i=p_i$\\ under-report: $r_i<p_i$};
-  \node[box=revc, right=6mm of rep, text width=32mm] (rv) {\textbf{3. Reviewer}\\[1pt] predicts the resource\\ with its model; picks one\\ shared cut $\lambda\in\{1,\tfrac34,\tfrac12,\tfrac14,0\}$\\ that meets its target};
-  \node[box=agentc, right=6mm of rv] (ex) {\textbf{4. Harvest}\\[1pt] allowance $a_i=\lambda p_i$;\\ a cheater takes\\ more than $a_i$};
-  \node[box=green!45!black, below=9mm of ex, text width=28mm, minimum height=17mm] (res) {\textbf{5. Resource}\\[1pt] regrows, with random\\ weather; spills onto\\ neighbours (\textsc{Forest})};
-  \node[box=audit, below=9mm of rv, text width=31mm, minimum height=17mm] (au) {\textbf{Audits} (rate $q$)\\[1pt] spot-check a few agents;\\ a catch leads to a fine $F$,\\ memory of the lie, or both};
-  % ---- arrows
-  \draw[flow] (req) -- (rep);
-  \draw[flow] (rep) -- (rv);
-  \draw[flow] (rv) -- (ex);
-  \draw[flow] (ex) -- (res);
-  \draw[flow] (res.south) |- ([yshift=-4mm]au.south) -| (req.south) node[pos=0.75, lab, right] {next round\\ ($T$ rounds)};
-  \draw[fb] ([xshift=3mm]ex.south west) -- ([xshift=-3mm]au.north east) node[midway, lab, left=0.5mm] {inspect};
-  \draw[fb] (au.north) -- (rv.south) node[midway, lab, left=1mm] {memory};
-  % ---- target annotation
-  \node[lab, above=1.5mm of rv] {target: one-step safety line, or half capacity (MSY level)};
-\end{tikzpicture}
-}\\[3mm]
-  \resizebox{0.66\textwidth}{!}{% Figure: how harm connects the agents in each game (TikZ, vector). Same colours as Figure 1:
-% agents grey, resource green, harm and coupling orange, reviewer blue. Requires \definecolor{rev}, {audit}.
-\begin{tikzpicture}[
-    font=\footnotesize,
-    >={Stealth[length=1.8mm]},
-    agent/.style={circle, draw=black!60, fill=black!8, minimum size=6.2mm, inner sep=0pt, font=\scriptsize},
-    res/.style={circle, draw=green!45!black, fill=green!10, align=center, inner sep=1pt, font=\scriptsize},
-    plot/.style={circle, draw=green!45!black, fill=green!10, minimum size=7.4mm, inner sep=0pt, font=\scriptsize},
-    harm/.style={circle, draw=audit!80!black, fill=audit!12, align=center, inner sep=1pt, font=\scriptsize},
-    rv/.style={rectangle, rounded corners=2pt, draw=rev!80!black, fill=rev!8, align=center, inner sep=2pt, font=\scriptsize},
-    take/.style={->, draw=black!60, thick},
-    spill/.style={<->, draw=audit!85!black, thick, dashed},
-    cut/.style={draw=rev!70, dashed, thin},
-    lab/.style={font=\scriptsize, align=center, text=black!70},
-    ttl/.style={font=\footnotesize\bfseries, anchor=south},
-  ]
-  % ------------------------------------------------------------------ (a) Fishery: a star around one stock
-  \begin{scope}[shift={(0,0)}]
-    \node[ttl] at (0,2.75) {(a) \textsc{Fishery}};
-    \node[res, minimum size=13mm] (S) at (0,0) {shared\\stock $x$\\[-1pt]{\tiny max 100}};
-    \foreach \k in {1,...,6} {
-      \node[agent] (a\k) at ({90-60*(\k-1)}:1.85) {$\k$};
-      \draw[take] (a\k) -- (S);
-    }
-    \draw[->, draw=green!45!black, thick] ([yshift=1.5mm]S.east) .. controls +(0.75,0.45) and +(0.75,-0.45) .. ([yshift=-1.5mm]S.east)
-      node[pos=0.5, lab, right=0pt] {regrows};
-    \draw[cut, rev!80, line width=0.6pt] (0,0) circle (2.3);
-    \node[lab, text=rev!80!black] at (-1.95,-1.95) {reviewer's\\shared cut};
-  \end{scope}
-  % ------------------------------------------------------------------ (b) Forest: a ring of plots with spillover
-  \begin{scope}[shift={(5.6,0)}]
-    \node[ttl] at (0,2.75) {(b) \textsc{Forest}};
-    \foreach \k in {1,...,6} {
-      \node[plot, minimum size=6.4mm] (p\k) at ({90-60*(\k-1)}:1.32) {};
-      \node[agent] (f\k) at ({90-60*(\k-1)}:2.22) {$\k$};
-      \draw[take] (f\k) -- (p\k);
-    }
-    \foreach \k/\j in {1/2,2/3,3/4,4/5,5/6,6/1} {
-      \draw[spill] (p\k) -- (p\j);
-    }
-    \node[lab] at (0,0) {6 plots\\{\tiny max 20 each}};
-  \end{scope}
-  % ------------------------------------------------------------------ (c) River: two pollutants that harm mainly together
-  \begin{scope}[shift={(11.2,0)}]
-    \node[ttl] at (0,2.75) {(c) \textsc{River}};
-    \foreach \k in {1,2,3} {
-      \node[agent] (x\k) at (-1.75,{1.75-0.62*(\k-1)}) {$\k$};
-    }
-    \foreach \k in {4,5,6} {
-      \node[agent] (y\k) at (1.75,{1.75-0.62*(\k-4)}) {$\k$};
-    }
-    \node[lab] at (-1.75,2.32) {reagent $X$};
-    \node[lab] at (1.75,2.32) {reagent $Y$};
-    \node[harm, minimum size=11mm] (M) at (0,0.15) {$\kappa XY$\\[-1pt]{\tiny joint}};
-    \foreach \k in {1,2,3} {\draw[take] (x\k) -- (M);}
-    \foreach \k in {4,5,6} {\draw[take] (y\k) -- (M);}
-    \node[res, minimum size=12mm] (Q) at (0,-1.65) {river\\quality $Q$\\[-1pt]{\tiny max 100}};
-    \draw[->, draw=audit!85!black, very thick] (M) -- (Q) node[midway, lab, right] {damage};
-    \draw[->, draw=black!45, thin] (x3) .. controls (-1.5,-1.0) .. (Q.west) node[pos=0.55, lab, left] {$\lambda X$};
-    \draw[->, draw=black!45, thin] (y6) .. controls (1.5,-1.0) .. (Q.east) node[pos=0.55, lab, right] {$\lambda Y$};
-  \end{scope}
-\end{tikzpicture}
-}
-  \caption{The audited commons. Top: one round, in which agents request a share and may under-report, the reviewer chooses one shared cut that meets its target, each agent takes its allowance or more, the resource regrows, and random audits answer a caught violation with a fine, a memory of the offence, or both. Bottom: how harm connects the agents in (a) Fishery, where six agents draw on one stock, (b) Forest, where over-cutting a plot damages its two neighbours (dashed), and (c) River, where damage arises mainly where reagents $X$ and $Y$ mix. The dashed ring in (a) marks the reviewer's shared cut, which links the agents in all three games.}
-  \label{fig:step}
-\end{figure*}
+FIGURE1
 
 \subsection{Audited commons}
 
@@ -193,12 +60,7 @@ To predict when a fine deters, let $\gone$ be an agent's gain from one round of 
 
 Depleting the resource lowers later catches, so $\gstar\le\gone$ in our games. An agent that decides round by round can therefore keep over-taking at fines where over-taking no longer pays over the game.
 
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=0.82\textwidth]{figures/fig3_audits.pdf}
-  \caption{Audits with programmed agents. (a) Share of rounds below the harm line with under-reporters in nine settings (Fishery and Forest; 2 or 4 greedy agents and regrowth rate), when the reviewer trusts reports, audits without memory, or audits with memory. (b) Observed deterrence threshold $e^*$ against the break-even $\gstar$ predicted from runs without audits; filled points are five settings predicted before the search, open points are audit rates from $1/6$ to $0.02$ and audits that miss cheats; the band marks one grid step. (c) Cheaters' gain against audit rate under five audit rules; the dotted line marks no audits. (d) Harvest per honest agent with a fine of 24 under random and predictable audits. (e) Harm remaining, relative to no audits, when one audit per round is aimed at random, at the largest report, or at the plot doing worst against prediction; numbers give the share of liars ever caught. Error bars and bands show 95\% intervals over populations.}
-  \label{fig:audits}
-\end{figure*}
+FIGURE2
 
 \subsection{Programmed agents}
 
@@ -218,12 +80,7 @@ We compared conditions on the same populations and report 95\% paired bootstrap 
 \section{Results}
 \label{sec:results}
 
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{figures/fig4_llm_main.pdf}
-  \caption{Language-model agents in Fishery. (a) Share of rounds in which each model over-took, against the fine $F$ (expected fine $e=F/6$); fines of 12--30\,t were tested for gpt-oss-120b and Nemotron 3 Super only. Dotted lines mark each model's one-round gain $\gone$, and the shaded area marks fines above both. Open triangles: Mistral Large 3, added as a fourth family. (b) Catch of the two rule-following fishers over 20 rounds. Error bars show 95\% intervals over populations.}
-  \label{fig:llm}
-\end{figure*}
+FIGURE3
 
 \subsection{Reviewer target and model}
 
@@ -243,12 +100,7 @@ In the pilot setting, cheaters stopped at $e\approx0.30$--$0.40$, against a pred
 A reviewer that answered known cheaters by tightening the \emph{shared} cut protected the stock but moved the cost onto honest agents. Cheaters gained more than with no audits (142 against 113), and honest agents received 36 each, against 104 under a fine (Figure~\ref{fig:audits}c). Aiming each audit at the largest memory-corrected report kept auditing the same agent: in Fishery, only 25\% of liars were ever caught, against 100\% under random audits, and harm stayed at 96.2\% of rounds against 7.4\%. River showed the same ordering, with 6.0\% against 2.8\% of rounds unsafe and 41\% against 37\% below half capacity. Static models favour report-based cutoff rules \citep{reinganum1985income}; with agents of different sizes playing repeatedly, a rank rule never leaves the largest agent, the feedback loop that \citet{ensign2018runaway} describe for predictive policing. Aiming audits at the plot doing worst against prediction gave the least harm in Forest, 26\% of the no-audit level against 65\% at random (Figure~\ref{fig:audits}e).
 
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\columnwidth]{figures/fig5_spine.pdf}
-  \caption{Over-taking by gpt-oss-120b and Nemotron 3 Super, relative to no fine, against the expected fine divided by each model's one-round gain $\gone$. Open markers show the fines of the threshold test, whose stopping point was predicted in advance; the shaded area marks fines above $\gone$. The dotted line marks Nemotron 3 Super's whole-game break-even; gpt-oss-120b's whole-game gain was negative. Programmed cheaters, which commit to one level per game, stopped at 1.0--1.2 of their whole-game gain (Figure~\ref{fig:audits}b).}
-  \label{fig:spine}
-\end{figure}
+FIGURE4
 
 \subsection{Language-model agents across fines}
 
@@ -283,5 +135,3 @@ The language-model results come from one game, two models that over-took on purp
 Random audits stopped AI agents from over-using a shared resource only through consequences, only when those consequences reached every agent unpredictably, and only once the expected penalty outweighed the gain the agent acted on. For programmed cheaters that gain was their whole-game gain; for the language models we tested it was the gain of one round. The penalty that stops such agents can be predicted before deployment, and their indifference to the shared stock means that it must be.
 
 \bibliography{refs}
-
-\end{document}

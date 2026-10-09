@@ -16,7 +16,7 @@
   ]
   % ------------------------------------------------------------------ (a) Fishery: a star around one stock
   \begin{scope}[shift={(0,0)}]
-    \node[ttl] at (0,2.75) {(a) \textsc{Fishery}: a star};
+    \node[ttl] at (0,2.75) {(a) \textsc{Fishery}};
     \node[res, minimum size=13mm] (S) at (0,0) {shared\\stock $x$\\[-1pt]{\tiny max 100}};
     \foreach \k in {1,...,6} {
       \node[agent] (a\k) at ({90-60*(\k-1)}:1.85) {$\k$};
@@ -26,11 +26,10 @@
       node[pos=0.5, lab, right=0pt] {regrows};
     \draw[cut, rev!80, line width=0.6pt] (0,0) circle (2.3);
     \node[lab, text=rev!80!black] at (-1.95,-1.95) {reviewer's\\shared cut};
-    \node[lab, text width=52mm] at (0,-2.95) {every agent draws on the same stock: one agent's\\catch lowers what all agents can take next round};
   \end{scope}
   % ------------------------------------------------------------------ (b) Forest: a ring of plots with spillover
   \begin{scope}[shift={(5.6,0)}]
-    \node[ttl] at (0,2.75) {(b) \textsc{Forest}: a ring};
+    \node[ttl] at (0,2.75) {(b) \textsc{Forest}};
     \foreach \k in {1,...,6} {
       \node[plot, minimum size=6.4mm] (p\k) at ({90-60*(\k-1)}:1.32) {};
       \node[agent] (f\k) at ({90-60*(\k-1)}:2.22) {$\k$};
@@ -40,11 +39,10 @@
       \draw[spill] (p\k) -- (p\j);
     }
     \node[lab] at (0,0) {6 plots\\{\tiny max 20 each}};
-    \node[lab, text width=46mm] at (0,-2.95) {each agent cuts its own plot; over-cutting\\damages the two neighbouring plots (dashed)};
   \end{scope}
   % ------------------------------------------------------------------ (c) River: two pollutants that harm mainly together
   \begin{scope}[shift={(11.2,0)}]
-    \node[ttl] at (0,2.75) {(c) \textsc{River}: a mixing junction};
+    \node[ttl] at (0,2.75) {(c) \textsc{River}};
     \foreach \k in {1,2,3} {
       \node[agent] (x\k) at (-1.75,{1.75-0.62*(\k-1)}) {$\k$};
     }
@@ -60,6 +58,5 @@
     \draw[->, draw=audit!85!black, very thick] (M) -- (Q) node[midway, lab, right] {damage};
     \draw[->, draw=black!45, thin] (x3) .. controls (-1.5,-1.0) .. (Q.west) node[pos=0.55, lab, left] {$\lambda X$};
     \draw[->, draw=black!45, thin] (y6) .. controls (1.5,-1.0) .. (Q.east) node[pos=0.55, lab, right] {$\lambda Y$};
-    \node[lab, text width=46mm] at (0,-2.95) {harm comes mainly from the two\\reagents together: no single agent's\\discharge looks harmful on its own};
   \end{scope}
 \end{tikzpicture}

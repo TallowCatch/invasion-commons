@@ -94,8 +94,9 @@ def grouped(ax, labels, series, width=0.8, fmt=None, ylim=None, hatch=None):
         ax.set_ylim(*ylim)
 
 
-def title(ax, letter, text):
-    ax.set_title(f"({letter}) {text}", loc="left", fontsize=7.6, fontweight="bold", pad=4)
+def title(ax, letter, text=None):
+    """Panel letter only (paper style, 9 Oct 2026): the description lives in the caption. `text` is kept for reference."""
+    ax.set_title(f"({letter})", loc="left", fontsize=8, fontweight="bold", pad=4)
 
 
 # ------------------------------------------------------------------ Figure 2: what the reviewer aims for and knows (claims 1-2)
@@ -204,7 +205,7 @@ def fig3_audits():
                                          ("Audit + memory", MEM_C, [harm(x, "memory") for x in order], None)], ylim=(0, 100))
     a.set_ylim(0, 118); a.set_yticks([0, 25, 50, 75, 100])
     a.set_ylabel("Harm (% of steps)$^*$"); a.legend(loc="upper right", ncol=3, fontsize=6.4, borderaxespad=0.1)
-    a.axvline(4.5, color=INK2, lw=0.5)
+    a.plot([4.5, 4.5], [0, 100], color=INK2, lw=0.5)  # divider stays inside the data range, clear of the legend
     for xc, gname in ((2.0, "Fishery"), (6.5, "Forest")):
         a.text(xc, -0.30, gname, transform=a.get_xaxis_transform(), ha="center", va="top", fontsize=6.8, fontweight="bold")
     title(a, "a", "Memory makes audits work (nine settings, under-reporters)")
@@ -225,7 +226,7 @@ def fig3_audits():
     b.set_xticks([0.2, 0.5, 1]); b.set_xticklabels(["0.2", "0.5", "1"]); b.set_yticks([0.2, 0.5, 1]); b.set_yticklabels(["0.2", "0.5", "1"])
     b.minorticks_off()
     b.set_xlabel("Predicted break-even $g^*$"); b.set_ylabel("Observed threshold $e^*$")
-    b.legend(fontsize=5.5, loc="upper left", borderaxespad=0.1, handletextpad=0.2)
+    b.legend(fontsize=5.5, loc="lower right", borderaxespad=0.1, handletextpad=0.2)
     title(b, "b", "Fines deter at break-even")
 
     # (c) gain against audit rate, by audit rule
@@ -322,10 +323,10 @@ def table2_regimes():
 
 
 # ------------------------------------------------------------------ Figure 4: language-model fishers under audits (claim 6, L2)
-LLM = {"gpt-oss_120b-cloud": ("gpt-oss-120b (OpenAI)", BLUE, "o"),
-       "nemotron-3-super_cloud": ("Nemotron 3 Super (NVIDIA)", ORANGE, "s"),
-       "gemma4_31b-cloud": ("Gemma 4 31B (Google)", AQUA, "D"),
-       "mistral-large-3_675b-cloud": ("Mistral Large 3 (added)", VIOLET, "^")}
+LLM = {"gpt-oss_120b-cloud": ("gpt-oss-120b", BLUE, "o"),
+       "nemotron-3-super_cloud": ("Nemotron 3 Super", ORANGE, "s"),
+       "gemma4_31b-cloud": ("Gemma 4 31B", AQUA, "D"),
+       "mistral-large-3_675b-cloud": ("Mistral Large 3", VIOLET, "^")}
 E_CELLS = ["E0", "E1", "E2", "E4", "E8", "E36"]
 E_FINE = {"E0": 0, "E1": 1, "E2": 2, "E4": 4, "E8": 8, "E36": 36}
 
@@ -469,51 +470,31 @@ def _llm_relative(model, g):
 
 
 def fig5_spine():
-    """Two kinds of agent, each scaled by its own gain (consistency fix, 8 Oct): (a) simulated cheaters choose one cheating
-    level for the whole game, so they are scaled by their whole-game net gain g* (R3); (b) LLM agents decide each round,
-    and are scaled by their one-round gain g1 (pre-registered in L2/L3). Panel (b) also marks where each model's
-    whole-game break-even lies on that axis (post hoc, l2_posthoc.json)."""
-    r3 = json.loads((NOTES / "claude_r3_v1" / "r3_summary.json").read_text())["cells"]
+    """Language-model agents against the expected fine scaled by their one-round gain g1 (single column).
+    Panel (a) of the earlier two-panel version (programmed cheaters against their whole-game gain) duplicated
+    Figure 2(b) and was removed on 9 Oct 2026. Marks where each model's whole-game break-even lies (post hoc)."""
     summ = {r["model"]: r for r in json.loads((NOTES / "claude_l2_v1" / "l2_summary.json").read_text())["models"]}
     ph = json.loads((NOTES / "claude_l2_v1" / "l2_posthoc.json").read_text())
-    fig, (a, b) = plt.subplots(1, 2, figsize=(TEXTW, 2.5), sharey=True)
-    for ax in (a, b):
-        ax.axvspan(1, 2.05, color=GRID, alpha=0.6, lw=0, zorder=0)
-        ax.axvline(1, color=INK2, lw=0.7, ls=(0, (3, 2)), zorder=1)
-        ax.set_xlim(-0.05, 2.05)
-        ax.grid(axis="x", visible=False)
-    first = True
-    for c in r3:
-        if not c.get("testable"):
-            continue
-        d = {float(k): v for k, v in c["d_star_by_e_over_g"].items()}
-        xs = sorted(d)
-        a.step(xs, [d[x] / d[0.0] for x in xs], where="post", color=LIGHT, lw=1.0, zorder=2,
-               label="5 Fishery settings (R3)" if first else None)
-        first = False
-    a.set_xlabel("Expected fine ÷ whole-game gain (e/g*)")
-    a.set_ylabel("Cheating, relative to no fine")
-    a.legend(loc="upper right", fontsize=6.2, frameon=True, framealpha=0.9, edgecolor="none")
-    title(a, "a", "Simulated cheaters (decide once per game)")
+    fig, b = plt.subplots(figsize=(3.4, 2.5))
+    b.axvspan(1, 2.05, color=GRID, alpha=0.6, lw=0, zorder=0)
+    b.axvline(1, color=INK2, lw=0.7, ls=(0, (3, 2)), zorder=1)
+    b.set_xlim(-0.05, 1.6)
+    b.grid(axis="x", visible=False)
     for m in ("gpt-oss_120b-cloud", "nemotron-3-super_cloud"):
         lab, col, mk = LLM[m]
         g1 = summ[m]["g_tonnes"]
         for x, y, lo, hi, new in _llm_relative(m, g1):
             b.errorbar(x, y, yerr=[[max(y - lo, 0)], [max(hi - y, 0)]], fmt=mk, color=col, ms=3.6, lw=0.8, capsize=1.2,
                        mfc="white" if new else col, zorder=3)
-        b.plot([], [], mk, color=col, ms=3.6, label=lab.split(" (")[0])
+        b.plot([], [], mk, color=col, ms=3.6, label=lab)
         gs = (ph.get(m, {}).get("whole_game_gain") or {}).get("g_star_whole_game")
-        if gs is not None and gs > 0:  # where e = g* falls on the one-round axis
+        if gs is not None and gs > 0:
             b.axvline(gs / g1, color=col, lw=0.8, ls=(0, (1, 1.5)), zorder=1)
-            b.text(gs / g1 + 0.02, 0.62, "Nemotron's\nwhole-game\nbreak-even", fontsize=5.6, color=col, va="top")
-        elif gs is not None:
-            b.text(1.08, 0.5, "gpt-oss: over-taking\nloses fish over the\ngame (g* < 0)", fontsize=5.6, color=col, va="top")
-    b.text(1.03, 1.62, "fine outweighs\nthe one-round gain", fontsize=6, color=INK2, va="top")
     b.set_xlabel("Expected fine ÷ one-round gain (e/g$_1$)")
+    b.set_ylabel("Over-taking, relative to no fine")
     b.set_ylim(-0.05, 1.8)
-    b.legend(loc="center right", bbox_to_anchor=(1.0, 0.45), fontsize=6.2, frameon=True, framealpha=0.9, edgecolor="none")
-    title(b, "b", "Language-model agents (decide every round)")
-    fig.tight_layout(w_pad=1.2)
+    b.legend(loc="upper right", fontsize=6.2, frameon=True, framealpha=0.9, edgecolor="none")
+    fig.tight_layout()
     save(fig, "fig5_spine")
 
 

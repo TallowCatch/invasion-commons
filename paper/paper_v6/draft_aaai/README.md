@@ -2,7 +2,8 @@
 
 - `main.tex` is the anonymous submission, built with the official AAAI-27 author kit (`aaai2027.sty`, `aaai2027.bst`; the full kit is in `../aaai_kit/AuthorKit27`). It is a single source file, as AAAI requires: the figure and table sources are inlined, and there is no `\input`.
 - `supplementary.tex` holds the supplementary document: the settings of every study, key terms, the reviewer figure, the audit-rules table, the LLM controls, the post hoc behaviour, and protocols.
-- The draft in `../draft/main.tex` is the working copy. **Edit the text there first, then regenerate**, or edit both.
+- **To edit, change `body.tex` (the text), `captions/*.tex` (the figure captions) or `preamble.tex`, then run `python3 build_main.py`.** That rebuilds the single-file `main.tex`, with the figure and TikZ sources inlined.
+- `../draft/` holds the first draft in the older passive style. It is superseded by this folder since the 9 Oct rewrite.
 
 Build (needs `newtx`, `tex-gyre`, `xstring`, `placeins` and `kastrup`; these were installed in user mode on 2026-10-09):
 

@@ -2,7 +2,7 @@
 \documentclass[10pt,letterpaper]{article}
 \usepackage[letterpaper,margin=1in]{geometry}
 \usepackage{newtxtext,newtxmath}
-\usepackage{graphicx,booktabs,amsmath,caption,placeins}
+\usepackage{graphicx,booktabs,amsmath,amssymb,caption,placeins}
 \renewcommand{\thefigure}{S\arabic{figure}}
 \renewcommand{\thetable}{S\arabic{table}}
 \newcommand{\game}[1]{\textsc{#1}}
@@ -150,5 +150,28 @@ Nobody cheats & --- & 0 & 104.1 & 0 & 0 \\
 Each study had a protocol frozen before its code, with hypotheses, falsifiers, sample sizes and analyses; amendments are dated and state what had been seen. The LLM studies used six amendments (an output-parsing fix; remote execution; a held-back and corrected memory cell; the replacement of Mistral Large 4, which used about 6{,}000 hidden-reasoning tokens per decision, by Mistral Large 3; and two infrastructure fixes) and one note that partial results of the threshold test were seen during the run, with nothing changed. Code, protocols, prompts, every game and all analysis scripts will be released.
 
 
+\FloatBarrier
+\section*{G\quad Positioning against prior work}
+\begin{table}[!ht]
+  \centering\small
+  \caption{Closest prior work. \checkmark: yes; (\checkmark): partly. $^a$Becker 1968; Harrington 1988; inspection games (Avenhaus et al.\ 2002). $^b$Greenblatt et al.\ 2024. Random audits: audits at random with stated odds. Memory: later treatment depends on past offences. Predicted threshold: the fine at which cheating stops is predicted before it is tested (this work: in simulation, and for language models in the threshold test). Partly: Greenblatt et al.\ use an audit budget rather than stated odds; Ye \& Steinhardt include a fishery as one of three environments, and their memory tracks the reliability of reporters; Okamoto et al.\ give audit likelihood in words, with one fine on each side of break-even; inspection games have one inspectee or a few.}
+  \begin{tabular}{lccccccc}
+\toprule
+ & \rotatebox{60}{LLM agents} & \rotatebox{60}{Several agents} & \rotatebox{60}{Renewable resource} & \rotatebox{60}{Random audits} & \rotatebox{60}{3+ fine levels} & \rotatebox{60}{Memory} & \rotatebox{60}{Predicted threshold} \\
+\midrule
+Enforcement economics$^{a}$ & -- & (\checkmark) & -- & \checkmark & \checkmark & \checkmark & -- \\
+AI control$^{b}$ & \checkmark & -- & -- & (\checkmark) & -- & -- & -- \\
+Makins et al.\ 2026 & \checkmark & \checkmark & -- & -- & -- & -- & -- \\
+Gans \& Holden 2026 & -- & -- & -- & \checkmark & -- & -- & -- \\
+GovSim (Piatti et al.\ 2024) & \checkmark & \checkmark & \checkmark & -- & -- & -- & -- \\
+Bracale Syrnikov et al.\ 2026 & \checkmark & \checkmark & \checkmark & -- & -- & -- & -- \\
+Ye \& Steinhardt 2026 & \checkmark & \checkmark & (\checkmark) & -- & -- & (\checkmark) & -- \\
+Okamoto et al.\ 2026 & \checkmark & -- & -- & (\checkmark) & -- & -- & -- \\
+\midrule
+\textbf{This work} & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+
+\end{table}
 \FloatBarrier
 \end{document}
