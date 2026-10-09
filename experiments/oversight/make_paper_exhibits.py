@@ -257,7 +257,7 @@ def fig3_audits():
     c.set_xscale("log"); c.set_xticks([0.02, 0.05, 0.1, 1 / 6]); c.set_xticklabels(["0.02", "0.05", "0.10", "1/6"]); c.minorticks_off()
     c.set_xlabel("Audit rate"); c.set_ylabel("Cheaters' gain")
     hc, lc_ = c.get_legend_handles_labels()
-    lc_ax.legend(hc, lc_, loc="center right", fontsize=6.0, title="Audit rule in (c)", title_fontsize=6.2, frameon=False,
+    lc_ax.legend(hc, lc_, loc="center right", fontsize=6.0, frameon=False,
                  handlelength=1.4, labelspacing=0.9, alignment="left")
     title(c, "c")
 
@@ -295,7 +295,7 @@ def fig3_audits():
     e.set_xticks(range(3)); e.set_xticklabels([x[1] for x in games], fontsize=6.4); e.grid(axis="x", visible=False)
     e.set_ylim(0, 112); e.set_ylabel("Harm left (% of no audits)")
     he, le = e.get_legend_handles_labels()
-    le_ax.legend(he, le, loc="center left", fontsize=6.0, title="Audit aimed at, in (e)", title_fontsize=6.2, frameon=False,
+    le_ax.legend(he, le, loc="center left", fontsize=6.0, frameon=False,
                  handlelength=1.4, labelspacing=0.9, alignment="left")
     title(e, "e")
     save(fig, "fig3_audits")
@@ -484,13 +484,14 @@ def _llm_relative(model, g):
 
 
 def fig5_spine():
-    """Which gain sets the stopping fine (9 Oct 2026 version, grouped bars; distinct from the dose-response in Figure 3).
-    For gpt-oss-120b and Nemotron 3 Super: the whole-game gain g* and the one-round gain g1 (both in tonnes per over-take
-    round, 95% bootstrap intervals over the 10 populations, ratio of sums), and the expected fine at which over-taking
-    stopped in the threshold test (bar at the first deterring grid point; the whisker reaches the last fine that did not
-    deter, so the true threshold lies within it)."""
+    """Observed against predicted stopping fine (calibration plot with a 1:1 line, the standard observed-versus-predicted
+    form; 9 Oct 2026). x: the expected fine at which over-taking should stop according to a gain; y: the expected fine at
+    which it did stop. Language models: predicted from the one-round gain g1 (filled) and from the whole-game gain g*
+    (open); vertical whiskers span the last fine that did not deter and the first that did; horizontal whiskers are 95%
+    bootstrap intervals of the gain over the 10 populations. Programmed cheaters (R3, grey): predicted from g*."""
     ph = json.loads((NOTES / "claude_l2_v1" / "l2_posthoc.json").read_text())
     l3 = json.loads((NOTES / "claude_l3_v1" / "l3_summary.json").read_text())["models"]
+    R3 = json.loads((NOTES / "claude_r3_v1/cells.json").read_text())
     grid = [0, 1, 2, 4, 8, 12, 18, 24, 30, 36]
     rng = np.random.default_rng(20261019)
     def ratio_ci(num, den):
@@ -498,28 +499,31 @@ def fig5_spine():
         idx = rng.integers(0, len(num), size=(4000, len(num)))
         dr = num[idx].sum(1) / den[idx].sum(1)
         return num.sum() / den.sum(), np.percentile(dr, 2.5), np.percentile(dr, 97.5)
-    models = ("gpt-oss_120b-cloud", "nemotron-3-super_cloud")
-    qty = [("Gain over the whole game", LIGHT), ("Gain in one round", INK2), ("Expected fine at which\nover-taking stopped", ORANGE)]
-    fig, ax = plt.subplots(figsize=(3.4, 2.55))
-    w = 0.25
-    for k, m in enumerate(models):
+    fig, ax = plt.subplots(figsize=(3.4, 3.0))
+    lim = (-2.6, 6.2)
+    ax.plot(lim, lim, color=INK2, lw=0.7, ls="--", zorder=1, label="Observed equals predicted")
+    rp = [(c_["g_star"], c_["e_star"]) for c_ in R3 if c_["testable"]]
+    ax.scatter([p_[0] for p_ in rp], [p_[1] for p_ in rp], s=14, color=LIGHT, edgecolor=INK2, lw=0.4, zorder=2,
+               label="Programmed cheaters, whole-game gain")
+    for m in ("gpt-oss_120b-cloud", "nemotron-3-super_cloud"):
+        lab, col, mk = LLM[m]
         wg = ph[m]["whole_game_gain"]
-        gs_ = ratio_ci(wg["net_gain_by_context"], wg["overtake_steps_by_context"])
         g1 = ratio_ci(wg["g1_excess_by_context"], wg["g1_steps_by_context"])
-        F = l3[m]["F_star"]
-        prev = grid[grid.index(F) - 1]
-        vals = [gs_, g1, (F / 6, prev / 6, F / 6)]
-        for q, ((lab, col), (v, lo, hi)) in enumerate(zip(qty, vals)):
-            x = k + (q - 1) * w
-            ax.bar(x, v, width=w * 0.92, color=col, edgecolor="white", lw=0, label=lab if k == 0 else None,
-                   yerr=[[v - lo], [hi - v]], capsize=1.5, error_kw=dict(lw=0.7, ecolor=INK))
-    ax.axhline(0, color=INK2, lw=0.6)
-    ax.set_xticks(range(len(models)))
-    ax.set_xticklabels([LLM[m][0] for m in models], fontsize=7)
-    ax.set_ylabel("Tonnes per over-take round")
-    ax.set_ylim(-2.2, 7.6)
-    ax.grid(axis="x", visible=False)
-    ax.legend(loc="upper left", fontsize=6.0, frameon=False, handlelength=1.2, labelspacing=0.5)
+        gs_ = ratio_ci(wg["net_gain_by_context"], wg["overtake_steps_by_context"])
+        F = l3[m]["F_star"]; obs, obs_lo = F / 6, grid[grid.index(F) - 1] / 6
+        for (v, lo, hi), filled in ((g1, True), (gs_, False)):
+            ax.errorbar(v, obs, xerr=[[v - lo], [hi - v]], yerr=[[obs - obs_lo], [0]], fmt=mk, color=col, ms=4.2, lw=0.8,
+                        capsize=1.5, mfc=col if filled else "white", zorder=3)
+        ax.annotate("", xy=(g1[0], obs), xytext=(gs_[0], obs), zorder=1,
+                    arrowprops=dict(arrowstyle="-", color=col, lw=0.5, ls=(0, (2, 2))))
+        ax.plot([], [], mk, color=col, ms=4.2, label=lab)
+    ax.plot([], [], "o", color=INK2, mfc=INK2, ms=4, label="Predicted from one-round gain")
+    ax.plot([], [], "o", color=INK2, mfc="white", ms=4, label="Predicted from whole-game gain")
+    ax.set_xlim(*lim); ax.set_ylim(-0.3, 6.2)
+    ax.set_xlabel("Predicted stopping fine (expected fine, t)")
+    ax.set_ylabel("Observed stopping fine (expected fine, t)")
+    ax.legend(loc="lower right", fontsize=5.6, frameon=True, framealpha=0.95, edgecolor="none", handlelength=1.4,
+              labelspacing=0.45)
     fig.tight_layout()
     save(fig, "fig5_spine")
 

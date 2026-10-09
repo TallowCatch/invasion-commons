@@ -122,7 +122,6 @@ The expected-penalty condition goes back to \citet{becker1968crime} and \citet{a
     \draw[->, draw=green!45!black, thick] ([yshift=1.5mm]S.east) .. controls +(0.75,0.45) and +(0.75,-0.45) .. ([yshift=-1.5mm]S.east)
       node[pos=0.5, lab, right=0pt] {regrows};
     \draw[cut, rev!80, line width=0.6pt] (0,0) circle (2.3);
-    \node[lab, text=rev!80!black, anchor=east, align=right] at (-2.4,-0.05) {dashed ring:\\the reviewer\\scales every\\request by the\\same factor};
   \end{scope}
   % ------------------------------------------------------------------ (b) Forest: a ring of plots with spillover
   \begin{scope}[shift={(5.6,0)}]
@@ -158,7 +157,7 @@ The expected-penalty condition goes back to \citet{becker1968crime} and \citet{a
   \end{scope}
 \end{tikzpicture}
 }
-  \caption{The audited commons. Top: one round, in which agents request a share and may under-report, the reviewer chooses one shared cut that meets its target, each agent takes its allowance or more, the resource regrows, and random audits answer a caught violation with a fine, a memory of the offence, or both. Bottom: how harm connects the agents in (a) Fishery, where six agents draw on one stock, (b) Forest, where over-cutting a plot damages its two neighbours (dashed), and (c) River, where damage arises mainly where reagents $X$ and $Y$ mix. The dashed ring in (a) marks the reviewer's shared cut: every agent's request is scaled by the same factor, in all three games.}
+  \caption{The audited commons. Top: one round, in which agents request a share and may under-report, the reviewer chooses one shared cut that meets its target, each agent takes its allowance or more, the resource regrows, and random audits answer a caught violation with a fine, a memory of the offence, or both. Bottom: how harm connects the agents in (a) Fishery, where six agents draw on one stock, (b) Forest, where over-cutting a plot damages its two neighbours (dashed), and (c) River, where damage arises mainly where reagents $X$ and $Y$ mix. In every game the reviewer scales all six requests by the same factor; the dashed ring in (a) marks this shared cut, which links every agent to every other.}
   \label{fig:step}
 \end{figure*}
 
@@ -246,7 +245,7 @@ A reviewer that answered known cheaters by lowering the allowance of \emph{all} 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\columnwidth]{figures/fig5_spine.pdf}
-  \caption{Which gain sets the stopping fine. For gpt-oss-120b and Nemotron 3 Super: the gain from over-taking over the whole game and in one round, per over-take round, and the expected fine at which over-taking stopped in the threshold test. Whiskers on the gains show 95\% intervals over populations; the whisker on the stopping fine spans the last fine that did not deter and the first that did. Over-taking stopped near the one-round gain, far above the whole-game gain, which was negative for gpt-oss-120b.}
+  \caption{Observed against predicted stopping fine for the language models. The stopping fine is predicted from each model's one-round gain (filled) or whole-game gain (open), and observed in the threshold test; points on the dashed line are predicted exactly. Vertical whiskers span the last fine that did not deter and the first that did; horizontal whiskers show 95\% intervals of the gain over populations. Grey points: programmed cheaters, predicted from their whole-game gain (Figure~\ref{fig:audits}b). The one-round gain predicted where the language models stopped; their whole-game gain did not.}
   \label{fig:spine}
 \end{figure}
 
