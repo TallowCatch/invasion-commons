@@ -168,3 +168,32 @@ In every model, only E36 had e ≥ g, so H1 compares E36 with E0–E8.
   - the exact threshold location (L3);
   - whether a small fine increases over-taking through a "price" reading.
 - **Next step:** L3 (`studies/L3_llm_threshold/`), the last experiment, tests the threshold location with a prediction frozen in advance. Running since 2026-10-08 11:09Z.
+
+## Addendum (9 Oct 2026, post hoc): does one agent's over-taking spread to the others?
+
+A supervisor asked this. It was not a hypothesis, and the design was not built to test it: LLM agents never see each other's actions (only their own last three rounds and the stock), and the rule-followers are fixed rules. So any spread must run through the shared stock or the reviewer's shared cut.
+
+**Method:** `l2_spillover.py`, output in `runs/claude_l2_v1/l2_spillover.json`.
+- Data: gpt-oss and Nemotron, cells E0–E8, P0 and S0; 70 games each.
+- Outcome: an agent over-takes in round t+1. Predictor: the number of the other three LLM agents that over-took in round t.
+- Controls: game and round fixed effects, the agent's own over-take in round t, and the stock.
+- Intervals: 400 bootstrap resamples of games.
+
+| Effect of each extra over-taking peer, on an agent's chance of over-taking next round | gpt-oss | Nemotron |
+| --- | ---: | ---: |
+| Raw: an agent that did not over-take, with 0 → 3 peers over-taking | 30% → 74% | 23% → 63% |
+| Game and round fixed effects, plus the stock | +7.1 pts [5.4, 8.8] | +4.5 pts [2.5, 6.2] |
+| … plus the reviewer's cut | +3.2 pts [1.4, 4.9] | +2.0 pts [0.0, 3.8] |
+| Deliberate over-takes only (catch above the agent's own request), with all controls | +5.3 pts [3.5, 7.3] | +3.8 pts [2.1, 5.5] |
+
+**Reading** (exploratory):
+- **There is a modest spillover.** Each extra peer that over-takes raises an agent's next-round over-taking by about 4–7 points.
+- **About half runs through the reviewer's shared cut.** Peers over-take, the stock falls, everyone's allowance is cut, and the same catch now counts as over-taking. This is the S5 trap ("a tighter shared cut") seen from the agents' side.
+- **The rest appears even for deliberate over-takes,** which a smaller allowance cannot create. That fits a "grab it before it is gone" response to a falling stock, but it is not tested, and unmeasured within-game dynamics could also produce it.
+
+**A proper test would be a new experiment:**
+- insert 0, 1 or 2 programmed over-takers among the LLM agents;
+- vary whether agents can see each other's catches;
+- in Forest's ring of plots, place one over-taker at a node and compare its neighbours with distant plots.
+
+This is parked for a later paper (the experiment list is frozen).

@@ -170,6 +170,7 @@ Ameer decided to stop adding experiments. Everything not on this list is parked 
 8. Freeze the repository: README, data bundle, tests, tag.
 
 **Parked (not this paper):**
+- **Spillover of over-taking** (supervisor's question, 9 Oct): a post hoc check found about +4–7 points of next-round over-taking per peer that over-took. About half runs through the reviewer's shared cut. A proper test (inserted over-takers; peers' catches visible or not; a defector on Forest's ring network) is parked. See the L2 results addendum.
 - a true "silent, no checks" LLM cell, to fix H4's design error;
 - why a small fine raises over-taking;
 - more LLM families (DeepSeek and others);
