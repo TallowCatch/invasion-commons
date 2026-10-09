@@ -18,6 +18,13 @@
 
 \begin{figure}[H]
   \centering
+  \resizebox{\textwidth}{!}{\input{figures/fig_networks.tex}}
+  \caption{How harm connects the agents in each game. (a)~\textsc{Fishery} is a star: six agents draw on one stock, so each agent's catch lowers what all can take next round; the reviewer's single shared cut (dashed ring) also links every agent, in all three games. (b)~\textsc{Forest} is a ring: each agent cuts its own plot, and over-cutting damages the two neighbouring plots ($0.12$ of the excess each). (c)~\textsc{River} is a mixing junction: three agents discharge reagent $X$ and three reagent $Y$; damage $\kappa XY+\lambda(X+Y)$ comes mainly from the two together, so no single discharge looks harmful on its own.}
+  \label{fig:networks}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
   \includegraphics[width=\textwidth]{figures/fig2_reviewer.pdf}
   \caption{\textbf{What the reviewer aims for, and what it knows, decide how well it protects the resource.} Top row, \textsc{Fishery}: (a)~fish stock over one run when the reviewer sees all requests (4 greedy agents; line: middle run, band: 80\% of 64 populations). With only the safety line, the stock is fished down to just above 10; with the MSY target it stays near 70. (b)~Total harvest in six settings (``4g 0.7'' = 4 greedy agents, regrowth 0.7; $^\dagger$ the pilot setting). The MSY target gives more wherever the safety line limits anything (1,394 against 544 in the pilot setting). (c)~Share of runs in which the stock collapsed when the reviewer's model is wrong: 41\% (regrowth overestimated) and 78\% (an unknown tipping point) with the safety line, 0\% with the MSY target. Bottom row, \textsc{Forest}: (d)~risky requests let through and (e)~safe requests blocked, when one part of the reviewer's model is wrong. The direction of the error decides the mistake: thinking regrowth is faster lets 82\% of risky requests through; thinking it slower blocks 42\% of safe ones. The cautious local reviewer blocks most safe requests in every case. (f)~A joint reviewer that learns the model while running lets through 16\% of risky requests early and 2.5\% late. Error bars: 95\% intervals.}
   \label{fig:reviewer}

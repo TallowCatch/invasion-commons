@@ -1,0 +1,65 @@
+% Figure: how harm connects the agents in each game (TikZ, vector). Same colours as Figure 1:
+% agents grey, resource green, harm and coupling orange, reviewer blue. Requires \definecolor{rev}, {audit}.
+\begin{tikzpicture}[
+    font=\footnotesize,
+    >={Stealth[length=1.8mm]},
+    agent/.style={circle, draw=black!60, fill=black!8, minimum size=6.2mm, inner sep=0pt, font=\scriptsize},
+    res/.style={circle, draw=green!45!black, fill=green!10, align=center, inner sep=1pt, font=\scriptsize},
+    plot/.style={circle, draw=green!45!black, fill=green!10, minimum size=7.4mm, inner sep=0pt, font=\scriptsize},
+    harm/.style={circle, draw=audit!80!black, fill=audit!12, align=center, inner sep=1pt, font=\scriptsize},
+    rv/.style={rectangle, rounded corners=2pt, draw=rev!80!black, fill=rev!8, align=center, inner sep=2pt, font=\scriptsize},
+    take/.style={->, draw=black!60, thick},
+    spill/.style={<->, draw=audit!85!black, thick, dashed},
+    cut/.style={draw=rev!70, dashed, thin},
+    lab/.style={font=\scriptsize, align=center, text=black!70},
+    ttl/.style={font=\footnotesize\bfseries, anchor=south},
+  ]
+  % ------------------------------------------------------------------ (a) Fishery: a star around one stock
+  \begin{scope}[shift={(0,0)}]
+    \node[ttl] at (0,2.75) {(a) \textsc{Fishery}: a star};
+    \node[res, minimum size=13mm] (S) at (0,0) {shared\\stock $x$\\[-1pt]{\tiny max 100}};
+    \foreach \k in {1,...,6} {
+      \node[agent] (a\k) at ({90-60*(\k-1)}:1.85) {$\k$};
+      \draw[take] (a\k) -- (S);
+    }
+    \draw[->, draw=green!45!black, thick] ([yshift=1.5mm]S.east) .. controls +(0.75,0.45) and +(0.75,-0.45) .. ([yshift=-1.5mm]S.east)
+      node[pos=0.5, lab, right=0pt] {regrows};
+    \draw[cut, rev!80, line width=0.6pt] (0,0) circle (2.3);
+    \node[lab, text=rev!80!black] at (-1.95,-1.95) {reviewer's\\shared cut};
+    \node[lab, text width=52mm] at (0,-2.95) {every agent draws on the same stock: one agent's\\catch lowers what all agents can take next round};
+  \end{scope}
+  % ------------------------------------------------------------------ (b) Forest: a ring of plots with spillover
+  \begin{scope}[shift={(5.6,0)}]
+    \node[ttl] at (0,2.75) {(b) \textsc{Forest}: a ring};
+    \foreach \k in {1,...,6} {
+      \node[plot, minimum size=6.4mm] (p\k) at ({90-60*(\k-1)}:1.32) {};
+      \node[agent] (f\k) at ({90-60*(\k-1)}:2.22) {$\k$};
+      \draw[take] (f\k) -- (p\k);
+    }
+    \foreach \k/\j in {1/2,2/3,3/4,4/5,5/6,6/1} {
+      \draw[spill] (p\k) -- (p\j);
+    }
+    \node[lab] at (0,0) {6 plots\\{\tiny max 20 each}};
+    \node[lab, text width=46mm] at (0,-2.95) {each agent cuts its own plot; over-cutting\\damages the two neighbouring plots (dashed)};
+  \end{scope}
+  % ------------------------------------------------------------------ (c) River: two pollutants that harm mainly together
+  \begin{scope}[shift={(11.2,0)}]
+    \node[ttl] at (0,2.75) {(c) \textsc{River}: a mixing junction};
+    \foreach \k in {1,2,3} {
+      \node[agent] (x\k) at (-1.75,{1.75-0.62*(\k-1)}) {$\k$};
+    }
+    \foreach \k in {4,5,6} {
+      \node[agent] (y\k) at (1.75,{1.75-0.62*(\k-4)}) {$\k$};
+    }
+    \node[lab] at (-1.75,2.32) {reagent $X$};
+    \node[lab] at (1.75,2.32) {reagent $Y$};
+    \node[harm, minimum size=11mm] (M) at (0,0.15) {$\kappa XY$\\[-1pt]{\tiny joint}};
+    \foreach \k in {1,2,3} {\draw[take] (x\k) -- (M);}
+    \foreach \k in {4,5,6} {\draw[take] (y\k) -- (M);}
+    \node[res, minimum size=12mm] (Q) at (0,-1.65) {river\\quality $Q$\\[-1pt]{\tiny max 100}};
+    \draw[->, draw=audit!85!black, very thick] (M) -- (Q) node[midway, lab, right] {damage};
+    \draw[->, draw=black!45, thin] (x3) .. controls (-1.5,-1.0) .. (Q.west) node[pos=0.55, lab, left] {$\lambda X$};
+    \draw[->, draw=black!45, thin] (y6) .. controls (1.5,-1.0) .. (Q.east) node[pos=0.55, lab, right] {$\lambda Y$};
+    \node[lab, text width=46mm] at (0,-2.95) {harm comes mainly from the two\\reagents together: no single agent's\\discharge looks harmful on its own};
+  \end{scope}
+\end{tikzpicture}

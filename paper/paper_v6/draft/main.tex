@@ -87,8 +87,10 @@ We build an \emph{audited commons} (Figure~\ref{fig:step}). Each round, six agen
 
 \begin{figure*}[t]
   \centering
-  \resizebox{0.92\textwidth}{!}{\input{../figures/fig1_game_step.tex}}
-  \caption{One round of the audited commons. Agents request a share; they may report honestly or under-report. The reviewer predicts the resource with its model and picks one shared cut that meets its target. Each agent takes its allowance or more. The resource regrows, and random audits answer a caught over-take or lie with a fine, a memory of the offence, or both.}
+  \resizebox{0.76\textwidth}{!}{\input{../figures/fig1_game_step.tex}}
+\\[3mm]
+  \resizebox{0.68\textwidth}{!}{\input{../figures/fig_networks.tex}}
+  \caption{The audited commons. \emph{Top:} one round. Agents request a share and may under-report; the reviewer picks one shared cut that meets its target; each agent takes its allowance or more; the resource regrows; random audits answer a caught violation with a fine, a memory of the offence, or both. \emph{Bottom:} how harm connects the agents. (a)~\game{Fishery} is a star around one stock; the reviewer's shared cut (dashed ring) links every agent in all three games. (b)~\game{Forest} is a ring: over-cutting a plot damages its two neighbours. (c)~\game{River} is a mixing junction: damage $\kappa XY+\lambda(X+Y)$ comes mainly from the two reagents together.}
   \label{fig:step}
 \end{figure*}
 
@@ -101,7 +103,8 @@ with weather noise $\varepsilon_t$ in \game{Forest} and \game{River}. Regrowth $
 
 \paragraph{Reviewer.} The reviewer chooses one shared cut $\lambda_t\in\{1,\tfrac34,\tfrac12,\tfrac14,0\}$, the largest whose predicted outcome meets its target, and grants allowances $a_{i,t}=\lambda_t\hat p_{i,t}$. A \emph{joint} reviewer sums all requests before predicting; \emph{local} reviewers judge one request at a time. The target is either a one-step safety line (the resource must not fall to a danger level next round) or the \emph{half-capacity} target $y_t\ge K/2$, the level behind maximum sustainable yield \citep{may1978exploiting}.
 
-\paragraph{Harm and outcome metrics.} A round is \emph{harmful} if the resource falls below half capacity: \game{Fishery} stock below 50 of 100 after fishing, \game{Forest} mean plot health below 10 of 20 (as a 5\% chance constraint), \game{River} quality below 50 of 100. Following commons-game practice \citep{piatti2024cooperate,perolat2017multiagent}, we also report \emph{efficiency}, the total harvest divided by $T\cdot rK/4$; \emph{equality}, $1-$Gini of the agents' returns; and \emph{survival}, the share of runs without collapse.
+\paragraph{Harm and outcome metrics.} A round is \emph{harmful} if the resource falls below half capacity: \game{Fishery} stock below 50 of 100 after fishing, \game{Forest} mean plot health below 10 of 20 (as a 5\% chance constraint), \game{River} quality below 50 of 100. Following commons-game practice \citep{piatti2024cooperate,perolat2017multiagent}, we also report \emph{efficiency}, the total harvest divided by $T\cdot rK/4$; \emph{equality}, $1-$Gini of the agents' returns; and \emph{survival}, the share of runs without collapse. Figure~\ref{fig:step} (bottom) shows how harm connects the agents in each game.
+
 
 \paragraph{Misbehaviour, audits and consequences.} An agent \emph{over-takes} when $c_{i,t}>a_{i,t}$, and \emph{under-reports} when $\hat p_{i,t}<p_{i,t}$. Each round, each agent is audited independently with probability $q$; an audit detects a violation with probability $s$. A caught agent pays a flat fine $F$, so the expected fine per violating round is $e=qsF$. Alternatively the reviewer keeps a \emph{memory}: it records the caught agent's excess and lowers its later allowances by the mean recorded excess, $a'_{i,t}=\max(0,\lambda_t\hat p_{i,t}-\bar m_i)$.
 
