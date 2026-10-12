@@ -1,190 +1,74 @@
 # Talk script and Q&A: PhD catch-up, 13 October 2026
 
-## The 10-minute version (use this tomorrow)
+About 7–8 minutes for 16 slides, then questions. Say each slide's first sentence, and let the slide carry the detail. The same script is in each slide's speaker notes.
 
-**Deck:** `phd_update_10min_2026-10-13.pptx`. There are 10 main slides, about 7–8 minutes plus discussion, and 6 backup slides after "Thank You" for questions. Each slide's script is also in its speaker notes.
+## Part 1: Script
 
-### Slide 1: Penalties Sized to the Gain (10 s)
+### Slide 1: Title (10 s)
 
-"Hi everyone. My project asks one question: when do random spot-checks stop AI agents from over-using something they share?"
+"Hi all. My project asks one question: when do random audits stop AI agents from over-using a shared resource? And can we predict the fine that stops them?"
 
-### Slide 2: The Project in One Slide (1 min 15)
+### Slide 2: The Project in One Slide (1 min)
 
-"AI agents are starting to share resources like compute, energy and budgets, and whoever oversees them can only check a sample of what they do. I built a simulated shared resource: six agents draw on it over many rounds, a reviewer sets how much each may take, and a few agents are checked at random each round. I tested what should happen to an agent that gets caught taking too much, and whether the fine that stops it can be worked out in advance. Short answer: checks only help when a catch has a consequence, and the stopping fine can be predicted from how much an agent gains by cheating. That held for programmed agents and for language models."
+"Quick overview first. AI agents increasingly share limited resources, like compute, energy and budgets, and an overseer can only audit a few of their actions. So I built an audited shared resource: six agents, a reviewer who sets each agent's allowance, and random audits every round. I tested two things: what a caught agent should face (a fine, a memory of the offence, or both), and whether the stopping fine can be predicted in advance. Short answer: audits only work through consequences, and the stopping fine is predictable from what an agent gains by over-taking."
 
-### Slide 3: How One Round Works (1 min)
+### Slide 3: The Problem (40 s)
 
-"One round: every agent asks for a share; the reviewer predicts the effect and scales everyone's request by the same factor if needed; each agent then takes its allowance, or more if it cheats; the resource regrows; and a few agents are checked. Harm means the resource falling below half its capacity, the level where it regrows fastest. I run this in three settings where harm spreads differently, one shared pool, neighbour damage on a ring, and pollution that is harmful in combination, so results don't rest on one structure."
+"The core idea is an allowance: what an agent may take this round. Taking more, which I call over-taking, helps that agent and costs everyone else. Auditing everything is too costly, so a random few are audited, like tax inspections. I run this in three settings where harm spreads differently: one shared stock, damage to neighbours on a ring, and pollution that is only harmful in combination. If a result holds in all three, it doesn't hinge on one structure."
 
-### Slide 4: How I Test It (1 min)
+### Slide 4: Three Questions (25 s)
 
-"The method: run games with no fine, measure how much an agent gains from one round of over-taking, predict the fine that should stop it, write that prediction down, then test it on new games. The one formula is Becker's rule from 1968: the expected fine is the chance of a check times the fine, and over-taking should stop once that beats the gain. With a 1 in 6 chance and a 30 tonne fine the expected fine is 5 tonnes, just above the roughly 4.5 tonnes the models gained."
+"So, three questions. What must follow a catch? Can we predict the stopping fine? And do language models follow the same rule?"
 
-### Slide 5: Finding 1: A Catch Needs a Consequence (45 s)
+### Slide 5: How One Round Works (40 s)
 
-"First finding, with programmed agents that under-report. If the reviewer only corrects the round in which it catches a lie, only 10 to 46 percent of the harm goes away. If it remembers each caught lie and adjusts that agent's later allowances, harm drops in all 12 settings, in Fishery from up to 99 percent of rounds below half capacity to under 3 percent. A catch needs a consequence."
+"Here's one round. Agents request a share. The reviewer predicts the effect and scales everyone by the same factor if needed. Agents then take their allowance, or more. The resource regrows, and random audits check a few agents. Harm means the resource dropping below half capacity: the maximum-sustainable-yield level, where it regrows fastest."
 
-### Slide 6: Finding 2: Language Models Stop Where Predicted (1 min)
+### Slide 6: How I Test It (45 s)
 
-"Second finding, with language models: four open models controlled four of the six fishers, 520 games. Two of them, gpt-oss and Nemotron, over-took on purpose. From their no-fine behaviour I predicted both would stop at 30 tonnes, before running those fines. Nemotron stopped exactly at 30 and gpt-oss one step early at 24. One surprise: a small fine made gpt-oss cheat more, as if the fine were a price."
+"The method has four steps. Play without fines and measure the gain from one round of over-taking. Predict the fine that should stop it. Freeze that prediction. Then test it on new games. The rule is Becker's: the expected fine, which is the audit probability times the fine, should beat the gain. With a one-in-six audit chance and a 30-tonne fine, that's 5 tonnes expected, just above the roughly 4.5 tonnes the models gained."
 
-### Slide 7: More Findings, in Brief (1 min)
+### Slide 7: Finding 1: A Catch Needs a Consequence (40 s)
 
-"A few more results, briefly; the backup slides have each in full. The stopping fine for programmed agents was predicted in 5 of 5 new settings. Two shortcuts backfire: always checking the biggest request misses most liars, and cutting everyone's allowance rewards the cheaters. Memory works for language models too, cutting gpt-oss's over-taking from 55 to 20 percent without any fine. And what predicts where models stop is the gain of one round, not what cheating earns over the whole game; they also stopped earlier than a perfect optimiser would."
+"Finding one, with programmed agents that under-report. Audits that only correct the caught round remove just 10 to 46 percent of the harm. Add memory, so the reviewer remembers each caught lie and adjusts later allowances, and harm falls in all 12 settings. In Fishery it goes from up to 99 percent of rounds below half capacity to under 3. A catch needs a consequence."
 
-### Slide 8: Running Now (Results Soon) (1 min)
+### Slide 8: Finding 2: A Predictable Threshold (30 s)
 
-"These are running now, so the boxes are empty. The main one tests whether models respond to the expected fine or to the fine's size, by keeping the expected fine fixed and changing the mix of check chance and fine. The others check the prediction on new games and reworded rules, what happens with no checks at all, and whether cheating spreads to neighbours in Forest. Next: a workshop paper and arXiv in November, then a main conference in January."
+"Finding two: the threshold is predictable. From games without audits I predicted where programmed cheaters would stop, and 5 of 5 new settings landed within one step. To be fair, these agents optimise by design, so this mainly validates the method."
 
-### Slide 9: Questions for You (1–2 min (discussion))
+### Slide 9: Finding 3: Two Shortcuts That Backfire (35 s)
 
-"I'd love your views on these."
+"Finding three: two shortcuts backfire. Cutting everyone's allowance to absorb the cheaters actually let cheaters gain more than with no audits at all. And always auditing the largest report caught only a quarter of the liars, against all of them with random audits. Shortcuts that save audits create blind spots."
 
-### Slide 10: Thank You (5 s)
+### Slide 10: Finding 4: Language Models Stop Where Predicted (45 s)
 
-"Thanks."
+"Now language models. Four open models ran four of the six fishers, over 520 games. Two over-took on purpose: gpt-oss and Nemotron. Before testing, I predicted both would stop at 30 tonnes. Nemotron stopped at exactly 30, and gpt-oss one step early, at 24. A side note: a small fine made gpt-oss over-take more, as if the fine became a price."
 
-**If you run short of time:** drop slide 7 (More findings), and say "there are a few more results in the backup slides".
+### Slide 11: Finding 5: One Round's Gain Matters (35 s)
 
-**Backup slides**, if someone asks: the problem and the settings; the predictable threshold; the two shortcuts; one round's gain; memory for language models; the timeline. Their longer explanations are in the full-length script below.
+"Finding five: what predicts the stop is the gain from one round, not the gain over the whole game, which was near zero or even negative. Both models also stopped earlier than a perfect optimiser would. That tells us what predicts the stop, not necessarily why they stop."
+
+### Slide 12: Memory Works for Language Models Too (30 s)
+
+"Memory works for language models too. With audits and memory but no fine, over-taking fell from 55 to 20 percent, and no lake collapsed. Memory reduces over-taking but doesn't stop it; a large enough fine does, with no loss of efficiency."
+
+### Slide 13: Running Now (Results Soon) (40 s)
+
+"These are running now, so the boxes are blank. The big one: do models respond to the expected fine, or just to the size of the fine? I hold the expected fine fixed and change the mix of audit probability and fine. The others test whether the prediction transfers to new games and reworded rules, what happens with no audits at all, and whether over-taking spreads to neighbours."
+
+### Slide 14: Where This Is Going (20 s)
+
+"Next: a workshop paper and arXiv in November, then a main conference in January. Every study was pre-registered before its code, and I report the predictions that failed."
+
+### Slide 15: Questions for You (open)
+
+"I'd love your take on these."
+
+### Slide 16: Thank You (5 s)
+
+"Thanks!"
 
 ---
-
-This is about 18–20 minutes at a relaxed pace, followed by questions. Read it aloud once tonight. You don't need to say it word for word: each slide's first sentence is the point, and the rest supports it.
-
----
-
-## Part 1: Full-length script (16-slide version; use it for the backup slides or a longer talk)
-
-### Slide 1: Title
-"Hi everyone. I'll catch you up on what I've been working on. The title is *Penalties Sized to the Gain*, and the question underneath is really the whole project: when do random spot-checks stop AI agents from over-using something they share?"
-
-### Slide 2: The project in one slide
-"If you only remember one slide, make it this one.
-
-**Why it matters:** AI agents are starting to act on things they share with other agents and people, like compute, energy and budgets. Whoever oversees them can't check every action, so they check a sample.
-
-**What I built:** a simulated shared resource. Six agents draw on it over many rounds, a reviewer decides how much each one is allowed to take, and a few agents are checked at random each round.
-
-**What I tested:** what should happen to an agent that gets caught taking too much — a fine, a memory of the offence, or both — and whether you can work out *in advance* how big the fine needs to be to stop it.
-
-**What I found:** checks only help when getting caught has a consequence, and the fine that stops an agent can be predicted from how much it gains by cheating. That held for programmed agents and for language models.
-
-The rest of the talk unpacks those four boxes."
-
-### Slide 3: The problem
-"Let me make the problem concrete. Each agent gets an **allowance**, the amount it's allowed to take this round. Taking more than that helps the agent and leaves less for everyone else.
-
-Checking every action costs too much, so the overseer spot-checks a few, the way tax inspectors or fisheries inspectors do. The open question is when a sampled check actually stops over-use, and how big the penalty has to be.
-
-I ask this in three settings, on the right. They aren't three toy problems; I picked them because harm travels differently in each:
-- in **Fishery**, everyone draws from one shared stock;
-- in **Forest**, each agent has its own plot, but over-cutting damages your two neighbours;
-- in **River**, two kinds of pollution are mostly harmless alone and harmful together.
-
-If a result holds in all three, it isn't an artefact of one particular structure."
-
-### Slide 4: Three questions
-"So there are three questions.
-1. When a check catches someone, what has to follow for the check to matter: a fine, a memory, or nothing?
-2. Is there a fine size where cheating stops, and can I calculate it *before* I try it?
-3. When most of the agents are language models making their own choices, do they stop where my prediction says?"
-
-### Slide 5: How one round works
-"This is one round.
-1. Every agent asks for a share.
-2. The reviewer predicts what those requests would do to the resource. It then scales everyone's request down by the same factor, if needed, to keep the resource healthy.
-3. Each agent then takes its allowance, or more if it's cheating.
-4. The resource regrows.
-5. A few agents are checked at random.
-
-The one definition to keep in mind is **harm**: the resource falling below half of its capacity. That's the level where it regrows fastest, the 'maximum sustainable yield' level from fisheries management. I use the same harm line in all three settings."
-
-### Slide 6: How I test it
-"Here's the method, in four steps.
-1. Run the setting.
-2. Run games with no fine and measure how much an agent gains from one round of taking more than its allowance.
-3. Use that to predict the fine that should stop it, and write the prediction down before running any game with that fine.
-4. Test the predicted fine, and the fines around it, on new games, and report the result whether or not it matches.
-
-The card on the right has the only formula in the talk:
-- *q* is the chance of being checked;
-- *F* is the fine;
-- so *q* times *F* is the expected fine for one round of cheating;
-- *g* is what you gain from that round.
-
-The prediction, which goes back to the economist Gary Becker in 1968, is that cheating stops once the expected fine is bigger than the gain. For example, with a 1-in-6 chance of a check and a 30-tonne fine, the expected fine is 5 tonnes. A model that gains about 4.5 tonnes per round should stop there, and not at 24 tonnes, where the expected fine is only 4."
-
-### Slide 7: Finding 1, a catch needs a consequence
-"First finding. Here some agents report less than they actually intend to take, so the reviewer underestimates their use unless a check catches them.
-
-If the reviewer only corrects the round in which it caught a lie, that removes just 10 to 46 percent of the harm. If it **remembers** each caught lie and adjusts that agent's future allowances, harm drops a lot in all 12 settings I tested. In Fishery, the share of rounds below half capacity fell from somewhere between 43 and 99 percent to under 3 percent.
-
-The takeaway: a catch by itself barely helps. It needs a consequence."
-
-### Slide 8: Finding 2, a predictable threshold
-"Second finding. These programmed agents choose how much to over-take so as to earn the most. Using only games without any checks, I predicted the expected fine at which they'd stop. In five out of five new settings, the stopping point landed within one step of the prediction.
-
-To be fair about it: these agents are built to maximise their payoff, so this is mostly a check that my measurement method works before I try it on language models."
-
-### Slide 9: Finding 3, two shortcuts that backfire
-"Third finding: two shortcuts that look sensible and backfire.
-
-On the left, the overseer knows there are cheaters and lowers *everyone's* allowance to make up for them. Cheaters actually gained more than with no checks at all, 142 against 113, and honest agents paid for it.
-
-On the right, the overseer always checks whoever asks for the most. Over a game that caught only 25 percent of the liars, against 100 percent with random checks, because the biggest requester is often honest, so the same honest agent keeps getting checked.
-
-The lesson is that shortcuts which save checks can open blind spots."
-
-### Slide 10: Finding 4, language models stop where predicted
-"Now language models. Four open models each controlled four of the six fishers, with two rule-following fishers left in so I can see who gets hurt. That's 520 games in total.
-
-The left panel shows how often each model took more than its allowance, at each fine size. Two models, gpt-oss and Nemotron, over-took on purpose. The other two barely did: Gemma rarely, and Mistral never.
-
-Before testing, I predicted from their no-fine behaviour that both would stop at 30 tonnes. Nemotron stopped exactly at 30, and gpt-oss one step early, at 24. The right panel shows the rule-following fishers getting their catch back once the fine is large enough.
-
-One interesting side result: a *small* fine made gpt-oss cheat **more**, from about 55 to about 90 percent of rounds. It's as if the fine became a price for cheating, which has also been seen in people."
-
-### Slide 11: Finding 5, one round's gain matters
-"Fifth finding: *which* gain predicts the stop. It was how much the model took above its allowance in a single round, about 4.5 to 4.7 tonnes.
-
-It was *not* what over-taking earned over the whole game. Over the whole game their cheating gained little or even lost fish, because it depleted the lake, and yet they kept going.
-
-They also stopped *earlier* than a perfect payoff-maximiser would. That agent would hold out until 36 tonnes; both models stopped before that, and gradually.
-
-I want to be careful here: this tells us what *predicts* where they stop, not *why* they stop."
-
-### Slide 12: Memory works for language models too
-"And memory works for language models too. With checks and memory, but no fine at all, gpt-oss over-took in 20 percent of rounds instead of 55. Rounds below half capacity fell from 92 to 20 percent, and no lake collapsed, against 5 out of 10 without memory.
-
-So memory reduced over-taking but didn't stop it. A big enough fine did stop it, and cost nothing in efficiency."
-
-### Slide 13: Running now
-"These are still running. The boxes are empty because the results aren't in yet. Each one answers a question an outside review raised.
-1. **Do the models respond to the expected fine, or to the size of the fine?** I keep the expected fine the same but change how it's made up: a 1-in-3 chance of a check with a small fine, 1-in-6, or 1-in-12 with a large fine.
-2. **Does the prediction hold on new games and with reworded rules?** The predictions are already written down: 30 tonnes for both models.
-3. **What happens if nothing ever checks?**
-4. **Does cheating spread?** In Forest, I put one programmed cheater among five language-model agents and see whether its neighbours start over-cutting, with and without being able to see each other's cuts.
-
-I also screened a fifth model, DeepSeek. It over-took in 80 percent of rounds without a fine, so it's a third model that cheats on purpose."
-
-### Slide 14: Where this is going
-"The plan:
-- The programmed-agent work and the first language-model studies are done.
-- The follow-ups finish in the next day or so.
-- I'm aiming for an AAAI workshop on 20 November, plus arXiv.
-- Then a main conference in January, IJCAI or ICML. Those dates are estimates, because the calls aren't out yet.
-
-Every study had its plan written down before the code, and I report the predictions that failed."
-
-### Slide 15: Questions for you
-"I'd really like your views on these. Is taking more than your allowance a fair stand-in for an AI agent misbehaving? If a fine works under one wording of the rules, how far would you trust it under another? Would more models or more kinds of setting convince you more? And where in your own work does someone check only a sample?"
-
-### Slide 16: Thank you
-"Thanks. I'm happy to share the draft."
-
----
-
 ## Part 2: Simple questions you might get
 
 **What's an "allowance"?**

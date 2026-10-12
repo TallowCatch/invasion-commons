@@ -1,0 +1,82 @@
+[
+ [
+  "Title",
+  "10 s",
+  "Hi all. My project asks one question: when do random audits stop AI agents from over-using a shared resource? And can we predict the fine that stops them?"
+ ],
+ [
+  "The Project in One Slide",
+  "1 min",
+  "Quick overview first. AI agents increasingly share limited resources, like compute, energy and budgets, and an overseer can only audit a few of their actions. So I built an audited shared resource: six agents, a reviewer who sets each agent's allowance, and random audits every round. I tested two things: what a caught agent should face (a fine, a memory of the offence, or both), and whether the stopping fine can be predicted in advance. Short answer: audits only work through consequences, and the stopping fine is predictable from what an agent gains by over-taking."
+ ],
+ [
+  "The Problem",
+  "40 s",
+  "The core idea is an allowance: what an agent may take this round. Taking more, which I call over-taking, helps that agent and costs everyone else. Auditing everything is too costly, so a random few are audited, like tax inspections. I run this in three settings where harm spreads differently: one shared stock, damage to neighbours on a ring, and pollution that is only harmful in combination. If a result holds in all three, it doesn't hinge on one structure."
+ ],
+ [
+  "Three Questions",
+  "25 s",
+  "So, three questions. What must follow a catch? Can we predict the stopping fine? And do language models follow the same rule?"
+ ],
+ [
+  "How One Round Works",
+  "40 s",
+  "Here's one round. Agents request a share. The reviewer predicts the effect and scales everyone by the same factor if needed. Agents then take their allowance, or more. The resource regrows, and random audits check a few agents. Harm means the resource dropping below half capacity: the maximum-sustainable-yield level, where it regrows fastest."
+ ],
+ [
+  "How I Test It",
+  "45 s",
+  "The method has four steps. Play without fines and measure the gain from one round of over-taking. Predict the fine that should stop it. Freeze that prediction. Then test it on new games. The rule is Becker's: the expected fine, which is the audit probability times the fine, should beat the gain. With a one-in-six audit chance and a 30-tonne fine, that's 5 tonnes expected, just above the roughly 4.5 tonnes the models gained."
+ ],
+ [
+  "Finding 1: A Catch Needs a Consequence",
+  "40 s",
+  "Finding one, with programmed agents that under-report. Audits that only correct the caught round remove just 10 to 46 percent of the harm. Add memory, so the reviewer remembers each caught lie and adjusts later allowances, and harm falls in all 12 settings. In Fishery it goes from up to 99 percent of rounds below half capacity to under 3. A catch needs a consequence."
+ ],
+ [
+  "Finding 2: A Predictable Threshold",
+  "30 s",
+  "Finding two: the threshold is predictable. From games without audits I predicted where programmed cheaters would stop, and 5 of 5 new settings landed within one step. To be fair, these agents optimise by design, so this mainly validates the method."
+ ],
+ [
+  "Finding 3: Two Shortcuts That Backfire",
+  "35 s",
+  "Finding three: two shortcuts backfire. Cutting everyone's allowance to absorb the cheaters actually let cheaters gain more than with no audits at all. And always auditing the largest report caught only a quarter of the liars, against all of them with random audits. Shortcuts that save audits create blind spots."
+ ],
+ [
+  "Finding 4: Language Models Stop Where Predicted",
+  "45 s",
+  "Now language models. Four open models ran four of the six fishers, over 520 games. Two over-took on purpose: gpt-oss and Nemotron. Before testing, I predicted both would stop at 30 tonnes. Nemotron stopped at exactly 30, and gpt-oss one step early, at 24. A side note: a small fine made gpt-oss over-take more, as if the fine became a price."
+ ],
+ [
+  "Finding 5: One Round's Gain Matters",
+  "35 s",
+  "Finding five: what predicts the stop is the gain from one round, not the gain over the whole game, which was near zero or even negative. Both models also stopped earlier than a perfect optimiser would. That tells us what predicts the stop, not necessarily why they stop."
+ ],
+ [
+  "Memory Works for Language Models Too",
+  "30 s",
+  "Memory works for language models too. With audits and memory but no fine, over-taking fell from 55 to 20 percent, and no lake collapsed. Memory reduces over-taking but doesn't stop it; a large enough fine does, with no loss of efficiency."
+ ],
+ [
+  "Running Now (Results Soon)",
+  "40 s",
+  "These are running now, so the boxes are blank. The big one: do models respond to the expected fine, or just to the size of the fine? I hold the expected fine fixed and change the mix of audit probability and fine. The others test whether the prediction transfers to new games and reworded rules, what happens with no audits at all, and whether over-taking spreads to neighbours."
+ ],
+ [
+  "Where This Is Going",
+  "20 s",
+  "Next: a workshop paper and arXiv in November, then a main conference in January. Every study was pre-registered before its code, and I report the predictions that failed."
+ ],
+ [
+  "Questions for You",
+  "open",
+  "I'd love your take on these."
+ ],
+ [
+  "Thank You",
+  "5 s",
+  "Thanks!"
+ ]
+]
