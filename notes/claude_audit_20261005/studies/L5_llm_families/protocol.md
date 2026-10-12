@@ -92,3 +92,6 @@ Ameer decided not to pay for closed-model API access now. Claude Sonnet 5.5, GPT
 | MiniMax M3 | 3,483 tokens; 33 s | 1,019 tokens; 11 s |
 
 - **Decision.** MiniMax M3 is the only feasible candidate, at about $0.9 per game. Whether to screen it is Ameer's budget decision, and is pending. Until then, L5 continues with DeepSeek V4.1 Flash alone. DeepSeek passed the gate and qualified: E0 over-take rate 0.80, $\hat g_1$ = 5.41 t, F* = 36 t, F⁻ = 30 t, frozen at 15:38Z.
+
+### Amendment 3 (2026-10-12T20:55Z): no second open family
+Ameer decided not to screen MiniMax M3 (about $9 for the screen, and about $18 more if it qualified). L5's open arm is therefore DeepSeek V4.1 Flash alone. With L2–L4, the paper has five families (gpt-oss-120b, Nemotron 3 Super, Gemma 4 31B, Mistral Large 3, DeepSeek V4.1 Flash), three of which over-take on purpose.
