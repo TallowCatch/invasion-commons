@@ -1,10 +1,60 @@
 # Talk script and Q&A: PhD catch-up, 13 October 2026
 
+## The 10-minute version (use this tomorrow)
+
+**Deck:** `phd_update_10min_2026-10-13.pptx`. There are 10 main slides, about 7–8 minutes plus discussion, and 6 backup slides after "Thank You" for questions. Each slide's script is also in its speaker notes.
+
+### Slide 1: Penalties Sized to the Gain (10 s)
+
+"Hi everyone. My project asks one question: when do random spot-checks stop AI agents from over-using something they share?"
+
+### Slide 2: The Project in One Slide (1 min 15)
+
+"AI agents are starting to share resources like compute, energy and budgets, and whoever oversees them can only check a sample of what they do. I built a simulated shared resource: six agents draw on it over many rounds, a reviewer sets how much each may take, and a few agents are checked at random each round. I tested what should happen to an agent that gets caught taking too much, and whether the fine that stops it can be worked out in advance. Short answer: checks only help when a catch has a consequence, and the stopping fine can be predicted from how much an agent gains by cheating. That held for programmed agents and for language models."
+
+### Slide 3: How One Round Works (1 min)
+
+"One round: every agent asks for a share; the reviewer predicts the effect and scales everyone's request by the same factor if needed; each agent then takes its allowance, or more if it cheats; the resource regrows; and a few agents are checked. Harm means the resource falling below half its capacity, the level where it regrows fastest. I run this in three settings where harm spreads differently, one shared pool, neighbour damage on a ring, and pollution that is harmful in combination, so results don't rest on one structure."
+
+### Slide 4: How I Test It (1 min)
+
+"The method: run games with no fine, measure how much an agent gains from one round of over-taking, predict the fine that should stop it, write that prediction down, then test it on new games. The one formula is Becker's rule from 1968: the expected fine is the chance of a check times the fine, and over-taking should stop once that beats the gain. With a 1 in 6 chance and a 30 tonne fine the expected fine is 5 tonnes, just above the roughly 4.5 tonnes the models gained."
+
+### Slide 5: Finding 1: A Catch Needs a Consequence (45 s)
+
+"First finding, with programmed agents that under-report. If the reviewer only corrects the round in which it catches a lie, only 10 to 46 percent of the harm goes away. If it remembers each caught lie and adjusts that agent's later allowances, harm drops in all 12 settings, in Fishery from up to 99 percent of rounds below half capacity to under 3 percent. A catch needs a consequence."
+
+### Slide 6: Finding 2: Language Models Stop Where Predicted (1 min)
+
+"Second finding, with language models: four open models controlled four of the six fishers, 520 games. Two of them, gpt-oss and Nemotron, over-took on purpose. From their no-fine behaviour I predicted both would stop at 30 tonnes, before running those fines. Nemotron stopped exactly at 30 and gpt-oss one step early at 24. One surprise: a small fine made gpt-oss cheat more, as if the fine were a price."
+
+### Slide 7: More Findings, in Brief (1 min)
+
+"A few more results, briefly; the backup slides have each in full. The stopping fine for programmed agents was predicted in 5 of 5 new settings. Two shortcuts backfire: always checking the biggest request misses most liars, and cutting everyone's allowance rewards the cheaters. Memory works for language models too, cutting gpt-oss's over-taking from 55 to 20 percent without any fine. And what predicts where models stop is the gain of one round, not what cheating earns over the whole game; they also stopped earlier than a perfect optimiser would."
+
+### Slide 8: Running Now (Results Soon) (1 min)
+
+"These are running now, so the boxes are empty. The main one tests whether models respond to the expected fine or to the fine's size, by keeping the expected fine fixed and changing the mix of check chance and fine. The others check the prediction on new games and reworded rules, what happens with no checks at all, and whether cheating spreads to neighbours in Forest. Next: a workshop paper and arXiv in November, then a main conference in January."
+
+### Slide 9: Questions for You (1–2 min (discussion))
+
+"I'd love your views on these."
+
+### Slide 10: Thank You (5 s)
+
+"Thanks."
+
+**If you run short of time:** drop slide 7 (More findings), and say "there are a few more results in the backup slides".
+
+**Backup slides**, if someone asks: the problem and the settings; the predictable threshold; the two shortcuts; one round's gain; memory for language models; the timeline. Their longer explanations are in the full-length script below.
+
+---
+
 This is about 18–20 minutes at a relaxed pace, followed by questions. Read it aloud once tonight. You don't need to say it word for word: each slide's first sentence is the point, and the rest supports it.
 
 ---
 
-## Part 1: Script, slide by slide
+## Part 1: Full-length script (16-slide version; use it for the backup slides or a longer talk)
 
 ### Slide 1: Title
 "Hi everyone. I'll catch you up on what I've been working on. The title is *Penalties Sized to the Gain*, and the question underneath is really the whole project: when do random spot-checks stop AI agents from over-using something they share?"
