@@ -1,5 +1,18 @@
 {
  "gpt-oss-120b": {
+  "split_half_observed_minus_predicted_steps": {
+   "-1": 1.0
+  },
+  "other_wordings_no_fine": {
+   "S0": {
+    "observed_excess_t": 4.017132867132868,
+    "predicted_stopping_fine_t": 30
+   },
+   "P0": {
+    "observed_excess_t": 3.959,
+    "predicted_stopping_fine_t": 24
+   }
+  },
   "observed_excess_t": [
    4.481123737373737,
    4.396817515711869,
@@ -40,6 +53,20 @@
   }
  },
  "Nemotron 3 Super": {
+  "split_half_observed_minus_predicted_steps": {
+   "-1": 0.09523809523809523,
+   "0": 0.9047619047619048
+  },
+  "other_wordings_no_fine": {
+   "S0": {
+    "observed_excess_t": 3.740462427745665,
+    "predicted_stopping_fine_t": 24
+   },
+   "P0": {
+    "observed_excess_t": 4.807266009852217,
+    "predicted_stopping_fine_t": 30
+   }
+  },
   "observed_excess_t": [
    4.7405945419103315,
    4.570679140096896,
