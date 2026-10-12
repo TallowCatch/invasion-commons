@@ -1,0 +1,32 @@
+{
+ "study": "L4",
+ "rule": "F* = smallest fine on GRID with F/6 > g1; F- = the grid step below",
+ "grid": [
+  6,
+  12,
+  18,
+  24,
+  30,
+  36,
+  42,
+  48
+ ],
+ "models": {
+  "gpt-oss:120b-cloud": {
+   "g1_E": 4.454021739130434,
+   "n_overtake_steps_E": 460,
+   "F_star_E": 30,
+   "F_minus_E": 24,
+   "g1_P": 4.051910299003322,
+   "n_overtake_steps_P": 602,
+   "F_star_P": 30,
+   "F_minus_P": 24,
+   "E0_overtake_rate": [
+    0.575,
+    0.5325,
+    0.615
+   ],
+   "frozen_at": "2026-10-12T13:06:15Z"
+  }
+ }
+}
