@@ -173,6 +173,11 @@ Ameer decided to stop adding experiments. Everything not on this list is parked 
 
 **Added after the freeze (9 Oct, at Ameer's request):** R4 (River) and R5 (Fishery) put all three games on one 2×2 grid for claim 3. Each ran in seconds and cost nothing.
 
+**Freeze lifted (12 Oct, Ameer's decision after two outside reviews and the venue research):** three more LLM studies, each with a protocol frozen before its code. They run on GitHub Actions (stage `l4` of the L2 workflow; `experiments/oversight/l4_ci.py`; results on `l2-results`; progress: `bash scripts/l4_progress.sh`).
+- **L4** (`studies/L4_llm_identification`): the same expected fine at audit rates 1/3, 1/6 and 1/12 (e = 2 and 3, 20 populations); the threshold re-tested on 10 new populations; transfer to the paraphrased wording; a true no-check control (N0).
+- **L5** (`studies/L5_llm_families`): DeepSeek V4.1 Flash and GLM-5.3 on Ollama, screened without a fine, then a threshold test if they over-take. The closed families (Claude, GPT, Gemini via OpenRouter) are on hold until research credits arrive (Amendment 1).
+- **L6** (`studies/L6_llm_forest_spillover`): LLM foresters on Forest's ring next to a programmed complier or over-cutter, with neighbours' cuts hidden or visible. This is the supervisor's spillover question.
+
 **Parked (not this paper):**
 - **Spillover of over-taking** (supervisor's question, 9 Oct): a post hoc check found about +4–7 points of next-round over-taking per peer that over-took. About half runs through the reviewer's shared cut. A proper test (inserted over-takers; peers' catches visible or not; a defector on Forest's ring network) is parked. See the L2 results addendum.
 - a true "silent, no checks" LLM cell, to fix H4's design error;
