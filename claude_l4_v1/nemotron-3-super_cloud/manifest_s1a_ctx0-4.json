@@ -1,0 +1,49 @@
+{
+ "protocol": "studies/L4_llm_identification/protocol.md",
+ "model": "nemotron-3-super:cloud",
+ "cells": {
+  "E0": [
+   "explicit",
+   "fine",
+   0.0,
+   0.16666666666666666
+  ],
+  "P0": [
+   "paraphrase",
+   "fine",
+   0.0,
+   0.16666666666666666
+  ],
+  "N0": [
+   "explicit",
+   "none",
+   0.0,
+   0.0
+  ]
+ },
+ "run_cells": [
+  "E0",
+  "P0",
+  "N0"
+ ],
+ "contexts": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "horizon": 20,
+ "q": 0.16666666666666666,
+ "seeds": {
+  "pop": 1960000000,
+  "audit": 1965000000,
+  "llm": 1970000000,
+  "shuffle": 1975000000
+ },
+ "token_cap": 40000000,
+ "over_t": 0.06,
+ "memory_rule": "tonnes",
+ "python": "3.12.15",
+ "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39"
+}
