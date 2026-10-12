@@ -12,107 +12,153 @@
       "type": "title",
       "title": "Penalties Sized to the Gain",
       "subtitle": "When do random audits stop AI agents from over-using a shared resource?",
-      "notes": "One sentence: I test when spot-checks actually stop AI agents from taking more than their share, and whether we can predict the penalty that does it."
+      "notes": "One sentence: I study when spot-checks stop AI agents from taking more than their share of something they share, and whether the penalty that does it can be worked out in advance."
+    },
+    {
+      "type": "cards",
+      "title": "The Project in One Slide",
+      "cards": [
+        {
+          "label": "Why",
+          "head": "Oversight of AI agents is sampled",
+          "text": "AI agents are starting to act on resources they share with others, such as compute, energy and budgets. Whoever oversees them can usually check only a few of their actions."
+        },
+        {
+          "label": "What I built",
+          "head": "A shared resource with checks",
+          "text": "Six agents draw on one renewable resource over many rounds. A reviewer sets how much each may take, and a few agents are checked at random each round."
+        },
+        {
+          "label": "What I tested",
+          "head": "Consequences and penalty size",
+          "text": "What a caught agent should face (a fine, a memory of the offence, or both), and whether the fine that stops an agent can be predicted before it is tried."
+        },
+        {
+          "label": "What I found",
+          "head": "Checks work through consequences",
+          "text": "Checks reduced harm only when a catch had a consequence. The stopping fine could be predicted from how much an agent gains by over-taking, for programmed agents and for language models."
+        }
+      ],
+      "notes": "If people remember one slide, it should be this one. The rest of the talk unpacks each card.",
+      "takeaway": "The rest of the talk: the setting, three questions, how I test them, five findings, and what is still running"
     },
     {
       "type": "split",
       "title": "The Problem",
       "blocks": [
         {
-          "head": "AI agents share limited things",
-          "text": "Compute, energy, money, a fish stock. Each agent is told how much it may take."
+          "head": "A limited, shared resource",
+          "text": "Each agent receives an allowance: the amount it may take this round. Taking more helps that agent and leaves less for everyone else."
         },
         {
-          "head": "Checking is expensive",
-          "text": "An overseer can only spot-check a few agents each round, like a tax audit or a fishing inspection."
+          "head": "Oversight by sampling",
+          "text": "Checking every action costs too much, so an overseer spot-checks a few, as tax and fisheries inspectors do."
         },
         {
-          "head": "What we don't know",
-          "text": "Do spot-checks stop agents taking more than their share? And how big must the penalty be?"
+          "head": "The open question",
+          "text": "When does a sampled check stop agents taking more than their allowance, and how large does the penalty need to be?"
         }
       ],
       "image": "figures/fig_networks.png",
-      "caption": "Three toy worlds with six agents each. Fishery: one shared stock. Forest: over-cutting damages your two neighbours. River: two pollutants that are harmful mainly together.",
-      "notes": "Keep this concrete: six agents, one renewable resource, an overseer that cannot check everyone.",
-      "textW": 5.0
+      "caption": "The same question in three settings, chosen because one agent's over-use reaches others in a different way in each: through a single shared pool (Fishery), through damage to direct neighbours (Forest), and through harm that appears only when two kinds of use combine (River). A result that holds in all three does not rest on one structure.",
+      "notes": "These settings are not toys to be solved one by one; they are a way of checking that a result about oversight holds across the main ways harm can spread."
     },
     {
       "type": "numbered",
       "title": "Three Questions",
       "items": [
         {
-          "head": "What must follow a catch?",
-          "text": "A fine, a memory of the offence, or nothing: which of these makes spot-checks reduce harm?"
+          "head": "What has to follow a catch?",
+          "text": "When a check finds an agent taking more than its allowance, the overseer can fine it, remember it, or do nothing. Which of these reduces harm?"
         },
         {
-          "head": "Can we predict the stopping penalty?",
-          "text": "Economics says cheating stops once the expected fine beats the gain. Does that hold, and can we predict it in advance?"
+          "head": "Can the stopping fine be predicted?",
+          "text": "Is there a fine size at which over-taking stops, and can it be worked out before that fine is tried?"
         },
         {
-          "head": "Do LLMs follow the same rule?",
-          "text": "If four of the six agents are LLMs, do they stop where we predict, and which gain do they act on?"
+          "head": "Do language models behave the same way?",
+          "text": "When most agents are language models making their own choices, do they stop where the prediction says?"
         }
-      ],
-      "notes": "These are the three questions the paper answers."
+      ]
     },
     {
       "type": "figure",
       "title": "How One Round Works",
       "image": "figures/fig1_game_step.png",
-      "caption": "Each round: agents ask for a share, a reviewer scales every request by one factor to keep the resource at half capacity, agents take their allowance or more, the resource regrows, and a few agents are spot-checked.",
-      "takeaway": "Harm = the resource falling below half capacity, where it regrows fastest",
-      "notes": "Half capacity is the maximum-sustainable-yield level from fisheries science. Same harm line in all three games."
+      "caption": "Each round, every agent asks for a share; the reviewer predicts what the requests would do to the resource and scales them all by one factor; each agent then takes its allowance or more; the resource regrows; and a few agents are checked at random.",
+      "takeaway": "Harm = the resource falling below half its capacity, the level at which it regrows fastest",
+      "notes": "Half capacity is the maximum-sustainable-yield level used in fisheries management. The same harm line is used in all three settings."
     },
     {
-      "type": "stats",
-      "title": "The Rule From Economics",
-      "stats": [
+      "type": "method",
+      "title": "How I Test It",
+      "steps": [
         {
-          "value": "q × F",
-          "label": "expected fine = chance of being checked × size of the fine"
+          "head": "Run the setting",
+          "text": "Six agents share the resource for many rounds; the reviewer sets allowances; a few agents are checked at random each round."
         },
         {
-          "value": "1/6 × 30 t",
-          "label": "= 5 t expected fine per round of cheating"
+          "head": "Measure the gain",
+          "text": "Run games without any fine and record how much an agent gains from one round of taking more than its allowance."
         },
         {
-          "value": "≈ 4.5 t",
-          "label": "what a model gained per round of cheating, with no fine"
+          "head": "Predict, then freeze",
+          "text": "Work out the fine that should stop over-taking and record the prediction before any game with that fine is run."
+        },
+        {
+          "head": "Test on games the prediction never saw",
+          "text": "Run the predicted fine and the fines around it on new games, and report the result whether or not it matches."
         }
       ],
-      "blocks": [
+      "cardTitle": "Key quantities",
+      "quantities": [
         {
-          "head": "Cheat while the gain beats the expected fine",
-          "text": "This is Becker's 1968 rule. So a 30 t fine should stop an agent that gains 4.5 t per round, and a 24 t fine (4 t expected) should not."
+          "sym": "q",
+          "italic": true,
+          "meaning": "chance that an agent is checked in a round (1 in 6 for the language models)"
         },
         {
-          "head": "But which gain?",
-          "text": "The gain from one round, or the gain over the whole game once the stock is depleted? The two differ, and that turns out to matter."
+          "sym": "F",
+          "italic": true,
+          "meaning": "fine paid when a check finds an agent over its allowance"
+        },
+        {
+          "sym": "e = q × F",
+          "meaning": "expected fine for one round of over-taking"
+        },
+        {
+          "sym": "g",
+          "italic": true,
+          "meaning": "what an agent gains from one round of over-taking"
+        },
+        {
+          "sym": "e > g",
+          "highlight": true,
+          "meaning": "the prediction: over-taking stops once the expected fine is larger than the gain (Becker 1968)"
         }
       ],
-      "notes": "This is the benchmark, not a new theorem. The interesting part is testing it in advance."
+      "notes": "Example: with a 1 in 6 chance of a check and a 30 t fine, the expected fine is 5 t; a model that gains about 4.5 t per round should stop there, and should not stop at 24 t (4 t expected)."
     },
     {
       "type": "split",
-      "title": "Finding 1: Catching Alone Barely Helps",
+      "title": "Finding 1: A Catch Needs a Consequence",
       "blocks": [
         {
-          "head": "Remembering each caught lie works",
-          "text": "Memory gave less harm than audits without memory in 12 of 12 settings across the three games."
+          "head": "The setting",
+          "text": "Some agents report less than they intend to take, so the reviewer underestimates their use unless a check catches them."
         },
         {
-          "head": "The numbers",
-          "text": "Rounds below half capacity fell from 43–99% to 0.3–3% in Fishery and from 35–66% to 3–5% in River."
+          "head": "Checks without memory",
+          "text": "Correcting only the round in which a lie was caught removed 10–46% of the harm."
         },
         {
-          "head": "Audits without memory",
-          "text": "Correcting only the current round removed just 10–46% of the harm."
+          "head": "Checks with memory",
+          "text": "Remembering each caught lie and adjusting that agent's later allowances reduced harm in all 12 settings tested. In Fishery, rounds below half capacity fell from 43–99% to 0.3–3%."
         }
       ],
       "image": "figures/fig3_audits_memory.png",
-      "caption": "Share of rounds below half capacity with lying agents. Dark: no audits. Light grey: audits without memory. Green: audits with memory.",
-      "notes": "Programmed agents, 64 populations per setting. The point: a catch has to have a consequence.",
-      "textW": 5.0
+      "caption": "Share of rounds below half capacity when some agents under-report. Dark: no checks. Light: checks without memory. Green: checks with memory. Each group has four settings: 2 or 4 misbehaving agents (2g, 4g) and two regrowth rates (1.0 and 0.85 of normal).",
+      "notes": "Programmed agents, 64 independent games per setting, 80 rounds each."
     },
     {
       "type": "split",
@@ -120,21 +166,21 @@
       "title": "Finding 2: A Predictable Threshold",
       "blocks": [
         {
-          "head": "Predicted before testing",
-          "text": "From runs without audits, we predicted where cheating would stop in five new settings."
+          "head": "What was predicted",
+          "text": "Programmed agents choose how much to over-take so as to earn the most. From games without checks, we predicted the expected fine at which they would stop."
         },
         {
-          "head": "5 of 5 within one step",
-          "text": "Every observed threshold landed within one step of the prediction, for thresholds from 0.19 to 1.20."
+          "head": "The result",
+          "text": "In 5 of 5 new settings, the observed stopping point was within one step of the prediction."
         },
         {
-          "head": "Why it matters",
-          "text": "This checks our measurement method before we try it on LLMs."
+          "head": "Why this comes first",
+          "text": "These agents are built to maximise their payoff, so this checks the measurement method before it is used on language models."
         }
       ],
       "image": "figures/fig3_audits_threshold.png",
-      "caption": "Observed against predicted threshold. Filled: new settings predicted first. Open: audit rate or detection varied.",
-      "notes": "These agents are built to optimise, so this is a validation of the measurement, not a surprise."
+      "caption": "Observed against predicted stopping point (expected fine). Filled: new settings predicted in advance. Open: the checking rate, or the chance that a check catches the cheat, was varied. The band marks one step of the tested grid.",
+      "notes": "This is a validation, not a surprise: the agents optimise the payoff the prediction is based on."
     },
     {
       "type": "figure2",
@@ -142,92 +188,103 @@
       "images": [
         {
           "image": "figures/fig3_audits_rules.png",
-          "caption": "Lowering everyone's allowance to absorb cheaters made cheating pay more than no audits at all (142 vs 113)."
+          "caption": "Lowering every agent's allowance to make up for known cheaters let the cheaters gain more than with no checks at all (142 vs 113); honest agents paid for it."
         },
         {
           "image": "figures/fig3_audits_targeting.png",
-          "caption": "Always checking the largest report caught 25% of liars, against 100% with random checks."
+          "caption": "Always checking the agent with the largest report caught 25% of liars over a game, against 100% with random checks: the largest reporter is often honest."
         }
       ],
-      "takeaway": "Keep checks unpredictable and covering everyone",
-      "notes": "Both shortcuts save audits but create blind spots. Targeting where the outcome falls short of the forecast did best in Forest."
+      "takeaway": "Shortcuts that save checks can open blind spots",
+      "notes": "Checking where the outcome fell furthest below the reviewer's forecast did best in Forest, so targeting by outcome can work; targeting by report did not."
     },
     {
       "type": "figure",
-      "title": "Finding 4: LLMs Stop Where Predicted",
+      "title": "Finding 4: Language Models Stop Where Predicted",
       "image": "figures/fig4_llm_main.png",
-      "caption": "Four LLMs, 520 games, 81,232 decisions. Left: how often each model took more than its allowance, by fine. Triangles: predicted stop (open) and observed stop (filled). Right: fish left for the rule-following agents.",
-      "takeaway": "Predicted 30 t: Nemotron stopped at 30 t, gpt-oss one step early at 24 t",
-      "notes": "Gemma rarely over-took and Mistral never did, so they say nothing about the threshold. A small fine made gpt-oss cheat more (55% to about 90%): a fine works like a price."
+      "caption": "Four open language models each controlled four of the six fishers (520 games). Left: share of rounds in which a model took more than its allowance, at each fine, with a 1 in 6 chance of a check. Triangles: stopping fine predicted before testing (open) and observed (filled). Right: catch left for the two rule-following fishers.",
+      "takeaway": "Predicted before testing: 30 t. Observed: 30 t (Nemotron 3 Super), 24 t (gpt-oss-120b)",
+      "notes": "Gemma rarely took more than its allowance and Mistral never did, so they say nothing about the stopping fine. A small fine made gpt-oss over-take more (55% to about 90%), as if the fine were a price."
     },
     {
       "type": "split",
-      "title": "Finding 5: They Act on One Round",
+      "title": "Finding 5: One Round's Gain Matters",
       "blocks": [
         {
-          "head": "The gain of a single round",
-          "text": "The stopping fine matched what each model took per round without a fine (4.5–4.7 t)."
+          "head": "What predicted it",
+          "text": "How much each model took above its allowance in one round without a fine (4.5–4.7 t)."
         },
         {
-          "head": "Not the whole game",
-          "text": "Over the whole game their over-taking gained little or lost fish (−1.05 and 0.71 t per round), yet they kept going."
+          "head": "What did not",
+          "text": "What over-taking earned over a whole game: about −1 to +0.7 t per round, because over-taking depleted the lake."
         },
         {
-          "head": "Easier to deter than a perfect optimiser",
-          "text": "A risk-neutral agent would hold out until 36 t. Both models stopped earlier, and gradually."
+          "head": "Compared with an ideal optimiser",
+          "text": "An agent that maximised its expected payoff would keep over-taking until 36 t. Both models stopped earlier, and gradually."
         }
       ],
       "image": "figures/fig5_spine.png",
-      "caption": "Observed against predicted stopping fine. Points on the dashed line are predicted exactly.",
-      "notes": "Careful wording: this shows what predicts the stopping fine, not why the models stop."
+      "caption": "Each point compares a predicted and an observed stopping fine; points on the dashed line were predicted exactly.",
+      "notes": "This shows what predicts where the models stop, not why they stop."
     },
     {
-      "type": "stats",
-      "title": "Memory Works for LLMs Too",
-      "stats": [
+      "type": "compare",
+      "title": "Memory Works for Language Models Too",
+      "columns": [
+        "Checks only",
+        "Checks + memory"
+      ],
+      "rows": [
         {
-          "value": "55% → 20%",
-          "label": "rounds in which gpt-oss over-took, with memory and no fine"
+          "label": "Rounds with over-taking",
+          "before": "55%",
+          "after": "20%"
         },
         {
-          "value": "92% → 20%",
-          "label": "rounds below half capacity under gpt-oss"
+          "label": "Rounds below half capacity",
+          "before": "92%",
+          "after": "20%"
         },
         {
-          "value": "0 of 10",
-          "label": "lakes collapsed with memory (5 of 10 without)"
+          "label": "Lakes collapsed (of 10)",
+          "before": "5",
+          "after": "0"
         }
       ],
+      "cardNote": "gpt-oss-120b, no fine in either condition, 10 games each",
       "blocks": [
         {
           "head": "Reduced, not stopped",
-          "text": "Memory protected the resource without any fine, but some over-taking remained. Fines above the gain stopped it and cost no efficiency (0.99 of the maximum sustainable harvest)."
+          "text": "Memory protected the lake without any fine, but some over-taking remained. For Nemotron 3 Super, over-taking fell from 65% to 33%."
+        },
+        {
+          "head": "With a large enough fine",
+          "text": "Fines above the gain stopped over-taking and kept the harvest at 0.99 of the maximum the lake can sustain."
         }
-      ],
-      "notes": "Nemotron: over-taking 65% to 33%, harm 96% to 40%."
+      ]
     },
     {
       "type": "pending",
       "title": "Running Now (Results Soon)",
       "rows": [
         {
-          "question": "Expected fine or fine size?",
-          "design": "Same expected fine (2 t or 3 t) with 1 in 3, 1 in 6 or 1 in 12 checked. gpt-oss, 20 new populations."
+          "question": "Expected fine, or the size of the fine?",
+          "design": "Same expected fine (2 t or 3 t), made up differently: 1 in 3 checked with a small fine, 1 in 6, or 1 in 12 with a large fine. gpt-oss-120b, 20 new games per condition."
         },
         {
-          "question": "Does the prediction transfer?",
-          "design": "10 new populations and a reworded prompt. Predicted stop frozen in advance: 30 t for both models."
+          "question": "Does the prediction hold on new games?",
+          "design": "Stopping fine recorded in advance (30 t for both models), tested on 10 new games and with the rules reworded."
         },
         {
-          "question": "What if nothing checks at all?",
-          "design": "Rules that never mention checks, compared with a check that carries a 0 t fine."
+          "question": "What if nothing is ever checked?",
+          "design": "Rules that never mention checks, compared with checks that carry no fine."
         },
         {
-          "question": "Does cheating spread to neighbours?",
-          "design": "Forest ring: one programmed over-cutter, five LLM foresters; neighbours' cuts hidden or visible."
+          "question": "Does over-taking spread to neighbours?",
+          "design": "Forest: one programmed over-taker among five language-model agents; neighbours' cuts either hidden or visible."
         }
       ],
-      "notes": "A fifth family, DeepSeek V4.1 Flash, over-took in 80% of rounds without a fine; its predicted stop (36 t) is frozen but not tested yet."
+      "notes": "A fifth model family, DeepSeek V4.1 Flash, took more than its allowance in 80% of rounds without a fine; its predicted stopping fine (36 t) is recorded but not tested yet."
     },
     {
       "type": "timeline",
@@ -235,17 +292,17 @@
       "steps": [
         {
           "when": "Sep – 8 Oct",
-          "what": "Programmed agents in three games; LLMs in Fishery",
+          "what": "Programmed agents in all three settings; language models in Fishery",
           "done": true
         },
         {
           "when": "12 – 14 Oct",
-          "what": "Follow-up tests from two outside reviews",
+          "what": "Follow-up tests asked for by two outside reviews",
           "done": false
         },
         {
           "when": "20 Nov",
-          "what": "AAAI-27 workshop (WMAC) and arXiv",
+          "what": "Workshop submission (AAAI-27 WMAC) and arXiv",
           "done": false
         },
         {
@@ -254,8 +311,8 @@
           "done": false
         }
       ],
-      "note": "Every study has a protocol frozen before its code; failed predictions are reported.",
-      "notes": "January dates are estimates; the calls are not out yet."
+      "note": "Each study has a protocol written down before its code; predictions that failed are reported.",
+      "notes": "January dates are estimates; the calls for papers are not out yet."
     },
     {
       "type": "questions",
@@ -263,15 +320,13 @@
       "questions": [
         "Is \"taking more than your allowance\" a fair stand-in for an AI agent misbehaving? What would be better?",
         "If a fine works under one wording of the rules, how far would you trust it under another?",
-        "What would convince you more: more models, or more kinds of game?",
+        "What would convince you more: more models, or more kinds of setting?",
         "Where in your own work does someone check only a sample, and what happens after a catch?"
-      ],
-      "notes": "Open the floor. These are the points reviewers raise too."
+      ]
     },
     {
       "type": "closing",
-      "title": "Thank You",
-      "notes": "Thanks; happy to share the paper draft."
+      "title": "Thank You"
     }
   ]
 }
