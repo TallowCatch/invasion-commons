@@ -76,3 +76,6 @@ As in L4: paired bootstrap over populations, 4,000 resamples, seed 20261019, all
 
 ### Note 1 (2026-10-12T10:25Z): corrected freeze time
 The "Frozen" line gives 10:30Z, which was a mistake made when writing it. The protocol was committed at 10:17Z (commit `c001344`), before the code (commit `30d93b2`, 10:22Z) and before the first game (10:22:42Z). Nothing else changes.
+
+### Amendment 1 (2026-10-12T10:50Z): closed families on hold
+Ameer decided not to pay for closed-model API access now. Claude Sonnet 5.5, GPT-6.1 Sol and Gemini 3.8 Flash are on hold until research credits (Anthropic External Researcher Access, Google Gemini Academic Program) or supervisor funding arrive. Their code is built and tested; if they run, they use this protocol unchanged. L5 now consists of DeepSeek V4.1 Flash and GLM-5.3 on Ollama. If the closed families never run, the paper states "open-weight models only" as a limitation. No L5 game had finished when this was decided.
