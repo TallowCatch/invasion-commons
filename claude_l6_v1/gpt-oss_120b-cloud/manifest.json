@@ -1,0 +1,55 @@
+{
+ "protocol": "studies/L6_llm_forest_spillover/protocol.md",
+ "model": "gpt-oss:120b-cloud",
+ "cells": {
+  "C_H": [
+   "control",
+   "hidden"
+  ],
+  "D_H": [
+   "defector",
+   "hidden"
+  ],
+  "C_V": [
+   "control",
+   "visible"
+  ],
+  "D_V": [
+   "defector",
+   "visible"
+  ]
+ },
+ "run_cells": [
+  "C_H",
+  "D_H",
+  "C_V",
+  "D_V"
+ ],
+ "contexts": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9
+ ],
+ "fine": 0.0,
+ "q": 0.16666666666666666,
+ "horizon": 20,
+ "seeds": {
+  "pop": 1980000000,
+  "weather": 1981000000,
+  "reviewer": 1986000000,
+  "audit": 1985000000,
+  "llm": 1990000000,
+  "shuffle": 1995000000
+ },
+ "over_t": 0.06,
+ "token_cap": 15000000,
+ "python": "3.12.15",
+ "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39"
+}
