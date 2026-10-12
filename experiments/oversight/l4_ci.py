@@ -34,8 +34,9 @@ from experiments.oversight import run_l6_llm_forest as F
 
 GPT, NEM, DS, GLM = "gpt-oss:120b-cloud", "nemotron-3-super:cloud", "deepseek-v4.1-flash:cloud", "glm-5.3:cloud"
 LANES = {
-    "A": [("s1", "L4", GPT, None), ("s1", "L5", DS, None), ("s1", "L5", GLM, None), ("l6pilot", GPT),
-          ("l6", GPT, None), ("s2", "L4", GPT, None), ("s2", "L5", DS, None), ("s2", "L5", GLM, None),
+    # GLM-5.3 dropped (L5 Amendment 2: about 12,000 reasoning tokens and 2 minutes per decision)
+    "A": [("s1", "L4", GPT, None), ("s1", "L5", DS, None), ("l6pilot", GPT),
+          ("l6", GPT, None), ("s2", "L4", GPT, None), ("s2", "L5", DS, None),
           ("s2", "L4", NEM, "14-19"), ("l6pilot", NEM), ("l6", NEM, "8-9")],
     "B": [("s1", "L4", NEM, "0-4"), ("s2", "L4", NEM, "0-6"), ("l6", NEM, "0-3")],
     "C": [("s1", "L4", NEM, "5-9"), ("s2", "L4", NEM, "7-13"), ("l6", NEM, "4-7")],

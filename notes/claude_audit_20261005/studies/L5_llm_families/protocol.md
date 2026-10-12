@@ -79,3 +79,16 @@ The "Frozen" line gives 10:30Z, which was a mistake made when writing it. The pr
 
 ### Amendment 1 (2026-10-12T10:50Z): closed families on hold
 Ameer decided not to pay for closed-model API access now. Claude Sonnet 5.5, GPT-6.1 Sol and Gemini 3.8 Flash are on hold until research credits (Anthropic External Researcher Access, Google Gemini Academic Program) or supervisor funding arrive. Their code is built and tested; if they run, they use this protocol unchanged. L5 now consists of DeepSeek V4.1 Flash and GLM-5.3 on Ollama. If the closed families never run, the paper states "open-weight models only" as a limitation. No L5 game had finished when this was decided.
+
+### Amendment 2 (2026-10-12T20:45Z): GLM-5.3 dropped for cost and latency
+- **Why.** On the remote runner, GLM-5.3 used about 12,000 completion (reasoning) tokens and about 2 minutes per decision: 158 calls, 1.81M output tokens, about $8 of Ollama credit. One 20-round game would take about 5 hours and cost about $9, so the 10-game screen alone would cost about $90, more than Ameer's monthly credit. This is the same problem as Mistral Large 4 in L2 (Amendment 4).
+- **What was stopped.** Lane A was cancelled at about 20:30Z, during GLM's first game. No GLM game finished, so no GLM outcome exists. The partial call log is kept.
+- **Replacements timed on one real request and one real catch prompt** (completion tokens; seconds, which may include queueing behind the 3 cloud lanes):
+
+| Model | Request | Catch |
+|---|---|---|
+| Kimi K2.6 | 9,424 tokens; 604 s | 8,531 tokens; 205 s |
+| GLM-5.3 Flash | 14,153 tokens; 65 s | 975 tokens; 3.5 s |
+| MiniMax M3 | 3,483 tokens; 33 s | 1,019 tokens; 11 s |
+
+- **Decision.** MiniMax M3 is the only feasible candidate, at about $0.9 per game. Whether to screen it is Ameer's budget decision, and is pending. Until then, L5 continues with DeepSeek V4.1 Flash alone. DeepSeek passed the gate and qualified: E0 over-take rate 0.80, $\hat g_1$ = 5.41 t, F* = 36 t, F⁻ = 30 t, frozen at 15:38Z.
