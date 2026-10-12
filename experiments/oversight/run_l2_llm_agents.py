@@ -127,7 +127,8 @@ class Client(L.OllamaClient):
                 break
             except urllib.error.HTTPError as exc:
                 text = exc.read().decode(errors="ignore").lower()
-                if exc.code == 429 or "limit" in text or "usage" in text:
+                # 402/429 or a usage/credit message: out of plan credit or rate-limited -> stop cleanly, resume later
+                if exc.code in (402, 429) or any(w in text for w in ("limit", "usage", "credit", "quota", "insufficient")):
                     raise QuotaStop(f"HTTP {exc.code}: {text[:200]}")
                 if exc.code in (400, 401, 403, 404):
                     raise
