@@ -6,7 +6,7 @@ git fetch -q origin l2-results
 tree() { git ls-tree -r --name-only origin/l2-results -- "$1" 2>/dev/null | grep -c '/episodes/.*\.json$'; }
 printf "%-34s %s\n" "study / model" "games saved (planned)"
 for row in "claude_l4_v1/gpt-oss_120b-cloud 190" "claude_l4_v1/nemotron-3-super_cloud 190" \
-           "claude_l5_v1/deepseek-v4_1-flash_cloud 10-30" "claude_l5_v1/glm-5_3_cloud 10-30" \
+           "claude_l5_v1/deepseek-v4_1-flash_cloud 30" \
            "claude_l6_pilot_v1/gpt-oss_120b-cloud 2" "claude_l6_v1/gpt-oss_120b-cloud 40" \
            "claude_l6_pilot_v1/nemotron-3-super_cloud 2" "claude_l6_v1/nemotron-3-super_cloud 40"; do
   set -- $row; printf "%-34s %s (%s)\n" "$1" "$(tree "$1")" "$2"
