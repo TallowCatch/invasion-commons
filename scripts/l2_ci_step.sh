@@ -11,6 +11,19 @@
 # Amendment 3: the memory cell EM is held back from this run until its interface fault is fixed.
 set -u
 MODE="$1"; STORE="$2"; MAXMIN="${3:-330}"; LANE="${4:-A}"; STAGE="${5:-main}"
+if [ "$STAGE" = "l4" ]; then  # L4, L5 and L6 (12 Oct 2026): lanes and order are in experiments/oversight/l4_ci.py
+  rm -f NEXT
+  if [ "$MODE" = "check" ]; then PYTHONPATH=. python -m experiments.oversight.l4_ci check; exit $?; fi
+  if [ -d "$STORE/.git" ]; then
+    ( while sleep 1200; do bash scripts/l2_save.sh "$STORE" "L4-L6 progress (lane $LANE, in job)"; done ) &
+    SAVER=$!
+    trap 'kill $SAVER 2>/dev/null' EXIT
+  fi
+  PYTHONPATH=. python -m experiments.oversight.l4_ci run --store "$STORE" --lane "$LANE" --max-minutes "$MAXMIN"
+  code=$?
+  [ -f NEXT ] || echo done > NEXT
+  exit $code
+fi
 LANE_A=("gpt-oss:120b-cloud" "nemotron-3-super:cloud@5-7")
 LANE_B=("gemma4:31b-cloud" "mistral-large-3:675b-cloud" "nemotron-3-super:cloud@8-9")
 LANE_C=("nemotron-3-super:cloud@0-4")

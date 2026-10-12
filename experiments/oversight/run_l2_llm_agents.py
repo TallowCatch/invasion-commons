@@ -51,7 +51,8 @@ TOKEN_CAP = 20_000_000  # Amendment 1 (was 15 M)
 API_NAMES = {"gpt-oss:120b-cloud": "gpt-oss:120b", "gemma4:31b-cloud": "gemma4:31b",
              "nemotron-3-super:cloud": "nemotron-3-super",  # names on https://ollama.com/api (Amendment 1)
              "mistral-large-4:cloud": "mistral-large-4",  # fourth family (Amendment 2); replaced, too slow (Amendment 4)
-             "mistral-large-3:675b-cloud": "mistral-large-3:675b"}  # fourth family, an addition (Amendment 4)
+             "mistral-large-3:675b-cloud": "mistral-large-3:675b",  # fourth family, an addition (Amendment 4)
+             "deepseek-v4.1-flash:cloud": "deepseek-v4.1-flash", "glm-5.3:cloud": "glm-5.3"}  # L5 open families
 # EM memory rule. "tonnes" (Amendment 5): a caught over-take is recorded as tonnes above the allowance, and later
 # allowances are lowered by the agent's mean recorded excess. "share" is S4's share-of-the-cut rule, used for the EM games
 # in claude_l2_v1 and set aside there (Amendment 3: it drops over-takes when nothing was cut).
