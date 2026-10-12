@@ -129,3 +129,6 @@ After stage 1, `analyze_l4.py predict` writes `prediction.json`, which is commit
 - The minimum detectable effect is given for each comparison.
 
 ## Amendments
+
+### Note 1 (2026-10-12T10:25Z): corrected freeze time
+The "Frozen" line gives 10:30Z, which was a mistake made when writing it. The protocol was committed at 10:17Z (commit `c001344`), before the code (commit `30d93b2`, 10:22Z) and before the first game (10:22:42Z). Nothing else changes.

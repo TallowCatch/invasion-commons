@@ -73,3 +73,6 @@ These are mid-priced, current models. The closed models run only once Ameer has 
 As in L4: paired bootstrap over populations, 4,000 resamples, seed 20261019, all results reported.
 
 ## Amendments
+
+### Note 1 (2026-10-12T10:25Z): corrected freeze time
+The "Frozen" line gives 10:30Z, which was a mistake made when writing it. The protocol was committed at 10:17Z (commit `c001344`), before the code (commit `30d93b2`, 10:22Z) and before the first game (10:22:42Z). Nothing else changes.
