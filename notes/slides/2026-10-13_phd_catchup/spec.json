@@ -229,41 +229,29 @@
       "notes": "Finding five: what predicts the stop is the gain from one round, not the gain over the whole game, which was near zero or even negative. Both models also stopped earlier than a perfect optimiser would. That tells us what predicts the stop, not necessarily why they stop."
     },
     {
-      "type": "compare",
-      "title": "Memory Works for Language Models Too",
-      "columns": [
-        "Audits only",
-        "Audits + memory"
-      ],
-      "rows": [
-        {
-          "label": "Rounds with over-taking",
-          "before": "55%",
-          "after": "20%"
-        },
-        {
-          "label": "Rounds below half capacity",
-          "before": "92%",
-          "after": "20%"
-        },
-        {
-          "label": "Lakes collapsed (of 10)",
-          "before": "5",
-          "after": "0"
-        }
-      ],
-      "cardNote": "gpt-oss-120b, audits with no fine in both columns, 10 games each",
+      "type": "split",
+      "textW": 4.4,
+      "title": "Memory Protects the Lake Without a Fine",
       "blocks": [
         {
-          "head": "Reduced, not stopped",
-          "text": "Memory alone protected the lake, but some over-taking remained (Nemotron: 65% → 33%)."
+          "head": "Same audits, no fine",
+          "text": "Audit probability 1 in 6 in both conditions. With memory, a caught model's later allowances drop by what it over-took."
         },
         {
-          "head": "Large enough fines",
-          "text": "They stopped over-taking and kept the harvest at 0.99 of the maximum sustainable yield."
+          "head": "Over-taking fell, but didn't stop",
+          "text": "Both models still over-took in a fifth to a third of their decisions."
+        },
+        {
+          "head": "The lake recovered",
+          "text": "No lake collapsed with memory (without: 5 and 1 of 10). Rule-following fishers caught 29 to 32 t, against 8 to 9 t."
         }
       ],
-      "notes": "Memory works for language models too. With audits and memory but no fine, over-taking fell from 55 to 20 percent, and no lake collapsed. Memory reduces over-taking but doesn't stop it; a large enough fine does, with no loss of efficiency."
+      "image": "figures/memory_llm.png",
+      "caption": "10 games per model and condition; bars are means over games with 95% intervals. Left: share of a model's decisions above its allowance. Right: share of rounds the lake ended below half capacity (50 of 100 t).",
+      "notes": "Memory protects the lake even without a fine. Same audits in both conditions, a one-in-six chance, no fine. With memory, over-taking fell from 55 to 20 percent of decisions for gpt-oss and from 65 to 33 for Nemotron, so it reduced over-taking but didn't stop it. The lake did much better: below half capacity in about a fifth of rounds instead of nine in ten for gpt-oss, and no lake collapsed. The two 20s for gpt-oss are a coincidence: one counts decisions, the other counts rounds. A fine above the gain is what stops over-taking completely.",
+      "blockStyle": {
+        "justify": false
+      }
     },
     {
       "type": "pending",

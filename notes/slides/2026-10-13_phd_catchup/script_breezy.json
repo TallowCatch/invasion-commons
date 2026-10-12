@@ -55,9 +55,9 @@
   "Finding five: what predicts the stop is the gain from one round, not the gain over the whole game, which was near zero or even negative. Both models also stopped earlier than a perfect optimiser would. That tells us what predicts the stop, not necessarily why they stop."
  ],
  [
-  "Memory Works for Language Models Too",
-  "30 s",
-  "Memory works for language models too. With audits and memory but no fine, over-taking fell from 55 to 20 percent, and no lake collapsed. Memory reduces over-taking but doesn't stop it; a large enough fine does, with no loss of efficiency."
+  "Memory Protects the Lake Without a Fine",
+  "35 s",
+  "Memory protects the lake even without a fine. Same audits in both conditions, a one-in-six chance, no fine. With memory, over-taking fell from 55 to 20 percent of decisions for gpt-oss and from 65 to 33 for Nemotron, so it reduced over-taking but didn't stop it. The lake did much better: below half capacity in about a fifth of rounds instead of nine in ten for gpt-oss, and no lake collapsed. The two 20s for gpt-oss are a coincidence: one counts decisions, the other counts rounds. A fine above the gain is what stops over-taking completely."
  ],
  [
   "Running Now (Results Soon)",

@@ -48,9 +48,9 @@ About 7–8 minutes for 16 slides, then questions. Say each slide's first senten
 
 "Finding five: what predicts the stop is the gain from one round, not the gain over the whole game, which was near zero or even negative. Both models also stopped earlier than a perfect optimiser would. That tells us what predicts the stop, not necessarily why they stop."
 
-### Slide 12: Memory Works for Language Models Too (30 s)
+### Slide 12: Memory Protects the Lake Without a Fine (35 s)
 
-"Memory works for language models too. With audits and memory but no fine, over-taking fell from 55 to 20 percent, and no lake collapsed. Memory reduces over-taking but doesn't stop it; a large enough fine does, with no loss of efficiency."
+"Memory protects the lake even without a fine. Same audits in both conditions, a one-in-six chance, no fine. With memory, over-taking fell from 55 to 20 percent of decisions for gpt-oss and from 65 to 33 for Nemotron, so it reduced over-taking but didn't stop it. The lake did much better: below half capacity in about a fifth of rounds instead of nine in ten for gpt-oss, and no lake collapsed. The two 20s for gpt-oss are a coincidence: one counts decisions, the other counts rounds. A fine above the gain is what stops over-taking completely."
 
 ### Slide 13: Running Now (Results Soon) (40 s)
 
@@ -97,6 +97,9 @@ gpt-oss-120b, Nemotron 3 Super, Gemma 4 31B and Mistral Large 3, all open-weight
 
 **How did the language models know the rules?**
 A system prompt explains the lake, the allowance, the 1-in-6 checks and the fine. Before playing, each model answered three comprehension questions, and every one scored 3 out of 3.
+
+**Why is gpt-oss at 20% for both over-taking and rounds below half capacity?**
+A coincidence of two different measures. Over-taking counts the model's decisions above its allowance: 160 of 800, so 20.0%. Below half capacity counts rounds in which the lake ended under 50 t: 19.5%. For Nemotron the two are 33% and 40%.
 
 **What does "memory" mean exactly?**
 When a check catches an agent over its allowance, the reviewer records by how much, and lowers that agent's future allowances by its average recorded excess.
