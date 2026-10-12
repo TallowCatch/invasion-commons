@@ -161,7 +161,7 @@ Each study had a protocol frozen before its code, with hypotheses, falsifiers, s
 \section*{G\quad Positioning against prior work}
 \begin{table}[!ht]
   \centering\small
-  \caption{Closest prior work. \checkmark: yes; (\checkmark): partly. $^a$Becker 1968; Harrington 1988; inspection games (Avenhaus et al.\ 2002). $^b$Greenblatt et al.\ 2024. Random audits: audits at random with stated odds. Memory: later treatment depends on past offences. Predicted threshold: the fine at which cheating stops is predicted before it is tested (this work: in simulation, and for language models in the threshold test). Partly: Greenblatt et al.\ use an audit budget rather than stated odds; Ye \& Steinhardt include a fishery as one of three environments, and track each agent's reliability with penalties that escalate for repeated misbehaviour, enforced through peer reports rather than random audits; Okamoto et al.\ give audit likelihood in words and raise it together with the fine across four levels around break-even; inspection games have one inspectee or a few.}
+  \caption{Closest prior work. \checkmark: yes; (\checkmark): partly. $^a$Becker 1968; Harrington 1988; inspection games (Avenhaus et al.\ 2002). $^b$Greenblatt et al.\ 2024. Random audits: audits at random with stated odds. Memory: later treatment depends on past offences. Predicted threshold: the fine at which cheating stops is predicted before it is tested (this work: in simulation, and for language models in the threshold test). Partly: Greenblatt et al.\ use an audit budget rather than stated odds; Ye \& Steinhardt include a fishery as one of three environments, and track each agent's reliability with penalties that escalate for repeated misbehaviour, enforced through peer reports rather than random audits; Okamoto et al.\ give audit likelihood in words and raise it together with the fine across four levels around break-even; inspection games have one inspectee or a few; Institutional AI escalates recorded sanctions (warning, fine, suspension) in a Cournot market; Konuganti \& Co state an audit probability to one agent, with no fine size.}
   \begin{tabular}{lccccccc}
 \toprule
  & \rotatebox{60}{LLM agents} & \rotatebox{60}{Several agents} & \rotatebox{60}{Renewable resource} & \rotatebox{60}{Random audits} & \rotatebox{60}{3+ fine levels} & \rotatebox{60}{Memory} & \rotatebox{60}{Predicted threshold} \\
@@ -174,6 +174,8 @@ GovSim (Piatti et al.\ 2024) & \checkmark & \checkmark & \checkmark & -- & -- & 
 Bracale Syrnikov et al.\ 2026 & \checkmark & \checkmark & \checkmark & -- & -- & -- & -- \\
 Ye \& Steinhardt 2026 & \checkmark & \checkmark & (\checkmark) & -- & -- & \checkmark & -- \\
 Okamoto et al.\ 2026 & \checkmark & -- & -- & (\checkmark) & (\checkmark) & -- & -- \\
+Bracale Syrnikov et al.\ 2026a (Institutional AI) & \checkmark & \checkmark & -- & -- & (\checkmark) & \checkmark & -- \\
+Konuganti \& Co 2026 & \checkmark & -- & -- & \checkmark & -- & -- & -- \\
 \midrule
 \textbf{This work} & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
 \bottomrule
@@ -275,6 +277,8 @@ Nemotron 3 Super & 4.74 [4.57, 4.91] & 5.09 [4.86, 5.31] & 30 / 36\,t & 30\,t (9
 \bottomrule
 \end{tabular}}
 \end{table}
+
+Two further checks (post hoc, 12 October). \emph{Split-half calibration:} over all 252 ways to split the 10 populations into halves, we estimated $\hat g_1$ on one half and found the stopping fine on the other. The prediction was 30\,t in every split; the held-out stopping fine was 24\,t in 100\% of splits for gpt-oss-120b and 30\,t in 90\% (24\,t in 10\%) for Nemotron 3 Super, the same as on all 10 populations. \emph{Other wordings:} without a fine, $\hat g_1$ was 4.02\,t (silent) and 3.96\,t (paraphrase) for gpt-oss-120b, and 3.74\,t and 4.81\,t for Nemotron 3 Super. In two of these four cases the predicted stopping fine moves one grid step, to 24\,t; those wordings were tested only at 36\,t, so whether the calibration transfers across wordings is open in this data.
 
 \FloatBarrier
 \end{document}

@@ -403,7 +403,14 @@ def fig4_llm(layout="full"):
             ax.axvspan(7.5, 9.5, color=GRID, alpha=0.7, zorder=0, lw=0)  # e = 5 and 6: above both models' gain
             for m, g in gs.items():  # where e = g falls between grid points (6g t lies between F = 24 and 30)
                 ax.axvline(7 + (6 * g - 24) / 6, color=LLM[m][1], lw=0.6, ls=(0, (2, 2)), zorder=1)
-        a.text(8.5, 72, "e > g", ha="center", va="bottom", fontsize=6, color=INK2)
+        a.text(8.5, 72, r"$e > \hat{g}_1$", ha="center", va="bottom", fontsize=6.5, color=INK2)
+        # stopping fines (review 2, 12 Oct): open triangle = predicted before L3 (30 t, both models); filled = observed
+        l3s = json.loads((NOTES / "claude_l3_v1" / "l3_summary.json").read_text())["models"]
+        a.plot(cells_all.index("E30"), 104, marker="v", ms=4.6, mfc="white", mec=INK2, mew=0.8, clip_on=False, zorder=4)
+        for k, m in enumerate(("gpt-oss_120b-cloud", "nemotron-3-super_cloud")):
+            if m in l3s:
+                xs_ = cells_all.index(f"E{l3s[m]['F_star']}") + (-0.14 if k == 0 else 0.14)
+                a.plot(xs_, 97, marker="v", ms=4, color=LLM[m][1], clip_on=False, zorder=4)
         a.set_ylim(-3, 103)
         a.set_ylabel("Over-taking (% of agent-steps)")
         title(a, "a", "Over-taking ends as e nears the gain g")
