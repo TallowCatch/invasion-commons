@@ -132,3 +132,9 @@ After stage 1, `analyze_l4.py predict` writes `prediction.json`, which is commit
 
 ### Note 1 (2026-10-12T10:25Z): corrected freeze time
 The "Frozen" line gives 10:30Z, which was a mistake made when writing it. The protocol was committed at 10:17Z (commit `c001344`), before the code (commit `30d93b2`, 10:22Z) and before the first game (10:22:42Z). Nothing else changes.
+
+### Amendment 1 (2026-10-12T21:20Z): budget cut, identification on gpt-oss-120b only
+- **Why.** Ameer has about $20 of Ollama credit left this month and asked for a credible study that does not use it all. The full plan needed about $33.
+- **What is cut.** L4-H2 (matched expected fine) runs for **gpt-oss-120b only**, on all 20 populations, so it keeps the power the protocol was designed for. Nemotron 3 Super plays only stage 2's threshold and transfer cells (E24, E30, P24, P30 on populations 0–9), so H1 and H3 are tested for both models.
+- **What was seen.** This was decided before any matched-cell game had been played. Of stage 2, only 11 of Nemotron's threshold and transfer games had finished, and their outcomes were not looked at. No hypothesis, cell or analysis changes otherwise.
+- **How it is reported.** The paper reports H2 for one model.

@@ -104,3 +104,7 @@ Also, per cell: mean plot health, the share of rounds in which the 5% chance con
 - The minimum detectable effect is given for H2 and H3.
 
 ## Amendments
+
+### Amendment 1 (2026-10-12T21:20Z): gpt-oss-120b only; F set by the pilot gate
+- **Budget cut (L4 Amendment 1).** L6 runs for gpt-oss-120b only, not for Nemotron 3 Super.
+- **Pilot gate.** The gate applied its frozen rule. The gpt-oss pilot (C_H, populations 0–1, F = 12) gave a forester over-take rate of 4%, below 15%, so F = 0 for the main run (`f_choice.json`, frozen 20:57Z, before any main L6 game).

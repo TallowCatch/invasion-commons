@@ -95,3 +95,6 @@ Ameer decided not to pay for closed-model API access now. Claude Sonnet 5.5, GPT
 
 ### Amendment 3 (2026-10-12T20:55Z): no second open family
 Ameer decided not to screen MiniMax M3 (about $9 for the screen, and about $18 more if it qualified). L5's open arm is therefore DeepSeek V4.1 Flash alone. With L2–L4, the paper has five families (gpt-oss-120b, Nemotron 3 Super, Gemma 4 31B, Mistral Large 3, DeepSeek V4.1 Flash), three of which over-take on purpose.
+
+### Amendment 4 (2026-10-12T21:20Z): DeepSeek's threshold test not run (budget)
+DeepSeek V4.1 Flash qualified (Amendment 2). Its stage B (E30, E36, 20 full-length games) would cost about $11, because the model reasons heavily. Under the budget cut (L4 Amendment 1), stage B is not run. The paper reports DeepSeek's screen: it passed the gate, over-took in 80% of agent-rounds without a fine, and has $\hat g_1$ = 5.41 t. Its frozen prediction (F* = 36 t) is reported as made and untested.

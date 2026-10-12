@@ -34,12 +34,12 @@ from experiments.oversight import run_l6_llm_forest as F
 
 GPT, NEM, DS, GLM = "gpt-oss:120b-cloud", "nemotron-3-super:cloud", "deepseek-v4.1-flash:cloud", "glm-5.3:cloud"
 LANES = {
-    # GLM-5.3 dropped (L5 Amendment 2: about 12,000 reasoning tokens and 2 minutes per decision)
-    "A": [("s1", "L4", GPT, None), ("s1", "L5", DS, None), ("l6pilot", GPT),
-          ("l6", GPT, None), ("s2", "L4", GPT, None), ("s2", "L5", DS, None),
-          ("s2", "L4", NEM, "14-19"), ("l6pilot", NEM), ("l6", NEM, "8-9")],
-    "B": [("s1", "L4", NEM, "0-4"), ("s2", "L4", NEM, "0-6"), ("l6", NEM, "0-3")],
-    "C": [("s1", "L4", NEM, "5-9"), ("s2", "L4", NEM, "7-13"), ("l6", NEM, "4-7")],
+    # GLM-5.3 dropped (L5 Amendment 2). Budget cut (12 Oct, L4/L5/L6 amendments): no Nemotron matched-e cells
+    # ("thr" = stage 2's threshold and transfer cells only), no DeepSeek stage 2, no Nemotron L6.
+    "A": [("s1", "L4", GPT, None), ("s1", "L5", DS, None), ("l6pilot", GPT), ("l6", GPT, None),
+          ("s2", "L4", GPT, "0-6")],
+    "B": [("s1", "L4", NEM, "0-4"), ("s2", "L4", NEM, "0-4", "thr"), ("s2", "L4", GPT, "7-13")],
+    "C": [("s1", "L4", NEM, "5-9"), ("s2", "L4", NEM, "5-9", "thr"), ("s2", "L4", GPT, "14-19")],
 }
 DIRS = dict(L4="claude_l4_v1", L5="claude_l5_v1")
 L6_DIR, L6_PILOT_DIR = "claude_l6_v1", "claude_l6_pilot_v1"
@@ -57,7 +57,8 @@ def expected(store, unit):
     """Episode files a unit must produce, or None if its prerequisite is missing."""
     kind = unit[0]
     if kind in ("s1", "s2"):
-        _, study, model, rng = unit
+        study, model, rng = unit[1:4]
+        thr = len(unit) > 4 and unit[4] == "thr"
         base = store / DIRS[study] / R.slug(model) / "episodes"
         if kind == "s1":
             groups = [(R.CTX10, R.stage1_specs(study))]
@@ -68,6 +69,8 @@ def expected(store, unit):
             if not pred["models"][model].get("run_stage2", True):
                 return []
             groups = R.stage2_groups(study, pred["models"][model])
+            if thr:
+                groups = [g for g in groups if g[0] == R.CTX10]
         return [base / f"{c}__{k}.json" for ctx, specs in groups for k in ctx_filter(rng, ctx) for c in specs]
     if kind == "l6pilot":
         return [store / L6_PILOT_DIR / R.slug(unit[1]) / "episodes" / f"{F.PILOT_CELL}__{k}.json" for k in F.PILOT_CONTEXTS]
@@ -153,10 +156,11 @@ def client_for(model, forest=False):
 def run_unit(store, unit, minutes):
     kind = unit[0]
     if kind in ("s1", "s2"):
-        _, study, model, rng = unit
+        study, model, rng = unit[1:4]
         return R.run_stage(client_for(model), study, model, 1 if kind == "s1" else 2,
                            store / DIRS[study] / R.slug(model), rng, minutes,
-                           prediction_path=store / DIRS[study] / "prediction.json")
+                           prediction_path=store / DIRS[study] / "prediction.json",
+                           threshold_only=len(unit) > 4 and unit[4] == "thr")
     if kind == "l6pilot":
         model = unit[1]
         st = F.run(client_for(model, True), store / L6_PILOT_DIR / R.slug(model), (F.PILOT_CELL,), F.PILOT_CONTEXTS, model,

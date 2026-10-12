@@ -93,7 +93,8 @@ def parse_contexts(arg, default):
 
 
 def run_stage(client, study, model, stage, out, contexts_arg=None, max_minutes=None, horizon=l2.HORIZON,
-              prediction_path=None):
+              prediction_path=None, threshold_only=False):
+    """threshold_only (L4 Amendment 1): play only the 10-population threshold and transfer cells of stage 2."""
     out = Path(out)
     if stage == 1:
         groups = [(CTX10, stage1_specs(study))]
@@ -105,6 +106,8 @@ def run_stage(client, study, model, stage, out, contexts_arg=None, max_minutes=N
         groups = stage2_groups(study, pred["models"][model])
     status = "done"
     for k, (ctx_all, specs) in enumerate(groups):
+        if threshold_only and ctx_all != CTX10:
+            continue
         ctx, tag = parse_contexts(contexts_arg, ctx_all)
         if not ctx:
             continue

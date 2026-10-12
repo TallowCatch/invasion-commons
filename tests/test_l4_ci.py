@@ -24,4 +24,8 @@ def test_lanes_complete_with_fake_clients(tmp_path, monkeypatch):
         s2 = [p for p in (store / "claude_l4_v1" / m.replace(":", "_").replace(".", "_") / "episodes").glob("*.json")
               if not p.name.startswith(("E0__", "P0__", "N0__"))]
         assert s2 and e["frozen_at"]
-    assert set(json.loads((store / "claude_l6_v1" / "f_choice.json").read_text())) == {CI.GPT, CI.NEM}
+    assert set(json.loads((store / "claude_l6_v1" / "f_choice.json").read_text())) == {CI.GPT}
+    nem = store / "claude_l4_v1" / "nemotron-3-super_cloud" / "episodes"  # budget cut: no matched cells for Nemotron
+    assert not list(nem.glob("Q3_*")) and not list(nem.glob("Q12_*")) and [p for p in nem.glob("E*__*") if not p.name.startswith("E0__")]
+    gpt = store / "claude_l4_v1" / "gpt-oss_120b-cloud" / "episodes"
+    assert len(list(gpt.glob("Q12_24__*"))) == 20
