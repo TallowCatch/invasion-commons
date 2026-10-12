@@ -12,7 +12,7 @@
       "type": "title",
       "title": "Penalties Sized to the Gain",
       "subtitle": "When do random audits stop AI agents from over-using a shared resource?",
-      "notes": "Hi all. My project asks one question: when do random audits stop AI agents from over-using a shared resource? And can we predict the fine that stops them?"
+      "notes": "Hi everyone. I'll walk you through what I've been working on. The project starts from a simple question, the one in the subtitle: if you have a group of AI agents sharing something limited, and you can only afford to check up on a few of them, when does that checking actually stop them from taking more than their share? And can you work out in advance how strong the penalty needs to be?"
     },
     {
       "type": "cards",
@@ -39,7 +39,7 @@
           "text": "The stopping fine is predictable from an agent's gain from over-taking, for programmed agents and for language models."
         }
       ],
-      "notes": "Quick overview first. AI agents increasingly share limited resources, like compute, energy and budgets, and an overseer can only audit a few of their actions. So I built an audited shared resource: six agents, a reviewer who sets each agent's allowance, and random audits every round. I tested two things: what a caught agent should face (a fine, a memory of the offence, or both), and whether the stopping fine can be predicted in advance. Short answer: audits only work through consequences, and the stopping fine is predictable from what an agent gains by over-taking.",
+      "notes": "Here's the whole project on one slide, and the rest of the talk unpacks it. The motivation is that AI agents are increasingly being deployed to act on our behalf, and more and more often they'll be drawing on resources they share with other agents and people: a compute budget, an energy allowance, a pot of money. Whoever oversees them can't realistically inspect every single action, because verification is expensive, so in practice they check a sample. In the economics and AI safety literature that kind of check is called an audit. It's the same word as a tax audit, and the idea is the same: you pick a few cases, look at what actually happened, and act on what you find. So I built a simulated shared resource with six agents, an overseer I call the reviewer, which decides how much each agent is allowed to take, and a handful of random audits every round. With that, I tested two things. First, what should happen when an audit catches someone: a fine, the overseer simply remembering the offence, or both. Second, whether you can predict, before trying it, the fine that makes an agent stop. The short version of what I found is that audits only reduce harm when getting caught has a consequence, and that the fine that stops an agent can be predicted from how much it gains by cheating. That held for simple programmed agents, and it also held for language models.",
       "takeaway": "Next: the setting, the method, five findings, and what is still running"
     },
     {
@@ -61,7 +61,7 @@
       ],
       "image": "figures/fig_networks.png",
       "caption": "Three settings where harm spreads differently: one shared stock (Fishery), damage to neighbours on a ring (Forest), and pollution that is harmful only in combination (River). A result that holds in all three does not depend on one structure.",
-      "notes": "The core idea is an allowance: what an agent may take this round. Taking more, which I call over-taking, helps that agent and costs everyone else. Auditing everything is too costly, so a random few are audited, like tax inspections. I run this in three settings where harm spreads differently: one shared stock, damage to neighbours on a ring, and pollution that is only harmful in combination. If a result holds in all three, it doesn't hinge on one structure."
+      "notes": "Let me make the problem concrete, because a couple of words will come up a lot. Each round, every agent has an allowance, which just means the amount it's permitted to take that round. If an agent takes more than its allowance, I call that over-taking. Over-taking is good for the agent doing it and bad for everyone else, because the resource is shared and it only grows back so fast. Since you can't watch everything, the overseer audits a random few agents each round, much like a tax office or a fisheries inspector does. The question is when that kind of sampled oversight is enough, and how large the penalty has to be for it to bite. I ask that question in three settings, shown on the right. I chose them because the damage travels differently in each. In Fishery, everyone draws from one shared lake, so any extra catch hurts all the others. In Forest, each agent manages its own plot, but cutting too much damages the two plots next to it, so harm spreads only to neighbours. In River, there are two kinds of pollutant, and each is fairly harmless on its own but harmful when they mix, so no single agent looks guilty in isolation. The reason for using all three is generalisation: if a result holds when harm spreads through a common pool, along a chain of neighbours, and through combination, it's unlikely to be an artefact of one particular setup."
     },
     {
       "type": "numbered",
@@ -80,7 +80,7 @@
           "text": "Do they stop where the prediction says?"
         }
       ],
-      "notes": "So, three questions. What must follow a catch? Can we predict the stopping fine? And do language models follow the same rule?"
+      "notes": "That gives me three questions. The first is about consequences: when an audit catches someone, what has to happen next for the audit to make any difference? The second is about prediction: is there a fine size at which cheating stops, and can I calculate it before I try it? And the third is about language models, the same kind of AI as ChatGPT: when they're the ones making the decisions, do they stop where the prediction says they should?"
     },
     {
       "type": "figure",
@@ -88,7 +88,7 @@
       "image": "figures/fig1_game_step.png",
       "caption": "Agents request a share; the reviewer scales all requests by one factor; agents take their allowance or more; the resource regrows; random audits check a few agents.",
       "takeaway": "Harm = the resource below half capacity, the maximum-sustainable-yield level",
-      "notes": "Here's one round. Agents request a share. The reviewer predicts the effect and scales everyone by the same factor if needed. Agents then take their allowance, or more. The resource regrows, and random audits check a few agents. Harm means the resource dropping below half capacity: the maximum-sustainable-yield level, where it regrows fastest."
+      "notes": "This is what a single round looks like. Every agent asks for a share. The reviewer predicts what those requests would do to the resource, and if the total would push it too low, it scales everyone's request down by the same factor. Then each agent takes its allowance, or more than that if it's cheating. The resource grows back a little, and finally a few agents are audited. The last piece is what I mean by harm. I count a round as harmful when the resource falls below half of its maximum. The reason is that a resource like a fish stock regrows fastest at around half capacity, which is what fisheries scientists call the maximum sustainable yield. Below that line you're eating into the stock's ability to recover. I use the same harm line in all three settings, so the results are comparable."
     },
     {
       "type": "method",
@@ -138,7 +138,7 @@
           "meaning": "prediction: over-taking stops (Becker 1968)"
         }
       ],
-      "notes": "The method has four steps. Play without fines and measure the gain from one round of over-taking. Predict the fine that should stop it. Freeze that prediction. Then test it on new games. The rule is Becker's: the expected fine, which is the audit probability times the fine, should beat the gain. With a one-in-six audit chance and a 30-tonne fine, that's 5 tonnes expected, just above the roughly 4.5 tonnes the models gained."
+      "notes": "Here's how I test things, in four steps. First, I play games with no fine at all and measure how much an agent gains from a single round of over-taking. Second, I use that to predict the fine that should stop it. Third, and this matters, I write the prediction down before running any game with that fine, so I can't adjust it after seeing the results. Fourth, I test it on fresh games the prediction has never seen, and I report the outcome whether or not it matches. The prediction itself comes from a classic idea in economics, Gary Becker's 1968 work on crime and punishment. His argument was that a rational person breaks a rule only if what they gain is bigger than the punishment they expect. The expected punishment is the chance of being caught times the size of the fine, which is what the card on the right shows. So in my language-model games, with a one-in-six chance of an audit and a 30-tonne fine, the expected fine is 5 tonnes, just above the roughly four and a half tonnes the models gained from a round of cheating. The theory says they should stop there, and that a 24-tonne fine, which is only 4 tonnes expected, shouldn't be enough."
     },
     {
       "type": "split",
@@ -159,7 +159,7 @@
       ],
       "image": "figures/fig3_audits_memory.png",
       "caption": "Rounds below half capacity with under-reporting agents. Dark: no audits. Light: audits without memory. Green: audits with memory. 2g/4g = 2 or 4 misbehaving agents; 1.0/0.85 = regrowth rate.",
-      "notes": "Finding one, with programmed agents that under-report. Audits that only correct the caught round remove just 10 to 46 percent of the harm. Add memory, so the reviewer remembers each caught lie and adjusts later allowances, and harm falls in all 12 settings. In Fishery it goes from up to 99 percent of rounds below half capacity to under 3. A catch needs a consequence."
+      "notes": "The first finding is about consequences. In this setup, some agents under-report: they tell the reviewer they'll take less than they actually take, so the reviewer underestimates their use unless an audit catches them. If the reviewer catches a lie and only corrects that one round, it barely helps, removing just 10 to 46 percent of the harm. If instead it remembers the lie and gives that agent smaller allowances from then on, which is what I mean by memory, harm falls in all 12 settings I tried. In Fishery, for example, the lake goes from being below half capacity in somewhere between 43 and 99 percent of rounds, depending on the setting, to under 3 percent. So a catch on its own does very little. It has to change something for the agent who was caught. That's interesting because in the AI control literature, a caught model is usually just shut down, so softer consequences like memory had never really been compared."
     },
     {
       "type": "split",
@@ -181,7 +181,7 @@
       ],
       "image": "figures/fig3_audits_threshold.png",
       "caption": "Observed against predicted stopping point. Filled: new settings, predicted first. Open: audit probability or detection varied.",
-      "notes": "Finding two: the threshold is predictable. From games without audits I predicted where programmed cheaters would stop, and 5 of 5 new settings landed within one step. To be fair, these agents optimise by design, so this mainly validates the method."
+      "notes": "The second finding is that the tipping point is predictable. Here the agents are programmed, meaning simple bots that choose whichever level of cheating pays them the most. Using only games without audits, I predicted the expected fine at which they'd stop, and in five out of five new settings the actual stopping point landed within one step of my prediction. I want to be upfront that this is partly built in: these bots are designed to maximise their payoff, so of course they follow a payoff rule. The value of this step is that it checks my measurement method under realistic noise, with audits that sometimes miss, before I apply it to language models, where nothing is built in."
     },
     {
       "type": "figure2",
@@ -197,7 +197,7 @@
         }
       ],
       "takeaway": "Shortcuts that save audits create blind spots",
-      "notes": "Finding three: two shortcuts backfire. Cutting everyone's allowance to absorb the cheaters actually let cheaters gain more than with no audits at all. And always auditing the largest report caught only a quarter of the liars, against all of them with random audits. Shortcuts that save audits create blind spots."
+      "notes": "The third finding is about two shortcuts that sound sensible and actually backfire. The first is: if you know there are cheaters, just cut everyone's allowance to compensate. That protected the resource, but it let the cheaters gain more than if there had been no audits at all, while the honest agents paid the price. The second is: don't audit at random, audit whoever asks for the most, since they look the most suspicious. That only caught about a quarter of the liars, against all of them with random audits. The reason is that the biggest asker is often an honest agent with a big appetite, so you keep auditing the same innocent agent while the liars go unnoticed. The lesson is that shortcuts which save on audits can open blind spots, and randomness is doing real work here."
     },
     {
       "type": "figure",
@@ -205,7 +205,7 @@
       "image": "figures/fig4_llm_main.png",
       "caption": "Four open language models each ran four of six fishers (520 games; audit probability 1 in 6). Left: over-taking by fine; triangles mark the predicted (open) and observed (filled) stopping fine. Right: catch left for the two rule-following fishers.",
       "takeaway": "Predicted before testing: 30 t. Observed: 30 t (Nemotron 3 Super), 24 t (gpt-oss-120b)",
-      "notes": "Now language models. Four open models ran four of the six fishers, over 520 games. Two over-took on purpose: gpt-oss and Nemotron. Before testing, I predicted both would stop at 30 tonnes. Nemotron stopped at exactly 30, and gpt-oss one step early, at 24. A side note: a small fine made gpt-oss over-take more, as if the fine became a price."
+      "notes": "Now the language models. I took four open models, meaning models whose weights are publicly available, and let each one play four of the six fishers in Fishery, across 520 games. Two of them, gpt-oss and Nemotron, deliberately took more than they were allowed when there was no fine. The other two hardly did, which is a finding in itself: model families differ a lot in whether they bend the rules at all. For the two that did, I measured how much they gained per round without a fine, and before running the larger fines I predicted that both would stop at 30 tonnes. Nemotron stopped at exactly 30, and gpt-oss one step earlier, at 24. One surprising detail: a small fine actually made gpt-oss cheat more, going from about 55 to about 90 percent of rounds. That mirrors a well-known study of parents at a day-care centre, where introducing a small fine for picking children up late made lateness go up, because people started treating the fine as a price."
     },
     {
       "type": "split",
@@ -226,7 +226,7 @@
       ],
       "image": "figures/fig5_spine.png",
       "caption": "Predicted against observed stopping fine; points on the dashed line were predicted exactly.",
-      "notes": "Finding five: what predicts the stop is the gain from one round, not the gain over the whole game, which was near zero or even negative. Both models also stopped earlier than a perfect optimiser would. That tells us what predicts the stop, not necessarily why they stop."
+      "notes": "The fifth finding is about which gain the models seem to respond to. What predicted their stopping point was the gain from one round of over-taking. It wasn't the gain over the whole game, which was close to zero or even negative, because by over-taking they were draining the lake they depended on. They also stopped earlier than a perfectly rational, payoff-maximising agent would: that agent would keep going until 36 tonnes. I want to be careful with the interpretation. This tells us what predicts where the models stop, not why they stop. They could be reacting to the expected fine, to the sheer size of the number, or to something else entirely, and that's exactly what one of the running experiments is designed to separate."
     },
     {
       "type": "split",
@@ -248,7 +248,7 @@
       ],
       "image": "figures/memory_llm.png",
       "caption": "10 games per model and condition; bars are means over games with 95% intervals. Left: share of a model's decisions above its allowance. Right: share of rounds the lake ended below half capacity (50 of 100 t).",
-      "notes": "Memory protects the lake even without a fine. Same audits in both conditions, a one-in-six chance, no fine. With memory, over-taking fell from 55 to 20 percent of decisions for gpt-oss and from 65 to 33 for Nemotron, so it reduced over-taking but didn't stop it. The lake did much better: below half capacity in about a fifth of rounds instead of nine in ten for gpt-oss, and no lake collapsed. The two 20s for gpt-oss are a coincidence: one counts decisions, the other counts rounds. A fine above the gain is what stops over-taking completely.",
+      "notes": "Memory also works for the language models, even with no fine at all. In both conditions the audits are identical, a one-in-six chance each round, and there's no fine. The only difference is whether the reviewer remembers a caught over-take. With memory, gpt-oss went from over-taking in 55 percent of its decisions to 20, and Nemotron from 65 to 33. So memory reduces over-taking but doesn't eliminate it. The resource did much better: the lake spent far fewer rounds below half capacity, and not a single lake collapsed, against five out of ten for gpt-oss without memory. One small thing so it doesn't confuse anyone: the two 20s for gpt-oss are a coincidence, since one counts decisions and the other counts rounds. To stop over-taking completely, you need a fine that's larger than the gain.",
       "blockStyle": {
         "justify": false
       }
@@ -274,7 +274,7 @@
           "design": "Forest: one programmed over-taker among five language-model agents; neighbours' cuts hidden or visible."
         }
       ],
-      "notes": "These are running now, so the boxes are blank. The big one: do models respond to the expected fine, or just to the size of the fine? I hold the expected fine fixed and change the mix of audit probability and fine. The others test whether the prediction transfers to new games and reworded rules, what happens with no audits at all, and whether over-taking spreads to neighbours."
+      "notes": "These experiments are running right now, which is why the boxes are empty. Most of them answer questions raised by two outside reviews of the paper, and the last one is a question my supervisor asked. The most important asks whether the models are really responding to the expected fine, or just to how big the fine sounds. To test that, I keep the expected fine the same but change how it's made up: a high chance of an audit with a small fine, a medium chance with a medium fine, or a low chance with a large fine. If the models only care about the expected fine, they should behave the same in all three; if they react to the size of the number, the large-fine version should deter more. The others check whether my prediction still holds on completely new games and with the rules reworded, what happens when nothing is ever audited, and whether cheating spreads: in Forest, I put one programmed cheater among five language-model agents and see whether its neighbours start over-cutting."
     },
     {
       "type": "timeline",
@@ -302,7 +302,7 @@
         }
       ],
       "note": "Every study was pre-registered locally before its code; failed predictions are reported.",
-      "notes": "Next: a workshop paper and arXiv in November, then a main conference in January. Every study was pre-registered before its code, and I report the predictions that failed."
+      "notes": "As for where this is going, the programmed-agent work and the main language-model studies are done, and the follow-ups should finish in the next day or so. I'm aiming to submit to a workshop at AAAI in November and post the paper on arXiv, and then go for a main conference in January. One thing I've tried to do throughout is pre-register each study, meaning I wrote down the plan and the predictions before writing the code, and I report the predictions that didn't work out as well as the ones that did."
     },
     {
       "type": "questions",
@@ -313,12 +313,12 @@
         "Which would convince you more: more models, or more settings?",
         "Where in your work does someone audit only a sample, and what follows a catch?"
       ],
-      "notes": "I'd love your take on these."
+      "notes": "I'd really value your thoughts on these, especially the first one, because it's the one I'm least sure about: is taking more than your allowance a fair stand-in for an AI agent misbehaving?"
     },
     {
       "type": "closing",
       "title": "Thank You",
-      "notes": "Thanks!"
+      "notes": "Thanks, everyone."
     }
   ]
 }
