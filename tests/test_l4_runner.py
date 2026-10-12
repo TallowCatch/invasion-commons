@@ -76,6 +76,7 @@ def test_threshold_fines_and_stage2_cells():
 
 def test_openrouter_missing_key(monkeypatch):
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.setattr(C, "read_key_file", lambda path=None: None)
     with pytest.raises(C.MissingKey):
         C.OpenRouterClient("anthropic/claude-sonnet-5.5")
 

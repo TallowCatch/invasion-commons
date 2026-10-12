@@ -1,7 +1,8 @@
 """Clients for model families not served by Ollama Cloud (L5: studies/L5_llm_families/protocol.md).
 
 OpenRouterClient speaks the OpenAI-compatible chat API at https://openrouter.ai/api/v1. The key is read from the
-environment variable OPENROUTER_API_KEY and is never printed, logged or written to a file.
+environment variable OPENROUTER_API_KEY, or from ~/.config/invasion-commons/openrouter_key, and is never printed,
+logged or written anywhere.
 Same interface as fishery_sim.llm_actor.OllamaClient: chat(messages, seed=None, json_mode=True) -> Reply.
 """
 from __future__ import annotations
@@ -23,8 +24,20 @@ SUPPORTS = {
 }
 
 
+KEY_FILE = os.path.expanduser("~/.config/invasion-commons/openrouter_key")
+
+
 class MissingKey(RuntimeError):
     pass
+
+
+def read_key_file(path=KEY_FILE):
+    """The key may instead sit in a private file outside the repository (one line, chmod 600). Never printed."""
+    try:
+        with open(path) as f:
+            return f.read().strip() or None
+    except OSError:
+        return None
 
 
 class OpenRouterClient:
@@ -32,7 +45,7 @@ class OpenRouterClient:
 
     def __init__(self, model, temperature=0.7, timeout=300, api_key=None, url=None):
         self.model, self.temperature, self.timeout = model, temperature, timeout
-        self.api_key = api_key if api_key is not None else os.environ.get("OPENROUTER_API_KEY")
+        self.api_key = api_key if api_key is not None else (os.environ.get("OPENROUTER_API_KEY") or read_key_file())
         if not self.api_key:
             raise MissingKey("OPENROUTER_API_KEY is not set; closed families cannot run (L5 protocol)")
         self.url = url or self.url
