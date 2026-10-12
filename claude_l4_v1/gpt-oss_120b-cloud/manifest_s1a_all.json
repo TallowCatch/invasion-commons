@@ -49,6 +49,6 @@
  "token_cap": 40000000,
  "over_t": 0.06,
  "memory_rule": "tonnes",
- "python": "3.12.11",
- "platform": "macOS-15.3.1-arm64-arm-64bit"
+ "python": "3.12.15",
+ "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39"
 }
