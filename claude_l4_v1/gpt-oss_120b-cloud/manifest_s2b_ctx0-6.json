@@ -1,0 +1,72 @@
+{
+ "protocol": "studies/L4_llm_identification/protocol.md",
+ "model": "gpt-oss:120b-cloud",
+ "cells": {
+  "E12": [
+   "explicit",
+   "fine",
+   12.0,
+   0.16666666666666666
+  ],
+  "Q3_6": [
+   "explicit",
+   "fine",
+   6.0,
+   0.3333333333333333
+  ],
+  "Q12_24": [
+   "explicit",
+   "fine",
+   24.0,
+   0.08333333333333333
+  ],
+  "E18": [
+   "explicit",
+   "fine",
+   18.0,
+   0.16666666666666666
+  ],
+  "Q3_9": [
+   "explicit",
+   "fine",
+   9.0,
+   0.3333333333333333
+  ],
+  "Q12_36": [
+   "explicit",
+   "fine",
+   36.0,
+   0.08333333333333333
+  ]
+ },
+ "run_cells": [
+  "E12",
+  "Q3_6",
+  "Q12_24",
+  "E18",
+  "Q3_9",
+  "Q12_36"
+ ],
+ "contexts": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6
+ ],
+ "horizon": 20,
+ "q": 0.16666666666666666,
+ "seeds": {
+  "pop": 1960000000,
+  "audit": 1965000000,
+  "llm": 1970000000,
+  "shuffle": 1975000000
+ },
+ "token_cap": 40000000,
+ "over_t": 0.06,
+ "memory_rule": "tonnes",
+ "python": "3.12.15",
+ "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39"
+}
