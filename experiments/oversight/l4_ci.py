@@ -38,9 +38,10 @@ LANES = {
     # ("thr" = stage 2's threshold and transfer cells only), no DeepSeek stage 2, no Nemotron L6.
     # 13 Oct: the remaining gpt-oss contexts are spread over all three lanes (no overlap between lanes).
     "A": [("s1", "L4", GPT, None), ("s1", "L5", DS, None), ("l6pilot", GPT), ("l6", GPT, None),
-          ("s2", "L4", GPT, "0-6"), ("s2", "L4", GPT, "7-10")],
-    "B": [("s1", "L4", NEM, "0-4"), ("s2", "L4", NEM, "0-4", "thr"), ("s2", "L4", GPT, "11-15")],
-    "C": [("s1", "L4", NEM, "5-9"), ("s2", "L4", NEM, "5-9", "thr"), ("s2", "L4", GPT, "16-19")],
+          ("s2", "L4", GPT, "0-6"), ("s2", "L4", GPT, "7-10"), ("s2", "L4", GPT, "16-17")],
+    "B": [("s1", "L4", NEM, "0-4"), ("s2", "L4", NEM, "0-4", "thr"), ("s2", "L4", GPT, "11-15"), ("s2", "L4", GPT, "18-19")],
+    # 13 Oct 13:15Z: lane C's gpt-oss share (16-19) moved to the idle lanes A and B; C finishes Nemotron only.
+    "C": [("s1", "L4", NEM, "5-9"), ("s2", "L4", NEM, "5-9", "thr")],
 }
 DIRS = dict(L4="claude_l4_v1", L5="claude_l5_v1")
 L6_DIR, L6_PILOT_DIR = "claude_l6_v1", "claude_l6_pilot_v1"
