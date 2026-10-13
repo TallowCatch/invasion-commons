@@ -134,3 +134,14 @@ def test_smoke_both_stages(tmp_path):
     names = sorted(p.stem for p in (tmp_path / "episodes").glob("*.json"))
     assert s1 == s2 == "done"
     assert {"E0__0", "P0__0", "N0__0", "E24__0", "E30__0", "P18__0", "P24__0", "Q3_6__0", "Q12_36__0"} <= set(names)
+
+
+def test_stage_time_budget_spans_both_groups(tmp_path):
+    """13 Oct fix: one time budget per stage. Before, each group restarted it and remote jobs overran their limit."""
+    import time as _t
+    pred = tmp_path / "prediction.json"
+    pred.write_text(json.dumps({"models": {"fake": dict(g1_E=4.48, g1_P=3.96)}}))
+    t0 = _t.time()
+    st = R.run_stage(L.FakeClient(over=0.5), "L4", "fake", 2, tmp_path, horizon=20, prediction_path=pred,
+                     max_minutes=0.002)
+    assert st == "time" and _t.time() - t0 < 30

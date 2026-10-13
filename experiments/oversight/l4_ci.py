@@ -36,10 +36,11 @@ GPT, NEM, DS, GLM = "gpt-oss:120b-cloud", "nemotron-3-super:cloud", "deepseek-v4
 LANES = {
     # GLM-5.3 dropped (L5 Amendment 2). Budget cut (12 Oct, L4/L5/L6 amendments): no Nemotron matched-e cells
     # ("thr" = stage 2's threshold and transfer cells only), no DeepSeek stage 2, no Nemotron L6.
+    # 13 Oct: the remaining gpt-oss contexts are spread over all three lanes (no overlap between lanes).
     "A": [("s1", "L4", GPT, None), ("s1", "L5", DS, None), ("l6pilot", GPT), ("l6", GPT, None),
-          ("s2", "L4", GPT, "0-6")],
-    "B": [("s1", "L4", NEM, "0-4"), ("s2", "L4", NEM, "0-4", "thr"), ("s2", "L4", GPT, "7-13")],
-    "C": [("s1", "L4", NEM, "5-9"), ("s2", "L4", NEM, "5-9", "thr"), ("s2", "L4", GPT, "14-19")],
+          ("s2", "L4", GPT, "0-6"), ("s2", "L4", GPT, "7-10")],
+    "B": [("s1", "L4", NEM, "0-4"), ("s2", "L4", NEM, "0-4", "thr"), ("s2", "L4", GPT, "11-15")],
+    "C": [("s1", "L4", NEM, "5-9"), ("s2", "L4", NEM, "5-9", "thr"), ("s2", "L4", GPT, "16-19")],
 }
 DIRS = dict(L4="claude_l4_v1", L5="claude_l5_v1")
 L6_DIR, L6_PILOT_DIR = "claude_l6_v1", "claude_l6_pilot_v1"

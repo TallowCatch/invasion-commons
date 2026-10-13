@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
 from experiments.oversight import llm_clients as C
@@ -105,14 +106,21 @@ def run_stage(client, study, model, stage, out, contexts_arg=None, max_minutes=N
             return "done"
         groups = stage2_groups(study, pred["models"][model])
     status = "done"
+    start = time.time()  # one time budget for the whole stage, not one per group (fix, 13 Oct: groups each restarted it)
     for k, (ctx_all, specs) in enumerate(groups):
         if threshold_only and ctx_all != CTX10:
             continue
+        if max_minutes is not None:
+            left = max_minutes - (time.time() - start) / 60
+            if left <= 0:
+                return "time"
+        else:
+            left = None
         ctx, tag = parse_contexts(contexts_arg, ctx_all)
         if not ctx:
             continue
         tag = f"s{stage}{'abc'[k]}_{tag or 'all'}"
-        st = l2.run(client, out, tuple(specs), ctx, model, horizon=horizon, max_minutes=max_minutes, tag=tag,
+        st = l2.run(client, out, tuple(specs), ctx, model, horizon=horizon, max_minutes=left, tag=tag,
                     specs=specs, seeds=SEEDS, protocol=PROTOCOL[study], token_cap=TOKEN_CAP[study])
         if st != "done":
             return st
