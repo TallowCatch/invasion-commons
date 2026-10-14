@@ -264,3 +264,43 @@ def test_imitation_depends_on_differences_only(registry):
     np.random.seed(10)
     b = ev._imitate(fit + 5.0)
     assert a[0] == b[0] and np.array_equal(a[1], b[1])
+
+
+# ------------------------------------------------------------------ the grid runner's job list (for CI lanes)
+def _grid_args(**kw):
+    import argparse
+    base = dict(runs="0-19", conditions=None, n=None, q=None, e_mult=None, exempt="any", include_dropped=False)
+    base.update(kw)
+    return argparse.Namespace(**base)
+
+
+def test_job_list_fixed_and_shards_partition_it():
+    from experiments.oversight import run_r1a_willis_audits as R
+    e_pred = {64: 0.9619609053802177, 4: -0.5859053635835585}
+    jobs = R.job_list(e_pred, _grid_args())
+    assert len(jobs) == 12 * 20
+    assert [c["name"] for c, _ in jobs[:2]] == ["n64_base", "n64_base"]
+    # n = 4 uses the n = 64 scale (Amendment 2), so no fine is negative
+    assert all(c["F"] >= 0 for c, _ in jobs)
+    # the dropped conditions come after the analysed grid, so including them leaves earlier indices unchanged
+    more = R.job_list(e_pred, _grid_args(include_dropped=True))
+    assert [(c["name"], r) for c, r in more[:240]] == [(c["name"], r) for c, r in jobs]
+    N = 7
+    shards = [[i for i in range(len(jobs)) if i % N == k] for k in range(N)]
+    assert sorted(i for s in shards for i in s) == list(range(len(jobs)))
+    sub = R.job_list(e_pred, _grid_args(n=[64], q=[0.1], e_mult=[1.25], exempt="yes", runs="0-24"))
+    assert [(c["name"], r) for c, r in sub] == [("n64_q0.1_e1.25", r) for r in range(25)]
+    assert R.parse_runs("0-2,5,7-8") == [0, 1, 2, 5, 7, 8]
+
+
+def test_existing_result_is_never_overwritten(tmp_path):
+    from experiments.oversight import run_r1a_willis_audits as R
+    cond = dict(name="n4_base", n=4, q=0.0, mult=0.0, e=0.0, F=0.0, exempt=True, arm="baseline", priority=1)
+    p = tmp_path / "n4_base" / "run_000.json.gz"
+    p.parent.mkdir(parents=True)
+    p.write_bytes(b"sentinel")
+    assert R.run_one(cond, 0, generations=2, out_dir=tmp_path) == ("exists", 0.0)
+    assert p.read_bytes() == b"sentinel"
+    assert R.run_one(cond, 1, generations=2, out_dir=tmp_path, deadline=0.0) == ("skipped_deadline", 0.0)
+    status, _ = R.run_one(cond, 2, generations=2, out_dir=tmp_path)
+    assert status == "done" and (tmp_path / "n4_base" / "run_002.json.gz").exists()

@@ -5,22 +5,22 @@ Game, evolution and strategies: Willis, Zhao, Du and Leibo's `emergent_llm` at e
 unmodified). The overseer: overseer/ (UniformRandom audits, Perfect detection of D, Fine), through
 overseer/adapters/emergent_llm.py. No LLM calls: the strategies are their committed, pre-written Python classes.
 
-Modes (run from the repo root):
-  PYTHONPATH=.:external/emergent_llm/src python3 -m experiments.oversight.run_r1a_willis_audits prediction
-  PYTHONPATH=.:external/emergent_llm/src python3 -m experiments.oversight.run_r1a_willis_audits pilot
-  PYTHONPATH=.:external/emergent_llm/src python3 -m experiments.oversight.run_r1a_willis_audits timing
-  PYTHONPATH=.:external/emergent_llm/src python3 -m experiments.oversight.run_r1a_willis_audits grid --R 20 \
-      [--conditions NAME ...] [--processes 7] [--max-hours 5.5]
-  PYTHONPATH=.:external/emergent_llm/src python3 -m experiments.oversight.run_r1a_willis_audits list
-
-- prediction: e_pred = dPi / dD per n from 2,000 fine-free games at the starting mix (seed R1A_BASE + 900); written
-  with a UTC timestamp to notes/.../runs/claude_r1a_v1/prediction.json (and a copy in results/runs/claude_r1a_v1/)
-  before any fined run. It refuses to overwrite an existing prediction.
-- pilot: 2 runs x 200 generations, n = 64, e = 0 (protocol "Unit, runs, intervals"); timing only, not analysed.
-- timing: short probes (50 generations) of the slower condition types, to cost the grid; not analysed.
-- grid: the conditions (protocol "Conditions", minus anything dropped by amendment), R runs each, in priority order
-  (H0 baselines, then H1/H2 at q = 0.1 for n = 64 and n = 4, then q = 0.25, then the secondary arm). Each run is saved
-  as soon as it finishes; finished runs are skipped on a restart. --max-hours stops *starting* runs after that wall time.
+Modes (run from the repo root; PY = PYTHONPATH=.:external/emergent_llm/src python3 -m experiments.oversight.run_r1a_willis_audits):
+  $PY prediction      e_pred per n (2,000 fine-free games per n, seed R1A_BASE + 900), written once with a UTC
+                      timestamp to notes/.../runs/claude_r1a_v1/prediction.json (copy in results/runs/claude_r1a_v1/);
+                      refuses to overwrite.
+  $PY pilot           2 runs x 200 generations, n = 64, e = 0 (timing only, not analysed).
+  $PY timing          50-generation probes of the slower condition types (timing only, not analysed).
+  $PY list            the conditions with their q, e and F.
+  $PY grid [selection] [--list-jobs] [--shard I --of N] [--out DIR] [--processes P] [--max-minutes M]
+      selection: --runs 0-19 (default; R = 20) --n 64 4 --q 0.1 --e-mult 0 0.5 1.0 1.25 2.0 --exempt yes|no|any
+                 --conditions NAME ... --include-dropped (conditions dropped by Amendment 3; listed after the grid)
+      The selected jobs form a fixed list, condition-major in the protocol's priority order, then run; --list-jobs
+      prints it with indices and exits. A lane runs the jobs whose index % N == I. Each job writes one file,
+      DIR/<condition>/run_XXX.json.gz (atomic rename), and a job whose file exists is skipped, never overwritten.
+      --max-minutes M: no job is started after M minutes; running jobs finish; exit 0. DIR/DONE_SHARD (and
+      DIR/DONE_shard_I_of_N) is written only when every job of the shard exists. Exit 1 only if a job raised.
+      Needs numpy and pandas only (plus this repo and external/emergent_llm); see overseer/adapters/emergent_llm.py.
 
 Seeds: run i seeds Python's and numpy's generators with R1A_BASE + i (so run i starts from the same population in every
 condition); audits use stable_seed(R1A_BASE, "audit", run, generation, game, round), game = repetition * (512 / n) + match.
@@ -152,10 +152,11 @@ def mode_prediction(args):
     print("wrote", PREDICTION, out["computed_utc"])
 
 
-def read_prediction():
-    if not PREDICTION.exists():
-        raise SystemExit(f"no prediction at {PREDICTION}: run `prediction` first")
-    return load_json(PREDICTION)
+def read_prediction(path=None):
+    path = Path(path or PREDICTION)
+    if not path.exists():
+        raise SystemExit(f"no prediction at {path}: run `prediction` first")
+    return load_json(path)
 
 
 # ------------------------------------------------------------------ conditions
@@ -186,7 +187,9 @@ def conditions(e_pred: dict, include_dropped=False):
                 add(n, q, m, True, "primary" + ("_dropped" if dropped else ""), 2 if q == 0.1 else 3)
     for m in SECONDARY_MULTS:
         add(64, 0.1, m, False, "secondary", 4)
-    out.sort(key=lambda c: c["priority"])
+    # analysed grid first, in priority order; conditions dropped by Amendment 3 after it, so that adding them never
+    # changes the index of an analysed job
+    out.sort(key=lambda c: (c["arm"].endswith("_dropped"), c["priority"]))
     return out
 
 
@@ -264,22 +267,68 @@ def _task(args):
     try:
         status, secs = run_one(cond, run, generations, out_dir, deadline)
     except Exception as exc:  # report, keep the pool alive
-        return dict(condition=cond["name"], run=run, status=f"error: {exc!r}", seconds=time.time() - t0)
+        return dict(condition=cond["name"], run=run, status=f"error: {exc!r}", seconds=round(time.time() - t0, 2))
     return dict(condition=cond["name"], run=run, status=status, seconds=round(secs, 2), pid=os.getpid(),
                 utc=utc_now())
 
 
 def run_pool(tasks, processes, log_path: Path):
+    """Run tasks in order on `processes` fresh interpreters (spawn; PYTHONHASHSEED=0 so set iteration inside
+    strategies is the same on every machine). Each finished task is appended to log_path as one JSON line."""
     log_path.parent.mkdir(parents=True, exist_ok=True)
-    ctx = mp.get_context("spawn")   # fresh interpreters: no inherited generator state
+    os.environ["PYTHONHASHSEED"] = "0"
+    ctx = mp.get_context("spawn")
     done = []
-    with ctx.Pool(processes, maxtasksperchild=None) as pool, open(log_path, "a") as log:
+    with ctx.Pool(processes) as pool, open(log_path, "a") as log:
         for r in pool.imap(_task, tasks, chunksize=1):
             log.write(json.dumps(r) + "\n")
             log.flush()
             done.append(r)
-            print(r, flush=True)
+            print(json.dumps(r), flush=True)
     return done
+
+
+def parse_runs(spec: str) -> list[int]:
+    """'0-19' -> 0..19; '0-4,10,12-13' -> [0..4, 10, 12, 13]."""
+    out = []
+    for part in spec.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        if "-" in part:
+            a, b = part.split("-")
+            out += list(range(int(a), int(b) + 1))
+        else:
+            out.append(int(part))
+    return sorted(set(out))
+
+
+def job_list(e_pred, args):
+    """The fixed, sorted job list: (condition, run) for the selected conditions (protocol priority order, analysed grid
+    first) and runs, condition-major. Every lane must be given the same selection flags."""
+    conds = conditions(e_pred, include_dropped=True)
+    if not args.include_dropped:
+        conds = [c for c in conds if not c["arm"].endswith("_dropped")]
+    if args.conditions:
+        known = {c["name"] for c in conditions(e_pred, include_dropped=True)}
+        missing = set(args.conditions) - known
+        if missing:
+            raise SystemExit(f"unknown conditions: {sorted(missing)}")
+        conds = [c for c in conditions(e_pred, include_dropped=True) if c["name"] in set(args.conditions)]
+    if args.n:
+        conds = [c for c in conds if c["n"] in args.n]
+    if args.q:
+        conds = [c for c in conds if any(abs(c["q"] - q) < 1e-12 for q in args.q)]
+    if args.e_mult:
+        conds = [c for c in conds if any(abs(c["mult"] - m) < 1e-12 for m in args.e_mult)]
+    if args.exempt != "any":
+        conds = [c for c in conds if c["exempt"] == (args.exempt == "yes")]
+    runs = parse_runs(args.runs)
+    return [(c, r) for c in conds for r in runs]
+
+
+def job_path(out_dir: Path, cond, run) -> Path:
+    return Path(out_dir) / cond["name"] / f"run_{run:03d}.json.gz"
 
 
 # ------------------------------------------------------------------ modes
@@ -316,51 +365,83 @@ def mode_timing(args):
 
 
 def mode_grid(args):
-    pred = read_prediction()
+    pred = read_prediction(args.prediction)
     e_pred = {int(k): v["e_pred"] for k, v in pred["per_n"].items()}
-    conds = conditions(e_pred, include_dropped=args.include_dropped)
-    if args.conditions:
-        wanted = set(args.conditions)
-        conds = [c for c in conditions(e_pred, include_dropped=True) if c["name"] in wanted]
-        missing = wanted - {c["name"] for c in conds}
-        if missing:
-            raise SystemExit(f"unknown conditions: {sorted(missing)}")
-    runs = range(args.run_start, args.run_start + args.R)
-    deadline = None if args.max_hours is None else time.time() + 3600 * args.max_hours
-    tasks = [(c, r, args.generations or GENERATIONS, RAW / "runs", deadline) for c in conds for r in runs]
+    jobs = job_list(e_pred, args)
+    out_dir = Path(args.out)
+    if args.list_jobs:
+        print(f"# {len(jobs)} jobs; index condition run n q e_mult e F exempt -> file under --out")
+        for i, (c, r) in enumerate(jobs):
+            print(f"{i}\t{c['name']}\t{r}\t{c['n']}\t{c['q']}\t{c['mult']}\t{c['e']:.6f}\t{c['F']:.6f}\t"
+                  f"{c['exempt']}\t{c['name']}/run_{r:03d}.json.gz")
+        return 0
+    if not 0 <= args.shard < args.of:
+        raise SystemExit("--shard must be in 0 .. --of - 1")
+    mine = [(i, c, r) for i, (c, r) in enumerate(jobs) if i % args.of == args.shard]
+    out_dir.mkdir(parents=True, exist_ok=True)
+    grid_file = out_dir / "grid_conditions.json"   # deterministic content, identical on every lane
+    if not grid_file.exists():
+        save_json(grid_file, dict(e_pred=e_pred, prediction_utc=pred["computed_utc"], R_default="0-19",
+                                  conditions=conditions(e_pred, include_dropped=True)))
+    deadline = None
+    if args.max_minutes is not None:
+        deadline = time.time() + 60 * args.max_minutes
+    elif args.max_hours is not None:
+        deadline = time.time() + 3600 * args.max_hours
+    todo = [(c, r, args.generations or GENERATIONS, out_dir, deadline) for _, c, r in mine
+            if not job_path(out_dir, c, r).exists()]
     procs = args.processes or max(1, (os.cpu_count() or 2) - 1)
-    save_json(RAW / "grid_conditions.json", dict(written_utc=utc_now(), e_pred=e_pred, R=args.R,
-                                                 conditions=conditions(e_pred, include_dropped=True)))
-    print(f"{len(tasks)} runs over {len(conds)} conditions, {procs} processes, deadline {args.max_hours} h", flush=True)
-    t0 = time.time()
-    res = run_pool(tasks, procs, RAW / "grid_log.jsonl")
-    print(f"grid wall {time.time() - t0:.0f} s;", {s: sum(r['status'] == s for r in res)
-                                                   for s in sorted({r['status'] for r in res})})
+    tag = f"shard_{args.shard}_of_{args.of}"
+    print(f"{tag}: {len(mine)} jobs, {len(mine) - len(todo)} already exist, {len(todo)} to run on {procs} processes; "
+          f"stop starting new jobs after {args.max_minutes} min", flush=True)
+    res = run_pool(todo, procs, out_dir / "logs" / f"{tag}.jsonl") if todo else []
+    errors = [r for r in res if r["status"].startswith("error")]
+    remaining = [(i, c["name"], r) for i, c, r in mine if not job_path(out_dir, c, r).exists()]
+    if not remaining:
+        body = json.dumps(dict(shard=args.shard, of=args.of, jobs=len(mine), finished_utc=utc_now()), indent=2)
+        (out_dir / "DONE_SHARD").write_text(body)
+        (out_dir / f"DONE_{tag}").write_text(body)
+    print(f"{tag}: done {sum(r['status'] == 'done' for r in res)}, errors {len(errors)}, "
+          f"still missing {len(remaining)}", flush=True)
+    return 1 if errors else 0
 
 
 def mode_list(args):
-    pred = read_prediction()
+    pred = read_prediction(args.prediction)
     e_pred = {int(k): v["e_pred"] for k, v in pred["per_n"].items()}
     for c in conditions(e_pred, include_dropped=True):
-        print(f"{c['priority']} {c['arm']:16s} {c['name']:22s} n={c['n']:3d} q={c['q']:<5} e={c['e']:.4f} "
+        print(f"{c['priority']} {c['arm']:16s} {c['name']:24s} n={c['n']:3d} q={c['q']:<5} e={c['e']:.4f} "
               f"F={c['F']:.4f} exempt={c['exempt']}")
+    return 0
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("mode", choices=["prediction", "pilot", "timing", "grid", "list"])
-    ap.add_argument("--R", type=int, default=20)
-    ap.add_argument("--run-start", type=int, default=0)
-    ap.add_argument("--conditions", nargs="*")
-    ap.add_argument("--include-dropped", action="store_true", help="also run conditions dropped by Amendment 2")
-    ap.add_argument("--processes", type=int)
-    ap.add_argument("--generations", type=int)
-    ap.add_argument("--max-hours", type=float)
+    sel = ap.add_argument_group("grid: which jobs (every lane must use the same selection flags)")
+    sel.add_argument("--runs", default="0-19", help="run indices, e.g. 0-19 (R = 20) or 0-4,10")
+    sel.add_argument("--conditions", nargs="*", help="condition names (see `list`)")
+    sel.add_argument("--n", type=int, nargs="*", help="group sizes, e.g. --n 64")
+    sel.add_argument("--q", type=float, nargs="*", help="audit probabilities, e.g. --q 0.1 (baselines have q = 0)")
+    sel.add_argument("--e-mult", type=float, nargs="*", help="e / e_pred(64), e.g. --e-mult 0 1.25 (0 = baseline)")
+    sel.add_argument("--exempt", choices=["yes", "no", "any"], default="any", help="final-round exemption")
+    sel.add_argument("--include-dropped", action="store_true", help="also conditions dropped by Amendment 3")
+    run = ap.add_argument_group("grid: how")
+    run.add_argument("--list-jobs", action="store_true", help="print the job list with indices and exit")
+    run.add_argument("--shard", type=int, default=0, help="this lane's index I (jobs with index %% N == I)")
+    run.add_argument("--of", type=int, default=1, help="number of lanes N")
+    run.add_argument("--out", default=str(RAW / "runs"), help="results directory (one file per job)")
+    run.add_argument("--processes", type=int, help="worker processes (default: cpu_count - 1)")
+    run.add_argument("--max-minutes", type=float, help="stop starting new jobs after M minutes, then exit 0")
+    run.add_argument("--max-hours", type=float, help=argparse.SUPPRESS)
+    run.add_argument("--generations", type=int, help="override 2,000 (testing only)")
+    ap.add_argument("--prediction", default=str(PREDICTION), help="prediction.json to read e_pred from")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args(argv)
-    {"prediction": mode_prediction, "pilot": mode_pilot, "timing": mode_timing, "grid": mode_grid,
-     "list": mode_list}[args.mode](args)
+    rc = {"prediction": mode_prediction, "pilot": mode_pilot, "timing": mode_timing, "grid": mode_grid,
+          "list": mode_list}[args.mode](args)
+    return int(rc or 0)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
