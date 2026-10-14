@@ -1,0 +1,108 @@
+# Experiment R1a (audits and fines in Willis et al.'s commons) run remotely on GitHub Actions. CPU only, no secrets.
+# Protocol: notes/claude_audit_20261005/studies/R1a_willis_cpr_audits/protocol.md (Amendments 1-4), code on branch
+# claude/r1-s1-oversight-experiments. One job = one condition x 10 runs; each run is its own file and existing runs are
+# never overwritten. Results go to the r1a-results branch. Re-running the workflow only runs what is still missing.
+name: R1a Willis CPR audits (remote run)
+
+on:
+  workflow_dispatch:
+    inputs:
+      extension:
+        description: "also run the conditions Amendment 3 dropped (Amendment 4 extension): true | false"
+        required: true
+        default: "true"
+
+permissions:
+  contents: write
+
+env:
+  CODE_REF: claude/r1-s1-oversight-experiments
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CODE_REF }}
+          submodules: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements-validation.txt
+      - name: Fetch finished runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git clone --quiet --depth 1 --branch r1a-results --single-branch "$url" store
+      - id: m
+        env:
+          EXTENSION: ${{ inputs.extension }}
+        run: |
+          PYTHONPATH=. python - >> "$GITHUB_OUTPUT" <<'PY'
+          import json, os
+          from pathlib import Path
+          from experiments.oversight import run_r1a_willis_audits as R
+          pred = R.read_prediction()
+          e = {int(k): v["e_pred"] for k, v in pred["per_n"].items()}
+          ext = os.environ["EXTENSION"] == "true"
+          conds = R.conditions(e, include_dropped=ext)
+          jobs = []
+          for c in conds:
+              for start in (0, 10):
+                  have = all((Path("store/claude_r1a_v1/runs") / c["name"] / f"run_{r:03d}.json.gz").exists()
+                             for r in range(start, start + 10))
+                  if not have:
+                      jobs.append(dict(cond=c["name"], start=start))
+          print("matrix=" + json.dumps(dict(include=jobs or [dict(cond="none", start=0)])))
+          PY
+  run:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        if: matrix.cond != 'none'
+        with:
+          ref: ${{ env.CODE_REF }}
+          submodules: true
+      - uses: actions/setup-python@v5
+        if: matrix.cond != 'none'
+        with:
+          python-version: "3.12"
+      - if: matrix.cond != 'none'
+        run: python -m pip install -r requirements-validation.txt
+      - name: Run ${{ matrix.cond }}, runs ${{ matrix.start }}-${{ matrix.start }}+9
+        if: matrix.cond != 'none'
+        run: |
+          PYTHONPATH=. python -m experiments.oversight.run_r1a_willis_audits grid \
+            --conditions "${{ matrix.cond }}" --run-start ${{ matrix.start }} --R 10 --processes 4 --max-hours 5.5
+      - name: Save runs to r1a-results
+        if: always() && matrix.cond != 'none'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          src=results/runs/claude_r1a_v1/runs
+          [ -d "$src" ] || { echo "no runs to save"; exit 0; }
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            rm -rf store
+            git clone --quiet --depth 1 --branch r1a-results --single-branch "$url" store
+            mkdir -p store/claude_r1a_v1/runs
+            cp -Rn "$src"/. store/claude_r1a_v1/runs/
+            cd store
+            git config user.name "r1a-ci"; git config user.email "r1a-ci@users.noreply.github.com"
+            git add -A
+            if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+            git commit -q -m "R1a runs: ${{ matrix.cond }} from run ${{ matrix.start }}"
+            if git push -q origin HEAD:r1a-results; then echo "saved"; exit 0; fi
+            cd ..; sleep $((RANDOM % 30 + 10))
+          done
+          echo "could not push after 10 attempts"; exit 1
