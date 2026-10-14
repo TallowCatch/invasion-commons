@@ -19,7 +19,7 @@
 \section*{A\quad Settings of every study}
 \begin{table}[!ht]
   \centering\small
-  \caption{The settings of every study. All simulations: 80 rounds, 64 new populations. LLM studies: 20 rounds, 10 populations. Audits random with probability $1/6$ per agent and round (T1 and C1: one audit per round). $^a$\game{Fishery}: stock below 50 after fishing; \game{Forest}: more than a 5\% chance that mean plot health falls below 10; R1 also reports the one-step line, which the \game{Fishery} parts of S1 and S1b used. $^b$Chosen by search to maximise the cheaters' payoff over the whole game. $^c$S4 and S5 cut a caught agent's allowance by the share of the cut it took back; L2 by its mean tonnes over. $^d$\game{River}: quality below 30 (pre-registered) and below 50. $^e$Part A compares reviewers built for the 30 line, so 30 is kept.}
+  \caption{The settings of every study. All simulations: 80 rounds, 64 new populations. LLM studies: 20 rounds, 10 populations. Audits random with probability $1/6$ per agent and round (T1 and C1: one audit per round; the memory grid of Figure~2a, R2 and R5: two audits per round in \game{Fishery} and \game{Forest}, and one in \game{River}, R4). Cheaters' over-take level chosen on 8 training populations (S1--S4) or 32 (R2, R3, S5). $^a$\game{Fishery}: stock below 50 after fishing; \game{Forest}: more than a 5\% chance that mean plot health falls below 10; R1 also reports the one-step line, which the \game{Fishery} parts of S1 and S1b used. $^b$Chosen by search to maximise the cheaters' payoff over the whole game. $^c$S4 and S5 cut a caught agent's allowance by the share of the cut it took back; L2 by its mean tonnes over. $^d$\game{River}: quality below 30 (pre-registered) and below 50. $^e$Part A compares reviewers built for the 30 line, so 30 is kept.}
   \label{tab:settings}
   \resizebox{\textwidth}{!}{\begin{tabular}{llllllll}
 \toprule
@@ -40,6 +40,8 @@ L3 & 6 & Fishery & gpt-oss, Nemotron: over-take & every round & fine 12--30 t & 
 \end{tabular}
 }
 \end{table}
+
+\paragraph{Where the settings come from.} The forms of the dynamics follow fisheries and commons-game practice: logistic regrowth with the most productive stock at half capacity, and the metrics of GovSim (Piatti et al.\ 2024) and Perolat et al.\ (2017). The numbers are design choices, fixed by pilot before the studies that use them and recorded in each protocol, which is also how commons games in multi-agent learning set theirs (Leibo et al.\ 2017; Perolat et al.\ 2017). Several sit inside published ranges. The \game{Fishery} growth rate $r=0.7$ per round lies in the FishBase prior ranges for fish with high (0.6--1.5) and medium (0.2--0.8) resilience (Froese et al.\ 2017). Groups of six match human common-pool experiments, whose groups are nearly always below ten (Mal\'ezieux and Spiegelman 2025). An audit probability of $1/6$ is above the 0.1 of the standard tax-compliance experiment (Kasper and Rablen 2022), and far above the 0.5--2\% audit budgets studied in AI control (Greenblatt et al.\ 2024). Half capacity is the fisheries \emph{target} level, not a limit point; we use it as the harm line because it is the level at which the resource is most productive.
 
 \FloatBarrier
 \section*{B\quad Key terms}

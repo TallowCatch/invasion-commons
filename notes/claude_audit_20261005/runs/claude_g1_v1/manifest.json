@@ -1,0 +1,119 @@
+{
+ "experiment": "G1",
+ "profile": "full",
+ "params": {
+  "populations": 64,
+  "train": 8,
+  "horizon": 80
+ },
+ "G1_BASE": 26101400,
+ "q": 0.16666666666666666,
+ "fstar": {
+  "fishery": {
+   "g_star": 0.356,
+   "F_star": 2.136,
+   "source": "paper (body.tex:96; S3 results:49)"
+  },
+  "forest": {
+   "g_star": 0.0,
+   "F_star": 0.0,
+   "source": "R3 rule, 8 training populations",
+   "by_level": {
+    "0.25": {
+     "G": -0.7499579146880135,
+     "n_over": 43.375,
+     "g": -0.017290096015861983
+    },
+    "0.5": {
+     "G": -1.6570481614550796,
+     "n_over": 43.875,
+     "g": -0.03776747946336364
+    },
+    "0.75": {
+     "G": -2.107904642797158,
+     "n_over": 44.125,
+     "g": -0.04777121003506307
+    },
+    "1.0": {
+     "G": -2.3013782209217504,
+     "n_over": 43.875,
+     "g": -0.0524530648643134
+    }
+   }
+  },
+  "river": {
+   "g_star": 0.14219910857260928,
+   "F_star": 0.8531946514356558,
+   "source": "R3 rule, 8 training populations",
+   "by_level": {
+    "0.25": {
+     "G": 2.9340051291167635,
+     "n_over": 58.5,
+     "g": 0.050153933831055784
+    },
+    "0.5": {
+     "G": 5.640455894872908,
+     "n_over": 53.875,
+     "g": 0.10469523702780341
+    },
+    "0.75": {
+     "G": 6.89059023054979,
+     "n_over": 50.0,
+     "g": 0.13781180461099582
+    },
+    "1.0": {
+     "G": 6.221211000051656,
+     "n_over": 43.75,
+     "g": 0.14219910857260928
+    }
+   }
+  }
+ },
+ "settings": {
+  "fishery": {
+   "game": "fishery",
+   "n": 6,
+   "horizon": 80,
+   "r": 0.7,
+   "externality": 0.22,
+   "kappa_mult": 1.0,
+   "capacity": 100.0,
+   "n_stress": 4
+  },
+  "forest": {
+   "game": "forest",
+   "n": 6,
+   "horizon": 80,
+   "r": 0.7,
+   "externality": 0.22,
+   "kappa_mult": 1.0,
+   "capacity": null,
+   "n_stress": 2
+  },
+  "river": {
+   "game": "river",
+   "n": 6,
+   "horizon": 80,
+   "r": 0.7,
+   "externality": 0.22,
+   "kappa_mult": 1.0,
+   "capacity": null,
+   "n_stress": 2
+  }
+ },
+ "n_rows": 5376,
+ "files": {
+  "episodes.jsonl.gz": "55ddbb0a1697a8dae0b18c02290069ab3657163f33b8da72d5f0956de89dcfaa",
+  "fstar.json": "b43d6b5fce5c8df63a3722d8006efa083c000aebf48fb6d20675740a7a18851b"
+ },
+ "source": {
+  "experiments/oversight/run_g1_schelling.py": "4d0bfe00f33f48a75f6eaace755bc8e6f9d51c833b0711262e0d103c0c8cc915",
+  "experiments/oversight/run_s3_threshold_timing_memory.py": "d142ccf1bcbbb0c7ab0ddba8f51262dfb8b6729a28959e02483b11c2a4aba36f",
+  "experiments/oversight/run_s2_compliance_deterrence.py": "0cc8dea8c6e32cd44f398338dc2e4566e144301c06d753624e7c57ecaa1274dc",
+  "experiments/oversight/run_r4_river_grid.py": "e263f3037879732f9fd28d8aded383056e9e57137a0ef4c21f07008ade5e783f",
+  "fishery_sim/two_reagent.py": "3828fc4c1727e5c26026817f0896af1fae3b543e8fc504eec0b69ee365823378",
+  "fishery_sim/harvest.py": "e96524eed215293633f3d039ae67fa86159f3a5f4fa4c97020a5a432208ee181",
+  "fishery_sim/calibrated_oversight.py": "6215379abd63e01e938a76784b27acf148d5810e274c534c8abf6dac9cdab712",
+  "fishery_sim/fishery_oversight.py": "f2fc8d9ef5dec6949435f6d0907119f1f47f4ebac8b21f1d98d5c9aa2603aba3"
+ }
+}

@@ -49,3 +49,21 @@ The over-take rate is the share of a model's decisions above its allowance, with
 - H2 rests on one model (gpt-oss), with 20 populations.
 - The e = 2 result is the pre-registered primary; e = 3 is secondary.
 - Nemotron's three stray matched-cell games (population 7) are not analysed.
+
+## Data note (14 October 2026): nine gpt-oss games were played twice
+
+- **What happened.** On 13 Oct the remaining gpt-oss populations were moved from lane C to lanes A and B (commit `4f5ef17`), but lane C also went on to play populations 16–17. Nine games were therefore played twice: E12 16–17, E18 16, Q12_24 16–17, Q12_36 16, Q3_6 16–17 and Q3_9 16. Each replay overwrote the stored game on the `l2-results` branch, two before this analysis ran and seven after.
+- **Which games the summary used.** The summary above was computed on the branch as it stood at `03512ad`, a mix of first plays and replays. It was found by W1's cross-check (`studies/W1_welfare_cost_rescoring/`).
+- **What the protocol schedules.** Each population is played once, so the **first play** of each game is the valid one.
+- **Re-analysis.** The frozen analysis was re-run unchanged (`analyze_l4 analyse`) on first plays only. The first plays were taken from git history; the commits are listed in `analyze_w1.py`, `L4_FIRST`.
+  - Output: `runs/claude_l4_v1/l4_summary_firstplay.json`.
+  - Three numbers change; all other cells and every verdict are identical:
+
+  | | As reported above | First plays |
+  |---|---|---|
+  | E12 (gpt-oss) | 32.1% [29.2, 34.7] | 31.7% [28.9, 34.4] |
+  | Q3_6 (gpt-oss) | 40.7% [38.7, 43.0] | 40.6% [38.5, 42.9] |
+  | H2 at e = 2: d | −12.9 [−16.4, −9.3] | **−12.75 [−16.2, −9.2]** |
+
+- **For the paper.** Quote the first-play numbers.
+- **Process fix.** A lane must not run a population that another lane owns. The runner should refuse to overwrite an existing episode file. This was not fixed in this note; it is to do before the next remote LLM study.

@@ -1,5 +1,61 @@
 # What we have learned, and what should come next
 
+## Update 10, 14 October 2026: Phase 0 (grounding and re-scoring) and the overseer layer
+
+- **Platform decision** (deep research, 93 sources; `research/commons_platform/2026-10-14_decision.md`):
+  - Build the overseer as a reusable layer and run it on standard games: SocialJax and OpenSocialJax, Willis's `emergent_llm`, and the text testbed.
+  - Settings everywhere in the field are hand-set; the field's grounding is Schelling diagrams and focal/background evaluation.
+  - Our settings audit: 12 grounded, 57 with a recorded reason, 35 with none.
+- **Overseer layer v0** (`overseer/`), checked with two admission tests:
+  - replaying stored games reproduces them **exactly** (L4 263/263, L2 402/402, L3 80/80, L5 10/10, the memory re-run 40/40);
+  - re-running S3 Parts A and B through the layer gives byte-identical episodes and an identical analysis.
+- **G1 Schelling diagrams [verified]:**
+  - All three base games are social dilemmas. Forest is one by fear only (a Stag Hunt). River passes with a small margin.
+  - With the reviewer and audits, Fishery over-taking still pays at the paper's group break-even fine.
+- **G1b [post hoc]:** a **lone** over-taker's break-even fine is 6.87 t, **3.2× the group's** 2.14 t, because a lone cheater does not bear the depletion it causes. At that fine its gain falls from +92 to +4.4 t [−26, +34]. The pre-stated criterion fails narrowly (the point estimate is above 0), and the gain is clearly negative at 1.5×.
+- **Forest's audited game is not a dilemma:** with the reviewer, everyone over-taking beats everyone complying, so the reviewer's allowance is below what is sustainable there. This is consistent with L6 (allowances halved).
+- **G2 sweeps:**
+  - The dilemma holds at 19 of 20 points; River at κ = 2× fails.
+  - The threshold is within 25% at 13 of 14 testable points; all Fishery points are within 10%.
+  - Audits reduce harm at 20 of 20.
+- **W1 [post hoc]:**
+  - Zero-fine audits make things worse than never mentioning audits (oversight efficiency below 0, both models).
+  - The break-even cost per audit is 0.03–0.24 t, and positive only where audits deter.
+  - Being caught does not reduce next-round over-taking among over-takers.
+  - Over-taking rises at the end of the game (+16.6 points in rounds 17–19).
+  - Oversight efficiency is inflated because N0 is near first-best, so quote efficiency differences next to it.
+- **L4 data note:** nine gpt-oss games were played twice. On first plays, H2's d is −12.75 instead of −12.9; no verdict changes (`studies/L4_llm_identification/results.md`).
+- **Paper:** five paper/code mismatches fixed. A supplement paragraph now places the settings inside published ranges.
+- **Still open from Phase 0:**
+  - G1-LLM, the role-prompt Schelling diagram (about $3);
+  - the temperature check (about $2);
+  - a K/4 limit line as a robustness check;
+  - stopping lanes from overwriting each other's games.
+
+## Update 9, 14 October 2026: after L4, L5 and L6, and the 13 October supervisor feedback
+
+- **L4 [verified]:**
+  - The 30 t prediction held on new populations and under reworded rules: 0.2% and 1.1% over-taking for gpt-oss, 1.8% and 1.9% for Nemotron. gpt-oss again stopped at 24 t.
+  - At an expected fine of 2 t, a rare audit with a large fine deterred more than a frequent audit with a small fine: 27.9% against 40.7% over-taking, d = −12.9 points [−16.4, −9.3]. At 3 t every mix gave 9–11%.
+  - Rules that never mention audits gave less over-taking than audits with a 0 t fine: 30% against 58% (gpt-oss), 46% against 64% (Nemotron).
+- **L5 [verified]:** DeepSeek over-took in 80% of decisions with no fine, with a one-round gain of 5.41 t, so its predicted stop is 36 t. That stage was not run, for cost.
+- **L6 [verified]:** one programmed over-cutter raised the gpt-oss foresters' over-taking by +25.1 points. Visibility added nothing.
+- **L6 mechanism [post hoc]:** the spread ran through the reviewer's shared cut, which roughly halved allowances while actual cuts stayed the same.
+- **Fines [verified from code]:** a fine only lowers the fined agent's score. Welfare must state whether fines count as lost or as transfers.
+- **Literature:** 58 AI papers, each checked; see `notes/supervisor_feedback_2026-10-13/literature_review_ai.md`. Bell and Madisetti (ICML 2026), Okamoto et al. (AIES 2026) and OpenSocialJax (arXiv, October 2026) are close, so the novelty claims must be narrowed to four things:
+  - the threshold predicted in advance and confirmed;
+  - audit chance separated from fine size;
+  - the never-mentioned control;
+  - spread through the overseer's rule.
+- **Next** (full plan: `notes/supervisor_feedback_2026-10-13/plan.md`):
+  - **W1:** welfare net of cost, a break-even audit cost and oversight efficiency, from stored games, $0.
+  - **A1:** an environment admission test, CPU only.
+  - **L7:** talk × planted cheater, then overseer responses (shared cut, targeted, leniency), about $5.
+  - **L8:** ring with proximity-dependent audits and plots that die for good, about $2.
+  - **L9:** LLM overseer, programmed agents first, under $1.
+  - **G1:** grid game, next paper.
+  - Each study gets a frozen protocol first.
+
 ## Update 8, 8 October 2026: consistency check across all studies
 
 - **The gain was defined two ways.** Simulated cheaters use the whole-game net gain g\*; LLMs use the one-round gain g₁ (pre-registered). Computed the simulations' way, the LLMs' whole-game gain is −1.05 t (gpt-oss) and 0.71 t (Nemotron) per over-take round. They keep over-taking far past that, and stop near g₁. **LLM agents are myopic offenders [post hoc]:** the one-round gain predicts them, the whole-game gain does not. Figure 5 now scales each kind of agent by its own gain.
