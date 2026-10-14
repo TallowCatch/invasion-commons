@@ -9,6 +9,10 @@ runs/claude_r1a_v1/prediction.json. Writes, in notes/claude_audit_20261005/runs/
 and the figure notes/claude_audit_20261005/figures/fig_r1a_willis_audits.{pdf,png}.
 
 Run: PYTHONPATH=.:external/emergent_llm/src python3 -m experiments.oversight.analyze_r1a [--min-runs 20]
+     [--runs DIR (the grid's --out, e.g. a checkout of r1a-results/claude_r1a_v1/runs)] [--summary-dir DIR]
+     [--figure PATH_STEM]
+Conditions dropped by Amendment 3 (arm 'primary_dropped') are tabulated as an extension but never enter H1-H3
+or figure panels (a), (c), (d).
 A condition is used for a hypothesis only if it has all R runs (--min-runs); partial conditions are shown as pending.
 """
 from __future__ import annotations
@@ -85,9 +89,9 @@ def _base(gene):
     return "collective" if att in _COLL else "selfish"
 
 
-def load_runs(raw=RAW):
+def load_runs(runs_dir=RAW / "runs"):
     out = {}
-    for d in sorted((raw / "runs").glob("*")):
+    for d in sorted(Path(runs_dir).glob("*")):
         files = sorted(d.glob("run_*.json.gz"))
         if not files:
             continue
@@ -325,7 +329,7 @@ def figure(rows, data, e64, path_stem):
         ax.set_xticks([0, 0.5, 1.0, 1.25, 2.0])
         ax.set_xlim(-0.15, 2.15)
         ax.set_ylim(0, 1)
-        ax.set_xlabel(f"Expected fine per defection, in units of the predicted balance point ({e64:.2f})")
+        ax.set_xlabel(f"Expected fine per defection ÷ predicted balance point ({e64:.2f})")
         ax.set_ylabel(ylab)
         ax.set_title(title, loc="left")
     handles = [plt.Line2D([], [], marker="o", color=BLUE, ls="", label="Groups of 64"),
@@ -337,7 +341,7 @@ def figure(rows, data, e64, path_stem):
 
     # (c) genotype shares
     ax = axes[1, 0]
-    shown = [r for r in rows if r["q"] in (0.0, 0.1)]
+    shown = [r for r in rows if r["q"] in (0.0, 0.1) and not r["arm"].endswith("_dropped")]
     labels = []
     for i, r in enumerate(shown):
         bottom = 0.0
@@ -376,7 +380,7 @@ def figure(rows, data, e64, path_stem):
     ax.set_title("(d) Groups of 64, audits at 10%: share Collective over time", loc="left")
     ax.legend(fontsize=6.8, loc="upper left")
     fig.tight_layout()
-    FIG.mkdir(parents=True, exist_ok=True)
+    Path(path_stem).parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(f"{path_stem}.pdf", bbox_inches="tight")
     fig.savefig(f"{path_stem}.png", dpi=200, bbox_inches="tight")
     plt.close(fig)
@@ -396,13 +400,22 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--min-runs", type=int, default=20)
     ap.add_argument("--no-figure", action="store_true")
+    ap.add_argument("--runs", "--runs-dir", dest="runs_dir", default=str(RAW / "runs"),
+                    help="directory of <condition>/run_XXX.json.gz files, e.g. a checkout of "
+                         "r1a-results/claude_r1a_v1/runs")
+    ap.add_argument("--summary-dir", default=str(SUMMARY))
+    ap.add_argument("--figure", default=str(FIG / "fig_r1a_willis_audits"), help="figure path without extension")
     args = ap.parse_args(argv)
+    summary_dir = Path(args.summary_dir)
     pred = json.loads((SUMMARY / "prediction.json").read_text())
     e64 = pred["per_n"]["64"]["e_pred"]
-    data = load_runs()
+    data = load_runs(args.runs_dir)
+    if not data:
+        raise SystemExit(f"no runs under {args.runs_dir}")
     rows = condition_table(data, args.min_runs)
     hyp = hypotheses(data, rows, args.min_runs)
-    grid = json.loads((RAW / "grid_conditions.json").read_text()) if (RAW / "grid_conditions.json").exists() else {}
+    gpath = Path(args.runs_dir) / "grid_conditions.json"
+    grid = json.loads(gpath.read_text()) if gpath.exists() else {}
     planned = [c["name"] for c in grid.get("conditions", []) if "dropped" not in c["arm"]]
     ran = {r["name"]: r["runs"] for r in rows}
     status = dict(R=args.min_runs, planned=planned,
@@ -410,21 +423,21 @@ def main(argv=None):
                   partial={c: ran[c] for c in planned if 0 < ran.get(c, 0) < args.min_runs},
                   not_started=[c for c in planned if ran.get(c, 0) == 0],
                   dropped_by_amendment_3=[c["name"] for c in grid.get("conditions", []) if "dropped" in c["arm"]])
-    SUMMARY.mkdir(parents=True, exist_ok=True)
+    summary_dir.mkdir(parents=True, exist_ok=True)
     slim = [{k: v for k, v in r.items()} for r in rows]
     out = dict(study="R1a", prediction=dict(e_pred={k: v["e_pred"] for k, v in pred["per_n"].items()},
                                             computed_utc=pred["computed_utc"], scale_used_for_both_n=e64),
                status=status, conditions=slim, hypotheses=hyp, bootstrap=dict(B=B, seed=BOOT_SEED))
-    (SUMMARY / "r1a_summary.json").write_text(json.dumps(out, indent=2))
-    write_csv(SUMMARY / "r1a_conditions.csv", slim)
+    (summary_dir / "r1a_summary.json").write_text(json.dumps(out, indent=2))
+    write_csv(summary_dir / "r1a_conditions.csv", slim)
     runrows = []
     for name, d in data.items():
         for run, s in zip(d["runs"], d["summaries"]):
             runrows.append(dict(condition=name, run=run, **{k: v for k, v in s.items() if k != "collective_path"}))
     if runrows:
-        write_csv(SUMMARY / "r1a_runs.csv", runrows)
+        write_csv(summary_dir / "r1a_runs.csv", runrows)
     if not args.no_figure and rows:
-        figure(rows, data, e64, FIG / "fig_r1a_willis_audits")
+        figure(rows, data, e64, args.figure)
     print(json.dumps(dict(status=status, H0=hyp["H0"], H2=hyp["H2"],
                           H1={k: {kk: v[kk] for kk in ("complete", "p_cell", "holds")} for k, v in
                               hyp["H1"]["cells"].items()}), indent=1))

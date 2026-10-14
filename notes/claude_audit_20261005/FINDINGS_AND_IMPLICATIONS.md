@@ -119,6 +119,19 @@ Started 14 October 2026.
 - **Found.** In the last round, defecting gains +2.0 and harms nobody, and their welfare maximum assumes everyone defects then. An overseer that fines every defection lowers measured efficiency in round 20.
 - **Action.** In R1a, exempt the final round (primary) and report non-exempt as a secondary result. **Status:** built into the R1a protocol.
 
+## F13. In Willis et al.'s CPR, Selfish strategies already earn less than Collective ones in groups of 4 [verified; R1a prediction, 14 Oct]
+
+- **Found.** In 2,000 fine-free games at the evolution's starting mix (every seat a random genotype and strategy):
+  - **n = 64:** a Selfish-genotype agent earns 3.21 more per game than a Collective one and makes 3.34 more defections before the last round. The expected fine per defection that cancels this is **e_pred = 0.96**, under half the myopic one-round gain of 2.
+  - **n = 4:** a Selfish agent earns 2.36 *less* per game (e_pred = −0.59, interval −0.72 to −0.44), because its extra defections drain a stock shared with only three others.
+- **What it means.**
+  - The paper's n = 4 result (56% Collective, 91% efficiency) is consistent with Selfish strategies being at a payoff *disadvantage* from the start. With β = 1 on normalised fitness, selection is weak, so drift keeps them near half. The paper credits group selection; the prediction points to direct self-harm in small groups as well. *Interpretation post hoc, untested.*
+  - In large groups the fine that removes the Selfish advantage at the start (about 0.96 per defection, F ≈ 9.6 at q = 0.1) is about half the Becker benchmark F\* = 2/q.
+- **Consequence for R1a.** The frozen fine levels at n = 4 would have been negative. Amendment 2 uses the n = 64 scale at both sizes and re-states H1 at n = 4 as "Collective > 0.5 at every e, including 0".
+- **Evidence.** `runs/claude_r1a_v1/prediction.json`; `studies/R1a_willis_cpr_audits/results.md`; protocol Amendment 2.
+- **Paper must say.** Any break-even fine for their CPR depends on group size, and is not 2/q. Report e_pred per n.
+- **Action.** The R1a grid is running on GitHub Actions (workflow `r1a-willis-cpr.yml`; results branch `r1a-results`, `claude_r1a_v1/runs`). Analyse with `analyze_r1a --runs <checkout>/claude_r1a_v1/runs`. **Status: open (grid running).**
+
 ---
 
 *Index entry:* this file is referenced from `what_we_learned_and_next.md` and from Ameer's Claude memory.

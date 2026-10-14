@@ -171,3 +171,17 @@ The repository is public, so CI CPU time is free.
 - **The conditions Amendment 3 dropped** (q = 0.25; e = 0.75 and 1.5 × e_pred) are also run, R = 20. As Amendment 3, item 5 already states, they are reported as an **extension outside the pre-registered tests**, not as part of H1–H3.
 
 Jobs are one condition × 10 runs (runs 0–9 and 10–19), with 4 processes each, and every run is its own file. Runs are skipped if their file already exists, so lanes cannot overwrite each other (lesson from the L4 data note, F8).
+
+### Amendment 5 (14 October 2026, after the remote grid started; no grid result exists or has been looked at)
+
+**A record of what actually runs**, correcting a draft. A second "Amendment 4" was drafted here at 15:41 UTC for a different remote set-up: shard lanes, `PYTHONHASHSEED=0` in the workers, and only the 240 analysed runs. It was **not used** and has been removed. The grid that runs is the one in Amendment 4 above:
+- workflow `r1a-willis-cpr.yml`, run 38591376955, started 14 Oct 2026;
+- 56 jobs (28 conditions × 2 run blocks), 4 processes each;
+- code `b86d620` on `claude/r1-s1-oversight-experiments`;
+- results on branch `r1a-results`.
+
+**Hash seed.** Workers use Python's default hash randomisation (`PYTHONHASHSEED` unset). The strategies use set and dict iteration only for membership tests (checked by grep in the committed strategy files), so the hash seed is not expected to change outcomes. Runs remain seeded through `R1A_BASE + run`.
+
+**Locked code.** The runner improvements from the draft (sharding, `--max-minutes`, `PYTHONHASHSEED=0`) are parked on branch `r1a-runner-v2` and are not merged until the grid has finished. Every run therefore uses the same code.
+
+The aborted local grid (15:32–15:37 UTC, no run finished) left only a console log.
