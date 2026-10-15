@@ -26,3 +26,6 @@ results/
 *.run.xml
 *.synctex.gz
 *.toc
+
+# Local scratch
+tmp/

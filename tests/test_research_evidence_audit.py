@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from experiments.audit_research_evidence import (
+from experiments.paper_v5.audit_research_evidence import (
     CONTEXT,
     METRICS,
     local_global_table,

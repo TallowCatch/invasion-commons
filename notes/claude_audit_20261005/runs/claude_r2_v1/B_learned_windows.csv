@@ -1,0 +1,7 @@
+cell,target,early_risky,early_risky_approved,late_risky,late_risky_approved,early_rate,late_rate,harvest_ratio_learned_over_exact
+fishery_s2_r0.9,msy,0,0,0,0,,,0.9906249999999999
+fishery_s2_r0.9,one_step,0,0,0,0,,,1.0
+fishery_s4_r0.7,msy,908,0,1260,0,0.0,0.0,0.9941925352753018
+fishery_s4_r0.7,one_step,686,0,1260,0,0.0,0.0,1.0
+harvest_s2_m0.85,one_step,572,94,565,14,0.16433566433566432,0.024778761061946902,0.9994483417615497
+harvest_s4_m1.0,one_step,1144,49,1272,0,0.04283216783216783,0.0,1.0004288424585184

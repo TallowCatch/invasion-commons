@@ -1,0 +1,38 @@
+[
+ {
+  "context": 0,
+  "mode": "trust",
+  "exec_risky": 80,
+  "scored_steps": 80
+ },
+ {
+  "context": 0,
+  "mode": "memoryless",
+  "exec_risky": 72,
+  "scored_steps": 80
+ },
+ {
+  "context": 0,
+  "mode": "memory",
+  "exec_risky": 3,
+  "scored_steps": 80
+ },
+ {
+  "context": 1,
+  "mode": "trust",
+  "exec_risky": 80,
+  "scored_steps": 80
+ },
+ {
+  "context": 1,
+  "mode": "memoryless",
+  "exec_risky": 65,
+  "scored_steps": 80
+ },
+ {
+  "context": 1,
+  "mode": "memory",
+  "exec_risky": 3,
+  "scored_steps": 80
+ }
+]

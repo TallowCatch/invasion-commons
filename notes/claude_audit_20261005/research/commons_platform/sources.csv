@@ -1,0 +1,94 @@
+id,file,title,type,url
+01,01_meltingpot_code_commons_harvest_open.md,Melting Pot source: `commons_harvest__open.py` substrate config,primary-code,https://github.com/google-deepmind/meltingpot/blob/main/meltingpot/configs/substrates/commons_harvest__open.py
+02,02_meltingpot_code_commons_harvest_closed_partnership.md,Melting Pot source: `commons_harvest__closed.py` and `commons_harvest__partnership.py`,primary-code,https://github.com/google-deepmind/meltingpot/tree/main/meltingpot/configs/substrates
+03,03_meltingpot_code_clean_up.md,Melting Pot source: `clean_up.py` config and `lua/levels/clean_up/components.lua`,primary-code,https://github.com/google-deepmind/meltingpot/blob/main/meltingpot/configs/substrates/clean_up.py
+04,04_meltingpot_code_engine_components_docs.md,"Melting Pot source: Lua component library and the ""concepts"" design doc",primary-code + docs,https://github.com/google-deepmind/meltingpot/tree/main/meltingpot/lua
+05,05_meltingpot_code_scenarios_bots_evaluation.md,"Melting Pot source: scenarios, bots, puppeteers and evaluation library",primary-code,https://github.com/google-deepmind/meltingpot/tree/main/meltingpot/configs
+06,06_lab2d_repo.md,DeepMind Lab2D repository (the engine under Melting Pot),primary-code / docs,https://github.com/google-deepmind/lab2d
+07,07_leibo2021_meltingpot1.md,Scalable Evaluation of Multi-Agent Reinforcement Learning with Melting Pot,academic,https://arxiv.org/abs/2107.06857
+08,08_agapiou2022_meltingpot2.md,Melting Pot 2.0,academic,https://arxiv.org/abs/2211.13746
+09,09_perolat2017_cpr_marl.md,A multi-agent reinforcement learning model of common-pool resource appropriation,academic,https://arxiv.org/abs/1707.06600
+10,10_hughes2018_inequity_aversion.md,Inequity aversion improves cooperation in intertemporal social dilemmas,academic,https://arxiv.org/abs/1803.08884
+11,11_trivedi2024_meltingpot_contest.md,Melting Pot Contest: Charting the Future of Generalized Cooperative Intelligence,academic,https://proceedings.neurips.cc/paper_files/paper/2024/file/1d3ea22480873b389a3365d711eb1e91-Paper-Datasets_and_Benchmarks_Track.pdf
+12,12_vezhnevets2023_concordia_paper.md,"Generative agent-based modeling with actions grounded in physical, social, or digital space using Concordia",academic,https://arxiv.org/abs/2312.03664
+13,13_concordia_code_architecture.md,"Concordia source: README, engines, entity prefab, GM components",primary-code,https://github.com/google-deepmind/concordia
+14,14_concordia_code_resource_dilemma.md,"Concordia source: `examples/resource_dilemma` (Pasture, Irrigation, Network, Fishery; standard vs election)",primary-code,https://github.com/google-deepmind/concordia/tree/main/examples/resource_dilemma
+15,15_smith2025_concordia_contest.md,Evaluating Generalization Capabilities of LLM-Based Agents in Mixed-Motive Scenarios Using Concordia,academic,https://arxiv.org/abs/2512.03318
+16,16_mosquera2024_llm_agents_meltingpot.md,Can LLM-Augmented autonomous agents cooperate? An evaluation of their cooperative capabilities through Melting Pot,academic,https://arxiv.org/abs/2403.11381
+17,17_faulkner2026_elected_leadership.md,Evaluating Cooperation in LLM Social Groups through Elected Leadership,"academic (abstract only, read via WebFetch; full text not read)",https://arxiv.org/abs/2604.11721
+18,18_formanek2026_molten_pot.md,Molten Pot: Evaluations & Datasets for Social Offline Reinforcement Learning,"academic (abstract page only, via WebFetch)",https://icml.cc/virtual/2026/69122
+19,19_cooperativeai_contest_pages.md,Cooperative AI Foundation contest pages: Melting Pot 2023 and Concordia 2024,docs / discussion,https://cooperativeai.com/contest/melting-pot-2023
+20,20_socialjax_paper.md,20. SocialJax: An Evaluation Suite for Multi-agent Reinforcement Learning in Sequential Social Dilemmas,academic,https://arxiv.org/html/2503.14576v3
+21,21_socialjax_repo_code.md,21. SocialJax source code (architecture),primary-code,
+22,22_opensocialjax_paper.md,22. OpenSocialJax: Evaluating Social Adaptation in Sequential Social Dilemmas with Open-Ended Environmental Dynamics,academic,https://arxiv.org/html/2610.13710
+23,23_opensocialjax_repo_code.md,"23. OpenSocialJax source code and README (LLM harness, cost)",primary-code (plus README docs),
+24,24_jaxmarl.md,24. JaxMARL: Multi-Agent RL Environments and Algorithms in JAX,primary-code / docs,
+25,25_ai_economist_sciadv_2022.md,25. The AI Economist: Taxation policy design via two-level deep multiagent reinforcement learning,academic,https://pmc.ncbi.nlm.nih.gov/articles/PMC9067926/
+26,26_ai_economist_foundation_repo.md,26. Foundation / ai-economist source code (Salesforce),primary-code,
+27,27_large_legislative_models.md,27. Large Legislative Models: Towards Efficient AI Policymaking in Economic Simulations,academic (preprint),https://arxiv.org/html/2410.08345v1
+28,28_llm_economist.md,28. LLM Economist: Large Population Models and Mechanism Design in Multi-Agent Generative Simulacra,academic,https://arxiv.org/html/2507.15815v1
+29,29_taxagent.md,29. TaxAgent: How Large Language Model Designs Fiscal Policy,academic,https://arxiv.org/html/2506.02838v1
+30,30_dizaji_aieconomist_vs_concordia.md,"30. Incentives to Build Houses, Trade Houses, or Trade House Building Skills in Simulated Worlds under Various Governing Systems or Institutions: Comp",academic (preprint),https://arxiv.org/html/2411.17724
+31,31_gallego_llm_policy_synthesis.md,31. Beyond Scalar Rewards: Dense Feedback for LLM Policy Synthesis in Sequential Social Dilemmas,academic (workshop),https://arxiv.org/html/2603.19453
+32,32_mao_perrault_small_llm_spatial.md,32. Training Small LLMs as Spatial Multi-Agent Policies,academic (preprint),https://arxiv.org/abs/2608.01425
+33,33_nguyen_cfc_agent_ijcai2025.md,33. Navigating Social Dilemmas with LLM-Based Agents via Consideration of Future Consequences,academic,https://www.ijcai.org/proceedings/2025/26
+40,40_emergent_llm_repo.md,"[40] emergent_llm: code for ""Evaluating Collective Behaviour of Hundreds of LLM Agents""","source code (cloned `--depth 1` to the scratchpad; read only, nothing installed or executed)","https://github.com/willis-richard/emergent_llm,"
+41,41_willis2026_hundreds_llm_agents.md,[41] Evaluating Collective Behaviour of Hundreds of LLM Agents,"workshop paper, full text read (HTML)",https://arxiv.org/abs/2602.16662
+42,42_willis2025_will_systems_llm_cooperate.md,[42] Will Systems of LLM Agents Cooperate: An Investigation into a Social Dilemma,"conference extended abstract + arXiv full paper (full text read, HTML)",https://ifaamas.csc.liv.ac.uk/Proceedings/aamas2025/pdfs/p2786.pdf
+43,43_willis2024_minimal_reward_transfer.md,[43] Resolving social dilemmas with minimal reward transfer,journal article (arXiv HTML full text read),https://arxiv.org/abs/2310.12928
+44,44_willis2025_self_interest_markov.md,[44] Quantifying the Self-Interest Level of Markov Social Dilemmas,conference paper (arXiv HTML full text read),https://arxiv.org/abs/2501.16138
+45,45_du2023_review_cooperation_mal.md,[45] A Review of Cooperation in Multi-agent Learning,"survey preprint (abstract only read, via arXiv API)",https://arxiv.org/abs/2312.05162
+46,46_guo2025_socialjax_willis_coauthor.md,[46] SocialJax: An Evaluation Suite for Multi-agent Reinforcement Learning in Sequential Social Dilemmas (Willis as co-author),"conference paper (abstract only read here, via arXiv API; the platform itself is covered in depth by the SocialJax sub-agent's sources 20–39)",https://arxiv.org/abs/2503.14576
+47,47_willis_github_and_author_search.md,[47] Richard Willis's GitHub repositories and publication search (incl. Jianing Zhao),"search records (GitHub API, arXiv API, OpenAlex API, web search). DBLP returned a bot-check page and was not used. Google Scholar was not queried.",https://api.github.com/users/willis-richard/repos`
+60,60_piatti2024_govsim_paper.md,Cooperate or Collapse: Emergence of Sustainable Cooperation in a Society of LLM Agents (GovSim),academic,https://arxiv.org/abs/2404.16698
+61,61_govsim_code_configs.md,GovSim official repository: configuration and environment code,primary-code,https://github.com/giorgiopiatti/GovSim
+62,62_guzmanpiedrahita2025_sanctsim.md,Corrupted by Reasoning: Reasoning Language Models Become Free-Riders in Public Goods Games (SanctSim),academic,https://github.com/davidguzmanp/SanctSim
+63,63_tewolde2026_coopeval.md,CoopEval: Benchmarking Cooperation-Sustaining Mechanisms and LLM Agents in Social Dilemmas,academic,https://arxiv.org/abs/2604.15267
+64,64_bell_madisetti2026_restitution.md,Restitution Over Deterrence: Formal Enforcement for LLM Commons Governance,academic,https://icml.cc/virtual/2026/78631
+65,65_rehm2026_govsim_selfgovern.md,Can Agents Adapt Their Institutions And Sacrifice Themselves During Collapse? Executable Self-Governance in a GovSim Commons (GovSim-SelfGovern),academic,https://arxiv.org/abs/2609.22600
+66,66_leibo2017_sequential_social_dilemmas.md,Multi-agent Reinforcement Learning in Sequential Social Dilemmas,academic,https://arxiv.org/abs/1702.03037
+67,67_kasper_rablen2022_post_audit_tax_lab.md,Tax Compliance After An Audit: Higher or Lower?,academic,https://mues.econ.muni.cz/media/3466301/kasper_2022_tax-compliance-after-an-audit-higher-or-lower.pdf
+68,68_alm_jackson_mckee1992_ntj.md,Estimating the Determinants of Taxpayer Compliance with Experimental Data,academic,https://ideas.repec.org/a/ntj/journl/v45y1992i1p107-14.html
+69,69_alm_malezieux2021_tax_evasion_meta.md,40 Years of Tax Evasion Games: A Meta-Analysis,academic,http://repec.tulane.edu/RePEc/pdf/tul2004.pdf
+70,70_schelling1973_hockey_helmets.md,"Hockey Helmets, Concealed Weapons, and Daylight Saving",academic,https://doi.org/10.1177/002200277301700302
+71,71_ostrom2002_handbook_cpr_institutions.md,Common-Pool Resources and Institutions: Toward a Revised Theory (Chapter 24),book (chapter),https://eclass-b.uoa.gr/modules/document/file.php/ECON284/10.%20Environmental%20and%20resource%20issues/HBAE%20Chapter%2024%20Common%20Pool%20resources%20Olstrom.pdf
+72,72_ostrom2009_nobel_lecture.md,Beyond Markets and States: Polycentric Governance of Complex Economic Systems (Prize Lecture),academic,https://www.nobelprize.org/uploads/2018/06/ostrom_lecture.pdf
+73,73_ostrom_walker_gardner1992_covenants.md,Covenants with and without a Sword: Self-Governance Is Possible,academic,https://doi.org/10.2307/1964229
+74,74_janssen2010_science_lab_ses.md,Lab Experiments for the Study of Social-Ecological Systems,academic,https://doi.org/10.1126/science.1183532
+75,75_janssen_rollins2012_jasss_foraging.md,Predicting Behavior in New Behavioral Experiments: Outcomes of a Modeling Competition,academic,https://www.jasss.org/15/3/5.html
+76,76_janssen2010_es_ecological_dynamics.md,Introducing Ecological Dynamics into Common-Pool Resource Experiments,academic,https://www.ecologyandsociety.org/vol15/iss2/art7/
+77,77_malezieux_spiegelman2025_anatomical_review_cpr.md,An anatomical review of the common pool resource game,academic (review),https://www.cambridge.org/core/journals/experimental-economics/article/an-anatomical-review-of-the-common-pool-resource-game/2BA22816765D4F2CE260EA2ACECA6D22
+78,78_clark2013_math_resource_management_gordon.md,"Mathematics and Resource Management (essay), covering Gordon (1954) and the logistic/MSY model","academic (expository essay by the field's standard textbook author); Gordon 1954 (JPE 62(2):124–142, DOI 10.1086/257497) is cited through it, NOT read directly (paywalled). Schaefer (1954) was not reached in this run.",https://ww2.amstat.org/mam/2013/essays/Clark-2013.pdf
+79,79_fishbase_resilience_r_priors.md,FishBase resilience categories as prior ranges for the intrinsic growth rate r (via CMSY studies),"academic (FishBase itself, the ""docs"" origin, was not opened directly)",https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2020.00616/full
+80,80_greenblatt2024_ai_control.md,AI Control: Improving Safety Despite Intentional Subversion,Peer-reviewed conference paper,https://arxiv.org/abs/2312.06942
+81,81_griffin2024_games_for_ai_control.md,Games for AI Control: Models of Safety Evaluations of AI Deployment Protocols,Preprint (formal / game-theoretic),https://arxiv.org/abs/2409.07985
+82,82_bhatt2025_ctrl_z.md,Ctrl-Z: Controlling AI Agents via Resampling,"Preprint (empirical control evaluation, multi-step agent)",https://arxiv.org/abs/2504.10374
+83,83_wen2025_adaptive_deployment_distributed_threats.md,Adaptive Deployment of Untrusted LLMs Reduces Distributed Threats,Peer-reviewed conference paper,https://arxiv.org/abs/2411.17693
+84,84_kutasov2025_control_protocols_untrusted_agents.md,Evaluating Control Protocols for Untrusted AI Agents,Preprint (empirical control evaluation in SHADE-Arena),https://arxiv.org/abs/2511.02997
+85,85_kutasov2025_shade_arena.md,SHADE-Arena: Evaluating Sabotage and Monitoring in LLM Agents,Preprint / benchmark,https://arxiv.org/abs/2506.15740
+86,86_radev2026_schemes_multiagent_sabotage.md,The Best-Laid SCHEMEs: Coordinated Sabotage and Monitoring in Multi-Agent Systems,Preprint / benchmark (multi-agent control),https://arxiv.org/abs/2605.29178
+87,87_gardnerchallis2026_untrusted_monitoring_collusion.md,When can we trust untrusted monitoring? A safety case sketch across collusion strategies,Preprint (safety case / taxonomy),https://arxiv.org/abs/2602.20628
+88,88_bowman2022_sandwiching.md,Measuring Progress on Scalable Oversight for Large Language Models,Preprint (research agenda + baseline experiment),https://arxiv.org/abs/2211.03540
+89,89_irving2018_debate.md,AI safety via debate,Preprint (proposal + toy experiment),https://arxiv.org/abs/1805.00899
+90,90_kenton2024_weak_judges_strong.md,On scalable oversight with weak LLMs judging strong LLMs,Conference paper,https://arxiv.org/abs/2407.04622
+91,91_khan2024_debate_persuasive.md,Debating with More Persuasive LLMs Leads to More Truthful Answers,Conference paper,https://arxiv.org/abs/2402.06782
+92,92_engels2025_scaling_laws_scalable_oversight.md,Scaling Laws For Scalable Oversight,Peer-reviewed conference paper,https://arxiv.org/abs/2504.18530
+93,93_burns2023_weak_to_strong.md,Weak-to-Strong Generalization: Eliciting Strong Capabilities With Weak Supervision,Preprint / conference paper,https://arxiv.org/abs/2312.09390
+94,94_hua2025_cost_constrained_monitors.md,Combining Cost-Constrained Runtime Monitors for AI Safety,Preprint / conference paper,https://arxiv.org/abs/2507.15886
+95,95_das2026_optimally_auditing_adversarial_agents.md,Optimally Auditing Adversarial Agents,Preprint (algorithmic game theory),https://arxiv.org/abs/2604.25085
+96,96_avenhaus2002_inspection_games.md,Inspection games (Chapter 51),Handbook chapter (survey),https://ideas.repec.org/h/eee/gamchp/3-51.html
+97,97_baker2025_cot_monitoring.md,Monitoring Reasoning Models for Misbehavior and the Risks of Promoting Obfuscation,Preprint (industry lab),https://arxiv.org/abs/2503.11926
+98,98_motwani2024_secret_collusion.md,Secret Collusion among AI Agents: Multi-Agent Deception via Steganography,Conference paper,https://arxiv.org/abs/2402.07510
+99,99_nakamura2026_colosseum_collusion.md,Colosseum: Auditing Collusion in Cooperative Multi-Agent Systems,Preprint / benchmark,https://arxiv.org/abs/2602.15198
+L01,L01_fishery_resource_model.md,"L01 Fishery: resource model, size and horizon",,
+L02,L02_fishery_programmed_agents.md,L02 Fishery (and shared): programmed agents,,
+L03,L03_reviewer.md,L03 The reviewer (all three games),,
+L04,L04_audits_fines_memory_programmed.md,"L04 Audits, fines and memory for programmed agents (S1-S5, R2-R5, T1, C1)",,
+L05,L05_harm_lines_and_metrics.md,L05 Harm lines and social metrics (all games),,
+L06,L06_forest_resource_model.md,"L06 Forest (Harvest engine): resource model, ring and spillover",,
+L07,L07_forest_agents_and_L6.md,L07 Forest agents: programmed strategies and the L6 language-model study,,
+L08,L08_river_game.md,"L08 River (two-reagent, compositional game; C1, T1, R4)",,
+L09,L09_llm_fishery_agents_and_interface.md,L09 LLM Fishery agents and interface (L1-L5),,
+L10,L10_llm_audit_rates_and_fines.md,"L10 LLM audit rates, fine grids and the stopping-fine rule (L1-L5)",,
+L11,L11_samples_seeds_analysis.md,"L11 Populations, seeds and analysis settings",,
+L12,L12_provenance_post_hoc_and_mismatches.md,"L12 Where the settings came from: pilot history, after-the-fact choices, and paper/code mismatches",,

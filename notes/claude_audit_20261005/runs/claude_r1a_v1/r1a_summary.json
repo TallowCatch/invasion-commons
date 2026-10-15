@@ -1,0 +1,3954 @@
+{
+  "study": "R1a",
+  "prediction": {
+    "e_pred": {
+      "64": 0.9619609053802177,
+      "4": -0.5859053635835585
+    },
+    "computed_utc": "2026-10-14T15:27:35Z",
+    "scale_used_for_both_n": 0.9619609053802177
+  },
+  "status": {
+    "R": 20,
+    "planned": [],
+    "complete": [],
+    "partial": {},
+    "not_started": [],
+    "dropped_by_amendment_3": []
+  },
+  "conditions": [
+    {
+      "name": "n64_base",
+      "n": 64,
+      "q": 0.0,
+      "mult": 0.0,
+      "e": 0.0,
+      "F": 0.0,
+      "exempt": true,
+      "arm": "baseline",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 4987.6025,
+      "collective_frequency": 0.15240625000000002,
+      "collective_frequency_ci": [
+        0.12433034667968751,
+        0.181039697265625
+      ],
+      "efficiency_transfer": 0.12785509772083528,
+      "efficiency_transfer_ci": [
+        0.10837583105063903,
+        0.14903568230991907
+      ],
+      "efficiency_lost": 0.12785509772083528,
+      "efficiency_lost_ci": [
+        0.10886802215780596,
+        0.14899392860197827
+      ],
+      "fines_per_game": 0.0,
+      "fines_per_game_ci": [
+        0.0,
+        0.0
+      ],
+      "audits_per_game": 0.0,
+      "audits_per_game_ci": [
+        0.0,
+        0.0
+      ],
+      "caught_per_game": 0.0,
+      "caught_per_game_ci": [
+        0.0,
+        0.0
+      ],
+      "cooperation_rate": 0.445149072265625,
+      "cooperation_rate_ci": [
+        0.41141366302490234,
+        0.4797151501464843
+      ],
+      "defections_nonfinal_per_agent_game": 10.243467285156251,
+      "defections_nonfinal_per_agent_game_ci": [
+        9.589544287109376,
+        10.897051171875
+      ],
+      "welfare_transfer": 8.858493713391741,
+      "welfare_transfer_ci": [
+        8.117397112896855,
+        9.643353920095617
+      ],
+      "welfare_lost": 8.858493713391741,
+      "welfare_lost_ci": [
+        8.121316224397697,
+        9.67950127096644
+      ],
+      "final_stock_mean": 1.4032464064087458,
+      "final_stock_mean_ci": [
+        0.6067399208915226,
+        2.3630940880209628
+      ],
+      "share_claude-haiku-4-5": 0.42609765624999996,
+      "share_claude-haiku-4-5_ci": [
+        0.32624272460937503,
+        0.5205199462890625
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.14697656249999996,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.1107324462890625,
+        0.1872259033203125
+      ],
+      "share_gpt-5.4-mini": 0.42692578125,
+      "share_gpt-5.4-mini_ci": [
+        0.3242862060546876,
+        0.5294421386718751
+      ],
+      "geno_claude-haiku-4-5_collective": 0.0786142578125,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.0502089111328125,
+        0.10968200683593751
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.3474833984375,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.270407421875,
+        0.4232756103515625
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.026223632812499998,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.017157861328125,
+        0.03644130859374999
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.1207529296875,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.0886638427734375,
+        0.1590218994140625
+      ],
+      "geno_gpt-5.4-mini_collective": 0.047568359374999994,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.034471508789062494,
+        0.06042080078124999
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.379357421875,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.28548847656250004,
+        0.4777950927734375
+      ],
+      "switched_runs": 16,
+      "switch_generation_median": 0.5
+    },
+    {
+      "name": "n4_base",
+      "n": 4,
+      "q": 0.0,
+      "mult": 0.0,
+      "e": 0.0,
+      "F": 0.0,
+      "exempt": true,
+      "arm": "baseline",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 2054.7825000000003,
+      "collective_frequency": 0.5105380859375,
+      "collective_frequency_ci": [
+        0.4326789794921874,
+        0.5872176513671876
+      ],
+      "efficiency_transfer": 0.9056503029659192,
+      "efficiency_transfer_ci": [
+        0.8980920899186813,
+        0.9126911022769616
+      ],
+      "efficiency_lost": 0.9056503029659192,
+      "efficiency_lost_ci": [
+        0.897829817339981,
+        0.9124568561722849
+      ],
+      "fines_per_game": 0.0,
+      "fines_per_game_ci": [
+        0.0,
+        0.0
+      ],
+      "audits_per_game": 0.0,
+      "audits_per_game_ci": [
+        0.0,
+        0.0
+      ],
+      "caught_per_game": 0.0,
+      "caught_per_game_ci": [
+        0.0,
+        0.0
+      ],
+      "cooperation_rate": 0.9006325317382812,
+      "cooperation_rate_ci": [
+        0.8937987857055663,
+        0.9068759909057617
+      ],
+      "defections_nonfinal_per_agent_game": 1.2195332031250001,
+      "defections_nonfinal_per_agent_game_ci": [
+        1.1064683349609377,
+        1.3356745544433593
+      ],
+      "welfare_transfer": 38.414711512704926,
+      "welfare_transfer_ci": [
+        38.11621190965061,
+        38.67502075445938
+      ],
+      "welfare_lost": 38.414711512704926,
+      "welfare_lost_ci": [
+        38.11711374158674,
+        38.67716329098245
+      ],
+      "final_stock_mean": 4.225799848546818,
+      "final_stock_mean_ci": [
+        3.574743028808104,
+        4.870437857313762
+      ],
+      "share_claude-haiku-4-5": 0.0643203125,
+      "share_claude-haiku-4-5_ci": [
+        0.0430347412109375,
+        0.08916401367187501
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.8774599609375,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.84774736328125,
+        0.9045463378906251
+      ],
+      "share_gpt-5.4-mini": 0.0582197265625,
+      "share_gpt-5.4-mini_ci": [
+        0.0448994384765625,
+        0.07279843750000001
+      ],
+      "geno_claude-haiku-4-5_collective": 0.052753906249999996,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.0323544921875,
+        0.0769905517578125
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.011566406250000001,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.008494140625,
+        0.015802734374999995
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.417060546875,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.3501692626953125,
+        0.48220295410156266
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.46039941406249996,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.38448916015625,
+        0.53713037109375
+      ],
+      "geno_gpt-5.4-mini_collective": 0.0407236328125,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.028120971679687502,
+        0.054326489257812506
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.01749609375,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.01256962890625,
+        0.022589892578124996
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.1_e0.5",
+      "n": 64,
+      "q": 0.1,
+      "mult": 0.5,
+      "e": 0.48098045269010886,
+      "F": 4.809804526901089,
+      "exempt": true,
+      "arm": "primary",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 1235.766,
+      "collective_frequency": 0.20116308593749999,
+      "collective_frequency_ci": [
+        0.1677328125,
+        0.23556508789062505
+      ],
+      "efficiency_transfer": 0.2508927900538425,
+      "efficiency_transfer_ci": [
+        0.23885220418989112,
+        0.2626381477216298
+      ],
+      "efficiency_lost": 0.15990108922212656,
+      "efficiency_lost_ci": [
+        0.1466950275782547,
+        0.17373302090898815
+      ],
+      "fines_per_game": 221.291816422733,
+      "fines_per_game_ci": [
+        216.31751470218197,
+        227.29949525173924
+      ],
+      "audits_per_game": 121.575234375,
+      "audits_per_game_ci": [
+        121.49173359375001,
+        121.66300156249999
+      ],
+      "caught_per_game": 46.008484375,
+      "caught_per_game_ci": [
+        44.94935546875,
+        47.202814062499996
+      ],
+      "cooperation_rate": 0.6016125244140624,
+      "cooperation_rate_ci": [
+        0.5917676770019531,
+        0.6101976553344727
+      ],
+      "defections_nonfinal_per_agent_game": 7.194052978515626,
+      "defections_nonfinal_per_agent_game_ci": [
+        7.031343029785156,
+        7.38933187866211
+      ],
+      "welfare_transfer": 13.533926022046014,
+      "welfare_transfer_ci": [
+        13.096912962595821,
+        13.968577988967448
+      ],
+      "welfare_lost": 10.07624139044081,
+      "welfare_lost_ci": [
+        9.55791791117677,
+        10.5726047334154
+      ],
+      "final_stock_mean": 10.646027990070257,
+      "final_stock_mean_ci": [
+        9.292916831954237,
+        12.03677266422315
+      ],
+      "share_claude-haiku-4-5": 0.7838857421875,
+      "share_claude-haiku-4-5_ci": [
+        0.7368637695312501,
+        0.8220435058593751
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.10791894531249999,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.086287548828125,
+        0.13229604492187497
+      ],
+      "share_gpt-5.4-mini": 0.1081953125,
+      "share_gpt-5.4-mini_ci": [
+        0.0840142333984375,
+        0.13493078613281248
+      ],
+      "geno_claude-haiku-4-5_collective": 0.12474902343749998,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.105687841796875,
+        0.142798046875
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.65913671875,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.6128290771484375,
+        0.7016440185546875
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.0372666015625,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.0236105712890625,
+        0.052337939453125
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.07065234375,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.0528267822265625,
+        0.090570361328125
+      ],
+      "geno_gpt-5.4-mini_collective": 0.0391474609375,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.0228559814453125,
+        0.057187573242187505
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.06904785156250001,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.05462099609374999,
+        0.08487902832031252
+      ],
+      "switched_runs": 19,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.1_e0.75",
+      "n": 64,
+      "q": 0.1,
+      "mult": 0.75,
+      "e": 0.7214706790351633,
+      "F": 7.214706790351633,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 907.8925000000002,
+      "collective_frequency": 0.22343359375,
+      "collective_frequency_ci": [
+        0.18356384277343754,
+        0.264338916015625
+      ],
+      "efficiency_transfer": 0.2820417510898435,
+      "efficiency_transfer_ci": [
+        0.2709080103854323,
+        0.29252556289898796
+      ],
+      "efficiency_lost": 0.15022729477298566,
+      "efficiency_lost_ci": [
+        0.13740441495485017,
+        0.1615441633261063
+      ],
+      "fines_per_game": 320.5727577625981,
+      "fines_per_game_ci": [
+        315.2624968323327,
+        326.976007316174
+      ],
+      "audits_per_game": 121.575234375,
+      "audits_per_game_ci": [
+        121.49219921875002,
+        121.66065781249999
+      ],
+      "caught_per_game": 44.433234375,
+      "caught_per_game_ci": [
+        43.71015859375,
+        45.284766796875005
+      ],
+      "cooperation_rate": 0.6150864135742188,
+      "cooperation_rate_ci": [
+        0.6079034930419921,
+        0.6207237725830079
+      ],
+      "defections_nonfinal_per_agent_game": 6.951166259765624,
+      "defections_nonfinal_per_agent_game_ci": [
+        6.834629803466796,
+        7.082522271728515
+      ],
+      "welfare_transfer": 14.717586541414054,
+      "welfare_transfer_ci": [
+        14.305400886281426,
+        15.126084410403537
+      ],
+      "welfare_lost": 9.708637201373456,
+      "welfare_lost_ci": [
+        9.218562957373527,
+        10.122409133769
+      ],
+      "final_stock_mean": 14.015636920824065,
+      "final_stock_mean_ci": [
+        12.50909547540557,
+        15.540432745173138
+      ],
+      "share_claude-haiku-4-5": 0.8237177734374999,
+      "share_claude-haiku-4-5_ci": [
+        0.7848892822265627,
+        0.856859033203125
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.0725576171875,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.05606437988281249,
+        0.08964807128906249
+      ],
+      "share_gpt-5.4-mini": 0.10372460937500001,
+      "share_gpt-5.4-mini_ci": [
+        0.07459189453125,
+        0.1355442626953125
+      ],
+      "geno_claude-haiku-4-5_collective": 0.163021484375,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.13151003417968746,
+        0.19595827636718752
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.6606962890625001,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.6212216552734375,
+        0.701078173828125
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.0249765625,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.013021435546875,
+        0.04025419921875001
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.0475810546875,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.0358807861328125,
+        0.06067404785156251
+      ],
+      "geno_gpt-5.4-mini_collective": 0.035435546874999994,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.019709057617187498,
+        0.053380712890625
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.0682890625,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.05102890625,
+        0.08949582519531252
+      ],
+      "switched_runs": 17,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.1_e1.0",
+      "n": 64,
+      "q": 0.1,
+      "mult": 1.0,
+      "e": 0.9619609053802177,
+      "F": 9.619609053802177,
+      "exempt": true,
+      "arm": "primary",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 2181.1065000000003,
+      "collective_frequency": 0.338708984375,
+      "collective_frequency_ci": [
+        0.27660737304687505,
+        0.3983752685546876
+      ],
+      "efficiency_transfer": 0.3435678391490421,
+      "efficiency_transfer_ci": [
+        0.31335521554979884,
+        0.3738281873237538
+      ],
+      "efficiency_lost": 0.17540063559915806,
+      "efficiency_lost_ci": [
+        0.1406616649917146,
+        0.21085564329444184
+      ],
+      "fines_per_game": 408.9826390333179,
+      "fines_per_game_ci": [
+        399.39719462229596,
+        420.50189917331863
+      ],
+      "audits_per_game": 121.575234375,
+      "audits_per_game_ci": [
+        121.49299804687499,
+        121.66275195312498
+      ],
+      "caught_per_game": 42.515515625,
+      "caught_per_game_ci": [
+        41.523632812500004,
+        43.69406093750001
+      ],
+      "cooperation_rate": 0.6344142211914063,
+      "cooperation_rate_ci": [
+        0.6238950274658204,
+        0.6438290182495118
+      ],
+      "defections_nonfinal_per_agent_game": 6.641457031250001,
+      "defections_nonfinal_per_agent_game_ci": [
+        6.487426770019532,
+        6.8214339233398436
+      ],
+      "welfare_transfer": 17.055577887663596,
+      "welfare_transfer_ci": [
+        15.851889261852389,
+        18.260428060428772
+      ],
+      "welfare_lost": 10.665224152768005,
+      "welfare_lost_ci": [
+        9.37368280695047,
+        12.017495283809149
+      ],
+      "final_stock_mean": 23.93841507502113,
+      "final_stock_mean_ci": [
+        19.73169932022792,
+        28.289714875740597
+      ],
+      "share_claude-haiku-4-5": 0.7567412109375,
+      "share_claude-haiku-4-5_ci": [
+        0.704163427734375,
+        0.8096952880859375
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.0788818359375,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.061434252929687495,
+        0.09850622558593751
+      ],
+      "share_gpt-5.4-mini": 0.164376953125,
+      "share_gpt-5.4-mini_ci": [
+        0.12284660644531248,
+        0.20787739257812504
+      ],
+      "geno_claude-haiku-4-5_collective": 0.17764257812500003,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.14136020507812502,
+        0.21540136718749997
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.5790986328125001,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.5133913330078126,
+        0.6468262939453125
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.04285742187500001,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.025358203124999996,
+        0.06238425292968751
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.036024414062499996,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.027418872070312506,
+        0.0454291748046875
+      ],
+      "geno_gpt-5.4-mini_collective": 0.118208984375,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.08056328125,
+        0.1563262939453125
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.04616796875,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.0358189453125,
+        0.056137670898437506
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.1_e1.25",
+      "n": 64,
+      "q": 0.1,
+      "mult": 1.25,
+      "e": 1.2024511317252722,
+      "F": 12.02451131725272,
+      "exempt": true,
+      "arm": "primary",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 1466.5735000000002,
+      "collective_frequency": 0.5969736328125,
+      "collective_frequency_ci": [
+        0.5406356689453125,
+        0.6496008056640624
+      ],
+      "efficiency_transfer": 0.5668861333092204,
+      "efficiency_transfer_ci": [
+        0.515544815277911,
+        0.6164818480731237
+      ],
+      "efficiency_lost": 0.39476862810501456,
+      "efficiency_lost_ci": [
+        0.3303386336744287,
+        0.4529675944461304
+      ],
+      "fines_per_game": 418.58977265662844,
+      "fines_per_game_ci": [
+        389.2816045379354,
+        448.12783909814306
+      ],
+      "audits_per_game": 121.575234375,
+      "audits_per_game_ci": [
+        121.4950046875,
+        121.66067265624997
+      ],
+      "caught_per_game": 34.811375000000005,
+      "caught_per_game_ci": [
+        32.360918359375006,
+        37.312176171874995
+      ],
+      "cooperation_rate": 0.7014109374999999,
+      "cooperation_rate_ci": [
+        0.6807786929321289,
+        0.7211919110107423
+      ],
+      "defections_nonfinal_per_agent_game": 5.439237548828125,
+      "defections_nonfinal_per_agent_game_ci": [
+        5.048663067626952,
+        5.809328277587889
+      ],
+      "welfare_transfer": 25.541673065750373,
+      "welfare_transfer_ci": [
+        23.632674970448424,
+        27.357119541177987
+      ],
+      "welfare_lost": 19.001207867990555,
+      "welfare_lost_ci": [
+        16.620419008215894,
+        21.258880914085726
+      ],
+      "final_stock_mean": 62.51219161666934,
+      "final_stock_mean_ci": [
+        51.725449407446604,
+        73.4487155387693
+      ],
+      "share_claude-haiku-4-5": 0.48298242187499996,
+      "share_claude-haiku-4-5_ci": [
+        0.3789927001953125,
+        0.5906936279296876
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.1635244140625,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.1032396484375,
+        0.23945720214843752
+      ],
+      "share_gpt-5.4-mini": 0.3534931640625,
+      "share_gpt-5.4-mini_ci": [
+        0.2609536865234375,
+        0.444921533203125
+      ],
+      "geno_claude-haiku-4-5_collective": 0.223716796875,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.16680100097656247,
+        0.2862203125000001
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.259265625,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.19896428222656248,
+        0.32999255371093744
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.1206806640625,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.0653678955078125,
+        0.19493195800781252
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.04284375,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.0327366455078125,
+        0.053346069335937496
+      ],
+      "geno_gpt-5.4-mini_collective": 0.25257617187500003,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.18669145507812498,
+        0.31938486328125
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.10091699218750001,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.0671181640625,
+        0.135582373046875
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.1_e1.5",
+      "n": 64,
+      "q": 0.1,
+      "mult": 1.5,
+      "e": 1.4429413580703265,
+      "F": 14.429413580703265,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 790.927,
+      "collective_frequency": 0.7163525390625001,
+      "collective_frequency_ci": [
+        0.6804810791015625,
+        0.7494347412109376
+      ],
+      "efficiency_transfer": 0.7329209506428627,
+      "efficiency_transfer_ci": [
+        0.7088758407696631,
+        0.7578951766120192
+      ],
+      "efficiency_lost": 0.5755783412267176,
+      "efficiency_lost_ci": [
+        0.54231783945854,
+        0.6117164366476057
+      ],
+      "fines_per_game": 382.65722610006503,
+      "fines_per_game_ci": [
+        357.62569379763613,
+        407.4673007229683
+      ],
+      "audits_per_game": 121.575234375,
+      "audits_per_game_ci": [
+        121.49351523437501,
+        121.66250546874998
+      ],
+      "caught_per_game": 26.51925,
+      "caught_per_game_ci": [
+        24.695674609375,
+        28.2085484375
+      ],
+      "cooperation_rate": 0.7684344604492186,
+      "cooperation_rate_ci": [
+        0.7543335375976561,
+        0.783616819152832
+      ],
+      "defections_nonfinal_per_agent_game": 4.1443876953125,
+      "defections_nonfinal_per_agent_game_ci": [
+        3.859347766113281,
+        4.412762005615234
+      ],
+      "welfare_transfer": 31.850996124428782,
+      "welfare_transfer_ci": [
+        30.931218456474912,
+        32.812653754704684
+      ],
+      "welfare_lost": 25.871976966615268,
+      "welfare_lost_ci": [
+        24.57183226822762,
+        27.226177379424076
+      ],
+      "final_stock_mean": 94.69374917369305,
+      "final_stock_mean_ci": [
+        84.83911212183071,
+        105.51714656544453
+      ],
+      "share_claude-haiku-4-5": 0.36318066406250005,
+      "share_claude-haiku-4-5_ci": [
+        0.27660576171875,
+        0.4624654052734376
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.31371484375,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.2298740234375,
+        0.3991863525390625
+      ],
+      "share_gpt-5.4-mini": 0.32310449218750004,
+      "share_gpt-5.4-mini_ci": [
+        0.261913671875,
+        0.3887310546875
+      ],
+      "geno_claude-haiku-4-5_collective": 0.23160058593750002,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.1689460693359375,
+        0.3006386474609375
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.131580078125,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.0858215087890625,
+        0.17868767089843748
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.24511621093749997,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.177030126953125,
+        0.31950490722656244
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.06859863281249999,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.047199462890625,
+        0.091775439453125
+      ],
+      "geno_gpt-5.4-mini_collective": 0.2396357421875,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.1898534912109375,
+        0.28908178710937504
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.08346875,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.06471005859375,
+        0.10274931640624999
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.1_e2.0",
+      "n": 64,
+      "q": 0.1,
+      "mult": 2.0,
+      "e": 1.9239218107604354,
+      "F": 19.239218107604355,
+      "exempt": true,
+      "arm": "primary",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 1474.0929999999998,
+      "collective_frequency": 0.8447998046875,
+      "collective_frequency_ci": [
+        0.8271131103515624,
+        0.862847900390625
+      ],
+      "efficiency_transfer": 0.8719822390390937,
+      "efficiency_transfer_ci": [
+        0.8572544576341793,
+        0.8861471148268277
+      ],
+      "efficiency_lost": 0.7431150271574417,
+      "efficiency_lost_ci": [
+        0.7162227296263995,
+        0.7682758416778686
+      ],
+      "fines_per_game": 313.4050592961774,
+      "fines_per_game_ci": [
+        286.8127773648772,
+        341.3464613359949
+      ],
+      "audits_per_game": 121.575234375,
+      "audits_per_game_ci": [
+        121.492670703125,
+        121.66367851562501
+      ],
+      "caught_per_game": 16.28990625,
+      "caught_per_game_ci": [
+        14.884136328125,
+        17.758678125000003
+      ],
+      "cooperation_rate": 0.8535222290039062,
+      "cooperation_rate_ci": [
+        0.8402859170532225,
+        0.8660301455688476
+      ],
+      "defections_nonfinal_per_agent_game": 2.5460776367187505,
+      "defections_nonfinal_per_agent_game_ci": [
+        2.328958203125,
+        2.769052825927735
+      ],
+      "welfare_transfer": 37.13532508348556,
+      "welfare_transfer_ci": [
+        36.54695076452384,
+        37.675841468483895
+      ],
+      "welfare_lost": 32.238371031982794,
+      "welfare_lost_ci": [
+        31.226114913054737,
+        33.17392722917631
+      ],
+      "final_stock_mean": 149.45509851390545,
+      "final_stock_mean_ci": [
+        136.15980880925125,
+        160.7599431806823
+      ],
+      "share_claude-haiku-4-5": 0.4532197265624999,
+      "share_claude-haiku-4-5_ci": [
+        0.36448806152343755,
+        0.5370770751953124
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.2999697265625,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.24485170898437494,
+        0.36453654785156253
+      ],
+      "share_gpt-5.4-mini": 0.24681054687499998,
+      "share_gpt-5.4-mini_ci": [
+        0.18748315429687498,
+        0.31028645019531254
+      ],
+      "geno_claude-haiku-4-5_collective": 0.39236132812499996,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.3221582763671875,
+        0.46312753906250015
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.060858398437499996,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.041345190429687505,
+        0.08211943359375003
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.2486318359375,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.19852004394531247,
+        0.30519377441406254
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.05133789062499999,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.036035668945312495,
+        0.0698225341796875
+      ],
+      "geno_gpt-5.4-mini_collective": 0.203806640625,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.153294384765625,
+        0.2538840087890625
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.04300390625,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.028831884765625006,
+        0.06044165039062501
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.25_e0.5",
+      "n": 64,
+      "q": 0.25,
+      "mult": 0.5,
+      "e": 0.48098045269010886,
+      "F": 1.9239218107604354,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 1089.726,
+      "collective_frequency": 0.1651982421875,
+      "collective_frequency_ci": [
+        0.141665625,
+        0.18862724609375003
+      ],
+      "efficiency_transfer": 0.25027024364435224,
+      "efficiency_transfer_ci": [
+        0.23844996990412964,
+        0.2618693608993422
+      ],
+      "efficiency_lost": 0.15970802231302048,
+      "efficiency_lost_ci": [
+        0.14584155584766761,
+        0.1730655646055397
+      ],
+      "fines_per_game": 220.24732227779901,
+      "fines_per_game_ci": [
+        215.29221205307627,
+        225.75250429417684
+      ],
+      "audits_per_game": 303.982390625,
+      "audits_per_game_ci": [
+        303.86850625,
+        304.0951265625
+      ],
+      "caught_per_game": 114.47831249999999,
+      "caught_per_game_ci": [
+        111.81290078125,
+        117.44574570312501
+      ],
+      "cooperation_rate": 0.603511962890625,
+      "cooperation_rate_ci": [
+        0.5940409436035156,
+        0.6115732659912111
+      ],
+      "defections_nonfinal_per_agent_game": 7.153265136718749,
+      "defections_nonfinal_per_agent_game_ci": [
+        6.992774707031249,
+        7.331350543212891
+      ],
+      "welfare_transfer": 13.510269258485389,
+      "welfare_transfer_ci": [
+        13.05037416461359,
+        13.943623245819426
+      ],
+      "welfare_lost": 10.068904847894778,
+      "welfare_lost_ci": [
+        9.540654971732334,
+        10.566269337336964
+      ],
+      "final_stock_mean": 10.43828888192537,
+      "final_stock_mean_ci": [
+        9.059462195094094,
+        11.786339458421727
+      ],
+      "share_claude-haiku-4-5": 0.7824130859374999,
+      "share_claude-haiku-4-5_ci": [
+        0.7249302246093751,
+        0.832563427734375
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.08052832031249998,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.0644989013671875,
+        0.09725644531250001
+      ],
+      "share_gpt-5.4-mini": 0.13705859375,
+      "share_gpt-5.4-mini_ci": [
+        0.09546147460937501,
+        0.19244157714843751
+      ],
+      "geno_claude-haiku-4-5_collective": 0.10370312500000001,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.084531787109375,
+        0.12404716796874997
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.6787099609375,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.6198633544921873,
+        0.7300516357421876
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.0209658203125,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.013525854492187505,
+        0.029038647460937504
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.0595625,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.0473657470703125,
+        0.0720166259765625
+      ],
+      "geno_gpt-5.4-mini_collective": 0.04052929687500001,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.025005517578125,
+        0.057949780273437515
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.096529296875,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.063951171875,
+        0.13867646484374996
+      ],
+      "switched_runs": 18,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.25_e0.75",
+      "n": 64,
+      "q": 0.25,
+      "mult": 0.75,
+      "e": 0.7214706790351633,
+      "F": 2.885882716140653,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 1297.3314999999998,
+      "collective_frequency": 0.22482324218749997,
+      "collective_frequency_ci": [
+        0.190276123046875,
+        0.25905895996093753
+      ],
+      "efficiency_transfer": 0.2738195311129078,
+      "efficiency_transfer_ci": [
+        0.26172388764490695,
+        0.2853774718900015
+      ],
+      "efficiency_lost": 0.14158104946468197,
+      "efficiency_lost_ci": [
+        0.12738056492804045,
+        0.15522451177609153
+      ],
+      "fines_per_game": 321.60398736848526,
+      "fines_per_game_ci": [
+        316.28343984455404,
+        327.8007892145531
+      ],
+      "audits_per_game": 303.982390625,
+      "audits_per_game_ci": [
+        303.87514843750006,
+        304.09164218750004
+      ],
+      "caught_per_game": 111.440421875,
+      "caught_per_game_ci": [
+        109.49066484375001,
+        113.61140351562503
+      ],
+      "cooperation_rate": 0.61447333984375,
+      "cooperation_rate_ci": [
+        0.6070890307617187,
+        0.6206834030151367
+      ],
+      "defections_nonfinal_per_agent_game": 6.966892822265625,
+      "defections_nonfinal_per_agent_game_ci": [
+        6.85243779296875,
+        7.103937280273436
+      ],
+      "welfare_transfer": 14.405142182290499,
+      "welfare_transfer_ci": [
+        13.948024990475366,
+        14.86442503214792
+      ],
+      "welfare_lost": 9.380079879657917,
+      "welfare_lost_ci": [
+        8.848514133583603,
+        9.89112949265569
+      ],
+      "final_stock_mean": 13.878646514497936,
+      "final_stock_mean_ci": [
+        12.082011418534291,
+        15.691124081864224
+      ],
+      "share_claude-haiku-4-5": 0.816810546875,
+      "share_claude-haiku-4-5_ci": [
+        0.7760304199218748,
+        0.8550653564453125
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.0874541015625,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.06789445800781249,
+        0.10735456542968749
+      ],
+      "share_gpt-5.4-mini": 0.0957353515625,
+      "share_gpt-5.4-mini_ci": [
+        0.06575859375,
+        0.12890551757812502
+      ],
+      "geno_claude-haiku-4-5_collective": 0.1607568359375,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.13079951171874998,
+        0.19211235351562497
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.6560537109375001,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.617111328125,
+        0.6911527343749999
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.019855468749999997,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.0129363525390625,
+        0.027316528320312502
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.06759863281249999,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.0527889892578125,
+        0.0820199951171875
+      ],
+      "geno_gpt-5.4-mini_collective": 0.04421093749999999,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.022982836914062502,
+        0.07055754394531252
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.0515244140625,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.0364371826171875,
+        0.06770800781250001
+      ],
+      "switched_runs": 17,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.25_e1.0",
+      "n": 64,
+      "q": 0.25,
+      "mult": 1.0,
+      "e": 0.9619609053802177,
+      "F": 3.847843621520871,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 1202.537,
+      "collective_frequency": 0.37863867187500005,
+      "collective_frequency_ci": [
+        0.31037890625000003,
+        0.4493661132812501
+      ],
+      "efficiency_transfer": 0.3790306367083286,
+      "efficiency_transfer_ci": [
+        0.34094376762013834,
+        0.4194267276901488
+      ],
+      "efficiency_lost": 0.21688596057786924,
+      "efficiency_lost_ci": [
+        0.17423575945457956,
+        0.261624430022334
+      ],
+      "fines_per_game": 394.335852349277,
+      "fines_per_game_ci": [
+        382.5294025386348,
+        405.38814885912376
+      ],
+      "audits_per_game": 303.982390625,
+      "audits_per_game_ci": [
+        303.87192539062494,
+        304.0940656249999
+      ],
+      "caught_per_game": 102.48229687499997,
+      "caught_per_game_ci": [
+        99.31930625,
+        105.30718046875
+      ],
+      "cooperation_rate": 0.6476692016601563,
+      "cooperation_rate_ci": [
+        0.6368340756225587,
+        0.6593986474609376
+      ],
+      "defections_nonfinal_per_agent_game": 6.406026367187501,
+      "defections_nonfinal_per_agent_game_ci": [
+        6.21808881225586,
+        6.588255242919923
+      ],
+      "welfare_transfer": 18.403164194916485,
+      "welfare_transfer_ci": [
+        16.94675726233908,
+        19.93483940734603
+      ],
+      "welfare_lost": 12.241666501959031,
+      "welfare_lost_ci": [
+        10.684880402819099,
+        13.925290705880224
+      ],
+      "final_stock_mean": 30.446879662666923,
+      "final_stock_mean_ci": [
+        23.5950850226745,
+        37.80882351825518
+      ],
+      "share_claude-haiku-4-5": 0.7253525390625,
+      "share_claude-haiku-4-5_ci": [
+        0.6491584228515626,
+        0.7919003662109373
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.09194042968749999,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.06696152343749999,
+        0.12207167968750002
+      ],
+      "share_gpt-5.4-mini": 0.18270703124999998,
+      "share_gpt-5.4-mini_ci": [
+        0.12828798828125001,
+        0.24305119628906252
+      ],
+      "geno_claude-haiku-4-5_collective": 0.20518652343750002,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.16318837890625001,
+        0.2485763671875
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.520166015625,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.446440576171875,
+        0.5897458740234375
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.0490791015625,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.029730053710937496,
+        0.075036572265625
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.042861328125,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.0304010009765625,
+        0.05602473144531251
+      ],
+      "geno_gpt-5.4-mini_collective": 0.12437304687500002,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.07689716796875,
+        0.1761175537109375
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.058333984375,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.039254833984375,
+        0.08023969726562502
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.25_e1.25",
+      "n": 64,
+      "q": 0.25,
+      "mult": 1.25,
+      "e": 1.2024511317252722,
+      "F": 4.809804526901089,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 1199.7314999999999,
+      "collective_frequency": 0.5568339843749999,
+      "collective_frequency_ci": [
+        0.48523547363281255,
+        0.6204434570312499
+      ],
+      "efficiency_transfer": 0.5402853160396125,
+      "efficiency_transfer_ci": [
+        0.48522719625840777,
+        0.5888920171569606
+      ],
+      "efficiency_lost": 0.36457216922525665,
+      "efficiency_lost_ci": [
+        0.29885046675018156,
+        0.4239568963410482
+      ],
+      "fines_per_game": 427.3343730525133,
+      "fines_per_game_ci": [
+        403.97353198899316,
+        451.9800744845395
+      ],
+      "audits_per_game": 303.982390625,
+      "audits_per_game_ci": [
+        303.8732171875,
+        304.0937347656251
+      ],
+      "caught_per_game": 88.846515625,
+      "caught_per_game_ci": [
+        83.8929421875,
+        93.94749140625001
+      ],
+      "cooperation_rate": 0.6947285522460939,
+      "cooperation_rate_ci": [
+        0.67654515625,
+        0.7122120712280274
+      ],
+      "defections_nonfinal_per_agent_game": 5.551366699218749,
+      "defections_nonfinal_per_agent_game_ci": [
+        5.247914031982422,
+        5.878129162597657
+      ],
+      "welfare_transfer": 24.530842009505275,
+      "welfare_transfer_ci": [
+        22.51526444357803,
+        26.35912960969405
+      ],
+      "welfare_lost": 17.853742430559755,
+      "welfare_lost_ci": [
+        15.50703935691719,
+        20.08833330831308
+      ],
+      "final_stock_mean": 56.96386567032221,
+      "final_stock_mean_ci": [
+        46.38062640392215,
+        66.78945804420266
+      ],
+      "share_claude-haiku-4-5": 0.5789892578125,
+      "share_claude-haiku-4-5_ci": [
+        0.49519697265625,
+        0.6592779296875001
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.19130371093749998,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.13046577148437505,
+        0.26382746582031247
+      ],
+      "share_gpt-5.4-mini": 0.22970703124999997,
+      "share_gpt-5.4-mini_ci": [
+        0.16901281738281249,
+        0.2906884765625
+      ],
+      "geno_claude-haiku-4-5_collective": 0.259544921875,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.21317529296875,
+        0.3063540771484375
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.3194443359375,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.24635432128906248,
+        0.40093471679687503
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.123771484375,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.07582795410156251,
+        0.18436640625000003
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.06753222656249999,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.044586621093749994,
+        0.09290710449218752
+      ],
+      "geno_gpt-5.4-mini_collective": 0.173517578125,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.12293935546874996,
+        0.2256657470703125
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.056189453125,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.04054489746093749,
+        0.07253474121093749
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.25_e1.5",
+      "n": 64,
+      "q": 0.25,
+      "mult": 1.5,
+      "e": 1.4429413580703265,
+      "F": 5.771765432281306,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 1096.0880000000002,
+      "collective_frequency": 0.7074990234375,
+      "collective_frequency_ci": [
+        0.672549853515625,
+        0.7419005371093752
+      ],
+      "efficiency_transfer": 0.7395502996414166,
+      "efficiency_transfer_ci": [
+        0.7085831415399295,
+        0.7685287364724066
+      ],
+      "efficiency_lost": 0.5855732678789121,
+      "efficiency_lost_ci": [
+        0.5419785023570933,
+        0.6246764222633611
+      ],
+      "fines_per_game": 374.4721412464111,
+      "fines_per_game_ci": [
+        349.16427327363454,
+        402.6618359173547
+      ],
+      "audits_per_game": 303.982390625,
+      "audits_per_game_ci": [
+        303.873901171875,
+        304.09173789062504
+      ],
+      "caught_per_game": 64.88000000000001,
+      "caught_per_game_ci": [
+        60.454875390625006,
+        69.88744609375001
+      ],
+      "cooperation_rate": 0.7741715576171876,
+      "cooperation_rate_ci": [
+        0.7593126736450196,
+        0.7882097027587892
+      ],
+      "defections_nonfinal_per_agent_game": 4.054749755859375,
+      "defections_nonfinal_per_agent_game_ci": [
+        3.7837320251464845,
+        4.352845837402343
+      ],
+      "welfare_transfer": 32.102911386373826,
+      "welfare_transfer_ci": [
+        30.89144199856029,
+        33.18195576861883
+      ],
+      "welfare_lost": 26.25178417939866,
+      "welfare_lost_ci": [
+        24.573473059250343,
+        27.762645303801083
+      ],
+      "final_stock_mean": 102.11301535966115,
+      "final_stock_mean_ci": [
+        92.24072612506951,
+        111.78647931843446
+      ],
+      "share_claude-haiku-4-5": 0.40428125000000004,
+      "share_claude-haiku-4-5_ci": [
+        0.32230556640624997,
+        0.48670263671874997
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.2899619140625,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.230510205078125,
+        0.35126835937500006
+      ],
+      "share_gpt-5.4-mini": 0.30575683593749997,
+      "share_gpt-5.4-mini_ci": [
+        0.23289611816406247,
+        0.38328212890624996
+      ],
+      "geno_claude-haiku-4-5_collective": 0.2864951171875,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.221385546875,
+        0.3539388916015625
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.11778613281249997,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.0853370361328125,
+        0.15203652343750002
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.19051269531249998,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.143748046875,
+        0.24260764160156253
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.09944921874999998,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.071299365234375,
+        0.13377043457031246
+      ],
+      "geno_gpt-5.4-mini_collective": 0.23049121093749997,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.169486474609375,
+        0.29280788574218747
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.07526562499999999,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.05212988281249999,
+        0.09953168945312499
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.25_e2.0",
+      "n": 64,
+      "q": 0.25,
+      "mult": 2.0,
+      "e": 1.9239218107604354,
+      "F": 7.695687243041742,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 1328.6654999999998,
+      "collective_frequency": 0.823869140625,
+      "collective_frequency_ci": [
+        0.797380126953125,
+        0.849635302734375
+      ],
+      "efficiency_transfer": 0.8864122356086417,
+      "efficiency_transfer_ci": [
+        0.8771768763837182,
+        0.8947244364379273
+      ],
+      "efficiency_lost": 0.7681518095610562,
+      "efficiency_lost_ci": [
+        0.750263180812803,
+        0.7842523620840922
+      ],
+      "fines_per_game": 287.6093561477277,
+      "fines_per_game_ci": [
+        268.1999761743451,
+        306.38440707559135
+      ],
+      "audits_per_game": 303.982390625,
+      "audits_per_game_ci": [
+        303.871437109375,
+        304.09414492187494
+      ],
+      "caught_per_game": 37.37279687499999,
+      "caught_per_game_ci": [
+        34.91200078125,
+        39.859260546875
+      ],
+      "cooperation_rate": 0.8674071533203124,
+      "cooperation_rate_ci": [
+        0.8586267547607421,
+        0.8760091058349609
+      ],
+      "defections_nonfinal_per_agent_game": 2.335268310546875,
+      "defections_nonfinal_per_agent_game_ci": [
+        2.1792083679199217,
+        2.4871960571289065
+      ],
+      "welfare_transfer": 37.68366495312838,
+      "welfare_transfer_ci": [
+        37.31809090478625,
+        38.009207137378
+      ],
+      "welfare_lost": 33.18976876332014,
+      "welfare_lost_ci": [
+        32.534813235052106,
+        33.813017467555234
+      ],
+      "final_stock_mean": 166.81507064582544,
+      "final_stock_mean_ci": [
+        158.82184585595388,
+        174.5842500479272
+      ],
+      "share_claude-haiku-4-5": 0.4624228515625,
+      "share_claude-haiku-4-5_ci": [
+        0.3746109130859375,
+        0.5473826904296876
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.2000888671875,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.1559146728515625,
+        0.24562033691406254
+      ],
+      "share_gpt-5.4-mini": 0.3374882812500001,
+      "share_gpt-5.4-mini_ci": [
+        0.251704345703125,
+        0.4326461669921876
+      ],
+      "geno_claude-haiku-4-5_collective": 0.3987724609375,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.3223904296875,
+        0.4722105712890626
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.063650390625,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.046830224609375,
+        0.08147312011718749
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.1596611328125,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.120100244140625,
+        0.200585693359375
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.040427734375,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.029187182617187495,
+        0.05378093261718749
+      ],
+      "geno_gpt-5.4-mini_collective": 0.265435546875,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.203116748046875,
+        0.33124125976562496
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.072052734375,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.04292724609374999,
+        0.10617731933593749
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.1_e0.5",
+      "n": 4,
+      "q": 0.1,
+      "mult": 0.5,
+      "e": 0.48098045269010886,
+      "F": 4.809804526901089,
+      "exempt": true,
+      "arm": "primary",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 4482.836000000001,
+      "collective_frequency": 0.6443447265625,
+      "collective_frequency_ci": [
+        0.5811478027343749,
+        0.706625244140625
+      ],
+      "efficiency_transfer": 0.9178726311725223,
+      "efficiency_transfer_ci": [
+        0.9107101570650884,
+        0.9244905184460419
+      ],
+      "efficiency_lost": 0.9054409267384228,
+      "efficiency_lost_ci": [
+        0.8974918312603734,
+        0.9133069007572421
+      ],
+      "fines_per_game": 1.8896190739831322,
+      "fines_per_game_ci": [
+        1.7087483475204048,
+        2.076347052638287
+      ],
+      "audits_per_game": 7.6028125000000015,
+      "audits_per_game_ci": [
+        7.598203369140626,
+        7.60761823730469
+      ],
+      "caught_per_game": 0.3928681640625,
+      "caught_per_game_ci": [
+        0.354274560546875,
+        0.42973132324218744
+      ],
+      "cooperation_rate": 0.9170207397460937,
+      "cooperation_rate_ci": [
+        0.9118499664306642,
+        0.9222831942749024
+      ],
+      "defections_nonfinal_per_agent_game": 0.9807216796875,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.8827682556152344,
+        1.0726733642578126
+      ],
+      "welfare_transfer": 38.87915998455584,
+      "welfare_transfer_ci": [
+        38.610337159549445,
+        39.12696374227786
+      ],
+      "welfare_lost": 38.40675521606006,
+      "welfare_lost_ci": [
+        38.100156435357114,
+        38.7037268581727
+      ],
+      "final_stock_mean": 5.828295707825409,
+      "final_stock_mean_ci": [
+        5.2438064354382075,
+        6.389505127271925
+      ],
+      "share_claude-haiku-4-5": 0.07244628906250002,
+      "share_claude-haiku-4-5_ci": [
+        0.054952001953125,
+        0.09124125976562501
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.8176816406249999,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.7704435546875001,
+        0.8561680908203125
+      ],
+      "share_gpt-5.4-mini": 0.10987207031249999,
+      "share_gpt-5.4-mini_ci": [
+        0.07859299316406249,
+        0.1471151123046875
+      ],
+      "geno_claude-haiku-4-5_collective": 0.0640400390625,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.0481263671875,
+        0.08177941894531249
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.00840625,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.0057371826171875,
+        0.011297924804687503
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.485640625,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.41767539062500003,
+        0.5544808837890626
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.332041015625,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.2702322021484376,
+        0.39271906738281254
+      ],
+      "geno_gpt-5.4-mini_collective": 0.0946640625,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.06600383300781251,
+        0.1295600830078125
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.015208007812500002,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.0112832763671875,
+        0.019386791992187503
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.1_e0.75",
+      "n": 4,
+      "q": 0.1,
+      "mult": 0.75,
+      "e": 0.7214706790351633,
+      "F": 7.214706790351633,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 2069.713,
+      "collective_frequency": 0.72880859375,
+      "collective_frequency_ci": [
+        0.6822459472656249,
+        0.772973876953125
+      ],
+      "efficiency_transfer": 0.9316002968513155,
+      "efficiency_transfer_ci": [
+        0.9268434861292496,
+        0.9361360793505477
+      ],
+      "efficiency_lost": 0.9176738101869576,
+      "efficiency_lost_ci": [
+        0.9116774068937351,
+        0.9236411344547617
+      ],
+      "fines_per_game": 2.116825972982409,
+      "fines_per_game_ci": [
+        1.917037249610401,
+        2.333281796338065
+      ],
+      "audits_per_game": 7.6028125000000015,
+      "audits_per_game_ci": [
+        7.598208862304689,
+        7.607806762695313
+      ],
+      "caught_per_game": 0.293404296875,
+      "caught_per_game_ci": [
+        0.26493452148437496,
+        0.32268347167968753
+      ],
+      "cooperation_rate": 0.9320185546875,
+      "cooperation_rate_ci": [
+        0.9281111456298828,
+        0.9355003024291992
+      ],
+      "defections_nonfinal_per_agent_game": 0.7338510742187501,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.6632369689941405,
+        0.8060380004882814
+      ],
+      "welfare_transfer": 39.40081128034999,
+      "welfare_transfer_ci": [
+        39.223129910919596,
+        39.57689354712598
+      ],
+      "welfare_lost": 38.871604787104395,
+      "welfare_lost_ci": [
+        38.64164928128994,
+        39.088128793142396
+      ],
+      "final_stock_mean": 6.843609485329724,
+      "final_stock_mean_ci": [
+        6.42114416469016,
+        7.3115667618958025
+      ],
+      "share_claude-haiku-4-5": 0.088921875,
+      "share_claude-haiku-4-5_ci": [
+        0.05931215820312499,
+        0.123641650390625
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.813109375,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.7719374511718752,
+        0.8481625244140625
+      ],
+      "share_gpt-5.4-mini": 0.09796875,
+      "share_gpt-5.4-mini_ci": [
+        0.077932861328125,
+        0.11971997070312498
+      ],
+      "geno_claude-haiku-4-5_collective": 0.0811826171875,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.052769287109375,
+        0.113138720703125
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.007739257812499999,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.0054267333984375,
+        0.010292163085937498
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.5629472656249999,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.5115337158203125,
+        0.6154710937500001
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.25016210937500005,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.20692658691406254,
+        0.29575522460937503
+      ],
+      "geno_gpt-5.4-mini_collective": 0.0846787109375,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.0676538330078125,
+        0.10371782226562501
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.013290039062499998,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.0095935546875,
+        0.017194531250000002
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.1_e1.0",
+      "n": 4,
+      "q": 0.1,
+      "mult": 1.0,
+      "e": 0.9619609053802177,
+      "F": 9.619609053802177,
+      "exempt": true,
+      "arm": "primary",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 3021.4145,
+      "collective_frequency": 0.6936416015625,
+      "collective_frequency_ci": [
+        0.593531201171875,
+        0.7859748779296876
+      ],
+      "efficiency_transfer": 0.937350511763829,
+      "efficiency_transfer_ci": [
+        0.9305798140031034,
+        0.9446168557381054
+      ],
+      "efficiency_lost": 0.9200544611126686,
+      "efficiency_lost_ci": [
+        0.9097499373884155,
+        0.9298899309438663
+      ],
+      "fines_per_game": 2.6289996989763753,
+      "fines_per_game_ci": [
+        2.0834873107941156,
+        3.1793303464200564
+      ],
+      "audits_per_game": 7.6028125000000015,
+      "audits_per_game_ci": [
+        7.598002758789063,
+        7.607444677734376
+      ],
+      "caught_per_game": 0.2732958984375,
+      "caught_per_game_ci": [
+        0.21648837890625003,
+        0.32726025390624996
+      ],
+      "cooperation_rate": 0.9329766601562499,
+      "cooperation_rate_ci": [
+        0.923841130065918,
+        0.9421435464477539
+      ],
+      "defections_nonfinal_per_agent_game": 0.683617431640625,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.545124200439453,
+        0.8211430908203124
+      ],
+      "welfare_transfer": 39.619319447025504,
+      "welfare_transfer_ci": [
+        39.34372693280027,
+        39.902569598071885
+      ],
+      "welfare_lost": 38.962069522281396,
+      "welfare_lost_ci": [
+        38.57369205597232,
+        39.35796669909957
+      ],
+      "final_stock_mean": 6.34343660948454,
+      "final_stock_mean_ci": [
+        5.394069647336522,
+        7.239949388183541
+      ],
+      "share_claude-haiku-4-5": 0.065443359375,
+      "share_claude-haiku-4-5_ci": [
+        0.0495511474609375,
+        0.084771728515625
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.8401259765625,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.7976032470703126,
+        0.8748145996093749
+      ],
+      "share_gpt-5.4-mini": 0.0944306640625,
+      "share_gpt-5.4-mini_ci": [
+        0.0657424072265625,
+        0.1258947998046875
+      ],
+      "geno_claude-haiku-4-5_collective": 0.060423828125,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.04396726074218749,
+        0.08023100585937502
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.00501953125,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.0030536865234375,
+        0.007366259765624999
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.5482744140624999,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.46953457031249995,
+        0.6283436279296875
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.2918515625,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.19742907714843752,
+        0.388357177734375
+      ],
+      "geno_gpt-5.4-mini_collective": 0.084943359375,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.05777119140625,
+        0.11678076171875001
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.0094873046875,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.007317333984375,
+        0.011815820312500001
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.1_e1.25",
+      "n": 4,
+      "q": 0.1,
+      "mult": 1.25,
+      "e": 1.2024511317252722,
+      "F": 12.02451131725272,
+      "exempt": true,
+      "arm": "primary",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 4484.444999999999,
+      "collective_frequency": 0.7299130859375,
+      "collective_frequency_ci": [
+        0.6706321777343751,
+        0.78777216796875
+      ],
+      "efficiency_transfer": 0.9434706742825723,
+      "efficiency_transfer_ci": [
+        0.9392970036041579,
+        0.9477958325066111
+      ],
+      "efficiency_lost": 0.9257299466221209,
+      "efficiency_lost_ci": [
+        0.9189387998375351,
+        0.9323358788724979
+      ],
+      "fines_per_game": 2.696590604388589,
+      "fines_per_game_ci": [
+        2.3112619687017806,
+        3.0898434987176477
+      ],
+      "audits_per_game": 7.6028125000000015,
+      "audits_per_game_ci": [
+        7.598228271484376,
+        7.607499243164065
+      ],
+      "caught_per_game": 0.22425781249999996,
+      "caught_per_game_ci": [
+        0.19295393066406252,
+        0.257155029296875
+      ],
+      "cooperation_rate": 0.9404359985351561,
+      "cooperation_rate_ci": [
+        0.9354160205078125,
+        0.9450174682617187
+      ],
+      "defections_nonfinal_per_agent_game": 0.56078662109375,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.4796924987792968,
+        0.6422179504394531
+      ],
+      "welfare_transfer": 39.85188562273775,
+      "welfare_transfer_ci": [
+        39.68886454771946,
+        40.01345711673967
+      ],
+      "welfare_lost": 39.177737971640596,
+      "welfare_lost_ci": [
+        38.92061463369501,
+        39.43989561624421
+      ],
+      "final_stock_mean": 6.874897924819457,
+      "final_stock_mean_ci": [
+        6.403666013762499,
+        7.316676541850595
+      ],
+      "share_claude-haiku-4-5": 0.060085937500000006,
+      "share_claude-haiku-4-5_ci": [
+        0.045657958984375004,
+        0.075310009765625
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.839828125,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.8150883300781251,
+        0.8645009033203126
+      ],
+      "share_gpt-5.4-mini": 0.10008593750000001,
+      "share_gpt-5.4-mini_ci": [
+        0.0780197998046875,
+        0.124233447265625
+      ],
+      "geno_claude-haiku-4-5_collective": 0.05578515625000001,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.04178291015624999,
+        0.07037238769531251
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.00430078125,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.0029892578125000004,
+        0.0058974609375
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.5831669921875,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.518575,
+        0.6423105712890627
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.2566611328125,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.201632666015625,
+        0.31683876953125
+      ],
+      "geno_gpt-5.4-mini_collective": 0.0909609375,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.07089736328125,
+        0.11449238281250002
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.009125,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.0068427490234375,
+        0.011625048828125
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.1_e1.5",
+      "n": 4,
+      "q": 0.1,
+      "mult": 1.5,
+      "e": 1.4429413580703265,
+      "F": 14.429413580703265,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 4545.062499999999,
+      "collective_frequency": 0.7584619140625,
+      "collective_frequency_ci": [
+        0.6936807128906249,
+        0.8166889892578126
+      ],
+      "efficiency_transfer": 0.9453659860187381,
+      "efficiency_transfer_ci": [
+        0.9406537966408379,
+        0.9497852106478338
+      ],
+      "efficiency_lost": 0.9261332263888924,
+      "efficiency_lost_ci": [
+        0.9182834271842373,
+        0.9335060855044837
+      ],
+      "fines_per_game": 2.9233794637366017,
+      "fines_per_game_ci": [
+        2.4459476510075024,
+        3.436087247127744
+      ],
+      "audits_per_game": 7.6028125000000015,
+      "audits_per_game_ci": [
+        7.598152197265627,
+        7.607611499023439
+      ],
+      "caught_per_game": 0.2025986328125,
+      "caught_per_game_ci": [
+        0.17152497558593752,
+        0.23652583007812497
+      ],
+      "cooperation_rate": 0.9447666625976563,
+      "cooperation_rate_ci": [
+        0.9391384921264648,
+        0.9502841986083985
+      ],
+      "defections_nonfinal_per_agent_game": 0.5059560546875,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.4262335754394531,
+        0.5880171020507813
+      ],
+      "welfare_transfer": 39.92390746871205,
+      "welfare_transfer_ci": [
+        39.74313860988857,
+        40.09813021097348
+      ],
+      "welfare_lost": 39.1930626027779,
+      "welfare_lost_ci": [
+        38.88688176520006,
+        39.47167129073499
+      ],
+      "final_stock_mean": 7.450720059418646,
+      "final_stock_mean_ci": [
+        6.794016166526807,
+        8.119538445419133
+      ],
+      "share_claude-haiku-4-5": 0.08854394531249998,
+      "share_claude-haiku-4-5_ci": [
+        0.06551074218749998,
+        0.11425764160156253
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.8168994140625001,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.7717196777343749,
+        0.8567587890624999
+      ],
+      "share_gpt-5.4-mini": 0.094556640625,
+      "share_gpt-5.4-mini_ci": [
+        0.0655389404296875,
+        0.12714333496093752
+      ],
+      "geno_claude-haiku-4-5_collective": 0.08390039062499999,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.060948974609375,
+        0.10958671874999999
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.004643554687500001,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.00292578125,
+        0.006979565429687501
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.5876582031250001,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.5169331054687502,
+        0.6520447509765626
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.2292412109375,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.17457019042968752,
+        0.29054201660156254
+      ],
+      "geno_gpt-5.4-mini_collective": 0.0869033203125,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.0575697265625,
+        0.11956047363281253
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.007653320312499999,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.0052548339843749995,
+        0.010228515625
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.1_e2.0",
+      "n": 4,
+      "q": 0.1,
+      "mult": 2.0,
+      "e": 1.9239218107604354,
+      "F": 19.239218107604355,
+      "exempt": true,
+      "arm": "primary",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 3226.125,
+      "collective_frequency": 0.8667636718749998,
+      "collective_frequency_ci": [
+        0.8335026611328126,
+        0.8964109619140623
+      ],
+      "efficiency_transfer": 0.9558449005208969,
+      "efficiency_transfer_ci": [
+        0.9518274186251555,
+        0.9595125387743212
+      ],
+      "efficiency_lost": 0.9393812827589845,
+      "efficiency_lost_ci": [
+        0.931878482814562,
+        0.94633165038568
+      ],
+      "fines_per_game": 2.50246989981069,
+      "fines_per_game_ci": [
+        1.9826300781445019,
+        3.0610371026529526
+      ],
+      "audits_per_game": 7.6028125000000015,
+      "audits_per_game_ci": [
+        7.598116796875002,
+        7.607621704101565
+      ],
+      "caught_per_game": 0.13007128906249998,
+      "caught_per_game_ci": [
+        0.10386264648437502,
+        0.15962019042968748
+      ],
+      "cooperation_rate": 0.9553441772460936,
+      "cooperation_rate_ci": [
+        0.950807466430664,
+        0.9593568533325194
+      ],
+      "defections_nonfinal_per_agent_game": 0.3259912109375,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.2614317260742187,
+        0.39641523437500004
+      ],
+      "welfare_transfer": 40.32210621979409,
+      "welfare_transfer_ci": [
+        40.172747871702164,
+        40.46180579869736
+      ],
+      "welfare_lost": 39.6964887448414,
+      "welfare_lost_ci": [
+        39.40732925268078,
+        39.96061004737929
+      ],
+      "final_stock_mean": 8.097069648929606,
+      "final_stock_mean_ci": [
+        7.625901320285079,
+        8.573557914138243
+      ],
+      "share_claude-haiku-4-5": 0.0644365234375,
+      "share_claude-haiku-4-5_ci": [
+        0.04796591796875,
+        0.081295556640625
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.84916796875,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.8125468750000001,
+        0.883158984375
+      ],
+      "share_gpt-5.4-mini": 0.08639550781250001,
+      "share_gpt-5.4-mini_ci": [
+        0.06081394042968749,
+        0.1182345458984375
+      ],
+      "geno_claude-haiku-4-5_collective": 0.062296874999999995,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.046403271484375,
+        0.07906652832031248
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.0021396484375,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.0015683593749999999,
+        0.0028770507812500004
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.722314453125,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.6830805419921876,
+        0.762966845703125
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.126853515625,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.09667644042968752,
+        0.160719921875
+      ],
+      "geno_gpt-5.4-mini_collective": 0.08215234375,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.05690097656250001,
+        0.11165910644531249
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.0042431640625,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.002825146484375,
+        0.005913427734375001
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.25_e0.5",
+      "n": 4,
+      "q": 0.25,
+      "mult": 0.5,
+      "e": 0.48098045269010886,
+      "F": 1.9239218107604354,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 4917.089,
+      "collective_frequency": 0.5835703125,
+      "collective_frequency_ci": [
+        0.5025777099609375,
+        0.6579200927734375
+      ],
+      "efficiency_transfer": 0.9214519302039514,
+      "efficiency_transfer_ci": [
+        0.9167906427290523,
+        0.9261214344524971
+      ],
+      "efficiency_lost": 0.909551372216766,
+      "efficiency_lost_ci": [
+        0.9037131036144497,
+        0.9154400564957164
+      ],
+      "fines_per_game": 1.8088848140521936,
+      "fines_per_game_ci": [
+        1.6336656079085745,
+        1.9866201022182
+      ],
+      "audits_per_game": 19.001997070312505,
+      "audits_per_game_ci": [
+        18.995473413085943,
+        19.00867922363281
+      ],
+      "caught_per_game": 0.9402070312500002,
+      "caught_per_game_ci": [
+        0.8468686767578125,
+        1.0346554931640626
+      ],
+      "cooperation_rate": 0.9184416870117188,
+      "cooperation_rate_ci": [
+        0.9115556887817383,
+        0.9248911846923829
+      ],
+      "defections_nonfinal_per_agent_game": 0.9405527343749999,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.8516978332519531,
+        1.0374263549804688
+      ],
+      "welfare_transfer": 39.01517334775015,
+      "welfare_transfer_ci": [
+        38.840316192413404,
+        39.19135993454276
+      ],
+      "welfare_lost": 38.56295214423711,
+      "welfare_lost_ci": [
+        38.33786850267233,
+        38.78852768146029
+      ],
+      "final_stock_mean": 5.615556527794549,
+      "final_stock_mean_ci": [
+        4.731384030132591,
+        6.510158579272085
+      ],
+      "share_claude-haiku-4-5": 0.09542382812500001,
+      "share_claude-haiku-4-5_ci": [
+        0.06454970703125,
+        0.14073566894531253
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.8138105468749999,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.76081904296875,
+        0.8594157470703125
+      ],
+      "share_gpt-5.4-mini": 0.09076562499999999,
+      "share_gpt-5.4-mini_ci": [
+        0.060540893554687496,
+        0.12629384765625
+      ],
+      "geno_claude-haiku-4-5_collective": 0.08435058593750001,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.053614111328125,
+        0.12979216308593752
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.0110732421875,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.007848608398437502,
+        0.015073486328125003
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.4240830078125001,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.36101435546874994,
+        0.4913866943359375
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.3897275390625,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.3161373779296875,
+        0.4690112060546876
+      ],
+      "geno_gpt-5.4-mini_collective": 0.07513671875000001,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.04727482910156249,
+        0.1085036865234375
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.01562890625,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.010209765625,
+        0.0219531982421875
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.25_e0.75",
+      "n": 4,
+      "q": 0.25,
+      "mult": 0.75,
+      "e": 0.7214706790351633,
+      "F": 2.885882716140653,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 18,
+      "complete": false,
+      "runtime_mean_s": 6229.007777777778,
+      "collective_frequency": 0.708005642361111,
+      "collective_frequency_ci": [
+        0.6335748697916667,
+        0.776954345703125
+      ],
+      "efficiency_transfer": 0.9323705146943815,
+      "efficiency_transfer_ci": [
+        0.9266823277725346,
+        0.9379983020704402
+      ],
+      "efficiency_lost": 0.9188915789074079,
+      "efficiency_lost_ci": [
+        0.910927454136688,
+        0.9263358003821043
+      ],
+      "fines_per_game": 2.048798239619998,
+      "fines_per_game_ci": [
+        1.749719912719471,
+        2.3635798267689
+      ],
+      "audits_per_game": 19.004102647569447,
+      "audits_per_game_ci": [
+        18.997379557291666,
+        19.010635932074653
+      ],
+      "caught_per_game": 0.7099381510416667,
+      "caught_per_game_ci": [
+        0.60560791015625,
+        0.81685986328125
+      ],
+      "cooperation_rate": 0.9337720675998263,
+      "cooperation_rate_ci": [
+        0.9267413845486112,
+        0.9401948852539063
+      ],
+      "defections_nonfinal_per_agent_game": 0.7095228407118055,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.6090480414496529,
+        0.8174210272894966
+      ],
+      "welfare_transfer": 39.430079558386495,
+      "welfare_transfer_ci": [
+        39.21315279241299,
+        39.639220136047754
+      ],
+      "welfare_lost": 38.9178799984815,
+      "welfare_lost_ci": [
+        38.62579661725174,
+        39.20799902484535
+      ],
+      "final_stock_mean": 7.064328086071457,
+      "final_stock_mean_ci": [
+        6.386240733889541,
+        7.72088957990389
+      ],
+      "share_claude-haiku-4-5": 0.09039496527777777,
+      "share_claude-haiku-4-5_ci": [
+        0.06482603624131944,
+        0.1186168891059028
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.7968381076388888,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.7540783148871528,
+        0.8376645779079861
+      ],
+      "share_gpt-5.4-mini": 0.11276692708333333,
+      "share_gpt-5.4-mini_ci": [
+        0.07916788736979166,
+        0.14906944444444442
+      ],
+      "geno_claude-haiku-4-5_collective": 0.08486328125,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.059601942274305555,
+        0.1120769314236111
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.005531684027777778,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.004017957899305555,
+        0.007116021050347222
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.5207747395833333,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.44579359266493057,
+        0.5942314995659723
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.27606336805555554,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.20819661458333336,
+        0.34944414605034724
+      ],
+      "geno_gpt-5.4-mini_collective": 0.10236762152777776,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.06931328667534722,
+        0.1381213650173611
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.010399305555555556,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.007766899956597222,
+        0.012989474826388889
+      ],
+      "switched_runs": 18,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.25_e1.0",
+      "n": 4,
+      "q": 0.25,
+      "mult": 1.0,
+      "e": 0.9619609053802177,
+      "F": 3.847843621520871,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 4946.8189999999995,
+      "collective_frequency": 0.7645595703125001,
+      "collective_frequency_ci": [
+        0.7027230712890625,
+        0.8218092285156252
+      ],
+      "efficiency_transfer": 0.9378714506446821,
+      "efficiency_transfer_ci": [
+        0.9324732386370895,
+        0.9432288636811716
+      ],
+      "efficiency_lost": 0.9221888080822422,
+      "efficiency_lost_ci": [
+        0.9144572462117048,
+        0.9301648051580038
+      ],
+      "fines_per_game": 2.383761669490899,
+      "fines_per_game_ci": [
+        2.007889255113295,
+        2.7562837544027334
+      ],
+      "audits_per_game": 19.001997070312505,
+      "audits_per_game_ci": [
+        18.995688964843755,
+        19.008751953125003
+      ],
+      "caught_per_game": 0.619505859375,
+      "caught_per_game_ci": [
+        0.5211991210937499,
+        0.7129367919921874
+      ],
+      "cooperation_rate": 0.9390657592773438,
+      "cooperation_rate_ci": [
+        0.932934690246582,
+        0.9448181051635742
+      ],
+      "defections_nonfinal_per_agent_game": 0.61907177734375,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.5239820434570313,
+        0.7169454284667968
+      ],
+      "welfare_transfer": 39.639115124497934,
+      "welfare_transfer_ci": [
+        39.43016159889977,
+        39.8399738538867
+      ],
+      "welfare_lost": 39.0431747071252,
+      "welfare_lost_ci": [
+        38.754444595945124,
+        39.33970332685412
+      ],
+      "final_stock_mean": 7.347320726540966,
+      "final_stock_mean_ci": [
+        6.621652370807694,
+        8.079436310779348
+      ],
+      "share_claude-haiku-4-5": 0.1054462890625,
+      "share_claude-haiku-4-5_ci": [
+        0.0519572509765625,
+        0.18383779296875005
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.7860029296875001,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.68780576171875,
+        0.8578498046874999
+      ],
+      "share_gpt-5.4-mini": 0.10855078124999999,
+      "share_gpt-5.4-mini_ci": [
+        0.0774594482421875,
+        0.1437151123046875
+      ],
+      "geno_claude-haiku-4-5_collective": 0.099353515625,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.045964038085937506,
+        0.17212316894531252
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.0060927734375,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.0037333251953124997,
+        0.009200415039062501
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.5669531250000001,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.4728960693359376,
+        0.6515998291015626
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.21904980468749996,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.16279042968750002,
+        0.2801730224609375
+      ],
+      "geno_gpt-5.4-mini_collective": 0.09825292968750002,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.06826687011718748,
+        0.13182924804687499
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.010297851562500002,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.0073388671875000006,
+        0.01364951171875
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.25_e1.25",
+      "n": 4,
+      "q": 0.25,
+      "mult": 1.25,
+      "e": 1.2024511317252722,
+      "F": 4.809804526901089,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 4934.3395,
+      "collective_frequency": 0.7556542968750002,
+      "collective_frequency_ci": [
+        0.7010421142578126,
+        0.8055880126953127
+      ],
+      "efficiency_transfer": 0.9414775426850757,
+      "efficiency_transfer_ci": [
+        0.9371479056674822,
+        0.9459945140484228
+      ],
+      "efficiency_lost": 0.9234966461770767,
+      "efficiency_lost_ci": [
+        0.9167951764507134,
+        0.9305132467577416
+      ],
+      "fines_per_game": 2.733096269215811,
+      "fines_per_game_ci": [
+        2.335905171290049,
+        3.107930113399135
+      ],
+      "audits_per_game": 19.001997070312505,
+      "audits_per_game_ci": [
+        18.99556010742188,
+        19.008844750976564
+      ],
+      "caught_per_game": 0.568234375,
+      "caught_per_game_ci": [
+        0.48873583984375,
+        0.6471458984375
+      ],
+      "cooperation_rate": 0.9416901733398436,
+      "cooperation_rate_ci": [
+        0.9362129028320311,
+        0.9471340994262695
+      ],
+      "defections_nonfinal_per_agent_game": 0.568190185546875,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.48420349731445306,
+        0.6479284912109375
+      ],
+      "welfare_transfer": 39.77614662203287,
+      "welfare_transfer_ci": [
+        39.60622655298264,
+        39.946856675991576
+      ],
+      "welfare_lost": 39.09287255472891,
+      "welfare_lost_ci": [
+        38.83229225640619,
+        39.35110067572614
+      ],
+      "final_stock_mean": 7.386519746755148,
+      "final_stock_mean_ci": [
+        6.732466388729312,
+        8.032884024283515
+      ],
+      "share_claude-haiku-4-5": 0.09358886718749998,
+      "share_claude-haiku-4-5_ci": [
+        0.064793896484375,
+        0.1251975830078125
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.7968124999999999,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.7486027587890625,
+        0.8380802734375
+      ],
+      "share_gpt-5.4-mini": 0.1095986328125,
+      "share_gpt-5.4-mini_ci": [
+        0.08245488281249999,
+        0.13860217285156248
+      ],
+      "geno_claude-haiku-4-5_collective": 0.08960156249999998,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.061061474609375,
+        0.12195024414062501
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.0039873046875,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.0026884765624999997,
+        0.005673974609375001
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.567548828125,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.5165799560546875,
+        0.6159327636718749
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.229263671875,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.18016752929687502,
+        0.2850787353515625
+      ],
+      "geno_gpt-5.4-mini_collective": 0.09850390625000001,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.07373505859375001,
+        0.12441713867187502
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.011094726562499999,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.006896826171875001,
+        0.016225976562500005
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.25_e1.5",
+      "n": 4,
+      "q": 0.25,
+      "mult": 1.5,
+      "e": 1.4429413580703265,
+      "F": 5.771765432281306,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 4915.758500000001,
+      "collective_frequency": 0.825064453125,
+      "collective_frequency_ci": [
+        0.7945388916015625,
+        0.8524592529296874
+      ],
+      "efficiency_transfer": 0.9466745132628331,
+      "efficiency_transfer_ci": [
+        0.9411483378098622,
+        0.9519083583046993
+      ],
+      "efficiency_lost": 0.9289193111957694,
+      "efficiency_lost_ci": [
+        0.9192312937843732,
+        0.9373935210378193
+      ],
+      "fines_per_game": 2.6987907141936676,
+      "fines_per_game_ci": [
+        2.185537600425988,
+        3.265970379325417
+      ],
+      "audits_per_game": 19.001997070312505,
+      "audits_per_game_ci": [
+        18.99530625,
+        19.008722924804687
+      ],
+      "caught_per_game": 0.46758496093749996,
+      "caught_per_game_ci": [
+        0.380978955078125,
+        0.5651646972656249
+      ],
+      "cooperation_rate": 0.9481098999023437,
+      "cooperation_rate_ci": [
+        0.9423074847412108,
+        0.9530567160034179
+      ],
+      "defections_nonfinal_per_agent_game": 0.46791967773437493,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.38137171630859373,
+        0.5653293029785157
+      ],
+      "welfare_transfer": 39.973631503987654,
+      "welfare_transfer_ci": [
+        39.75893836280607,
+        40.167945418489985
+      ],
+      "welfare_lost": 39.29893382543925,
+      "welfare_lost_ci": [
+        38.944150828898124,
+        39.60585173213356
+      ],
+      "final_stock_mean": 7.94457905055485,
+      "final_stock_mean_ci": [
+        7.4673850563345345,
+        8.383799800271008
+      ],
+      "share_claude-haiku-4-5": 0.0983330078125,
+      "share_claude-haiku-4-5_ci": [
+        0.06946123046875,
+        0.13510166015625
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.7952177734375,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.7399044921875001,
+        0.840849365234375
+      ],
+      "share_gpt-5.4-mini": 0.10644921875000002,
+      "share_gpt-5.4-mini_ci": [
+        0.07213417968750001,
+        0.1437588134765625
+      ],
+      "geno_claude-haiku-4-5_collective": 0.09398828125,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.06460734863281252,
+        0.13105800781250004
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.0043447265625,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.002764599609375,
+        0.006269775390625001
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.6315556640625001,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.5667129638671875,
+        0.6839676269531251
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.16366210937499998,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.13807580566406252,
+        0.19301794433593747
+      ],
+      "geno_gpt-5.4-mini_collective": 0.09952050781249999,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.0685618408203125,
+        0.13699316406250003
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.006928710937500001,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.0039491943359375005,
+        0.010853515625000004
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n4_q0.25_e2.0",
+      "n": 4,
+      "q": 0.25,
+      "mult": 2.0,
+      "e": 1.9239218107604354,
+      "F": 7.695687243041742,
+      "exempt": true,
+      "arm": "primary_dropped",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 2834.169,
+      "collective_frequency": 0.8381640625,
+      "collective_frequency_ci": [
+        0.795526318359375,
+        0.8714544433593748
+      ],
+      "efficiency_transfer": 0.9522929063109942,
+      "efficiency_transfer_ci": [
+        0.9484452725573326,
+        0.9561888336520337
+      ],
+      "efficiency_lost": 0.9329285976868082,
+      "efficiency_lost_ci": [
+        0.9263320373960047,
+        0.9393455944784095
+      ],
+      "fines_per_game": 2.943374910876268,
+      "fines_per_game_ci": [
+        2.520615263154403,
+        3.3911350206906157
+      ],
+      "audits_per_game": 19.001997070312505,
+      "audits_per_game_ci": [
+        18.995724365234377,
+        19.008498828125006
+      ],
+      "caught_per_game": 0.382470703125,
+      "caught_per_game_ci": [
+        0.3266003662109374,
+        0.44064890136718754
+      ],
+      "cooperation_rate": 0.9528775146484376,
+      "cooperation_rate_ci": [
+        0.9497423092651369,
+        0.9556356964111329
+      ],
+      "defections_nonfinal_per_agent_game": 0.38313476562500004,
+      "defections_nonfinal_per_agent_game_ci": [
+        0.3274201110839844,
+        0.4426837524414062
+      ],
+      "welfare_transfer": 40.187130439817786,
+      "welfare_transfer_ci": [
+        40.04137794858856,
+        40.338794085400764
+      ],
+      "welfare_lost": 39.45128671209871,
+      "welfare_lost_ci": [
+        39.19627768953135,
+        39.706046723649955
+      ],
+      "final_stock_mean": 8.162454750072774,
+      "final_stock_mean_ci": [
+        7.594820585154985,
+        8.665775439574167
+      ],
+      "share_claude-haiku-4-5": 0.10779492187499999,
+      "share_claude-haiku-4-5_ci": [
+        0.0525895263671875,
+        0.19305603027343757
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.7807646484375,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.6923726806640624,
+        0.8516367431640625
+      ],
+      "share_gpt-5.4-mini": 0.11144042968750001,
+      "share_gpt-5.4-mini_ci": [
+        0.0726525146484375,
+        0.15676660156249997
+      ],
+      "geno_claude-haiku-4-5_collective": 0.10405468750000002,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.05162067871093749,
+        0.18555310058593752
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.003740234374999999,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.0021122802734375,
+        0.005777612304687501
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.6281630859375,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.5484294677734375,
+        0.7002748779296876
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.15260156249999995,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.1188560302734375,
+        0.19475102539062497
+      ],
+      "geno_gpt-5.4-mini_collective": 0.10594628906249999,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.067135546875,
+        0.15241857910156253
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.0054941406249999995,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.0037294189453125,
+        0.0075371826171875015
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.1_e1.25_noexempt",
+      "n": 64,
+      "q": 0.1,
+      "mult": 1.25,
+      "e": 1.2024511317252722,
+      "F": 12.02451131725272,
+      "exempt": false,
+      "arm": "secondary",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 1486.0530000000003,
+      "collective_frequency": 0.6565009765625,
+      "collective_frequency_ci": [
+        0.6146657470703125,
+        0.6920082763671875
+      ],
+      "efficiency_transfer": 0.6586036650814735,
+      "efficiency_transfer_ci": [
+        0.6091815805235823,
+        0.6995627166760754
+      ],
+      "efficiency_lost": 0.4950099599368752,
+      "efficiency_lost_ci": [
+        0.43331651233442,
+        0.5485596231139773
+      ],
+      "fines_per_game": 397.85989091166346,
+      "fines_per_game_ci": [
+        371.93121169868425,
+        426.87175816203035
+      ],
+      "audits_per_game": 127.96540624999997,
+      "audits_per_game_ci": [
+        127.88779375,
+        128.04555507812498
+      ],
+      "caught_per_game": 33.08740625,
+      "caught_per_game_ci": [
+        30.85707109375,
+        35.556280078125
+      ],
+      "cooperation_rate": 0.7412570068359376,
+      "cooperation_rate_ci": [
+        0.7221527969360352,
+        0.7584026119995119
+      ],
+      "defections_nonfinal_per_agent_game": 4.701334228515626,
+      "defections_nonfinal_per_agent_game_ci": [
+        4.3714693359375,
+        5.0634562683105475
+      ],
+      "welfare_transfer": 29.026939273096,
+      "welfare_transfer_ci": [
+        27.080750246199855,
+        30.63123415755748
+      ],
+      "welfare_lost": 22.810378477601255,
+      "welfare_lost_ci": [
+        20.494587228678903,
+        24.792793608052964
+      ],
+      "final_stock_mean": 85.97761554646382,
+      "final_stock_mean_ci": [
+        74.82168495482678,
+        96.37653060906283
+      ],
+      "share_claude-haiku-4-5": 0.39479492187500004,
+      "share_claude-haiku-4-5_ci": [
+        0.30977514648437504,
+        0.4801384765625
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.2177900390625,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.16607937011718749,
+        0.27147958984375004
+      ],
+      "share_gpt-5.4-mini": 0.38741503906249997,
+      "share_gpt-5.4-mini_ci": [
+        0.31449492187499994,
+        0.46264580078125017
+      ],
+      "geno_claude-haiku-4-5_collective": 0.2319404296875,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.17991352539062505,
+        0.2866070556640626
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.16285449218749998,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.11065266113281251,
+        0.22235122070312502
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.141021484375,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.10237812500000004,
+        0.1823333740234375
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.07676855468749999,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.053041674804687515,
+        0.10444887695312502
+      ],
+      "geno_gpt-5.4-mini_collective": 0.2835390625,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.22775571289062496,
+        0.34368330078125
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.1038759765625,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.08061142578124998,
+        0.12725341796875
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    },
+    {
+      "name": "n64_q0.1_e2.0_noexempt",
+      "n": 64,
+      "q": 0.1,
+      "mult": 2.0,
+      "e": 1.9239218107604354,
+      "F": 19.239218107604355,
+      "exempt": false,
+      "arm": "secondary",
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 1212.3480000000002,
+      "collective_frequency": 0.8577216796875,
+      "collective_frequency_ci": [
+        0.84104638671875,
+        0.8740030029296876
+      ],
+      "efficiency_transfer": 0.902488622508381,
+      "efficiency_transfer_ci": [
+        0.8898314802252061,
+        0.9128699904440112
+      ],
+      "efficiency_lost": 0.7892573543777418,
+      "efficiency_lost_ci": [
+        0.7641890653007797,
+        0.8124045309363723
+      ],
+      "fines_per_game": 275.3784440937144,
+      "fines_per_game_ci": [
+        245.68370296681076,
+        307.5243968832792
+      ],
+      "audits_per_game": 127.96540624999997,
+      "audits_per_game_ci": [
+        127.88596601562503,
+        128.04973476562498
+      ],
+      "caught_per_game": 14.313390625000002,
+      "caught_per_game_ci": [
+        12.828592187499998,
+        15.94907265625
+      ],
+      "cooperation_rate": 0.8882549194335937,
+      "cooperation_rate_ci": [
+        0.8749975936889649,
+        0.9000151751708984
+      ],
+      "defections_nonfinal_per_agent_game": 1.9906972656250002,
+      "defections_nonfinal_per_agent_game_ci": [
+        1.7919594604492186,
+        2.212718420410156
+      ],
+      "welfare_transfer": 38.29456765531848,
+      "welfare_transfer_ci": [
+        37.79684002992918,
+        38.70496254501014
+      ],
+      "welfare_lost": 33.99177946635419,
+      "welfare_lost_ci": [
+        33.021607747964495,
+        34.85368461497241
+      ],
+      "final_stock_mean": 187.64397720845966,
+      "final_stock_mean_ci": [
+        176.46651074648685,
+        197.09353010981818
+      ],
+      "share_claude-haiku-4-5": 0.39198437499999994,
+      "share_claude-haiku-4-5_ci": [
+        0.3122873291015626,
+        0.47573972167968753
+      ],
+      "share_gemini-3.1-flash-lite-preview": 0.1476025390625,
+      "share_gemini-3.1-flash-lite-preview_ci": [
+        0.10209912109375,
+        0.20500913085937503
+      ],
+      "share_gpt-5.4-mini": 0.4604130859375001,
+      "share_gpt-5.4-mini_ci": [
+        0.384915869140625,
+        0.5314738769531252
+      ],
+      "geno_claude-haiku-4-5_collective": 0.34065625,
+      "geno_claude-haiku-4-5_collective_ci": [
+        0.272802490234375,
+        0.4136714599609375
+      ],
+      "geno_claude-haiku-4-5_selfish": 0.051328125,
+      "geno_claude-haiku-4-5_selfish_ci": [
+        0.03692568359375,
+        0.06697021484375
+      ],
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.11805664062499999,
+      "geno_gemini-3.1-flash-lite-preview_collective_ci": [
+        0.07824853515625001,
+        0.1640897705078125
+      ],
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.029545898437499996,
+      "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
+        0.017798632812500003,
+        0.04263430175781251
+      ],
+      "geno_gpt-5.4-mini_collective": 0.3990087890625,
+      "geno_gpt-5.4-mini_collective_ci": [
+        0.33220717773437497,
+        0.46133710937499994
+      ],
+      "geno_gpt-5.4-mini_selfish": 0.061404296874999986,
+      "geno_gpt-5.4-mini_selfish_ci": [
+        0.04710341796875,
+        0.0752747802734375
+      ],
+      "switched_runs": 20,
+      "switch_generation_median": 1.0
+    }
+  ],
+  "hypotheses": {
+    "H0": {
+      "64": {
+        "test": "cf<0.5 and eff<0.3",
+        "collective_frequency": 0.15240625000000002,
+        "collective_frequency_ci": [
+          0.12433034667968751,
+          0.181039697265625
+        ],
+        "efficiency_transfer": 0.12785509772083528,
+        "efficiency_transfer_ci": [
+          0.10837583105063903,
+          0.14903568230991907
+        ],
+        "paper": {
+          "collective": 0.19,
+          "efficiency": 0.15
+        },
+        "holds": true,
+        "status": "verified"
+      },
+      "4": {
+        "test": "eff>0.5",
+        "collective_frequency": 0.5105380859375,
+        "collective_frequency_ci": [
+          0.4326789794921874,
+          0.5872176513671876
+        ],
+        "efficiency_transfer": 0.9056503029659192,
+        "efficiency_transfer_ci": [
+          0.8980920899186813,
+          0.9126911022769616
+        ],
+        "paper": {
+          "collective": 0.56,
+          "efficiency": 0.91
+        },
+        "holds": true,
+        "status": "verified"
+      },
+      "holds": true
+    },
+    "H1": {
+      "cells": {
+        "n64_q0.1": {
+          "levels": {
+            "n64_base": {
+              "side": "below",
+              "mean": 0.15240625000000002,
+              "ci": [
+                0.12433034667968751,
+                0.181039697265625
+              ],
+              "p": 0.00024993751562109475,
+              "interval_excludes_half": true
+            },
+            "n64_q0.1_e0.5": {
+              "side": "below",
+              "mean": 0.20116308593749999,
+              "ci": [
+                0.1677328125,
+                0.23556508789062505
+              ],
+              "p": 0.00024993751562109475,
+              "interval_excludes_half": true
+            },
+            "n64_q0.1_e1.25": {
+              "side": "above",
+              "mean": 0.5969736328125,
+              "ci": [
+                0.5406356689453125,
+                0.6496008056640624
+              ],
+              "p": 0.000999750062484379,
+              "interval_excludes_half": true
+            },
+            "n64_q0.1_e2.0": {
+              "side": "above",
+              "mean": 0.8447998046875,
+              "ci": [
+                0.8271131103515624,
+                0.862847900390625
+              ],
+              "p": 0.00024993751562109475,
+              "interval_excludes_half": true
+            }
+          },
+          "pending": [],
+          "complete": true,
+          "p_cell": 0.000999750062484379,
+          "amended": null,
+          "holm_rejects_null": true,
+          "holds": true
+        },
+        "n4_q0.1": {
+          "levels": {
+            "n4_base": {
+              "side": "above",
+              "mean": 0.5105380859375,
+              "ci": [
+                0.4326789794921874,
+                0.5872176513671876
+              ],
+              "p": 0.3836540864783804,
+              "interval_excludes_half": false
+            },
+            "n4_q0.1_e0.5": {
+              "side": "above",
+              "mean": 0.6443447265625,
+              "ci": [
+                0.5811478027343749,
+                0.706625244140625
+              ],
+              "p": 0.00024993751562109475,
+              "interval_excludes_half": true
+            },
+            "n4_q0.1_e1.0": {
+              "side": "above",
+              "mean": 0.6936416015625,
+              "ci": [
+                0.593531201171875,
+                0.7859748779296876
+              ],
+              "p": 0.00024993751562109475,
+              "interval_excludes_half": true
+            },
+            "n4_q0.1_e1.25": {
+              "side": "above",
+              "mean": 0.7299130859375,
+              "ci": [
+                0.6706321777343751,
+                0.78777216796875
+              ],
+              "p": 0.00024993751562109475,
+              "interval_excludes_half": true
+            },
+            "n4_q0.1_e2.0": {
+              "side": "above",
+              "mean": 0.8667636718749998,
+              "ci": [
+                0.8335026611328126,
+                0.8964109619140623
+              ],
+              "p": 0.00024993751562109475,
+              "interval_excludes_half": true
+            }
+          },
+          "pending": [],
+          "complete": true,
+          "p_cell": 0.3836540864783804,
+          "amended": "Amendment 2: > 0.5 at every e",
+          "holm_rejects_null": false,
+          "holds": false
+        }
+      },
+      "holm_m": 2,
+      "alpha": 0.05
+    },
+    "H2": {
+      "0.1": {
+        "efficiency_transfer": {
+          "diff": 0.4390310355883852,
+          "ci": [
+            0.3835840077265195,
+            0.4931366742877089
+          ]
+        },
+        "efficiency_lost": {
+          "diff": 0.2669135303841793,
+          "ci": [
+            0.19910916464845702,
+            0.33300560605337176
+          ]
+        },
+        "holds": true,
+        "status": "verified"
+      }
+    },
+    "H3": {
+      "n64_q0.1_e0.5": {
+        "audits_per_game": 121.575234375,
+        "complete": true,
+        "c_star_transfer": 2.461255117394245,
+        "c_star_transfer_ci": [
+          1.9970228238716503,
+          2.9202667770481825
+        ],
+        "W_per_game_transfer_cell": 866.1712654109449,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 0.641050389347772,
+        "c_star_lost_ci": [
+          0.1441626494845274,
+          1.1234528376426975
+        ],
+        "W_per_game_lost_cell": 644.8794489882118,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.1_e0.75": {
+        "audits_per_game": 121.575234375,
+        "complete": true,
+        "c_star_transfer": 3.0843612428234564,
+        "c_star_transfer_ci": [
+          2.6088824091085705,
+          3.5240282045904556
+        ],
+        "W_per_game_transfer_cell": 941.9255386504994,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 0.4475350881331973,
+        "c_star_lost_ci": [
+          -0.03992665714482988,
+          0.9019904051706639
+        ],
+        "W_per_game_lost_cell": 621.3527808879012,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.1_e1.0": {
+        "audits_per_game": 121.575234375,
+        "complete": true,
+        "c_star_transfer": 4.315133668878841,
+        "c_star_transfer_ci": [
+          3.5684953231055485,
+          5.048812134178723
+        ],
+        "W_per_game_transfer_cell": 1091.55698481047,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 0.9511044639520635,
+        "c_star_lost_ci": [
+          0.1645625382507423,
+          1.7706411505966515
+        ],
+        "W_per_game_lost_cell": 682.5743457771523,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.1_e1.25": {
+        "audits_per_game": 121.575234375,
+        "complete": true,
+        "c_star_transfer": 8.782409378357018,
+        "c_star_transfer_ci": [
+          7.712060290895194,
+          9.859706109977349
+        ],
+        "W_per_game_transfer_cell": 1634.667076208024,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 5.339358046327633,
+        "c_star_lost_ci": [
+          4.048033288472881,
+          6.627649356383872
+        ],
+        "W_per_game_lost_cell": 1216.0773035513955,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.1_e1.5": {
+        "audits_per_game": 121.575234375,
+        "complete": true,
+        "c_star_transfer": 12.103782171354508,
+        "c_star_transfer_ci": [
+          11.466320129815028,
+          12.721506789482778
+        ],
+        "W_per_game_transfer_cell": 2038.463751963442,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 8.95628894983412,
+        "c_star_lost_ci": [
+          8.160089431717738,
+          9.782166020556357
+        ],
+        "W_per_game_lost_cell": 1655.8065258633771,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.1_e2.0": {
+        "audits_per_game": 121.575234375,
+        "complete": true,
+        "c_star_transfer": 14.88557449211995,
+        "c_star_transfer_ci": [
+          14.367993953138471,
+          15.366520093052783
+        ],
+        "W_per_game_transfer_cell": 2376.660805343076,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 12.307705233571156,
+        "c_star_lost_ci": [
+          11.642243007983668,
+          12.931734911051974
+        ],
+        "W_per_game_lost_cell": 2063.255746046899,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.25_e0.5": {
+        "audits_per_game": 303.982390625,
+        "complete": true,
+        "c_star_transfer": 0.9793778984166887,
+        "c_star_transfer_ci": [
+          0.7855642019791248,
+          1.1547267369522143
+        ],
+        "W_per_game_transfer_cell": 864.6572325430649,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 0.25483815838450546,
+        "c_star_lost_ci": [
+          0.0566505673163952,
+          0.4449483285208237
+        ],
+        "W_per_game_lost_cell": 644.4099102652658,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.25_e0.75": {
+        "audits_per_game": 303.982390625,
+        "complete": true,
+        "c_star_transfer": 1.1677831116455661,
+        "c_star_transfer_ci": [
+          0.9690944005849647,
+          1.3514179498035641
+        ],
+        "W_per_game_transfer_cell": 921.9290996665919,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 0.10981397498849021,
+        "c_star_lost_ci": [
+          -0.09041817130192253,
+          0.30232444449887724
+        ],
+        "W_per_game_lost_cell": 600.3251122981067,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.25_e1.0": {
+        "audits_per_game": 303.982390625,
+        "complete": true,
+        "c_star_transfer": 2.0095207145441325,
+        "c_star_transfer_ci": [
+          1.6615053090300813,
+          2.369791132393223
+        ],
+        "W_per_game_transfer_cell": 1177.802508474655,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 0.712288162558122,
+        "c_star_lost_ci": [
+          0.3393984597612247,
+          1.1036730562699675
+        ],
+        "W_per_game_lost_cell": 783.466656125378,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.25_e1.25": {
+        "audits_per_game": 303.982390625,
+        "complete": true,
+        "c_star_transfer": 3.299632879684233,
+        "c_star_transfer_ci": [
+          2.8558492193604716,
+          3.7008592896096912
+        ],
+        "W_per_game_transfer_cell": 1569.9738886083376,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 1.8938462741710103,
+        "c_star_lost_ci": [
+          1.3721390326025122,
+          2.3715769444792594
+        ],
+        "W_per_game_lost_cell": 1142.6395155558243,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.25_e1.5": {
+        "audits_per_game": 303.982390625,
+        "complete": true,
+        "c_star_transfer": 4.893845094158909,
+        "c_star_transfer_ci": [
+          4.59773114319933,
+          5.183112465575686
+        ],
+        "W_per_game_transfer_cell": 2054.586328727925,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 3.6619574822598087,
+        "c_star_lost_ci": [
+          3.2797874764543034,
+          4.017881232723619
+        ],
+        "W_per_game_lost_cell": 1680.1141874815141,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.25_e2.0": {
+        "audits_per_game": 303.982390625,
+        "complete": true,
+        "c_star_transfer": 6.068808642336615,
+        "c_star_transfer_ci": [
+          5.886121402022836,
+          6.237170291914897
+        ],
+        "W_per_game_transfer_cell": 2411.754557000216,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 5.122670428355236,
+        "c_star_lost_ci": [
+          4.904852876769497,
+          5.3272117010266475
+        ],
+        "W_per_game_lost_cell": 2124.145200852489,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n4_q0.1_e0.5": {
+        "audits_per_game": 7.6028125000000015,
+        "complete": true,
+        "c_star_transfer": 0.2443561362855731,
+        "c_star_transfer_ci": [
+          0.05451645232837597,
+          0.44432138874230154
+        ],
+        "W_per_game_transfer_cell": 155.51663993822336,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": -0.004185975463613452,
+        "c_star_lost_ci": [
+          -0.21582117382953817,
+          0.21109685951612694
+        ],
+        "W_per_game_lost_cell": 153.62702086424025,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n4_q0.1_e0.75": {
+        "audits_per_game": 7.6028125000000015,
+        "complete": true,
+        "c_star_transfer": 0.5188078846585076,
+        "c_star_transfer_ci": [
+          0.34896833925877063,
+          0.6986120026031606
+        ],
+        "W_per_game_transfer_cell": 157.60324512139997,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": 0.24038118756682175,
+        "c_star_lost_ci": [
+          0.05049728683613922,
+          0.43390256961348533
+        ],
+        "W_per_game_lost_cell": 155.48641914841758,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n4_q0.1_e1.0": {
+        "audits_per_game": 7.6028125000000015,
+        "complete": true,
+        "c_star_transfer": 0.633769639496214,
+        "c_star_transfer_ci": [
+          0.4310657398039087,
+          0.8453251284841184
+        ],
+        "W_per_game_transfer_cell": 158.47727778810201,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": 0.2879765926498754,
+        "c_star_lost_ci": [
+          0.037069621094097734,
+          0.5553294785375607
+        ],
+        "W_per_game_lost_cell": 155.84827808912559,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n4_q0.1_e1.25": {
+        "audits_per_game": 7.6028125000000015,
+        "complete": true,
+        "c_star_transfer": 0.7561276093723582,
+        "c_star_transfer_ci": [
+          0.5944810289005427,
+          0.9327376368102958
+        ],
+        "W_per_game_transfer_cell": 159.407542490951,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": 0.40144431231766914,
+        "c_star_lost_ci": [
+          0.20505275915947263,
+          0.6050281392025528
+        ],
+        "W_per_game_lost_cell": 156.71095188656238,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n4_q0.1_e1.5": {
+        "audits_per_game": 7.6028125000000015,
+        "complete": true,
+        "c_star_transfer": 0.7940198214842866,
+        "c_star_transfer_ci": [
+          0.6273750800893584,
+          0.9772969893508447
+        ],
+        "W_per_game_transfer_cell": 159.6956298748482,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": 0.40950692395635097,
+        "c_star_lost_ci": [
+          0.20078649930907877,
+          0.6197245686704187
+        ],
+        "W_per_game_lost_cell": 156.7722504111116,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n4_q0.1_e2.0": {
+        "audits_per_game": 7.6028125000000015,
+        "complete": true,
+        "c_star_transfer": 1.0035205824629558,
+        "c_star_transfer_ci": [
+          0.8422607352732905,
+          1.17305779600904
+        ],
+        "W_per_game_transfer_cell": 161.28842487917635,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": 0.6743700345820586,
+        "c_star_lost_ci": [
+          0.47215451151278715,
+          0.8764113548842751
+        ],
+        "W_per_game_lost_cell": 158.7859549793656,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n4_q0.25_e0.5": {
+        "audits_per_game": 19.001997070312505,
+        "complete": true,
+        "c_star_transfer": 0.12639973215938363,
+        "c_star_transfer_ci": [
+          0.060364660226936435,
+          0.19849653093998545
+        ],
+        "W_per_game_transfer_cell": 156.0606933910006,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": 0.031205274052753976,
+        "c_star_lost_ci": [
+          -0.039543480847235475,
+          0.11064599244708648
+        ],
+        "W_per_game_lost_cell": 154.25180857694843,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n4_q0.25_e0.75": {
+        "audits_per_game": 19.004102647569447,
+        "complete": false,
+        "c_star_transfer": 0.21371554648204996,
+        "c_star_transfer_ci": [
+          0.14485400929534567,
+          0.2881334906937034
+        ],
+        "W_per_game_transfer_cell": 157.72031823354598,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": 0.10590733908521172,
+        "c_star_lost_ci": [
+          0.02194097950932373,
+          0.19032607518424052
+        ],
+        "W_per_game_lost_cell": 155.671519993926,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n4_q0.25_e1.0": {
+        "audits_per_game": 19.001997070312505,
+        "complete": true,
+        "c_star_transfer": 0.25774209042605045,
+        "c_star_transfer_ci": [
+          0.18772896809932996,
+          0.3322558875101534
+        ],
+        "W_per_game_transfer_cell": 158.55646049799174,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": 0.13229413563106954,
+        "c_star_lost_ci": [
+          0.05107423742479356,
+          0.22146869093594232
+        ],
+        "W_per_game_lost_cell": 156.1726988285008,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n4_q0.25_e1.25": {
+        "audits_per_game": 19.001997070312505,
+        "complete": true,
+        "c_star_transfer": 0.2865877948070965,
+        "c_star_transfer_ci": [
+          0.21897287450158084,
+          0.36011468662972024
+        ],
+        "W_per_game_transfer_cell": 159.10458648813147,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": 0.14275574078126815,
+        "c_star_lost_ci": [
+          0.0650465746523805,
+          0.22748059382731314
+        ],
+        "W_per_game_lost_cell": 156.37149021891565,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n4_q0.25_e1.5": {
+        "audits_per_game": 19.001997070312505,
+        "complete": true,
+        "c_star_transfer": 0.3281591899028938,
+        "c_star_transfer_ci": [
+          0.2575817367069402,
+          0.4039881614275069
+        ],
+        "W_per_game_transfer_cell": 159.89452601595062,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": 0.18613250164442455,
+        "c_star_lost_ci": [
+          0.09214331838486521,
+          0.2766264819224365
+        ],
+        "W_per_game_lost_cell": 157.195735301757,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n4_q0.25_e2.0": {
+        "audits_per_game": 19.001997070312505,
+        "complete": true,
+        "c_star_transfer": 0.37310161043693085,
+        "c_star_transfer_ci": [
+          0.3105379512318061,
+          0.4426613852450136
+        ],
+        "W_per_game_transfer_cell": 160.74852175927114,
+        "W_per_game_transfer_none": 153.6588460508197,
+        "c_star_lost": 0.21820342263145778,
+        "c_star_lost_ci": [
+          0.13953822435869603,
+          0.3018722521846311
+        ],
+        "W_per_game_lost_cell": 157.80514684839483,
+        "W_per_game_lost_none": 153.6588460508197
+      },
+      "n64_q0.1_e1.25_noexempt": {
+        "audits_per_game": 127.96540624999997,
+        "complete": true,
+        "c_star_transfer": 10.086948915704106,
+        "c_star_transfer_ci": [
+          9.097027210138299,
+          10.969584646288583
+        ],
+        "W_per_game_transfer_cell": 1857.724113478144,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 6.97782823558542,
+        "c_star_lost_ci": [
+          5.714115618361336,
+          8.028692285709155
+        ],
+        "W_per_game_lost_cell": 1459.8642225664803,
+        "W_per_game_lost_none": 566.9435976570715
+      },
+      "n64_q0.1_e2.0_noexempt": {
+        "audits_per_game": 127.96540624999997,
+        "complete": true,
+        "c_star_transfer": 14.722015797010075,
+        "c_star_transfer_ci": [
+          14.261995965198295,
+          15.156814805047015
+        ],
+        "W_per_game_transfer_cell": 2450.852329940383,
+        "W_per_game_transfer_none": 566.9435976570715,
+        "c_star_lost": 12.57004010167472,
+        "c_star_lost_ci": [
+          11.963085090046912,
+          13.162268254360736
+        ],
+        "W_per_game_lost_cell": 2175.473885846668,
+        "W_per_game_lost_none": 566.9435976570715
+      }
+    },
+    "secondary": {
+      "n64_q0.1_e1.25_noexempt": {
+        "collective_frequency": {
+          "noexempt": 0.6565009765625,
+          "exempt": 0.5969736328125,
+          "diff": 0.059527343749999906,
+          "ci": [
+            -0.007140283203124988,
+            0.12985173339843759
+          ]
+        },
+        "efficiency_transfer": {
+          "noexempt": 0.6586036650814735,
+          "exempt": 0.5668861333092204,
+          "diff": 0.09171753177225306,
+          "ci": [
+            0.019641677806061953,
+            0.15982430877249873
+          ]
+        },
+        "efficiency_lost": {
+          "noexempt": 0.4950099599368752,
+          "exempt": 0.39476862810501456,
+          "diff": 0.10024133183186063,
+          "ci": [
+            0.016659471293203436,
+            0.18460306293355447
+          ]
+        }
+      },
+      "n64_q0.1_e2.0_noexempt": {
+        "collective_frequency": {
+          "noexempt": 0.8577216796875,
+          "exempt": 0.8447998046875,
+          "diff": 0.012921874999999972,
+          "ci": [
+            -0.010791967773437461,
+            0.036595751953124984
+          ]
+        },
+        "efficiency_transfer": {
+          "noexempt": 0.902488622508381,
+          "exempt": 0.8719822390390937,
+          "diff": 0.030506383469287357,
+          "ci": [
+            0.011888211082564657,
+            0.04900780277862668
+          ]
+        },
+        "efficiency_lost": {
+          "noexempt": 0.7892573543777418,
+          "exempt": 0.7431150271574417,
+          "diff": 0.046142327220300094,
+          "ci": [
+            0.010476720044046919,
+            0.08152065936795987
+          ]
+        }
+      }
+    }
+  },
+  "bootstrap": {
+    "B": 4000,
+    "seed": 26101441
+  }
+}

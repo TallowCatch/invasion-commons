@@ -4,10 +4,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from experiments.extract_harvest_oversight_case import _matching_strategy_rows
-from experiments.validate_harvest_mechanisms import joint_reference, local_cutoff, local_state, predict_health, setup
-from experiments.run_overseer_limit_ablation import _summarise
-from experiments.analyze_stagea_stress_regimes import STRESS_PREFIXES, BASE_METRICS, _summarise as summarise_stress
+from experiments.common.extract_harvest_oversight_case import _matching_strategy_rows
+from experiments.common.validate_harvest_mechanisms import joint_reference, local_cutoff, local_state, predict_health, setup
+from experiments.paper_v5.run_overseer_limit_ablation import _summarise
+from experiments.paper_v5.analyze_stagea_stress_regimes import STRESS_PREFIXES, BASE_METRICS, _summarise as summarise_stress
 from fishery_sim.harvest import GovernmentAgent, HarvestCommonsConfig, SelfInterestedHarvestAgent, run_harvest_episode
 
 
