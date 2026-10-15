@@ -130,7 +130,26 @@ Started 14 October 2026.
 - **Consequence for R1a.** The frozen fine levels at n = 4 would have been negative. Amendment 2 uses the n = 64 scale at both sizes and re-states H1 at n = 4 as "Collective > 0.5 at every e, including 0".
 - **Evidence.** `runs/claude_r1a_v1/prediction.json`; `studies/R1a_willis_cpr_audits/results.md`; protocol Amendment 2.
 - **Paper must say.** Any break-even fine for their CPR depends on group size, and is not 2/q. Report e_pred per n.
-- **Action.** The R1a grid is running on GitHub Actions (workflow `r1a-willis-cpr.yml`; results branch `r1a-results`, `claude_r1a_v1/runs`). Analyse with `analyze_r1a --runs <checkout>/claude_r1a_v1/runs`. **Status: open (grid running).**
+- **Action.** Done. R1a ran in full (see F14). At n = 4 the Selfish disadvantage alone did not lift Collective above half (0.51 [0.43, 0.59]); any fine did. **Status: closed.**
+
+## F14. Audits and fines reverse the Selfish takeover in Willis et al.'s large groups, just above a fine predicted in advance [verified; R1a, 15 Oct]
+
+- **Found** (n = 64, q = 0.1, 20 evolution runs per condition, blind LLM-written strategies):
+  - The share of Collective strategies is 0.15 with no oversight, and 0.20 / 0.34 / **0.60** / 0.84 at 0.5 / 1.0 / 1.25 / 2.0 × the predicted balance fine (0.96 per defection, frozen before any run).
+  - Welfare efficiency is 0.13 → 0.57 at 1.25× and 0.87 at 2× (fines as transfers; 0.39 and 0.74 counting fines as lost).
+  - The paper's baseline replicates: 0.15 / 0.13 against 0.19 / 0.15.
+  - **At the same expected fine**, rare audits with large fines break even at 2.3–2.8× the audit cost of frequent small ones (60% fewer audits).
+  - With strong oversight, the surviving strategies shift from Selfish GPT/Claude to Collective Claude/Gemini/GPT.
+- **Built in vs found.** With blind strategies, every effect runs through which strategies get copied, and "a big enough fine makes Collective win" is mechanical. What was found: the switch fell between 1.0 and 1.25 × a balance point predicted before any run, the size of the welfare recovery, the cost comparison, and the model shares.
+- **Evidence.** `studies/R1a_willis_cpr_audits/results.md`; `runs/claude_r1a_v1/r1a_summary.json`; `figures/fig_r1a_willis_audits`.
+- **Paper must say.**
+  - It extends the frozen-prediction result (L3/L4) to hundreds of agents under cultural evolution, on the field's own code.
+  - The strategies are blind to audits, so the effect is selection, not in-game deterrence (R1b tests that).
+- **Action.**
+  - R1b: regenerate strategies with the audit rule in the prompt (about $1).
+  - Fix the overlapping labels in figure panels c and d.
+  - Two extension runs are being re-run.
+  - **Status: open (R1b next).**
 
 ---
 

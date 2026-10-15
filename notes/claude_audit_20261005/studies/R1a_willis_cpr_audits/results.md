@@ -1,10 +1,9 @@
 # Results R1a: do random audits and fines stop Selfish strategies taking over in Willis et al.'s commons?
 
-**Status: pending: grid running remotely.** As of 14 October 2026, the grid runs on GitHub Actions (workflow `r1a-willis-cpr.yml`, results branch `r1a-results`). Done so far:
-- the code and tests;
-- the prediction, the pilot and the choice of R (Amendments 1–4).
-
-No evolution result exists or has been looked at, so H0–H3, model shares and figures are pending. This file will be completed with `PYTHONPATH=.:external/emergent_llm/src python3 -m experiments.oversight.analyze_r1a --runs <checkout of r1a-results>/claude_r1a_v1/runs`.
+**Status: complete for the pre-registered grid (240 of 240 runs).**
+- The extension (Amendment 4) has 318 of 320 runs. The two missing runs (`n4_q0.25_e0.75`, runs 8–9) hit the CI job's 5.5-hour cap and are being re-run; this affects one extension point only.
+- The analysis was run on 15 October 2026 on the `r1a-results` branch (GitHub Actions run 38591376955; code `b86d620`).
+- Every number below comes from `runs/claude_r1a_v1/r1a_summary.json` and `r1a_conditions.csv` **[verified]**.
 
 **Protocol:** `protocol.md` in this folder, frozen 14 October 2026 before any R1a code existed, with four amendments written before any grid run:
 1. how the frozen text is implemented (what strategies see, the seed key, the tests);
@@ -77,47 +76,102 @@ Source: `runs/claude_r1a_v1/prediction.json`, computed 2026-10-14 15:27:35 UTC (
 
 ## What came out
 
-**Pending: grid running remotely.** No evolution result exists yet. A local grid was started at 15:32 UTC and stopped at 15:37 UTC on instruction, before any run finished (Amendment 4).
+### H0: the paper replicates (holds)
 
-When the runs are in, `analyze_r1a.py` writes:
-- `runs/claude_r1a_v1/r1a_summary.json`, `r1a_conditions.csv` and `r1a_runs.csv`;
-- `figures/fig_r1a_willis_audits.{pdf,png}`, a composite with four panels:
-  - (a) share of Collective strategies against e ÷ e_pred(64), for n = 4 and 64;
-  - (b) welfare efficiency on the same axis, with fines counted as transfers (points) and as lost (bars);
-  - (c) final genotype shares by model and attitude;
-  - (d) share Collective over generations at n = 64.
+| | Ours, no oversight (20 runs) | Paper |
+|---|---|---|
+| n = 64, share Collective | **0.15** [0.12, 0.18] | 0.19 |
+| n = 64, welfare efficiency | **0.13** [0.11, 0.15] | 0.15 |
+| n = 4, share Collective | **0.51** [0.43, 0.59] | 0.56 |
+| n = 4, welfare efficiency | **0.91** [0.90, 0.91] | 0.91 |
 
-The analysis and figure were checked end to end on a 4-generation smoke run (not analysed, not kept).
+### H1 at n = 64: Collective strategies take over just above the predicted fine (holds)
 
-## What it will and will not be able to show
+Share of Collective strategies in the last 100 generations (q = 0.1; Holm-corrected p = 0.001):
 
-**True by construction, with blind strategies:**
-- A fine never changes what any strategy does in a game. The strategies cannot see it, and the stock path given the actions is identical.
-- Every effect of oversight therefore comes through **which genotypes get copied**.
-- A large enough fine lowers a Selfish genotype's payoff mechanically. "Collective wins at a high enough fine" is built in.
+| Expected fine ÷ e_pred (0.96) | 0 | 0.5 | 0.75\* | 1.0 | 1.25 | 1.5\* | 2.0 |
+|---|---|---|---|---|---|---|---|
+| Share Collective | 0.15 | 0.20 | 0.22 | 0.34 | **0.60** [0.54, 0.65] | 0.72 | 0.84 |
 
-**Not built in, and what R1a tests:**
-- whether the switch happens near e_pred(64) = 0.96, given frequency-dependent payoffs and weak, noisy selection (β = 1 on fitness normalised to about 0–1);
-- whether welfare in groups of 64 recovers by at least 0.2 (H2);
-- which model's strategies survive;
-- whether the welfare gain is worth the audit cost (H3, break-even cost per audit).
+\* Extension point (Amendment 4), not part of the test.
 
-**What R1a cannot show:**
-- **Whether strategies respond to audits within a game.** That needs strategies regenerated with the audit rule in the prompt (R1b).
-- **The welfare result counting fines as lost.** In groups of 64 at the predicted fine this count can fall below the no-oversight level even if the Collective share rises. Both counts are reported.
+- **Verdict.** Below half at every level ≤ 0.75 e_pred, and above half at 1.25 and 2.0, as predicted.
+- **The switch** lies between 1.0 and 1.25 times the fine predicted, before any run, from the starting mix. At exactly the predicted fine the share is still 0.34. The prediction is a payoff balance at the *starting* mix, and evolution needs a small surplus to tip the population.
+- **Extension at q = 0.25**, the same expected fines made of more frequent and smaller fines: 0.17, 0.22, 0.38, 0.56, 0.71, 0.82. This is almost the same curve. With blind strategies this is expected: only the expected fine reaches selection.
+
+### H1 at n = 4 (as amended): fails, but only at e = 0
+
+- **Verdict.** H1 at n = 4 required the Collective share above half at every e, *including e = 0*. With no fine the share is 0.51 [0.43, 0.59]; the interval includes 0.5 (p = 0.38), so H1 fails there.
+- **With any fine**, it is above half: 0.64 to 0.87 at q = 0.1, and 0.58 to 0.84 at q = 0.25.
+- The payoff disadvantage of Selfish strategies at n = 4 (F13) is too small to win under weak selection on its own. A fine makes it decisive.
+
+### H2: oversight rescues the large group (holds)
+
+At n = 64, q = 0.1, e = 1.25 e_pred, compared with no oversight:
+- welfare efficiency, fines counted as transfers: **0.13 → 0.57**, +0.44 [+0.38, +0.49];
+- fines counted as lost: 0.13 → 0.39, +0.27 [+0.20, +0.33].
+
+At 2 × e_pred, efficiency is 0.87 (transfers) and 0.74 (lost), close to the n = 4 level of 0.91.
+
+### H3: break-even cost per audit (descriptive)
+
+c\* = welfare gain over no oversight ÷ audits per game. Welfare is in payoff units; one agent's cooperative take per round at full stock is 2.
+
+| n = 64, e ÷ e_pred | 0.5 | 1.0 | 1.25 | 2.0 |
+|---|---|---|---|---|
+| q = 0.1 (122 audits per game): c\*, fines as transfers / as lost | 0.04 / 0.01 | 0.07 / 0.02 | 0.14 / 0.08 | 0.23 / 0.19 |
+| q = 0.25 (304 audits per game) | 0.02 / 0.00 | 0.03 / 0.01 | 0.05 / 0.03 | 0.10 / 0.08 |
+
+**At the same expected fine, rare audits with large fines break even at 2.3–2.8× the audit cost of frequent audits with small fines.** They deliver the same deterrence with 60% fewer audits. This is Becker's cost argument, and it matches the direction of L4: at e = 2 t, a rare audit with a large fine deterred more.
+
+### Secondary arm: fining the final round too (n = 64, q = 0.1)
+
+| | Final round exempt | Final round fined |
+|---|---|---|
+| e = 1.25 e_pred: share Collective | 0.60 | **0.66** |
+| e = 1.25 e_pred: efficiency (transfers) | 0.57 | **0.66** |
+| e = 2.0 e_pred: share Collective | 0.84 | 0.86 |
+| e = 2.0 e_pred: efficiency (transfers) | 0.87 | 0.90 |
+
+Fining the final round adds deterrence against Selfish genotypes, and that outweighs the welfare lost by deterring the welfare-raising last-round grab. The design trap of F12 did not bite here.
+
+### Which models' strategies survive (descriptive)
+
+| | Largest shares (last 100 generations) |
+|---|---|
+| n = 64, no oversight | GPT-5.4 Mini Selfish 0.38, Claude Haiku Selfish 0.35, Gemini Selfish 0.12 (Collective 0.15 in total) |
+| n = 64, e = 1.25 e_pred | GPT Collective 0.25, Claude Selfish 0.26, Claude Collective 0.22 |
+| n = 64, e = 2.0 e_pred | **Claude Collective 0.39**, Gemini Collective 0.25, GPT Collective 0.20 |
+| n = 4, any condition | **Gemini dominates** (0.85–0.88 of the population, both attitudes) |
+
+Oversight changes not only how many strategies are Collective but **which developers' strategies win**. In large groups without oversight, Selfish GPT and Claude strategies take over. With strong oversight, Collective Claude strategies lead.
+
+## What it means
+
+1. **Willis et al.'s institution gap, filled for the first time.** An overseer with random audits and fines reverses the takeover by Selfish strategies in groups of 64. It raises welfare efficiency from 0.13 to 0.57 just above the predicted fine, and to 0.87 at twice it.
+2. **The fine needed was predicted before any run** from fine-free games: a payoff balance of 0.96 per defection. The switch happened between 1.0 and 1.25 times it. This is the same kind of claim as L3/L4 (a frozen, then confirmed, threshold), now at the scale of hundreds of agents with cultural evolution.
+3. **Cost.** For the same deterrence, rare audits with large fines are cheaper per unit of welfare than frequent small ones (H3). This connects the monitoring-cost feedback to Becker's result.
+
+## What it does not show
+
+- **Built in, with blind strategies.** Strategies cannot react to audits, so every effect runs through selection. "A large enough fine makes Collective win" is mechanical. What is not mechanical is that the switch fell close to the predicted balance point, given frequency dependence and weak selection, and that welfare recovered as much as it did.
+- **Whether LLM-written strategies would respond to audits if told the rules.** That is R1b.
+- **Equal results at q = 0.1 and q = 0.25 for the same e** are expected for blind strategies. They say nothing about how LLMs weigh certainty against severity; L4 tested that.
 
 ## Design caveats
 
-- **e_pred is computed at the starting mix only.** As the population changes, the payoff gap changes too, so the prediction is a first-order guide, not an equilibrium threshold.
-- **n = 4 uses another group size's scale** (Amendment 2), chosen after seeing the prediction but before any evolution run. H1 at n = 4 as re-stated is close to a replication claim: it predicts that Collective wins at e = 0.
-- **Shared seeds.** Run i starts from the same population in every condition. The intervals still resample conditions independently (conservative).
-- **Final-window statistics** follow their batch summary: the last 100 played generations.
-- **Software.** Their package imports LLM client libraries, `pathos` and matplotlib at import time. The adapter replaces any that are missing with placeholders that are never called; their code is unmodified.
+- **"Time to switch" is uninformative.** Every run starts at 50% Collective, so noise crosses 0.5 in the first generation (median 1.0 in every condition). It is not reported as a result. The over-time curves (figure, panel d) show the dynamics instead.
+- **e_pred is a starting-mix quantity** (see above). Its closeness to the switch point is an empirical finding, not a guarantee.
+- **The amended n = 4 test** was close to a replication claim, and it failed only at e = 0.
+- **Figure, panels c and d:** the x-axis labels and the legend overlap, to fix.
+- **Extension point `n4_q0.25_e0.75`** has 18 runs (2 being re-run).
 
 ## What we now believe, what is untested, next step
 
-- **Believed (verified):**
-  - The audited CPR is correct: fines never leak into the stock, and e = 0 is the authors' code bit for bit.
-  - At the starting mix, defection pays in groups of 64 (by 0.96 per defection) and already costs in groups of 4.
-- **Untested:** every evolution hypothesis (H0–H3).
-- **Next:** run the 240 jobs on CI lanes (about 50 CPU-hours on an M1 core, perhaps 60–75 on hosted runners; for example 8 lanes × 4 processes, about 2–2.5 h each). Then run `analyze_r1a.py` and fill in this file. No LLM cost.
+- **Believed** (verified, one game, blind strategies, 20 runs per condition):
+  - audits with fines reverse the Selfish takeover in large groups just above a fine predicted in advance;
+  - rare audits with large fines are the cheaper way to get there.
+- **Untested:**
+  - in-game responses of strategies that know the rules (R1b, about $1 of Ollama credit);
+  - an LLM-written overseer at this scale (R1d).
+- **Next:** R1b, regenerating the strategies with the audit rule in the prompt (pilot of 20 strategies first).

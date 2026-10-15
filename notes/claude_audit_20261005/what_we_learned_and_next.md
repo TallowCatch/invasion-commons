@@ -1,5 +1,16 @@
 # What we have learned, and what should come next
 
+## Update 11, 15 October 2026: R1a (audits in Willis et al.'s commons)
+
+- **The pre-registered grid is complete:** 240 runs on GitHub Actions. The extension has 318 of 320 runs (2 being re-run).
+- **H0 replicates the paper:** in groups of 64, 15% Collective and 13% efficiency, against 19% and 15% in the paper.
+- **H1 holds at n = 64:** the Collective share switches above half between 1.0 and 1.25 × the balance fine of 0.96 predicted before any run (0.34 → 0.60).
+- **H2 holds:** efficiency 0.13 → 0.57 at 1.25 × e_pred.
+- **H1 at n = 4 fails, only at e = 0** (0.51 [0.43, 0.59]). Any fine gives 0.58–0.87.
+- **Cost:** rare audits with large fines break even at 2.3–2.8× the audit cost of frequent small ones.
+- **Final round:** fining it as well helped slightly (0.66 against 0.60 Collective).
+- **Strategies are blind**, so the effect is selection; R1b is next. See F14.
+
 ## Update 10, 14 October 2026: Phase 0 (grounding and re-scoring) and the overseer layer
 
 - **Platform decision** (deep research, 93 sources; `research/commons_platform/2026-10-14_decision.md`):
