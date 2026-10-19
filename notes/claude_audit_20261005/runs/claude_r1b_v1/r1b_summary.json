@@ -1,0 +1,1039 @@
+{
+ "study": "R1b",
+ "generation": {
+  "pools": {
+   "A": {
+    "records": 128,
+    "ok": 127,
+    "failed": 1,
+    "failed_classes": [
+     "Strategy_SELFINTERESTED_10"
+    ],
+    "attempts_used": 130,
+    "by_synonym": {
+     "collective/altruistic": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "collective/benevolent": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "collective/collective": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "selfish/individualistic": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "selfish/opportunistic": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "collective/prosocial": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "selfish/self-interested": {
+      "ok": 15,
+      "failed": 1,
+      "unfinished": 0
+     },
+     "selfish/selfish": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     }
+    }
+   },
+   "B": {
+    "records": 128,
+    "ok": 127,
+    "failed": 1,
+    "failed_classes": [
+     "Strategy_INDIVIDUALISTIC_9"
+    ],
+    "attempts_used": 130,
+    "by_synonym": {
+     "collective/altruistic": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "collective/benevolent": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "collective/collective": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "selfish/individualistic": {
+      "ok": 15,
+      "failed": 1,
+      "unfinished": 0
+     },
+     "selfish/opportunistic": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "collective/prosocial": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "selfish/self-interested": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     },
+     "selfish/selfish": {
+      "ok": 16,
+      "failed": 0,
+      "unfinished": 0
+     }
+    }
+   }
+  },
+  "last_status": {
+   "utc": "2026-10-19T15:10:11Z",
+   "mode": "full",
+   "stopped": "done",
+   "detail": null,
+   "calls_this_run": 476,
+   "tokens_this_run": 1669686,
+   "calls": 516,
+   "tokens": 1814918,
+   "spent_usd": 0.580774,
+   "cap_usd": 3.0,
+   "call_cap": 1000,
+   "price_per_m": 0.32,
+   "planned": 256,
+   "per_synonym": 16,
+   "counts": {
+    "A": {
+     "ok": 127,
+     "failed": 1,
+     "described": 0,
+     "pending": 0
+    },
+    "B": {
+     "ok": 127,
+     "failed": 1,
+     "described": 0,
+     "pending": 0
+    }
+   },
+   "wall_s": 1130.7,
+   "unfinished": []
+  },
+  "calls": 516,
+  "tokens": 1814918,
+  "estimated_usd": 0.58077376,
+  "failed_calls": 0
+ },
+ "prediction": {
+  "study": "R1b",
+  "pool": "B",
+  "computed_utc": "2026-10-19T15:11:22Z",
+  "seed": 26102350,
+  "games": 2000,
+  "n": 64,
+  "definition": "e_pred(B) = (mean payoff Selfish - mean payoff Collective) / (mean non-final-round D Selfish - mean non-final-round D Collective), per agent per game, fine-free games among Pool B strategies at the starting mix (uniform over the 8 attitude genes, then a strategy)",
+  "strategies_per_gene": {
+   "gpt-oss-120b[altruistic]": 16,
+   "gpt-oss-120b[benevolent]": 16,
+   "gpt-oss-120b[collective]": 16,
+   "gpt-oss-120b[individualistic]": 15,
+   "gpt-oss-120b[opportunistic]": 16,
+   "gpt-oss-120b[prosocial]": 16,
+   "gpt-oss-120b[self-interested]": 16,
+   "gpt-oss-120b[selfish]": 16
+  },
+  "per_n": {
+   "64": {
+    "n": 64,
+    "games": 2000,
+    "agents": 128000,
+    "selfish_agents": 63978,
+    "mean_payoff_selfish": 8.493857851983874,
+    "mean_payoff_collective": 6.357094642000912,
+    "mean_nonfinal_D_selfish": 15.329285066741692,
+    "mean_nonfinal_D_collective": 11.911999000343632,
+    "delta_payoff": 2.136763209982962,
+    "delta_D": 3.4172860663980593,
+    "e_pred": 0.6252807545126552,
+    "e_pred_boot95_descriptive": [
+     0.6125258166939396,
+     0.6387754250043193
+    ],
+    "welfare_efficiency_at_start_mix": 0.09013444712672836,
+    "myopic_gain_full_stock": 2.0,
+    "forward_looking_gain": 1.97,
+    "myopic_F_star_q0.1": 20.0
+   }
+  },
+  "e_pred_B": 0.6252807545126552,
+  "runtime_s": 16.9
+ },
+ "part1": {
+  "H1": {
+   "4": {
+    "strategies": 63,
+    "rate_e0": 0.4298663324979115,
+    "rate_e2": 0.035547201336675015,
+    "ratio": 0.0826936157807793,
+    "ratio_ci": [
+     0.013700385416989598,
+     0.17709170755622194
+    ],
+    "fails_ratio": false,
+    "steps": [
+     {
+      "e_from": 0.0,
+      "e_to": 0.5,
+      "change": -0.17744360902255646,
+      "ci": [
+       -0.2276942355889724,
+       -0.13119883040935665
+      ]
+     },
+     {
+      "e_from": 0.5,
+      "e_to": 1.0,
+      "change": -0.04477861319966581,
+      "ci": [
+       -0.06328529657477024,
+       -0.02589494569757713
+      ]
+     },
+     {
+      "e_from": 1.0,
+      "e_to": 2.0,
+      "change": -0.17209690893901422,
+      "ci": [
+       -0.21834168755221378,
+       -0.1304490392648288
+      ]
+     },
+     {
+      "e_from": 2.0,
+      "e_to": 3.0,
+      "change": -0.006098579782790305,
+      "ci": [
+       -0.011404553049289891,
+       -0.0015455304928989133
+      ]
+     },
+     {
+      "e_from": 3.0,
+      "e_to": 4.0,
+      "change": -0.0033834586466165405,
+      "ci": [
+       -0.007686925647451967,
+       -0.00016708437761069408
+      ]
+     }
+    ],
+    "fails_steps": false,
+    "verdict": "holds"
+   },
+   "64": {
+    "strategies": 63,
+    "rate_e0": 0.7422723475355055,
+    "rate_e2": 0.059690893901420204,
+    "ratio": 0.08041643218908269,
+    "ratio_ci": [
+     0.017662594783660023,
+     0.1588341328807987
+    ],
+    "fails_ratio": false,
+    "steps": [
+     {
+      "e_from": 0.0,
+      "e_to": 0.5,
+      "change": -0.3914786967418547,
+      "ci": [
+       -0.48362677527151227,
+       -0.2956902673350044
+      ]
+     },
+     {
+      "e_from": 0.5,
+      "e_to": 1.0,
+      "change": -0.09853801169590648,
+      "ci": [
+       -0.13116228070175442,
+       -0.0678728070175439
+      ]
+     },
+     {
+      "e_from": 1.0,
+      "e_to": 2.0,
+      "change": -0.19256474519632413,
+      "ci": [
+       -0.2357581453634086,
+       -0.15338241436925645
+      ]
+     },
+     {
+      "e_from": 2.0,
+      "e_to": 3.0,
+      "change": -0.02351712614870509,
+      "ci": [
+       -0.05756265664160402,
+       -0.0012531328320802004
+      ]
+     },
+     {
+      "e_from": 3.0,
+      "e_to": 4.0,
+      "change": -0.0038847117794486227,
+      "ci": [
+       -0.008312447786132014,
+       -0.0007101086048454525
+      ]
+     }
+    ],
+    "fails_steps": false,
+    "verdict": "holds"
+   }
+  },
+  "H2": {
+   "4": {
+    "e_levels": [
+     0.0,
+     0.5,
+     1.0,
+     2.0,
+     3.0,
+     4.0
+    ],
+    "max_abs_change_any_strategy": 0.0,
+    "holds": true,
+    "mean_by_e": {
+     "0.0": 0.4592208868628263,
+     "0.5": 0.4592208868628263,
+     "1.0": 0.4592208868628263,
+     "2.0": 0.4592208868628263,
+     "3.0": 0.4592208868628263,
+     "4.0": 0.4592208868628263
+    }
+   },
+   "64": {
+    "e_levels": [
+     0.0,
+     0.5,
+     1.0,
+     2.0,
+     3.0,
+     4.0
+    ],
+    "max_abs_change_any_strategy": 0.0,
+    "holds": true,
+    "mean_by_e": {
+     "0.0": 0.7150020721094074,
+     "0.5": 0.7150020721094074,
+     "1.0": 0.7150020721094074,
+     "2.0": 0.7150020721094074,
+     "3.0": 0.7150020721094074,
+     "4.0": 0.7150020721094074
+    }
+   }
+  },
+  "H3": {
+   "4": {
+    "pool_A": 0.2817023026315789,
+    "pool_B": 0.3622532894736842,
+    "diff": -0.08055098684210527,
+    "ci": [
+     -0.16439247532894735,
+     0.00534745065789473
+    ]
+   },
+   "64": {
+    "pool_A": 0.34169407894736836,
+    "pool_B": 0.625205592105263,
+    "diff": -0.2835115131578947,
+    "ci": [
+     -0.4191293174342105,
+     -0.15019942434210526
+    ]
+   }
+  },
+  "table": [
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "collective",
+    "e": 0.0,
+    "strategies": 64,
+    "defect_rate": 0.2817023026315789,
+    "ci_lo": 0.2236379523026316,
+    "ci_hi": 0.34333984375,
+    "fines_per_game": 0.0,
+    "net_payoff": 17.831111786630373
+   },
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "collective",
+    "e": 0.5,
+    "strategies": 64,
+    "defect_rate": 0.2626233552631579,
+    "ci_lo": 0.20932565789473684,
+    "ci_hi": 0.32039782072368417,
+    "fines_per_game": 2.60546875,
+    "net_payoff": 18.883849412366697
+   },
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "collective",
+    "e": 1.0,
+    "strategies": 64,
+    "defect_rate": 0.2390625,
+    "ci_lo": 0.1875,
+    "ci_hi": 0.29412109375,
+    "fines_per_game": 4.5390625,
+    "net_payoff": 21.36841916474247
+   },
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "collective",
+    "e": 2.0,
+    "strategies": 64,
+    "defect_rate": 0.036718749999999994,
+    "ci_lo": 0.012870065789473683,
+    "ci_hi": 0.0726572779605263,
+    "fines_per_game": 1.703125,
+    "net_payoff": 36.79546875260355
+   },
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "collective",
+    "e": 3.0,
+    "strategies": 64,
+    "defect_rate": 0.03108552631578947,
+    "ci_lo": 0.00838815789473684,
+    "ci_hi": 0.06558799342105262,
+    "fines_per_game": 2.3203125,
+    "net_payoff": 36.30331492345546
+   },
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "collective",
+    "e": 4.0,
+    "strategies": 64,
+    "defect_rate": 0.03219572368421052,
+    "ci_lo": 0.008304893092105263,
+    "ci_hi": 0.06833881578947368,
+    "fines_per_game": 3.15625,
+    "net_payoff": 35.54382565298412
+   },
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "selfish",
+    "e": 0.0,
+    "strategies": 63,
+    "defect_rate": 0.4298663324979115,
+    "ci_lo": 0.34891290726817037,
+    "ci_hi": 0.5085651629072683,
+    "fines_per_game": 0.0,
+    "net_payoff": 17.7483378738295
+   },
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "selfish",
+    "e": 0.5,
+    "strategies": 63,
+    "defect_rate": 0.25242272347535505,
+    "ci_lo": 0.19982664995822888,
+    "ci_hi": 0.30919172932330824,
+    "fines_per_game": 2.3412698412698414,
+    "net_payoff": 19.96798483652632
+   },
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "selfish",
+    "e": 1.0,
+    "strategies": 63,
+    "defect_rate": 0.20764411027568924,
+    "ci_lo": 0.1576837928153718,
+    "ci_hi": 0.26224206349206347,
+    "fines_per_game": 3.7857142857142856,
+    "net_payoff": 23.54727897269597
+   },
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "selfish",
+    "e": 2.0,
+    "strategies": 63,
+    "defect_rate": 0.035547201336675015,
+    "ci_lo": 0.005805137844611528,
+    "ci_hi": 0.07711361737677529,
+    "fines_per_game": 1.3174603174603174,
+    "net_payoff": 38.47517509042515
+   },
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "selfish",
+    "e": 3.0,
+    "strategies": 63,
+    "defect_rate": 0.02944862155388471,
+    "ci_lo": 0.0018796992481203006,
+    "ci_hi": 0.06863095238095238,
+    "fines_per_game": 1.6428571428571428,
+    "net_payoff": 38.322574582440446
+   },
+   {
+    "pool": "A",
+    "n": 4,
+    "base": "selfish",
+    "e": 4.0,
+    "strategies": 63,
+    "defect_rate": 0.02606516290726817,
+    "ci_lo": 0.0002506265664160401,
+    "ci_hi": 0.06453634085213032,
+    "fines_per_game": 1.9047619047619047,
+    "net_payoff": 38.17149962520673
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "collective",
+    "e": 0.0,
+    "strategies": 64,
+    "defect_rate": 0.34169407894736836,
+    "ci_lo": 0.24625513980263158,
+    "ci_hi": 0.44124486019736836,
+    "fines_per_game": 0.0,
+    "net_payoff": 6.503293328157281
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "collective",
+    "e": 0.5,
+    "strategies": 64,
+    "defect_rate": 0.2869654605263158,
+    "ci_lo": 0.21204666940789474,
+    "ci_hi": 0.3678495065789474,
+    "fines_per_game": 2.8046875,
+    "net_payoff": 13.115636152605548
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "collective",
+    "e": 1.0,
+    "strategies": 64,
+    "defect_rate": 0.25982730263157894,
+    "ci_lo": 0.19609169407894733,
+    "ci_hi": 0.328043791118421,
+    "fines_per_game": 4.96875,
+    "net_payoff": 19.920593248134956
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "collective",
+    "e": 2.0,
+    "strategies": 64,
+    "defect_rate": 0.027302631578947367,
+    "ci_lo": 0.0026726973684210523,
+    "ci_hi": 0.06550267269736841,
+    "fines_per_game": 0.984375,
+    "net_payoff": 38.58523080541598
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "collective",
+    "e": 3.0,
+    "strategies": 64,
+    "defect_rate": 0.01809210526315789,
+    "ci_lo": 0.0003289473684210526,
+    "ci_hi": 0.050287828947368406,
+    "fines_per_game": 1.0078125,
+    "net_payoff": 38.93898811042545
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "collective",
+    "e": 4.0,
+    "strategies": 64,
+    "defect_rate": 0.01809210526315789,
+    "ci_lo": 0.0003289473684210526,
+    "ci_hi": 0.05098889802631579,
+    "fines_per_game": 1.34375,
+    "net_payoff": 38.65001212571904
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "selfish",
+    "e": 0.0,
+    "strategies": 63,
+    "defect_rate": 0.7422723475355055,
+    "ci_lo": 0.6405545112781954,
+    "ci_hi": 0.8388523391812865,
+    "fines_per_game": 0.0,
+    "net_payoff": 8.983220742581238
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "selfish",
+    "e": 0.5,
+    "strategies": 63,
+    "defect_rate": 0.3507936507936508,
+    "ci_lo": 0.28738199665831243,
+    "ci_hi": 0.41604636591478683,
+    "fines_per_game": 3.4801587301587302,
+    "net_payoff": 14.826816728015952
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "selfish",
+    "e": 1.0,
+    "strategies": 63,
+    "defect_rate": 0.25225563909774434,
+    "ci_lo": 0.20024331662489556,
+    "ci_hi": 0.31120300751879704,
+    "fines_per_game": 4.904761904761905,
+    "net_payoff": 21.42560054097208
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "selfish",
+    "e": 2.0,
+    "strategies": 63,
+    "defect_rate": 0.059690893901420204,
+    "ci_lo": 0.012656641604010022,
+    "ci_hi": 0.11833751044277357,
+    "fines_per_game": 2.5396825396825395,
+    "net_payoff": 39.441355446776186
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "selfish",
+    "e": 3.0,
+    "strategies": 63,
+    "defect_rate": 0.036173767752715115,
+    "ci_lo": 0.0029657477025898074,
+    "ci_hi": 0.08300229741019216,
+    "fines_per_game": 2.4285714285714284,
+    "net_payoff": 39.492443292179836
+   },
+   {
+    "pool": "A",
+    "n": 64,
+    "base": "selfish",
+    "e": 4.0,
+    "strategies": 63,
+    "defect_rate": 0.03228905597326649,
+    "ci_lo": 0.0006265664160401002,
+    "ci_hi": 0.07731829573934836,
+    "fines_per_game": 2.7936507936507935,
+    "net_payoff": 39.057513453417165
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "collective",
+    "e": 0.0,
+    "strategies": 64,
+    "defect_rate": 0.3622532894736842,
+    "ci_lo": 0.301640625,
+    "ci_hi": 0.42491879111842107,
+    "fines_per_game": 0.0,
+    "net_payoff": 19.46940522771258
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "collective",
+    "e": 0.5,
+    "strategies": 64,
+    "defect_rate": 0.3622532894736842,
+    "ci_lo": 0.2999434621710526,
+    "ci_hi": 0.42475431743421055,
+    "fines_per_game": 3.3984375,
+    "net_payoff": 16.07096772771258
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "collective",
+    "e": 1.0,
+    "strategies": 64,
+    "defect_rate": 0.3622532894736842,
+    "ci_lo": 0.3023848684210526,
+    "ci_hi": 0.4245970394736842,
+    "fines_per_game": 6.796875,
+    "net_payoff": 12.672530227712581
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "collective",
+    "e": 2.0,
+    "strategies": 64,
+    "defect_rate": 0.3622532894736842,
+    "ci_lo": 0.30250616776315786,
+    "ci_hi": 0.42467619243421056,
+    "fines_per_game": 13.59375,
+    "net_payoff": 5.875655227712582
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "collective",
+    "e": 3.0,
+    "strategies": 64,
+    "defect_rate": 0.3622532894736842,
+    "ci_lo": 0.3027025082236842,
+    "ci_hi": 0.42241570723684213,
+    "fines_per_game": 20.390625,
+    "net_payoff": -0.9212197722874184
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "collective",
+    "e": 4.0,
+    "strategies": 64,
+    "defect_rate": 0.3622532894736842,
+    "ci_lo": 0.3025483141447369,
+    "ci_hi": 0.4254183799342106,
+    "fines_per_game": 27.1875,
+    "net_payoff": -7.718094772287418
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "selfish",
+    "e": 0.0,
+    "strategies": 63,
+    "defect_rate": 0.5577276524644944,
+    "ci_lo": 0.47814954051796155,
+    "ci_hi": 0.6367627401837926,
+    "fines_per_game": 0.0,
+    "net_payoff": 17.91152798662976
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "selfish",
+    "e": 0.5,
+    "strategies": 63,
+    "defect_rate": 0.5577276524644944,
+    "ci_lo": 0.47765037593984955,
+    "ci_hi": 0.6363001253132831,
+    "fines_per_game": 5.2103174603174605,
+    "net_payoff": 12.701210526312305
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "selfish",
+    "e": 1.0,
+    "strategies": 63,
+    "defect_rate": 0.5577276524644944,
+    "ci_lo": 0.47602234753550543,
+    "ci_hi": 0.6360985797827903,
+    "fines_per_game": 10.420634920634921,
+    "net_payoff": 7.490893065994841
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "selfish",
+    "e": 2.0,
+    "strategies": 63,
+    "defect_rate": 0.5577276524644944,
+    "ci_lo": 0.47592836257309945,
+    "ci_hi": 0.633377192982456,
+    "fines_per_game": 20.841269841269842,
+    "net_payoff": -2.9297418546400786
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "selfish",
+    "e": 3.0,
+    "strategies": 63,
+    "defect_rate": 0.5577276524644944,
+    "ci_lo": 0.4786528822055138,
+    "ci_hi": 0.6393911862990809,
+    "fines_per_game": 31.261904761904763,
+    "net_payoff": -13.350376775274997
+   },
+   {
+    "pool": "B",
+    "n": 4,
+    "base": "selfish",
+    "e": 4.0,
+    "strategies": 63,
+    "defect_rate": 0.5577276524644944,
+    "ci_lo": 0.47965747702589806,
+    "ci_hi": 0.6382623224728486,
+    "fines_per_game": 41.682539682539684,
+    "net_payoff": -23.771011695909927
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "collective",
+    "e": 0.0,
+    "strategies": 64,
+    "defect_rate": 0.625205592105263,
+    "ci_lo": 0.5307154605263158,
+    "ci_hi": 0.713948396381579,
+    "fines_per_game": 0.0,
+    "net_payoff": 6.349352550305786
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "collective",
+    "e": 0.5,
+    "strategies": 64,
+    "defect_rate": 0.625205592105263,
+    "ci_lo": 0.526559416118421,
+    "ci_hi": 0.7139823190789473,
+    "fines_per_game": 6.03125,
+    "net_payoff": 0.3181025503057854
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "collective",
+    "e": 1.0,
+    "strategies": 64,
+    "defect_rate": 0.625205592105263,
+    "ci_lo": 0.5261502878289473,
+    "ci_hi": 0.7155879934210525,
+    "fines_per_game": 12.0625,
+    "net_payoff": -5.7131474496942145
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "collective",
+    "e": 2.0,
+    "strategies": 64,
+    "defect_rate": 0.625205592105263,
+    "ci_lo": 0.5301788651315789,
+    "ci_hi": 0.7215871710526315,
+    "fines_per_game": 24.125,
+    "net_payoff": -17.775647449694212
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "collective",
+    "e": 3.0,
+    "strategies": 64,
+    "defect_rate": 0.625205592105263,
+    "ci_lo": 0.5298416940789473,
+    "ci_hi": 0.7181393914473684,
+    "fines_per_game": 36.1875,
+    "net_payoff": -29.83814744969422
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "collective",
+    "e": 4.0,
+    "strategies": 64,
+    "defect_rate": 0.625205592105263,
+    "ci_lo": 0.5243349095394736,
+    "ci_hi": 0.7181373355263158,
+    "fines_per_game": 48.25,
+    "net_payoff": -41.90064744969422
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "selfish",
+    "e": 0.0,
+    "strategies": 63,
+    "defect_rate": 0.8062238930659983,
+    "ci_lo": 0.7189954051796157,
+    "ci_hi": 0.8847149122807016,
+    "fines_per_game": 0.0,
+    "net_payoff": 8.534255757035455
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "selfish",
+    "e": 0.5,
+    "strategies": 63,
+    "defect_rate": 0.8062238930659983,
+    "ci_lo": 0.7151138262322474,
+    "ci_hi": 0.8910609857978278,
+    "fines_per_game": 7.583333333333333,
+    "net_payoff": 0.950922423702121
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "selfish",
+    "e": 1.0,
+    "strategies": 63,
+    "defect_rate": 0.8062238930659983,
+    "ci_lo": 0.7182048872180453,
+    "ci_hi": 0.8858395989974936,
+    "fines_per_game": 15.166666666666666,
+    "net_payoff": -6.6324109096312105
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "selfish",
+    "e": 2.0,
+    "strategies": 63,
+    "defect_rate": 0.8062238930659983,
+    "ci_lo": 0.7142804928989139,
+    "ci_hi": 0.8855900167084377,
+    "fines_per_game": 30.333333333333332,
+    "net_payoff": -21.799077576297876
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "selfish",
+    "e": 3.0,
+    "strategies": 63,
+    "defect_rate": 0.8062238930659983,
+    "ci_lo": 0.7146501670843776,
+    "ci_hi": 0.8871365914786967,
+    "fines_per_game": 45.5,
+    "net_payoff": -36.96574424296454
+   },
+   {
+    "pool": "B",
+    "n": 64,
+    "base": "selfish",
+    "e": 4.0,
+    "strategies": 63,
+    "defect_rate": 0.8062238930659983,
+    "ci_lo": 0.7160808270676692,
+    "ci_hi": 0.8894778613199665,
+    "fines_per_game": 60.666666666666664,
+    "net_payoff": -52.13241090963121
+   }
+  ]
+ },
+ "part2": {
+  "H4": {
+   "status": "pending",
+   "runs_A": 0,
+   "runs_B": 0
+  },
+  "H5": {
+   "A": {
+    "first_mult_collective_above_half": null,
+    "complete_levels": []
+   },
+   "B": {
+    "first_mult_collective_above_half": null,
+    "complete_levels": []
+   }
+  },
+  "pending_conditions": [],
+  "table": []
+ },
+ "part3": {
+  "summary": {
+   "A/all": {
+    "strategies": 127,
+    "reads_q_or_F": 0.9606299212598425,
+    "reads_audit_history": 0.07086614173228346,
+    "ev_comparison": 0.6220472440944882
+   },
+   "A/collective": {
+    "strategies": 64,
+    "reads_q_or_F": 0.921875,
+    "reads_audit_history": 0.09375,
+    "ev_comparison": 0.5
+   },
+   "A/selfish": {
+    "strategies": 63,
+    "reads_q_or_F": 1.0,
+    "reads_audit_history": 0.047619047619047616,
+    "ev_comparison": 0.746031746031746
+   },
+   "B/all": {
+    "strategies": 127,
+    "reads_q_or_F": 0.0,
+    "reads_audit_history": 0.0,
+    "ev_comparison": 0.0
+   },
+   "B/collective": {
+    "strategies": 64,
+    "reads_q_or_F": 0.0,
+    "reads_audit_history": 0.0,
+    "ev_comparison": 0.0
+   },
+   "B/selfish": {
+    "strategies": 63,
+    "reads_q_or_F": 0.0,
+    "reads_audit_history": 0.0,
+    "ev_comparison": 0.0
+   }
+  },
+  "handcheck_seed": 26101452,
+  "handcheck": [
+   "Strategy_ALTRUISTIC_11",
+   "Strategy_BENEVOLENT_11",
+   "Strategy_COLLECTIVE_10",
+   "Strategy_COLLECTIVE_16",
+   "Strategy_COLLECTIVE_2",
+   "Strategy_COLLECTIVE_8",
+   "Strategy_COLLECTIVE_9",
+   "Strategy_INDIVIDUALISTIC_11",
+   "Strategy_OPPORTUNISTIC_1",
+   "Strategy_OPPORTUNISTIC_11",
+   "Strategy_OPPORTUNISTIC_16",
+   "Strategy_PROSOCIAL_2",
+   "Strategy_SELFINTERESTED_16",
+   "Strategy_SELFINTERESTED_2",
+   "Strategy_SELFINTERESTED_9",
+   "Strategy_SELFISH_1",
+   "Strategy_SELFISH_14",
+   "Strategy_SELFISH_2",
+   "Strategy_SELFISH_4",
+   "Strategy_SELFISH_7"
+  ]
+ },
+ "bootstrap": {
+  "resamples": 4000,
+  "seed": 26101451
+ }
+}

@@ -151,6 +151,24 @@ Started 14 October 2026.
   - All 560 runs are complete (19 Oct).
   - **Status: open (R1b next).**
 
+## F15. When told the audit rule, LLM-written strategies obey Becker, and a zero-fine announcement does not backfire on them [verified; R1b Part 1, 19 Oct]
+
+- **Found** (gpt-oss-120b, 127 audit-aware and 127 blind strategies, Willis et al.'s CPR):
+  - Audit-aware Selfish strategies at n = 64 cut their defection from 0.74 to **0.06** at an expected fine of 2: 8% of the no-fine level [2%, 16%]. They had already halved it at 0.5.
+  - The blind pool is unchanged.
+  - 100% of Selfish audit-aware strategies read q or F, and 75% implement an explicit expected-value comparison; 7% use their own audit history.
+  - Audit-aware Collective strategies defect less even with audits off (0.34 against 0.63).
+  - No audits and audits with a zero fine give identical behaviour.
+- **What it means.**
+  - Deterrence works through in-game response as well as through selection (R1a).
+  - **Agents that write code and agents that act live differ:** the zero-fine backfire in L4 (F4) does not appear in written strategies.
+- **Evidence.** `studies/R1b_audit_aware_strategies/results.md`; `runs/claude_r1b_v1/r1b_summary.json`.
+- **Paper must say.** The live-agent backfire (L4) is a property of acting LLM agents, not of the rule.
+- **Action.**
+  - Part 2 (evolution) is running.
+  - Hand-check 20 strategies.
+  - **Status: open.**
+
 ---
 
 *Index entry:* this file is referenced from `what_we_learned_and_next.md` and from Ameer's Claude memory.
