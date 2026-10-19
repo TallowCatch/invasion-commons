@@ -1,0 +1,44 @@
+{
+  "study": "R1b",
+  "pool": "B",
+  "computed_utc": "2026-10-19T15:11:22Z",
+  "seed": 26102350,
+  "games": 2000,
+  "n": 64,
+  "definition": "e_pred(B) = (mean payoff Selfish - mean payoff Collective) / (mean non-final-round D Selfish - mean non-final-round D Collective), per agent per game, fine-free games among Pool B strategies at the starting mix (uniform over the 8 attitude genes, then a strategy)",
+  "strategies_per_gene": {
+    "gpt-oss-120b[altruistic]": 16,
+    "gpt-oss-120b[benevolent]": 16,
+    "gpt-oss-120b[collective]": 16,
+    "gpt-oss-120b[individualistic]": 15,
+    "gpt-oss-120b[opportunistic]": 16,
+    "gpt-oss-120b[prosocial]": 16,
+    "gpt-oss-120b[self-interested]": 16,
+    "gpt-oss-120b[selfish]": 16
+  },
+  "per_n": {
+    "64": {
+      "n": 64,
+      "games": 2000,
+      "agents": 128000,
+      "selfish_agents": 63978,
+      "mean_payoff_selfish": 8.493857851983874,
+      "mean_payoff_collective": 6.357094642000912,
+      "mean_nonfinal_D_selfish": 15.329285066741692,
+      "mean_nonfinal_D_collective": 11.911999000343632,
+      "delta_payoff": 2.136763209982962,
+      "delta_D": 3.4172860663980593,
+      "e_pred": 0.6252807545126552,
+      "e_pred_boot95_descriptive": [
+        0.6125258166939396,
+        0.6387754250043193
+      ],
+      "welfare_efficiency_at_start_mix": 0.09013444712672836,
+      "myopic_gain_full_stock": 2.0,
+      "forward_looking_gain": 1.97,
+      "myopic_F_star_q0.1": 20.0
+    }
+  },
+  "e_pred_B": 0.6252807545126552,
+  "runtime_s": 16.9
+}
