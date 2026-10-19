@@ -1,0 +1,32 @@
+{
+ "utc": "2026-10-19T14:49:44Z",
+ "mode": "pilot",
+ "stopped": "done",
+ "detail": null,
+ "calls_this_run": 40,
+ "tokens_this_run": 145232,
+ "calls": 40,
+ "tokens": 145232,
+ "spent_usd": 0.046474,
+ "cap_usd": 3.0,
+ "call_cap": 1000,
+ "price_per_m": 0.32,
+ "planned": 20,
+ "per_synonym": null,
+ "counts": {
+  "A": {
+   "ok": 10,
+   "failed": 0,
+   "described": 0,
+   "pending": 0
+  },
+  "B": {
+   "ok": 10,
+   "failed": 0,
+   "described": 0,
+   "pending": 0
+  }
+ },
+ "wall_s": 90.5,
+ "unfinished": []
+}

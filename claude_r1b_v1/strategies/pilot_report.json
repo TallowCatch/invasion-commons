@@ -1,0 +1,28 @@
+{
+ "utc": "2026-10-19T14:49:44Z",
+ "pilot_strategies": 20,
+ "finished": 20,
+ "ok": 20,
+ "failed": 0,
+ "price_per_m": 0.32,
+ "gate_usd_for_256": 2.5,
+ "tokens_per_strategy": 7261.6,
+ "calls_per_strategy": 2.0,
+ "usd_per_strategy": 0.002323712,
+ "projected_usd_256": 0.594870272,
+ "projected_usd_remaining": 0.548396032,
+ "by_pool": {
+  "A": {
+   "tokens_per_strategy": 8156.7,
+   "finished": 10
+  },
+  "B": {
+   "tokens_per_strategy": 6366.5,
+   "finished": 10
+  }
+ },
+ "gate_passes": true,
+ "complete": true,
+ "total_calls_logged": 40,
+ "total_spent_usd": 0.04647424
+}
