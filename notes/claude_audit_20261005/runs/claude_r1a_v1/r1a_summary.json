@@ -2441,110 +2441,110 @@
       "F": 2.885882716140653,
       "exempt": true,
       "arm": "primary_dropped",
-      "runs": 18,
-      "complete": false,
-      "runtime_mean_s": 6229.007777777778,
-      "collective_frequency": 0.708005642361111,
+      "runs": 20,
+      "complete": true,
+      "runtime_mean_s": 5898.1655,
+      "collective_frequency": 0.7202490234375,
       "collective_frequency_ci": [
-        0.6335748697916667,
-        0.776954345703125
+        0.6498363525390625,
+        0.785041162109375
       ],
-      "efficiency_transfer": 0.9323705146943815,
+      "efficiency_transfer": 0.9329967996685944,
       "efficiency_transfer_ci": [
-        0.9266823277725346,
-        0.9379983020704402
+        0.9279808167893998,
+        0.9378492066422157
       ],
-      "efficiency_lost": 0.9188915789074079,
+      "efficiency_lost": 0.9196742702898784,
       "efficiency_lost_ci": [
-        0.910927454136688,
-        0.9263358003821043
+        0.912410848547562,
+        0.9264655795915424
       ],
-      "fines_per_game": 2.048798239619998,
+      "fines_per_game": 2.025024465564864,
       "fines_per_game_ci": [
-        1.749719912719471,
-        2.3635798267689
+        1.755437857503767,
+        2.309103193154355
       ],
-      "audits_per_game": 19.004102647569447,
+      "audits_per_game": 19.001997070312505,
       "audits_per_game_ci": [
-        18.997379557291666,
-        19.010635932074653
+        18.995447998046874,
+        19.008514868164063
       ],
-      "caught_per_game": 0.7099381510416667,
+      "caught_per_game": 0.7017001953125,
       "caught_per_game_ci": [
-        0.60560791015625,
-        0.81685986328125
+        0.6104685791015626,
+        0.7988420166015627
       ],
-      "cooperation_rate": 0.9337720675998263,
+      "cooperation_rate": 0.9341435302734376,
       "cooperation_rate_ci": [
-        0.9267413845486112,
-        0.9401948852539063
+        0.9281672494506835,
+        0.9400933633422851
       ],
-      "defections_nonfinal_per_agent_game": 0.7095228407118055,
+      "defections_nonfinal_per_agent_game": 0.70114599609375,
       "defections_nonfinal_per_agent_game_ci": [
-        0.6090480414496529,
-        0.8174210272894966
+        0.6093196411132812,
+        0.7998561645507812
       ],
-      "welfare_transfer": 39.430079558386495,
+      "welfare_transfer": 39.45387838740659,
       "welfare_transfer_ci": [
-        39.21315279241299,
-        39.639220136047754
+        39.25636845031819,
+        39.63693363907568
       ],
-      "welfare_lost": 38.9178799984815,
+      "welfare_lost": 38.947622271015376,
       "welfare_lost_ci": [
-        38.62579661725174,
-        39.20799902484535
+        38.67349149083527,
+        39.21398743409574
       ],
-      "final_stock_mean": 7.064328086071457,
+      "final_stock_mean": 7.052925274130814,
       "final_stock_mean_ci": [
-        6.386240733889541,
-        7.72088957990389
+        6.424399538157979,
+        7.653301555222103
       ],
-      "share_claude-haiku-4-5": 0.09039496527777777,
+      "share_claude-haiku-4-5": 0.087525390625,
       "share_claude-haiku-4-5_ci": [
-        0.06482603624131944,
-        0.1186168891059028
+        0.0648008056640625,
+        0.11370642089843751
       ],
-      "share_gemini-3.1-flash-lite-preview": 0.7968381076388888,
+      "share_gemini-3.1-flash-lite-preview": 0.8030703124999998,
       "share_gemini-3.1-flash-lite-preview_ci": [
-        0.7540783148871528,
-        0.8376645779079861
+        0.7643502685546875,
+        0.8415881835937499
       ],
-      "share_gpt-5.4-mini": 0.11276692708333333,
+      "share_gpt-5.4-mini": 0.109404296875,
       "share_gpt-5.4-mini_ci": [
-        0.07916788736979166,
-        0.14906944444444442
+        0.07905283203125,
+        0.1431222412109375
       ],
-      "geno_claude-haiku-4-5_collective": 0.08486328125,
+      "geno_claude-haiku-4-5_collective": 0.08207324218750002,
       "geno_claude-haiku-4-5_collective_ci": [
-        0.059601942274305555,
-        0.1120769314236111
+        0.0586179931640625,
+        0.10817509765624998
       ],
-      "geno_claude-haiku-4-5_selfish": 0.005531684027777778,
+      "geno_claude-haiku-4-5_selfish": 0.0054521484375,
       "geno_claude-haiku-4-5_selfish_ci": [
-        0.004017957899305555,
-        0.007116021050347222
+        0.0039871582031250005,
+        0.006997094726562499
       ],
-      "geno_gemini-3.1-flash-lite-preview_collective": 0.5207747395833333,
+      "geno_gemini-3.1-flash-lite-preview_collective": 0.5386650390625001,
       "geno_gemini-3.1-flash-lite-preview_collective_ci": [
-        0.44579359266493057,
-        0.5942314995659723
+        0.46951323242187504,
+        0.6088438720703124
       ],
-      "geno_gemini-3.1-flash-lite-preview_selfish": 0.27606336805555554,
+      "geno_gemini-3.1-flash-lite-preview_selfish": 0.2644052734375,
       "geno_gemini-3.1-flash-lite-preview_selfish_ci": [
-        0.20819661458333336,
-        0.34944414605034724
+        0.20190759277343748,
+        0.3334939453125
       ],
-      "geno_gpt-5.4-mini_collective": 0.10236762152777776,
+      "geno_gpt-5.4-mini_collective": 0.0995107421875,
       "geno_gpt-5.4-mini_collective_ci": [
-        0.06931328667534722,
-        0.1381213650173611
+        0.07042609863281249,
+        0.1339681640625
       ],
-      "geno_gpt-5.4-mini_selfish": 0.010399305555555556,
+      "geno_gpt-5.4-mini_selfish": 0.009893554687499998,
       "geno_gpt-5.4-mini_selfish_ci": [
-        0.007766899956597222,
-        0.012989474826388889
+        0.0074677001953125,
+        0.012455151367187502
       ],
-      "switched_runs": 18,
+      "switched_runs": 20,
       "switch_generation_median": 1.0
     },
     {
@@ -3760,21 +3760,21 @@
         "W_per_game_lost_none": 153.6588460508197
       },
       "n4_q0.25_e0.75": {
-        "audits_per_game": 19.004102647569447,
-        "complete": false,
-        "c_star_transfer": 0.21371554648204996,
+        "audits_per_game": 19.001997070312505,
+        "complete": true,
+        "c_star_transfer": 0.21874898114265917,
         "c_star_transfer_ci": [
-          0.14485400929534567,
-          0.2881334906937034
+          0.14951682974996716,
+          0.2897213730474403
         ],
-        "W_per_game_transfer_cell": 157.72031823354598,
+        "W_per_game_transfer_cell": 157.81551354962636,
         "W_per_game_transfer_none": 153.6588460508197,
-        "c_star_lost": 0.10590733908521172,
+        "c_star_lost": 0.11217994747363383,
         "c_star_lost_ci": [
-          0.02194097950932373,
-          0.19032607518424052
+          0.031914584649784306,
+          0.19132144791007363
         ],
-        "W_per_game_lost_cell": 155.671519993926,
+        "W_per_game_lost_cell": 155.7904890840615,
         "W_per_game_lost_none": 153.6588460508197
       },
       "n4_q0.25_e1.0": {

@@ -1,7 +1,6 @@
 # Results R1a: do random audits and fines stop Selfish strategies taking over in Willis et al.'s commons?
 
-**Status: complete for the pre-registered grid (240 of 240 runs).**
-- The extension (Amendment 4) has 318 of 320 runs. The two missing runs (`n4_q0.25_e0.75`, runs 8–9) hit the CI job's 5.5-hour cap and are being re-run; this affects one extension point only.
+**Status: complete:** 560 of 560 runs (the pre-registered 240 plus the 320 in the Amendment 4 extension). The last two extension runs (`n4_q0.25_e0.75`, runs 8–9) were re-run on 15–16 October (GitHub Actions run 38760318444) and the analysis repeated on 19 October. Only that extension point changed: 0.72 Collective [0.65, 0.79], against 0.71 on 18 runs.
 - The analysis was run on 15 October 2026 on the `r1a-results` branch (GitHub Actions run 38591376955; code `b86d620`).
 - Every number below comes from `runs/claude_r1a_v1/r1a_summary.json` and `r1a_conditions.csv` **[verified]**.
 
@@ -164,7 +163,6 @@ Oversight changes not only how many strategies are Collective but **which develo
 - **e_pred is a starting-mix quantity** (see above). Its closeness to the switch point is an empirical finding, not a guarantee.
 - **The amended n = 4 test** was close to a replication claim, and it failed only at e = 0.
 - **Figure, panels c and d:** the x-axis labels and the legend overlap, to fix.
-- **Extension point `n4_q0.25_e0.75`** has 18 runs (2 being re-run).
 
 ## What we now believe, what is untested, next step
 

@@ -148,7 +148,7 @@ Started 14 October 2026.
 - **Action.**
   - R1b: regenerate strategies with the audit rule in the prompt (about $1).
   - Fix the overlapping labels in figure panels c and d.
-  - Two extension runs are being re-run.
+  - All 560 runs are complete (19 Oct).
   - **Status: open (R1b next).**
 
 ---
