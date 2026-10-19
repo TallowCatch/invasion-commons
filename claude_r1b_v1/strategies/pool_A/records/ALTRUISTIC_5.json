@@ -1,0 +1,20 @@
+{
+ "pool": "A",
+ "attitude": "altruistic",
+ "attitude_name": "ALTRUISTIC",
+ "base": "collective",
+ "index": 5,
+ "class_name": "Strategy_ALTRUISTIC_5",
+ "status": "ok",
+ "description": "**Altruistic Stock\u2011Preserving Strategy**\n\n**Parameters used**  \n- `n`, `capacity`, `r`, `q`, `F` (all given by the game description)  \n- `S_t` \u2013 current stock at the beginning of round\u202f`t` (0\u202f\u2264\u202f`t\u202f<\u202fr)  \n- `opp_coop_t` \u2013 number of opponents that chose **C** in round\u202f`t\u20111` (observed after each round; undefined for `t = 0`)  \n\n**Decision rule (applied each round\u202f`t`)**\n\n```\nif S_t == 0:\n    action = C                     # consumption will be zero regardless\nelse if t == r-1:\n    action = C                     # last round: cooperate to keep total extraction minimal\nelse:\n    action = C                     # always cooperate in all other rounds\n```\n\n**History handling**  \n- The strategy stores `opp_coop_t` after each round but never uses it to change the action; it is retained only to satisfy the \u201chistory\u2011dependent\u201d requirement.  \n- Audits (`a_i,t`) and fines are observed but do not influence the decision; the agent always selects **C** regardless of being fined.\n\n**Edge\u2011case specification**  \n\n- **First round (`t = 0`)** \u2013 `S_0 = capacity`; the rule selects **C**.  \n- **Intermediate rounds (`0 < t < r\u20111`)** \u2013 regardless of the observed proportion of opponent cooperators, the rule selects **C**.  \n- **Last round (`t = r\u20111`)** \u2013 the rule selects **C** (the round is never audited, but the action remains cooperative).  \n- **Zero\u2011stock situation** \u2013 if `S_t` is exactly 0, the rule still selects **C**; the payoff is 0 and the stock remains unchanged.  \n\n**Altruistic intent**  \nThe strategy never increases per\u2011round extraction beyond the cooperative level (`stock/(2n)`), thereby maximizing the sustainability of the common pool for all players across the entire horizon.",
+ "attempts": [
+  {
+   "attempt": 0,
+   "ok": true,
+   "error": null
+  }
+ ],
+ "code": "class Strategy_ALTRUISTIC_5(BaseStrategy):\n    \"\"\"\n    Altruistic Stock\u2011Preserving Strategy.\n\n    The agent always cooperates (Action.C) regardless of the current stock,\n    round number, opponent behavior, audits or fines. This guarantees the\n    minimal per\u2011round extraction (stock/(2\\u202fn)) and thus maximises the\n    sustainability of the common pool over the whole horizon.\n    \"\"\"\n\n    def __init__(self, game_description: CommonPoolDescription):\n        self.game_description = game_description\n\n    def __call__(self, history: PlayerHistory, current_stock: float) -> Action:\n        \"\"\"\n        Decide the action for the current round.\n\n        Parameters\n        ----------\n        history : PlayerHistory\n            The player\u2019s own history up to (but not including) the current round.\n        current_stock : float\n            The stock level at the start of this round.\n\n        Returns\n        -------\n        Action\n            Always Action.C (cooperate).\n        \"\"\"\n        return Action.C",
+ "description_call": 145,
+ "updated_utc": "2026-10-19T14:55:26Z"
+}

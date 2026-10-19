@@ -1,0 +1,30 @@
+{
+ "pool": "B",
+ "attitude": "individualistic",
+ "attitude_name": "INDIVIDUALISTIC",
+ "base": "selfish",
+ "index": 9,
+ "class_name": "Strategy_INDIVIDUALISTIC_9",
+ "status": "failed",
+ "description": "**Strategy: Adaptive Individualist (AI\u2011C/D)**  \n\n**Parameters**  \n- `n`, `r`, `capacity` are given.  \n- `S_t` = common\u2011stock at the start of round `t` (observable).  \n- `k_t` = number of opponents that cooperated in round `t\u20111` (observable after each round; for `t=0` this is undefined).  \n\n**Internal variables**  \n- `E_defect` = estimated probability that a random opponent will defect in the current round.  \n- `E_coop`   = 1\u202f\u2212\u202f`E_defect`.  \n- `future_value(S,remaining_rounds)` = discounted expectation of total payoff if I always defect from now on, assuming opponents keep the same defect probability as the latest estimate. (Discount factor = 1, i.e. pure sum.)  \n\n**Update rule (after each round)**  \n1. Compute the empirical defect rate of opponents in the just\u2011finished round:  \n   `obs_defect = (n\u20111\u2011k_t) / (n\u20111)`.  \n2. Update `E_defect` with exponential smoothing (\u03b1 = 0.3):  \n   `E_defect \u2190 \u03b1\u00b7obs_defect + (1\u2011\u03b1)\u00b7E_defect`.  \n   Initialise `E_defect = 0.5` at the start of the game.  \n\n**Decision rule (for round t, 0\u202f\u2264\u202ft\u202f<\u202fr)**  \n\n```\nif t == r\u20111:                     # last round\n    action = D                  # always defect for maximal immediate payoff\nelse:\n    # Immediate payoff if I cooperate vs defect\n    payoff_C = S_t / (2*n)\n    payoff_D = S_t / n\n\n    # Expected future stock if I cooperate now\n    expected_consumption_C = payoff_C + (n\u20111)*(E_coop*payoff_C + E_defect*payoff_D)\n    S_after_C = S_t - expected_consumption_C\n    growth_C = 2 * S_after_C * (1 - S_after_C / capacity)\n    S_next_C = min(S_after_C + growth_C, capacity)\n\n    # Expected future stock if I defect now\n    expected_consumption_D = payoff_D + (n\u20111)*(E_coop*payoff_C + E_defect*payoff_D)\n    S_after_D = S_t - expected_consumption_D\n    growth_D = 2 * S_after_D * (1 - S_after_D / capacity)\n    S_next_D = min(S_after_D + growth_D, capacity)\n\n    # Projected total payoff over remaining rounds (including this one)\n    remaining = r - t - 1\n    proj_total_C = payoff_C + future_value(S_next_C, remaining)\n    proj_total_D = payoff_D + future_value(S_next_D, remaining)\n\n    # Choose action that yields larger projected total payoff\n    if proj_total_C > proj_total_D:\n        action = C\n    else:\n        action = D\n```\n\n**future_value function** (recursive, memoized for efficiency):\n\n```\nfunction future_value(S, m):\n    if m == 0: return 0\n    # assume opponent behavior unchanged (E_defect, E_coop)\n    payoff_C = S / (2*n)\n    payoff_D = S / n\n    # Expected opponent consumption per round (same as above)\n    exp_opp_cons = (n\u20111)*(E_coop*payoff_C + E_defect*payoff_D)\n\n    # Evaluate both my possible actions and keep the larger\n    # C branch\n    S_after = S - (payoff_C + exp_opp_cons)\n    growth = 2 * S_after * (1 - S_after / capacity)\n    S_next = min(S_after + growth, capacity)\n    val_C = payoff_C + future_value(S_next, m\u20111)\n\n    # D branch\n    S_after = S - (payoff_D + exp_opp_cons)\n    growth = 2 * S_after * (1 - S_after / capacity)\n    S_next = min(S_after + growth, capacity)\n    val_D = payoff_D + future_value(S_next, m\u20111)\n\n    return max(val_C, val_D)\n```\n\n**Edge\u2011case handling**  \n- **First round (t\u202f=\u202f0)**: `E_defect` initialized to 0.5, so the decision follows the same projection logic.  \n- **Zero stock (S_t\u202f=\u202f0)**: Both payoffs are zero; the strategy defaults to cooperate (`C`) to avoid accelerating depletion (no cost to cooperating).  \n- **Stock at capacity**: Projections treat it normally; if both actions give the same projected total, prefer `C` to signal willingness to sustain the resource.  \n\n**Rationale (implicit)**  \nThe algorithm evaluates the trade\u2011off between the immediate gain from defecting and the longer\u2011term benefit of preserving a higher stock for future rounds, using an empirical estimate of opponent defection rates. It defects in the final round (no future to protect) and otherwise selects the action with the higher projected cumulative payoff, thus remaining fully self\u2011interested while adapting to observed opponent behavior.",
+ "attempts": [
+  {
+   "attempt": 0,
+   "ok": false,
+   "error": "RuntimeError: Strategy took 13.0s"
+  },
+  {
+   "attempt": 1,
+   "ok": false,
+   "error": "RuntimeError: Strategy took 13.1s"
+  },
+  {
+   "attempt": 2,
+   "ok": false,
+   "error": "RuntimeError: Strategy took 22.6s"
+  }
+ ],
+ "code": null,
+ "description_call": 283,
+ "updated_utc": "2026-10-19T15:01:17Z"
+}
