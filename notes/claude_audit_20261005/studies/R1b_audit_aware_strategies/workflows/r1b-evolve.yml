@@ -1,0 +1,191 @@
+# Experiment R1b, Parts 1 and 2 (CPU only, no LLM calls, no secrets). Protocol:
+# notes/claude_audit_20261005/studies/R1b_audit_aware_strategies/protocol.md, code on branch
+# claude/r1-s1-oversight-experiments. Reads the strategies from the r1b-results branch (claude_r1b_v1/strategies,
+# written by r1b-generate.yml) and writes back to it:
+#   1. plan: if claude_r1b_v1/prediction.json is missing, computes e_pred(B) (2,000 fine-free games, seed
+#      R1B_BASE + 900) and pushes it BEFORE any evolution job starts; then lists the missing work.
+#   2. part1: the strategy-level test (one job per pool), if any of its files are missing.
+#   3. evolve: one job per missing (condition, run block of 10); each run is its own file and existing runs are never
+#      overwritten, so re-running the workflow only runs what is still missing.
+# To be placed in .github/workflows/ on main (dispatch it from main; the code is checked out from CODE_REF).
+name: R1b evolve (remote run)
+
+on:
+  workflow_dispatch:
+    inputs:
+      R:
+        description: "runs per condition"
+        required: true
+        default: "20"
+
+permissions:
+  contents: write
+
+env:
+  CODE_REF: claude/r1-s1-oversight-experiments
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+      part1: ${{ steps.m.outputs.part1 }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CODE_REF }}
+          submodules: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements-validation.txt
+      - name: Fetch strategies and finished work
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git clone --quiet --branch r1b-results --single-branch "$url" store
+          test -f store/claude_r1b_v1/strategies/pool_A/common_pool/gpt-oss-120b.py
+          test -f store/claude_r1b_v1/strategies/pool_B/common_pool/gpt-oss-120b.py
+      - name: Prediction e_pred(B), before any evolution run
+        run: |
+          if [ -f store/claude_r1b_v1/prediction.json ]; then echo "prediction exists"; cat store/claude_r1b_v1/prediction.json | head -20; exit 0; fi
+          PYTHONPATH=. python -m experiments.oversight.run_r1b_parts prediction --root store/claude_r1b_v1
+          cd store
+          git config user.name "r1b-ci"; git config user.email "r1b-ci@users.noreply.github.com"
+          git add claude_r1b_v1/prediction.json
+          git commit -q -m "R1b prediction e_pred(B) $(date -u +%Y-%m-%dT%H:%MZ)"
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if git push -q origin HEAD:r1b-results; then echo "saved"; exit 0; fi
+            git pull -q --rebase origin r1b-results || { git rebase --abort; sleep 5; continue; }
+            sleep $((RANDOM % 20 + 5))
+          done
+          echo "could not push the prediction"; exit 1
+      - id: m
+        env:
+          R: ${{ inputs.R }}
+        run: |
+          PYTHONPATH=. python - >> "$GITHUB_OUTPUT" <<'PY'
+          import json, os
+          from pathlib import Path
+          from experiments.oversight import run_r1b_parts as P
+          root = Path("store/claude_r1b_v1")
+          e, _ = P.read_e_pred(root)
+          R = int(os.environ["R"])
+          jobs = []
+          for c in P.conditions(e):
+              for start in range(0, R, 10):
+                  have = all(P.run_path(root, c, r).exists() for r in range(start, min(start + 10, R)))
+                  if not have:
+                      jobs.append(dict(cond=c["name"], start=start, R=min(10, R - start)))
+          part1 = [p for p in ("A", "B")
+                   if not all(P.part1_path(root, p, n, x).exists() for n in P.P1_NS for x in P.P1_E)]
+          print("matrix=" + json.dumps(dict(include=jobs or [dict(cond="none", start=0, R=0)])))
+          print("part1=" + json.dumps(part1 or ["none"]))
+          PY
+
+  part1:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        pool: ${{ fromJSON(needs.plan.outputs.part1) }}
+    steps:
+      - uses: actions/checkout@v4
+        if: matrix.pool != 'none'
+        with:
+          ref: ${{ env.CODE_REF }}
+          submodules: true
+      - uses: actions/setup-python@v5
+        if: matrix.pool != 'none'
+        with:
+          python-version: "3.12"
+      - if: matrix.pool != 'none'
+        run: python -m pip install -r requirements-validation.txt
+      - name: Part 1, pool ${{ matrix.pool }}
+        if: matrix.pool != 'none'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git clone --quiet --depth 1 --branch r1b-results --single-branch "$url" inputs
+          PYTHONPATH=. python -m experiments.oversight.run_r1b_parts part1 --root inputs/claude_r1b_v1 \
+            --out out --pools "${{ matrix.pool }}" --processes 4
+      - name: Save Part 1 to r1b-results
+        if: always() && matrix.pool != 'none'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          [ -d out/part1 ] || { echo "nothing to save"; exit 0; }
+          mv out/part1/part1_log.jsonl "out/part1/part1_log_${{ matrix.pool }}.jsonl" 2>/dev/null || true
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            rm -rf store
+            git clone --quiet --depth 1 --branch r1b-results --single-branch "$url" store
+            mkdir -p store/claude_r1b_v1/part1
+            cp -Rn out/part1/. store/claude_r1b_v1/part1/
+            cd store
+            git config user.name "r1b-ci"; git config user.email "r1b-ci@users.noreply.github.com"
+            git add -A
+            if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+            git commit -q -m "R1b Part 1: pool ${{ matrix.pool }}"
+            if git push -q origin HEAD:r1b-results; then echo "saved"; exit 0; fi
+            cd ..; sleep $((RANDOM % 30 + 10))
+          done
+          echo "could not push after 10 attempts"; exit 1
+
+  evolve:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        if: matrix.cond != 'none'
+        with:
+          ref: ${{ env.CODE_REF }}
+          submodules: true
+      - uses: actions/setup-python@v5
+        if: matrix.cond != 'none'
+        with:
+          python-version: "3.12"
+      - if: matrix.cond != 'none'
+        run: python -m pip install -r requirements-validation.txt
+      - name: Run ${{ matrix.cond }}, runs ${{ matrix.start }} to ${{ matrix.start }}+${{ matrix.R }}-1
+        if: matrix.cond != 'none'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git clone --quiet --depth 1 --branch r1b-results --single-branch "$url" inputs
+          PYTHONPATH=. python -m experiments.oversight.run_r1b_parts grid --root inputs/claude_r1b_v1 --out out \
+            --conditions "${{ matrix.cond }}" --run-start ${{ matrix.start }} --R ${{ matrix.R }} --processes 4 \
+            --max-hours 5.5
+      - name: Save runs to r1b-results
+        if: always() && matrix.cond != 'none'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          src=out/runs
+          [ -d "$src" ] || { echo "no runs to save"; exit 0; }
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            rm -rf store
+            git clone --quiet --depth 1 --branch r1b-results --single-branch "$url" store
+            mkdir -p store/claude_r1b_v1/runs
+            cp -Rn "$src"/. store/claude_r1b_v1/runs/
+            cd store
+            git config user.name "r1b-ci"; git config user.email "r1b-ci@users.noreply.github.com"
+            git add -A
+            if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+            git commit -q -m "R1b runs: ${{ matrix.cond }} from run ${{ matrix.start }}"
+            if git push -q origin HEAD:r1b-results; then echo "saved"; exit 0; fi
+            cd ..; sleep $((RANDOM % 30 + 10))
+          done
+          echo "could not push after 10 attempts"; exit 1

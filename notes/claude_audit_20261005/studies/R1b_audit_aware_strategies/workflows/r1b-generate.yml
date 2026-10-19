@@ -1,0 +1,91 @@
+# Experiment R1b, generation of the two strategy pools (Pool A audit-aware, Pool B blind) with gpt-oss-120b on
+# Ollama Cloud. Protocol: notes/claude_audit_20261005/studies/R1b_audit_aware_strategies/protocol.md (Amendments 1-2),
+# code on branch claude/r1-s1-oversight-experiments. Budget: the generator stops at an estimated $3.00 in total
+# (tokens x $0.32/M, every earlier run's log counted) or 1,000 calls; rerunning resumes where it stopped.
+# Results (strategies as Python files, records, prompts, every call with its tokens) go to the r1b-results branch,
+# under claude_r1b_v1/strategies/. Mode pilot first (20 strategies + cost report); full only after the pilot gate passes.
+# Needs the Ollama API key as repository secret OLLAMA_API_KEY (or SCALABLE_OVERSIGHT).
+# To be placed in .github/workflows/ on main (dispatch it from main; the code is checked out from CODE_REF).
+name: R1b generate strategies (remote run)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "pilot | full"
+        required: true
+        default: "pilot"
+      per_synonym:
+        description: "full mode: strategies per synonym (16 -> 128 per pool; 8 if the pilot gate failed and an amendment halves the pools)"
+        required: false
+        default: "16"
+      workers:
+        description: "strategies generated at once"
+        required: false
+        default: "4"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: r1b-generate
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      OLLAMA_HOST: https://ollama.com
+      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY || secrets.SCALABLE_OVERSIGHT }}
+      MODE: ${{ inputs.mode }}
+      CODE_REF: claude/r1-s1-oversight-experiments
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CODE_REF }}
+          submodules: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install -r requirements-validation.txt
+      - name: Check out the results branch into ./store (resume from what is there)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code --heads "$url" r1b-results >/dev/null; then
+            git clone --quiet --branch r1b-results --single-branch "$url" store
+          else
+            mkdir store && git -C store init -q -b r1b-results && git -C store remote add origin "$url"
+          fi
+          mkdir -p store/claude_r1b_v1/strategies
+      - name: Generate (${{ inputs.mode }})
+        timeout-minutes: 330
+        run: |
+          case "$MODE" in pilot|full) ;; *) echo "mode must be pilot or full"; exit 1;; esac
+          extra=""
+          if [ "$MODE" = "full" ]; then extra="--per-synonym ${{ inputs.per_synonym }}"; fi
+          PYTHONPATH=. python -m experiments.oversight.run_r1b_generate "$MODE" \
+            --out store/claude_r1b_v1/strategies --workers "${{ inputs.workers }}" --max-minutes 320 $extra
+      - name: Cost report
+        if: always()
+        run: |
+          PYTHONPATH=. python -m experiments.oversight.run_r1b_generate report --out store/claude_r1b_v1/strategies \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+          cat store/claude_r1b_v1/strategies/status.json 2>/dev/null | head -40 || true
+      - name: Commit to r1b-results (with push retry)
+        if: always()
+        run: |
+          cd store
+          git config user.name "r1b-ci"; git config user.email "r1b-ci@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+          git commit -q -m "R1b generation ($MODE) $(date -u +%Y-%m-%dT%H:%MZ)"
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if git push -q origin HEAD:r1b-results; then echo "saved"; exit 0; fi
+            git pull -q --rebase origin r1b-results || { git rebase --abort; sleep 5; continue; }
+            sleep $((RANDOM % 20 + 5))
+          done
+          echo "could not push after 10 attempts"; exit 1
