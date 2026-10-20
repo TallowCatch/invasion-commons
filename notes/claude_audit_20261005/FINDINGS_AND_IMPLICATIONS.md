@@ -165,9 +165,23 @@ Started 14 October 2026.
 - **Evidence.** `studies/R1b_audit_aware_strategies/results.md`; `runs/claude_r1b_v1/r1b_summary.json`.
 - **Paper must say.** The live-agent backfire (L4) is a property of acting LLM agents, not of the rule.
 - **Action.**
-  - Part 2 (evolution) is running.
+  - Part 2 is done (see F16).
   - Hand-check 20 strategies.
-  - **Status: open.**
+  - **Status: open (hand check only).**
+
+## F16. Compliance is not conversion: against strategies that know the rule, oversight works by changing behaviour, and the Selfish majority survives [verified; R1b Part 2, 20 Oct]
+
+- **Found** (n = 64, q = 0.1, 20 runs; fine at 1.25 × the frozen balance point 0.63):
+  - **Blind pool:** Collective share 0.15 → 0.60, but welfare only 0.13: selection works, behaviour barely changes.
+  - **Audit-aware pool:** Collective share stays at 0.19, defections fall 63%, and welfare is 0.45, so H4 holds at +0.32 [+0.29, +0.34]. At 2×: 0.64 against 0.42.
+  - **Without audits,** the audit-aware pool falls back to 0.03 efficiency.
+- **What it means.**
+  - An overseer of agents that can respond produces compliant Selfish agents, not cooperative ones.
+  - The share of "good types" is the wrong success measure; behaviour and welfare are the right ones (this supports W1's oversight-efficiency framing).
+  - Compliance under audits does not show what the agents do without them.
+- **Paper must say.** This is the mechanism result for the flagship paper: routes to deterrence and what metric to use. The "compliance under monitoring is not alignment" angle connects to the AI-control literature.
+- **Evidence.** `studies/R1b_audit_aware_strategies/results.md`; `runs/claude_r1b_v1/r1b_part2.csv`.
+- **Status:** open (hand check of 20 strategies; a test of removing oversight after evolution would make the point directly).
 
 ---
 

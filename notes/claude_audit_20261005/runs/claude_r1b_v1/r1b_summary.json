@@ -952,22 +952,508 @@
  },
  "part2": {
   "H4": {
-   "status": "pending",
-   "runs_A": 0,
-   "runs_B": 0
+   "diff": 0.31600250301367594,
+   "ci": [
+    0.29404171946300356,
+    0.3368532919099058
+   ],
+   "runs_A": 20,
+   "runs_B": 20,
+   "verdict": "holds"
   },
   "H5": {
    "A": {
     "first_mult_collective_above_half": null,
-    "complete_levels": []
+    "complete_levels": [
+     0.0,
+     0.5,
+     1.0,
+     1.25,
+     2.0
+    ]
    },
    "B": {
-    "first_mult_collective_above_half": null,
-    "complete_levels": []
+    "first_mult_collective_above_half": 1.25,
+    "complete_levels": [
+     0.0,
+     0.5,
+     1.0,
+     1.25,
+     2.0
+    ]
    }
   },
   "pending_conditions": [],
-  "table": []
+  "table": [
+   {
+    "name": "A_e0",
+    "pool": "A",
+    "mult": 0.0,
+    "e": 0.0,
+    "F": 0.0,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.14459375000000002,
+    "collective_frequency_ci": [
+     0.12403942871093748,
+     0.163458544921875
+    ],
+    "efficiency_transfer": 0.030105199353729295,
+    "efficiency_transfer_ci": [
+     0.02636683047281065,
+     0.03414275000644624
+    ],
+    "efficiency_lost": 0.030105199353729295,
+    "efficiency_lost_ci": [
+     0.026527938357912704,
+     0.033934036241664474
+    ],
+    "fines_per_game": 0.0,
+    "fines_per_game_ci": [
+     0.0,
+     0.0
+    ],
+    "audits_per_game": 121.64290624999998,
+    "audits_per_game_ci": [
+     121.56801328124997,
+     121.71791093750001
+    ],
+    "defections_nonfinal_per_agent_game": 13.647026855468749,
+    "defections_nonfinal_per_agent_game_ci": [
+     13.097078540039066,
+     14.21256844482422
+    ]
+   },
+   {
+    "name": "A_none",
+    "pool": "A",
+    "mult": 0.0,
+    "e": 0.0,
+    "F": 0.0,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.14304101562500002,
+    "collective_frequency_ci": [
+     0.11541369628906249,
+     0.17164411621093753
+    ],
+    "efficiency_transfer": 0.03051801438408261,
+    "efficiency_transfer_ci": [
+     0.02682521637799289,
+     0.034746525035483075
+    ],
+    "efficiency_lost": 0.03051801438408261,
+    "efficiency_lost_ci": [
+     0.026717306342648774,
+     0.03460311545638174
+    ],
+    "fines_per_game": 0.0,
+    "fines_per_game_ci": [
+     0.0,
+     0.0
+    ],
+    "audits_per_game": 0.0,
+    "audits_per_game_ci": [
+     0.0,
+     0.0
+    ],
+    "defections_nonfinal_per_agent_game": 13.632218017578126,
+    "defections_nonfinal_per_agent_game_ci": [
+     13.13096128540039,
+     14.15105462036133
+    ]
+   },
+   {
+    "name": "A_e0.5",
+    "pool": "A",
+    "mult": 0.5,
+    "e": 0.3126403772563276,
+    "F": 3.126403772563276,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.20086132812500002,
+    "collective_frequency_ci": [
+     0.1673958740234375,
+     0.23703642578125006
+    ],
+    "efficiency_transfer": 0.21715119363139315,
+    "efficiency_transfer_ci": [
+     0.21307186419585825,
+     0.22131879659592124
+    ],
+    "efficiency_lost": 0.1650730336064246,
+    "efficiency_lost_ci": [
+     0.16139587172742462,
+     0.16891944974277665
+    ],
+    "fines_per_game": 126.6540851807235,
+    "fines_per_game_ci": [
+     124.95487373907207,
+     128.3198367744996
+    ],
+    "audits_per_game": 121.64290624999998,
+    "audits_per_game_ci": [
+     121.56476289062499,
+     121.719501953125
+    ],
+    "defections_nonfinal_per_agent_game": 6.322876708984374,
+    "defections_nonfinal_per_agent_game_ci": [
+     6.238481970214844,
+     6.402983380126952
+    ]
+   },
+   {
+    "name": "A_e1",
+    "pool": "A",
+    "mult": 1.0,
+    "e": 0.6252807545126552,
+    "F": 6.252807545126552,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.174421875,
+    "collective_frequency_ci": [
+     0.1438182861328125,
+     0.21031838378906254
+    ],
+    "efficiency_transfer": 0.3676936307669248,
+    "efficiency_transfer_ci": [
+     0.3615069498318429,
+     0.37379730905558833
+    ],
+    "efficiency_lost": 0.27634116827238664,
+    "efficiency_lost_ci": [
+     0.27010665438887926,
+     0.28211021851863205
+    ],
+    "fines_per_game": 222.16918878671672,
+    "fines_per_game_ci": [
+     219.22747487451468,
+     224.85116937800422
+    ],
+    "audits_per_game": 121.64290624999998,
+    "audits_per_game_ci": [
+     121.5671171875,
+     121.71795624999999
+    ],
+    "defections_nonfinal_per_agent_game": 5.551036621093751,
+    "defections_nonfinal_per_agent_game_ci": [
+     5.479496221923828,
+     5.615291656494141
+    ]
+   },
+   {
+    "name": "A_e1.25",
+    "pool": "A",
+    "mult": 1.25,
+    "e": 0.781600943140819,
+    "F": 7.816009431408189,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.18806054687499998,
+    "collective_frequency_ci": [
+     0.1442513427734375,
+     0.23571889648437497
+    ],
+    "efficiency_transfer": 0.4490405799887426,
+    "efficiency_transfer_ci": [
+     0.44426225558872967,
+     0.4540478480482188
+    ],
+    "efficiency_lost": 0.3433952972868434,
+    "efficiency_lost_ci": [
+     0.3388909364576361,
+     0.34798091020804145
+    ],
+    "fines_per_game": 256.92932753101843,
+    "fines_per_game_ci": [
+     252.5131661833828,
+     261.1363800950771
+    ],
+    "audits_per_game": 121.64290624999998,
+    "audits_per_game_ci": [
+     121.56573164062496,
+     121.72063125
+    ],
+    "defections_nonfinal_per_agent_game": 5.133427734375,
+    "defections_nonfinal_per_agent_game_ci": [
+     5.045151599121095,
+     5.222370501708983
+    ]
+   },
+   {
+    "name": "A_e2",
+    "pool": "A",
+    "mult": 2.0,
+    "e": 1.2505615090253104,
+    "F": 12.505615090253103,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.17290917968750003,
+    "collective_frequency_ci": [
+     0.13831794433593753,
+     0.21446252441406252
+    ],
+    "efficiency_transfer": 0.6449882055292938,
+    "efficiency_transfer_ci": [
+     0.6335213273463826,
+     0.65530341136629
+    ],
+    "efficiency_lost": 0.5114176018361107,
+    "efficiency_lost_ci": [
+     0.5002939141754504,
+     0.521590524686474
+    ],
+    "fines_per_game": 324.843708181821,
+    "fines_per_game_ci": [
+     320.068429289596,
+     329.88527851537395
+    ],
+    "audits_per_game": 121.64290624999998,
+    "audits_per_game_ci": [
+     121.566763671875,
+     121.71931562500001
+    ],
+    "defections_nonfinal_per_agent_game": 4.056709228515625,
+    "defections_nonfinal_per_agent_game_ci": [
+     3.9972525085449213,
+     4.121309222412109
+    ]
+   },
+   {
+    "name": "B_e0",
+    "pool": "B",
+    "mult": 0.0,
+    "e": 0.0,
+    "F": 0.0,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.150482421875,
+    "collective_frequency_ci": [
+     0.12164030761718748,
+     0.18384130859374997
+    ],
+    "efficiency_transfer": 0.03767926982057525,
+    "efficiency_transfer_ci": [
+     0.033189909279293724,
+     0.0425863684573461
+    ],
+    "efficiency_lost": 0.03767926982057525,
+    "efficiency_lost_ci": [
+     0.03308810357072355,
+     0.042777675397358446
+    ],
+    "fines_per_game": 0.0,
+    "fines_per_game_ci": [
+     0.0,
+     0.0
+    ],
+    "audits_per_game": 121.64290624999998,
+    "audits_per_game_ci": [
+     121.56635742187498,
+     121.71803125
+    ],
+    "defections_nonfinal_per_agent_game": 15.295830810546878,
+    "defections_nonfinal_per_agent_game_ci": [
+     14.864957794189454,
+     15.664337976074219
+    ]
+   },
+   {
+    "name": "B_none",
+    "pool": "B",
+    "mult": 0.0,
+    "e": 0.0,
+    "F": 0.0,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.150482421875,
+    "collective_frequency_ci": [
+     0.12172341308593751,
+     0.18626088867187499
+    ],
+    "efficiency_transfer": 0.03767926982057525,
+    "efficiency_transfer_ci": [
+     0.033161478113558414,
+     0.04256765202944798
+    ],
+    "efficiency_lost": 0.03767926982057525,
+    "efficiency_lost_ci": [
+     0.03312821176756641,
+     0.04253383875979682
+    ],
+    "fines_per_game": 0.0,
+    "fines_per_game_ci": [
+     0.0,
+     0.0
+    ],
+    "audits_per_game": 0.0,
+    "audits_per_game_ci": [
+     0.0,
+     0.0
+    ],
+    "defections_nonfinal_per_agent_game": 15.295830810546878,
+    "defections_nonfinal_per_agent_game_ci": [
+     14.870195574951174,
+     15.671305743408205
+    ]
+   },
+   {
+    "name": "B_e0.5",
+    "pool": "B",
+    "mult": 0.5,
+    "e": 0.3126403772563276,
+    "F": 3.126403772563276,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.268306640625,
+    "collective_frequency_ci": [
+     0.23114030761718746,
+     0.30703837890625
+    ],
+    "efficiency_transfer": 0.057969073401882884,
+    "efficiency_transfer_ci": [
+     0.05385052432511478,
+     0.0626252879318359
+    ],
+    "efficiency_lost": -0.05408567046756134,
+    "efficiency_lost_ci": [
+     -0.05968095544306815,
+     -0.047890326682659454
+    ],
+    "fines_per_game": 272.51713709048835,
+    "fines_per_game_ci": [
+     266.76144972772596,
+     278.6260970882872
+    ],
+    "audits_per_game": 121.64290624999998,
+    "audits_per_game_ci": [
+     121.56574648437501,
+     121.72026953125
+    ],
+    "defections_nonfinal_per_agent_game": 13.614777832031251,
+    "defections_nonfinal_per_agent_game_ci": [
+     13.343936804199217,
+     13.920284503173827
+    ]
+   },
+   {
+    "name": "B_e1",
+    "pool": "B",
+    "mult": 1.0,
+    "e": 0.6252807545126552,
+    "F": 6.252807545126552,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.40728124999999993,
+    "collective_frequency_ci": [
+     0.34471066894531255,
+     0.4692964355468749
+    ],
+    "efficiency_transfer": 0.08524397288021242,
+    "efficiency_transfer_ci": [
+     0.07267897058292985,
+     0.09991867457701774
+    ],
+    "efficiency_lost": -0.12203964233486775,
+    "efficiency_lost_ci": [
+     -0.13805659149157348,
+     -0.1037757506292862
+    ],
+    "fines_per_game": 504.113752203075,
+    "fines_per_game_ci": [
+     493.9409155002347,
+     514.3160967840216
+    ],
+    "audits_per_game": 121.64290624999998,
+    "audits_per_game_ci": [
+     121.56628554687497,
+     121.71951718750002
+    ],
+    "defections_nonfinal_per_agent_game": 12.588071289062501,
+    "defections_nonfinal_per_agent_game_ci": [
+     12.332979522705077,
+     12.845246551513673
+    ]
+   },
+   {
+    "name": "B_e1.25",
+    "pool": "B",
+    "mult": 1.25,
+    "e": 0.781600943140819,
+    "F": 7.816009431408189,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.5958662109375,
+    "collective_frequency_ci": [
+     0.538392236328125,
+     0.6551197509765625
+    ],
+    "efficiency_transfer": 0.13303807697506662,
+    "efficiency_transfer_ci": [
+     0.11291819362998476,
+     0.15420463107885685
+    ],
+    "efficiency_lost": -0.1089631967962954,
+    "efficiency_lost_ci": [
+     -0.13545164387119948,
+     -0.08083492896706326
+    ],
+    "fines_per_game": 588.5470978119525,
+    "fines_per_game_ci": [
+     572.816368245649,
+     603.607396956762
+    ],
+    "audits_per_game": 121.64290624999998,
+    "audits_per_game_ci": [
+     121.56959023437501,
+     121.72023984375
+    ],
+    "defections_nonfinal_per_agent_game": 11.7620517578125,
+    "defections_nonfinal_per_agent_game_ci": [
+     11.444217999267579,
+     12.050096679687499
+    ]
+   },
+   {
+    "name": "B_e2",
+    "pool": "B",
+    "mult": 2.0,
+    "e": 1.2505615090253104,
+    "F": 12.505615090253103,
+    "runs": 20,
+    "complete": true,
+    "collective_frequency": 0.8696748046874999,
+    "collective_frequency_ci": [
+     0.8281450927734375,
+     0.8992879394531249
+    ],
+    "efficiency_transfer": 0.4206294853716333,
+    "efficiency_transfer_ci": [
+     0.34006973930462103,
+     0.4990174934496823
+    ],
+    "efficiency_lost": 0.16182677414912255,
+    "efficiency_lost_ci": [
+     0.04676815533171481,
+     0.2713420464832582
+    ],
+    "fines_per_game": 629.408193693146,
+    "fines_per_game_ci": [
+     555.1714137032419,
+     703.8185232874687
+    ],
+    "audits_per_game": 121.64290624999998,
+    "audits_per_game_ci": [
+     121.56544726562498,
+     121.722094921875
+    ],
+    "defections_nonfinal_per_agent_game": 7.853757812500001,
+    "defections_nonfinal_per_agent_game_ci": [
+     6.924990228271483,
+     8.805474047851563
+    ]
+   }
+  ]
  },
  "part3": {
   "summary": {

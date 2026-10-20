@@ -1,5 +1,14 @@
 # What we have learned, and what should come next
 
+## Update 12, 19–20 October 2026: R1b (strategies told the audit rule)
+
+- **Generation:** 254 of 256 gpt-oss strategies valid, 516 calls, about $0.58 of Ollama credit.
+- **Part 1:** audit-aware Selfish strategies cut defection 0.74 → 0.06 at an expected fine of 2 (H1 holds); the blind pool is unchanged. 75% of Selfish strategies implement Becker's rule explicitly. A zero-fine announcement has no effect on written strategies, unlike live agents in L4 (F15).
+- **Part 2:**
+  - Blind pool: oversight selects Collective strategies (0.15 → 0.60), but welfare stays low (0.13).
+  - Audit-aware pool: Selfish strategies comply and survive (Collective share 0.19), and welfare is 0.45 (H4 holds, +0.32).
+  - **Compliance is not conversion** (F16).
+
 ## Update 11, 15 October 2026: R1a (audits in Willis et al.'s commons)
 
 - **The pre-registered grid is complete:** 240 runs on GitHub Actions. The extension has 318 of 320 runs (2 being re-run).
