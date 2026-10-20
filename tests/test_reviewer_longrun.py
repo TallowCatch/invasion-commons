@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from experiments.analyze_reviewer_longrun import analyze
+from experiments.paper_v5.analyze_reviewer_longrun import analyze
 
 
 def _episodes():

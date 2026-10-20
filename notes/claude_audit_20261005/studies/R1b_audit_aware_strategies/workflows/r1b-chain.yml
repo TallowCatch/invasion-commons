@@ -1,0 +1,35 @@
+# R1b: start the evolution workflow automatically when the FULL strategy generation has finished.
+# Triggered by every completed "R1b generate strategies (remote run)"; it only dispatches r1b-evolve.yml when
+# claude_r1b_v1/strategies/status.json on r1b-results says mode = full, stopped = done and nothing is pending.
+# CPU only, no secrets beyond the workflow token.
+name: R1b chain (generation -> evolution)
+
+on:
+  workflow_run:
+    workflows: ["R1b generate strategies (remote run)"]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  chain:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the generation status and start evolution
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git clone --quiet --depth 1 --branch r1b-results --single-branch "$url" store
+          python3 - <<'PY' > decision
+          import json
+          s = json.load(open("store/claude_r1b_v1/strategies/status.json"))
+          pending = sum(v.get("pending", 0) + v.get("described", 0) for v in s["counts"].values())
+          ok = s["mode"] == "full" and s["stopped"] == "done" and pending == 0
+          print("go" if ok else f"skip mode={s['mode']} stopped={s['stopped']} pending={pending}")
+          PY
+          cat decision
+          if [ "$(cat decision)" = "go" ]; then gh workflow run r1b-evolve.yml --ref main -f R=20 --repo "$GITHUB_REPOSITORY"; fi

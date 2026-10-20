@@ -1,0 +1,251 @@
+{
+ "models": {
+  "gpt-oss_120b-cloud": {
+   "complete": true,
+   "F_star": 24,
+   "non_monotone": false,
+   "predicted": 30,
+   "verdicts": {
+    "H1": false,
+    "H2": true,
+    "H3": false
+   },
+   "by_fine": {
+    "0": {
+     "cell": "E0",
+     "episodes": 10,
+     "overtake_rate": 0.553072625698324,
+     "ci": [
+      0.519998670212766,
+      0.5811855670103093
+     ],
+     "honest": 8.08943502020282,
+     "collapsed": 5
+    },
+    "1": {
+     "cell": "E1",
+     "episodes": 10,
+     "overtake_rate": 0.8825,
+     "ci": [
+      0.85875,
+      0.90875
+     ],
+     "honest": 14.277419431401677,
+     "collapsed": 0
+    },
+    "2": {
+     "cell": "E2",
+     "episodes": 10,
+     "overtake_rate": 0.91625,
+     "ci": [
+      0.9,
+      0.9325
+     ],
+     "honest": 12.8134057834849,
+     "collapsed": 0
+    },
+    "4": {
+     "cell": "E4",
+     "episodes": 10,
+     "overtake_rate": 0.7475,
+     "ci": [
+      0.725,
+      0.7675
+     ],
+     "honest": 17.954600474382197,
+     "collapsed": 0
+    },
+    "8": {
+     "cell": "E8",
+     "episodes": 10,
+     "overtake_rate": 0.51375,
+     "ci": [
+      0.49375,
+      0.535
+     ],
+     "honest": 23.51326484273529,
+     "collapsed": 0
+    },
+    "12": {
+     "cell": "E12",
+     "episodes": 10,
+     "overtake_rate": 0.435,
+     "ci": [
+      0.4,
+      0.46875
+     ],
+     "honest": 25.215844111097795,
+     "collapsed": 0
+    },
+    "18": {
+     "cell": "E18",
+     "episodes": 10,
+     "overtake_rate": 0.12625,
+     "ci": [
+      0.08125,
+      0.1725
+     ],
+     "honest": 31.117257787142286,
+     "collapsed": 0
+    },
+    "24": {
+     "cell": "E24",
+     "episodes": 10,
+     "overtake_rate": 0.01,
+     "ci": [
+      0.0025,
+      0.01875
+     ],
+     "honest": 33.81992555264217,
+     "collapsed": 0
+    },
+    "30": {
+     "cell": "E30",
+     "episodes": 10,
+     "overtake_rate": 0.005,
+     "ci": [
+      0.0,
+      0.01125
+     ],
+     "honest": 34.17525479680941,
+     "collapsed": 0
+    },
+    "36": {
+     "cell": "E36",
+     "episodes": 10,
+     "overtake_rate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "honest": 32.55038342793888,
+     "collapsed": 0
+    }
+   }
+  },
+  "nemotron-3-super_cloud": {
+   "complete": true,
+   "F_star": 30,
+   "non_monotone": false,
+   "predicted": 30,
+   "verdicts": {
+    "H1": true,
+    "H2": true,
+    "H3": false
+   },
+   "by_fine": {
+    "0": {
+     "cell": "E0",
+     "episodes": 10,
+     "overtake_rate": 0.6477272727272727,
+     "ci": [
+      0.6056701030927835,
+      0.689409090909091
+     ],
+     "honest": 9.403116882886058,
+     "collapsed": 1
+    },
+    "1": {
+     "cell": "E1",
+     "episodes": 10,
+     "overtake_rate": 0.5458015267175572,
+     "ci": [
+      0.5136679159628378,
+      0.5790471813725491
+     ],
+     "honest": 3.348047969055414,
+     "collapsed": 10
+    },
+    "2": {
+     "cell": "E2",
+     "episodes": 10,
+     "overtake_rate": 0.5641447368421053,
+     "ci": [
+      0.5243027553763441,
+      0.5957799498405786
+     ],
+     "honest": 3.4565455630978974,
+     "collapsed": 9
+    },
+    "4": {
+     "cell": "E4",
+     "episodes": 10,
+     "overtake_rate": 0.5625,
+     "ci": [
+      0.5198162506580102,
+      0.6062874251497006
+     ],
+     "honest": 5.370092309152424,
+     "collapsed": 8
+    },
+    "8": {
+     "cell": "E8",
+     "episodes": 10,
+     "overtake_rate": 0.5846354166666666,
+     "ci": [
+      0.5416612694300518,
+      0.6256346804633607
+     ],
+     "honest": 6.357356544207884,
+     "collapsed": 5
+    },
+    "12": {
+     "cell": "E12",
+     "episodes": 10,
+     "overtake_rate": 0.5631720430107527,
+     "ci": [
+      0.5237411573171135,
+      0.5975
+     ],
+     "honest": 9.636158956349751,
+     "collapsed": 4
+    },
+    "18": {
+     "cell": "E18",
+     "episodes": 10,
+     "overtake_rate": 0.4183417085427136,
+     "ci": [
+      0.33625,
+      0.5
+     ],
+     "honest": 18.813526445681514,
+     "collapsed": 1
+    },
+    "24": {
+     "cell": "E24",
+     "episodes": 10,
+     "overtake_rate": 0.08,
+     "ci": [
+      0.04125,
+      0.1225
+     ],
+     "honest": 31.84502353554393,
+     "collapsed": 0
+    },
+    "30": {
+     "cell": "E30",
+     "episodes": 10,
+     "overtake_rate": 0.0175,
+     "ci": [
+      0.00875,
+      0.0275
+     ],
+     "honest": 34.62839426390909,
+     "collapsed": 0
+    },
+    "36": {
+     "cell": "E36",
+     "episodes": 10,
+     "overtake_rate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "honest": 34.0135119044118,
+     "collapsed": 0
+    }
+   }
+  }
+ },
+ "claim6_wording": "within one grid step"
+}
