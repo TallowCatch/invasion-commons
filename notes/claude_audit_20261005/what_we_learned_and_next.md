@@ -1,5 +1,13 @@
 # What we have learned, and what should come next
 
+## Update 13, 27 October 2026: tracking audit, L5 written up, grant draft
+
+- **Tracking audit.** `PROJECT_HISTORY.md` had not been updated since 12 Oct, the study index since 7 Oct and `PAPER_PLAN.md` since 8 Oct. All three are now current: rows for L4–L6, the 13 Oct meeting, the literature and platform research, Phase 0, the overseer layer, R1a, R1b and the grant draft. A tracking checklist is now in `README.md` ("What to update after any piece of work").
+- **L5 had no results file;** it now does (`studies/L5_llm_families/results.md`). DeepSeek over-took in 80% of agent-rounds with no fine and collapsed the stock in 10 of 10 games; its 36 t prediction is untested.
+- **The slide deck and talk scripts** (Ameer's hand edits) are now committed; renders and lock files are ignored.
+- **The OpenMined "Ensembles & Routing" grant** (closes 30 Oct AoE) is drafted in `notes/private/grants/` (not in git): a budgeted worker–monitor–auditor cascade with random spot-checks, built on the audit-budget results.
+- **Open decisions:** Forest (F2); the paper structure; GPU access (whether the message to Yali was sent is not recorded); the grant.
+
 ## Update 12, 19–20 October 2026: R1b (strategies told the audit rule)
 
 - **Generation:** 254 of 256 gpt-oss strategies valid, 516 calls, about $0.58 of Ollama credit.

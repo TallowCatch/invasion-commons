@@ -1,5 +1,16 @@
 # Paper plan (7 October 2026)
 
+> **Status update, 27 October 2026.** This plan predates L4–L6, the 13 October feedback and Phase 0. What has changed:
+> - **Proposed structure (awaiting Ameer):**
+>   - Paper 1, built on Fishery and River: workshop 20 Nov, then the January main track.
+>   - Forest moved to the supplement as a game that failed the dilemma test under oversight (F2).
+>   - Contagion re-tested in Fishery (L7).
+>   - A separate flagship paper on evaluating overseers (Phases 1–4; R1a and R1b feed it).
+> - **New results for paper 1:** L4 (prediction out of sample; severity at e = 2; the never-mentioned control), L6 (spread through the shared cut), and G1/G2 and W1 (dilemma tests, welfare and cost).
+> - **Novelty claims to narrow:** see F11.
+> - **Corrections the paper must carry:** see F1–F10 in `FINDINGS_AND_IMPLICATIONS.md`.
+> - **The "Final list (frozen 8 Oct 2026)" below was superseded** when Ameer lifted the freeze on 12 Oct.
+
 The full plan is a shared doc:
 https://claude.ai/code/artifact/af1a091c-1c78-49da-aed2-442f9cdba821
 

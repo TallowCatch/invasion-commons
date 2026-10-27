@@ -118,6 +118,16 @@ test against the same fixed reviewer protocol.
 | **L3** (8 Oct) | Does each LLM stop over-taking at the fine its own gain predicts? Fines 12–30 t, gpt-oss and Nemotron, 80 games, with the prediction frozen first. | Predicted F = 30 for both. **Nemotron: exactly F = 30. gpt-oss: F = 24**, one grid step early. Deterrence is graded: over-taking falls from about e/g = 0.4 and is at 2–12% of the no-fine level by e/g ≈ 0.85–0.9. That is earlier than a risk-neutral agent would stop (H3 failed for both). 0 fallbacks; comprehension 3 of 3. | Claim 6, by the pre-stated rule: "within one grid step" (exact for Nemotron). |
 | **R4** (9 Oct) | Does memory make audits work in River too, on a grid like Forest's (2g/4g × regrowth 1.0/0.85)? Added at Ameer's request for consistent testing; programmed agents only, $0. | Yes, in **4 of 4** settings: rounds below half capacity fell from 35–66% (no audits) to **3–5%** with memory, while audits without memory removed only 11–15% of the harm. With the reviewer aiming at half capacity, River now matches Fishery and Forest (C1's weaker 53% → 39% came from a reviewer aiming at the 30 line). | Claim 3 now holds in **13 of 13** settings across all three games. |
 | **R5** (9 Oct) | The Fishery memory test on the same 2×2 grid (2g/4g × regrowth multiplier 1.0/0.85) used for Forest and River, so all three games share one design. Programmed agents, $0. | Memory beats audits without memory in **4 of 4** settings: 0.3–3% of rounds breaking the MSY limit, against 23–84% without memory and 43–99% with no audits. R2's wider 5-setting Fishery grid moves to supplementary Table S5. | Claim 3: 12 of 12 settings on the common grid. |
+| **L4** (12–13 Oct) | Does the frozen 30 t prediction hold on new populations and reworded rules? At the same expected fine, does a frequent small fine or a rare large one deter more? What happens if audits are never mentioned? (gpt-oss 190 games, Nemotron 70) | Prediction held out of sample: gpt-oss **0.2%**, Nemotron **1.8%** over-taking at 30 t (reworded: 1.1%, 1.9%); gpt-oss again stopped one step early (24 t). At e = 2 t, rare large fines deterred more: **27.9% vs 40.7%**, d = **−12.75** [−16.2, −9.2] on first plays (data note: nine games were played twice). At e = 3 t, every mix gave 9–11%. **Never mentioning audits gave less over-taking than audits with a 0 t fine: 30% vs 58% (gpt-oss), 46% vs 64% (Nemotron).** | H1a, H3a hold; H1b, H3b fail for gpt-oss (one step early); H2 "severity" at e = 2, "expected fine" at e = 3 |
+| **L5** (12 Oct) | Do more families over-take, and stop at their predicted fine? | DeepSeek V4.1 Flash passed the screen, over-took in **80%** of agent-rounds with no fine, collapsed the stock in **10 of 10** games; predicted stop **36 t**, untested (stage B not run, about $11). GLM-5.3 was dropped (about $8 spent, no game finished); MiniMax and closed models not run. | Screen only (results written 27 Oct) |
+| **L6** (12–13 Oct) | Does one programmed over-cutter make LLM foresters over-take, and does seeing neighbours' cuts matter? (gpt-oss, 40 games, F = 0) | Over-taking **+25.1 points** [+20.2, +30.6] at every ring distance; visibility added nothing (+2.2, n.s.). **Post hoc:** the spread ran through the reviewer's shared cut (allowances roughly halved while cuts stayed about 2.3 units). | H1, H2 hold; H3 fails; H4 descriptive |
+| **13 Oct: catch-up meeting** | PhD catch-up talk (deck and scripts in `notes/slides/2026-10-13_phd_catchup/`). | Supervisor feedback: cost of monitoring; agent communication and contagion (ground in Willis, Zhao, Du & Leibo 2026); individual vs social welfare and how to choose environments; a metric for whether the overseer works; an LLM overseer. Ameer added: a real 2D game (SocialJax-like) and more AI papers. | Answered in `notes/supervisor_feedback_2026-10-13/` |
+| **Literature and platform research** (13–14 Oct) | Which AI papers matter? How are commons games built and evaluated, and should the 2D game be built or extended? | 58 checked AI papers (`supervisor_feedback_2026-10-13/literature_review_ai.md`). Deep research, 93 sources (`research/commons_platform/2026-10-14_decision.md`): every platform hand-sets its numbers and grounds them with Schelling diagrams and focal/background evaluation. **Decision:** build the overseer as a reusable layer and run it on SocialJax/OpenSocialJax, Willis's `emergent_llm` and the text testbed; own grid only as a faithful port. 39 studies in phases 0–4. Settings audit: 12 grounded, 57 with a recorded reason, 35 with none. | Plan approved by Ameer 14 Oct |
+| **Phase 0** (14 Oct) | Ground the current paper: Schelling diagrams, sweeps, welfare and monitoring cost, paper/code mismatches. | **G1:** all three base games are social dilemmas (Forest by fear only); in the audited Fishery a lone over-taker still profits at the group break-even fine. **G1b [post hoc]:** a lone cheater's break-even is **3.2×** the group's (6.87 vs 2.14 t). **G2:** dilemma at 19 of 20 sweep points; threshold within 25% at 13 of 14. **W1 [post hoc]:** zero-fine audits score below no oversight for both models; break-even audit cost 0.03–0.24 t; being caught does not reduce the next round's over-taking; end-game rise +16.6 points. **Forest under the reviewer is not a dilemma** (F2). Five paper/code mismatches fixed. | G1 P1 supported, P2 fails in Fishery; G2 S1–S3 hold except two River points |
+| **Overseer layer v0** (14 Oct) | One overseer implementation that plugs into any game (`overseer/`). | Admission tests: exact replay of every stored LLM game (L4 263/263, L2 402/402, L3 80/80, L5 10/10); byte-identical re-run of S3. | Admitted |
+| **R1a** (14–19 Oct) | Do random audits and fines stop Selfish strategies taking over in Willis et al.'s commons (n = 64 and 4, cultural evolution, blind LLM-written strategies)? 560 runs on GitHub Actions, $0. | Paper baseline replicated (15% Collective, 13% efficiency at n = 64). With the frozen balance fine 0.96: Collective share **0.34 at 1.0×, 0.60 at 1.25×, 0.84 at 2×**; efficiency 0.13 → 0.57 → 0.87. Rare large fines are 2.3–2.8× cheaper per audit. At n = 4, Selfish already earns less without fines (F13). | H0, H1 (n = 64), H2 hold; H1 at n = 4 fails only at e = 0 |
+| **R1b** (19–20 Oct) | When gpt-oss writes strategies told the audit rule, do they respond, and does that add to selection? 254 strategies (about $0.58), 240 evolution runs. | Audit-aware Selfish strategies cut defection **0.74 → 0.06** at expected fine 2; the blind pool is unchanged; 75% implement Becker's rule explicitly; a zero-fine announcement has no effect on written strategies. In evolution, audit-aware strategies **comply but stay Selfish** (Collective 0.19 vs 0.60 blind), with far higher welfare (0.45 vs 0.13): **compliance is not conversion** (F16). | H1, H2, H4 hold |
+| **Grant application** (23–27 Oct) | OpenMined "Ensembles & Routing" call (closes 30 Oct AoE). | Drafted: a budgeted three-model cascade (worker, monitor, auditor) with random spot-checks, built on the audit-budget results. Draft in `notes/private/grants/` (not in git). | Ameer to decide and submit |
 
 **7 Oct: paper exhibits.**
 - Built for claims 1–5, following how the closest papers present their results.
@@ -202,27 +212,49 @@ Ameer decided to stop adding experiments. Everything not on this list is parked 
 
 - ~~Definition of harm~~: decided 8 Oct, MSY.
 - ~~Which paper~~: decided 8 Oct, the full paper on misreporting, costly checking and deterrence.
-- **Main game:** Harvest, with Fishery as a sanity check? Most deterrence
-  results are Fishery-only, because cheating never paid in Harvest.
+- ~~Platform for the next phase~~: decided 14 Oct, the overseer layer on existing games (`research/commons_platform/2026-10-14_decision.md`).
+- **Forest (open since 14 Oct):** move it to the supplement as a game that failed the dilemma test under oversight, and re-test contagion in Fishery (F2). Recommended; awaiting Ameer.
+- **Paper structure (open):** paper 1 now (Fishery and River; workshop 20 Nov, then the January main track), plus one flagship paper on evaluating overseers (Phases 1–4). Proposed 15 Oct; awaiting Ameer.
+- **GPU (open):** needed for RL agents in SocialJax. A Slack message to Yali was drafted on 14 Oct; whether it was sent is not recorded.
+- **OpenMined grant (open):** submit by 30 Oct AoE or not; a 12-week commitment that overlaps the January deadline.
 
 ### Next steps already proposed
 
-- **L2:** done for 10 of 11 cells (results in `studies/L2_llm_agents/results.md`, Figure 4). The memory cell (EM) is running with the corrected rule (Amendment 5); then H3 is added. A finer fine grid between e = 1.33 and 6 t would locate the threshold.
-- **A coordinated group attacker** with per-agent strategies (S5 gap).
-- **A reviewer that hedges against uncertainty in its own model** (R2 gap).
-- **A direct test** of report-based against signal-based audit targeting (C1
-  conjecture).
+Updated 27 Oct. The full ordered list is `notes/claude_audit_20261005/research/commons_platform/2026-10-14_decision.md` §6; the findings that change what the paper must say are in `notes/claude_audit_20261005/FINDINGS_AND_IMPLICATIONS.md`.
+
+1. **L7, talk × planted cheater**, then overseer responses (shared cut, targeted, leniency); about $5. Its no-talk cells re-test contagion in Fishery for paper 1.
+2. **S0, the spatial port:** SocialJax/OpenSocialJax as submodules, the overseer adapter, mechanics checks, a high-level-move layer for LLM agents. CPU now; its LLM parts wait for credit.
+3. **Loose ends:**
+   - hand-check 20 R1b strategies;
+   - fix two overlapping figure labels (R1a);
+   - stop remote lanes from overwriting each other's games;
+   - G1-LLM (about $3) and the temperature check (about $2);
+   - a K/4 robustness line.
+4. **Paper 1:**
+   - restructure per the Forest decision;
+   - integrate L4–L6;
+   - narrow the novelty claims (F11);
+   - SocialJax citation now ICLR 2026.
+
+**Ollama credit:** about $9.35 left (27 Oct estimate; R1b used about $0.58).
 
 ### Where the October files are
 
-| Item | Path (in `notes/claude_audit_20261005/`) |
+| Item | Path (in `notes/claude_audit_20261005/` unless stated) |
 | --- | --- |
 | Per-study protocol and results | `studies/<ID>_<name>/protocol.md` and `results.md` |
-| Arithmetic results stated once | `propositions.md` |
+| **Findings that change what the paper must say (F1–F16)** | `FINDINGS_AND_IMPLICATIONS.md` |
 | Running "what we learned" log | `what_we_learned_and_next.md` |
+| Arithmetic results stated once | `propositions.md` |
 | Every check that was run | `verification_log.md` |
 | Figures, with one-line takeaways | `figures_guide.md`, `figures/` |
 | Sources and terms | `literature_ledger.md` |
+| Platform decision and the 39-study plan (deep research, 93 sources) | `research/commons_platform/` |
+| Venue research (12 Oct) | `research/venue_readiness/` |
+| Supervisor feedback (13 Oct): answers, AI literature review, spatial-game options, plan | `notes/supervisor_feedback_2026-10-13/` (repository root) |
+| Catch-up deck and talk scripts (13 Oct) | `notes/slides/2026-10-13_phd_catchup/` (repository root) |
+| The overseer layer | `overseer/` (repository root; `DESIGN.md`, `ADMISSION.md`) |
+| Remote-run results | branches `l2-results` (L2–L6), `r1a-results`, `r1b-results` |
 | Background (September audit, design issues, caveats) | `background/` |
 
 ## Why these games, specifically?

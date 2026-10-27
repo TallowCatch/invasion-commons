@@ -12,3 +12,9 @@ bash ~/.claude/skills/canva-academic-deck/scripts/render_pptx.sh phd_catchup_202
 ```
 
 Run the builder from a folder where `pptxgenjs` is installed. The style and the build steps are in the skills `canva-academic-deck` and `research-catchup-talk`.
+
+## Which files are current (27 October 2026)
+
+- **The deck:** `phd_catchup_2026-10-13.pptx` is the version Ameer edited by hand, including slide 13 "Follow-up Results" with L4 and L6. `spec.json` no longer matches it; do not rebuild from the spec.
+- **The scripts:** the `.docx` files are the current versions (edited by Ameer). `talk_script_concise.md` is kept in sync for slide 13. `talk_script_and_qa.md` predates Ameer's docx edits.
+- **Renders** (`render*/`) are scratch images and are git-ignored.

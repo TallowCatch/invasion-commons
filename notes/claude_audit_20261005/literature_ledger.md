@@ -140,3 +140,10 @@ All of these sources were checked by a research subagent on 13 October against a
 | Hua et al. (2025) *Combining Cost-Constrained Runtime Monitors for AI Safety* | arXiv:2507.15886; NeurIPS 2025 | Abstract only | Monitoring as a budgeted decision (W1, monitoring cost) | It measures detection, not deterrence. |
 | Perolat et al. (2017) *A multi-agent RL model of common-pool resource appropriation* | arXiv:1707.06600; NIPS 2017 | Abstract and ar5iv text (subagent) | Efficiency, equality, sustainability and peace; zapping protects the stock by removing harvesters (a confound for G1) | Not LLM agents. |
 | Mosquera et al. (2024) *Can LLM-Augmented autonomous agents cooperate?* | arXiv:2403.11381 | arXiv HTML (subagent) | A symbol grid failed and an object list worked; cost $0.78–15.63 per simulation. Design input for G1 | No enforcement. |
+
+## Added 27 October 2026 (cited in the OpenMined grant draft; not yet in the paper)
+
+| Source | Identifier | Depth | Used for | What it does NOT support |
+| --- | --- | --- | --- | --- |
+| Chen, Zaharia & Zou (2023) *FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance* | arXiv:2305.05176 | Abstract only (structure read 23 Oct) | The standard LLM cascade baseline: query cheap models first and escalate. Reports matching the best single model at much lower cost | Oversight or audits; random spot-checks |
+| Ong et al. (2024) *RouteLLM: Learning to Route LLMs with Preference Data* | arXiv:2406.18665 (preprint; no venue listed) | Metadata only (title, authors, date checked 27 Oct) | A trained-router baseline | Content not read; do not cite results from it |

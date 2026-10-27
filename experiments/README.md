@@ -10,11 +10,16 @@ python -m experiments.paper_v5.plot_reviewer_decisions --help
 `configs/` stays here, and its paths (`experiments/configs/...`) are unchanged.
 Scripts import each other across folders as `experiments.<folder>.<name>`.
 
+**Outside `experiments/`, since 14 October 2026:**
+- `overseer/`: the reusable oversight layer (allowances, audits, detection, sanctions, budget, metrics), with adapters for the text Fishery (`adapters/fishery_text.py`) and Willis et al.'s CPR (`adapters/emergent_llm.py`). Design: `overseer/DESIGN.md`; admission tests: `overseer/ADMISSION.md`.
+- `external/emergent_llm`: Willis, Zhao, Du & Leibo's code as a git submodule pinned at `be78ff9` (MIT), never edited.
+- **Remote runs** (workflows on `main`): `l2-llm-agents.yml` (L2–L6), `r1a-willis-cpr.yml`, and `r1b-generate.yml` / `r1b-evolve.yml` / `r1b-chain.yml`. Their results go to the branches `l2-results`, `r1a-results` and `r1b-results`.
+
 | Folder | Scripts | What it holds |
 | --- | ---: | --- |
 | `paper_v5/` | 21 | Builds and checks paper v5: data export, figures, provenance-listed analyses, input checks, source packaging. |
 | `common/` | 11 | Shared reviewer and Harvest libraries imported across folders (`run_matched_oversight` is the core). |
-| `oversight/` | 9 | Current oversight experiments R1, S1, S1b and S2, and the progress figures (`notes/claude_audit_20261005/`). |
+| `oversight/` | 52 | Current oversight experiments (protocols and results in `notes/claude_audit_20261005/studies/`): programmed-agent studies R1–R5, S1–S5, C1, T1; LLM studies L1–L6 (`run_l2_llm_agents`, `run_l4_llm_identification`, `run_l6_llm_forest`, with `l4_ci.py` for the remote lanes); Phase 0 G1/G2 (`run_g1_schelling`, `run_g1b_lone_breakeven`, `run_g2_sweeps`, `analyze_g1_g2`) and W1 (`analyze_w1`); the overseer admission run (`run_overseer_admission`); Willis et al.'s commons R1a (`run_r1a_willis_audits`, `analyze_r1a`) and R1b (`run_r1b_generate`, `run_r1b_parts`, `analyze_r1b`). |
 | `archive/harvest_2026q2/` | 35 | Earlier Harvest work: Stage A invasion matrix, threshold-replay shards, LLM strategy bridge, RL, actor-pressure pilot, decision suite, Clean Up. |
 | `archive/fishery_2026q1/` | 20 | The earlier single-stock Fishery study. |
 | `archive/oneoff/` | 8 | GIFs, the showcase report, talk figures, the results organiser, the LLM setup check. |

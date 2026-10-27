@@ -33,7 +33,30 @@ with its key numbers. Start there.
 | `runs/` | Small copies of each run's analysis tables and manifests. |
 | `scripts/` | The audit's re-analysis scripts. |
 
-**Studies so far:** R1, S1, S1b/S2, S3, S4, R2, S5, C1, the L1 pilot, R3 and T1. L2 is drafted, waiting on decisions.
+**Studies so far** (updated 27 October 2026):
+- **Programmed agents:** R1, S1, S1b/S2, S3, S4, R2, S5, C1, R3, T1, R4, R5.
+- **Language-model agents:** the L1 pilot, L2, L3, L4, L5 (screen only), L6.
+- **Phase 0 grounding:** G1/G2 (Schelling diagrams and sweeps, with the post hoc G1b) and W1 (welfare, monitoring cost, control-style re-scoring).
+- **Willis et al.'s commons:** R1a (audits on blind strategies) and R1b (strategies told the audit rule).
+- **Planned next:** L7 (talk × planted cheater) and S0 (spatial port).
+
+**Also in this folder:**
+- `FINDINGS_AND_IMPLICATIONS.md`: every finding that changes what the paper must say (F1–F16), with its status.
+- `research/commons_platform/`: the 14 October platform decision and the 39-study plan.
+
+## What to update after any piece of work
+
+This is the tracking checklist, agreed 27 October 2026. After a study, analysis, paper change or decision, update every line that applies:
+
+1. **The study's own files.** `studies/<ID>_<name>/protocol.md` is frozen before code; deviations are appended as dated amendments. `results.md` is written when results exist, including for studies that stop early.
+2. **`PROJECT_HISTORY.md`** (repository root): one row in the October table, and the "Open decisions", "Next steps" and "Where the files are" sections.
+3. **`what_we_learned_and_next.md`:** a dated "Update N" at the top.
+4. **`FINDINGS_AND_IMPLICATIONS.md`:** a new F-entry for anything that changes a claim, and status changes on existing entries.
+5. **`literature_ledger.md`:** every new source that is cited.
+6. **This README:** the studies list. **`experiments/README.md`:** new scripts or packages.
+7. **Decisions and costs:** record them where they apply, with the Ollama credit left (also in Claude's memory).
+8. **Commit and push.** Raw runs stay git-ignored or on the results branches. Small summaries go under `runs/`.
+
 
 ### Old file numbers
 
