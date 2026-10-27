@@ -1,5 +1,14 @@
 # What we have learned, and what should come next
 
+## Update 14, 27 October 2026: the workshop paper is paused; a PhD contribution plan
+
+- Ameer paused the workshop paper to develop a working contribution with a proper schedule.
+- **Proposed contribution:** a **calibrate-then-deploy overseer**. It probes agents without consequences (shadow mode), designs the cheapest audit rate, targeting and consequence that keeps violations under a target, then verifies and recalibrates from random audits.
+- **The gap it fills:** AI control measures detection under audit budgets but not deterrence. LLM commons work lacks calibrated, budgeted enforcement. Audit-game theory is untested on LLM agents.
+- **Five claims (C1–C5)** and four chapters. Chapter 1 is the existing results.
+- **Schedule:** Nov (build and offline validation, $0) → Dec (live tests, unknown odds, red team; the key gate) → Jan (scarce budgets, drift) → Feb (families) → Mar (scale on Willis's game) → Apr (LLM overseer) → May (NeurIPS submission) → summer (talk and collusion, then the spatial game).
+- Full plan: `notes/phd_plan/2026-10-27_calibrated_overseer_plan.md`.
+
 ## Update 13, 27 October 2026: tracking audit, L5 written up, grant draft
 
 - **Tracking audit.** `PROJECT_HISTORY.md` had not been updated since 12 Oct, the study index since 7 Oct and `PAPER_PLAN.md` since 8 Oct. All three are now current: rows for L4–L6, the 13 Oct meeting, the literature and platform research, Phase 0, the overseer layer, R1a, R1b and the grant draft. A tracking checklist is now in `README.md` ("What to update after any piece of work").
