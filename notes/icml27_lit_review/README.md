@@ -1,6 +1,6 @@
 # ICML 2027 literature review: the reading list in Zotero
 
-Built 28 October 2026. **278 papers** were saved to Zotero, in **My Library**, all tagged `ICML27`. The full list is in `reading_list.csv`, which you can open in Excel. `resolve.py` and `build.py` rebuild it from scratch.
+Built 28 October 2026. **278 papers** were saved to Zotero, in the collection **ICML**, all tagged `ICML27`. The Hiring-LLMs collection belongs to a different project and was not touched. The full list is in `reading_list.csv`, which you can open in Excel. `resolve.py` and `build.py` rebuild it from scratch.
 
 ## Where the papers came from
 
