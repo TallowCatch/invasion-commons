@@ -1,5 +1,7 @@
 # PhD contribution plan: a calibrated overseer for populations of AI agents
 
+> **28 Oct 2026, reframed.** Ameer asked for the work to sit in the MARL / SocialJax domain, not to lean on economics theory. The current plan is the gameplan in `talking_about_my_work.md` §9. It puts SocialJax Harvest first (step 1 is a free JAX wrapper) and uses RL learners as the red team. The calibrate-then-deploy idea below still stands, but its framing and order are superseded.
+
 Written 27 October 2026. The workshop paper is paused (Ameer's decision, 27 Oct). This plan replaces the paper-driven ordering of `research/commons_platform/2026-10-14_decision.md` §6. The platform decision itself stands: the overseer is the contribution, and existing games are the test environments.
 
 ---
