@@ -33,3 +33,6 @@ tmp/
 # Slide renders and Office lock files (27 Oct 2026)
 notes/slides/**/render*/
 ~$*
+
+# KU interview deck renders contain personal details; kept local only
+notes/slides/style_kit_ku/examples/
