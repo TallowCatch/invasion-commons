@@ -1,0 +1,279 @@
+core,year,title,first_author,type,url_or_doi,topics,source
+yes,2013,Audit Games,Blocki,preprint,https://arxiv.org/abs/1303.0356,Auditing & security games,from: project notes
+yes,2017,Multi-agent Reinforcement Learning in Sequential Social Dilemmas,Leibo,preprint,https://arxiv.org/abs/1702.03037,MARL social dilemmas,from: project notes
+yes,2017,A multi-agent reinforcement learning model of common-pool resource appropriation,Perolat,preprint,https://arxiv.org/abs/1707.06600,MARL social dilemmas; Commons & resources,from: project notes
+yes,2018,Inequity aversion improves cooperation in intertemporal social dilemmas,Hughes,preprint,https://arxiv.org/abs/1803.08884,MARL social dilemmas,from: project notes
+yes,2018,Adaptive Incentive Design,Ratliff,preprint,https://arxiv.org/abs/1806.05749,Incentive & mechanism design,added: MARL & oversight (28 Oct)
+yes,2018,Learning Optimal Commitment to Overcome Insecurity,Blum,journalArticle,https://doi.org/10.1184/r1/6606896,Auditing & security games,added: MARL & oversight (28 Oct)
+yes,2018,Deep Reinforcement Learning for Green Security Games with Real-Time Information,Wang,preprint,https://arxiv.org/abs/1811.02483,MARL social dilemmas; Auditing & security games,added: MARL & oversight (28 Oct)
+yes,2019,A Regulation Enforcement Solution for Multi-agent Reinforcement Learning,Sun,preprint,https://arxiv.org/abs/1901.10059,"MARL social dilemmas; Incentive & mechanism design; Sanctions, norms & institutions",added: arXiv sweep 2025-26
+yes,2020,Learning to Incentivize Other Learning Agents,Yang,preprint,https://arxiv.org/abs/2006.06051,MARL social dilemmas; Incentive & mechanism design,from: project notes
+yes,2020,Adaptive Mechanism Design: Learning to Promote Cooperation,Baumann,conferencePaper,https://doi.org/10.1109/IJCNN48605.2020.9207690,Incentive & mechanism design; MARL social dilemmas,from: project notes
+yes,2020,Open Problems in Cooperative AI,Dafoe,preprint,https://arxiv.org/abs/2012.08630,Other / background,from: project notes
+yes,2020,Silly rules improve the capacity of agents to learn stable enforcement and compliance behaviors,Köster,preprint,https://arxiv.org/abs/2001.09318,"MARL social dilemmas; Sanctions, norms & institutions",from: project notes
+yes,2020,D3C: Reducing the Price of Anarchy in Multi-Agent Learning,Gemp,preprint,https://arxiv.org/abs/2010.00575,Other / background,from: project notes
+yes,2021,The AI Economist: Optimal Economic Policy Design via Two-level Deep Reinforcement Learning,Zheng,preprint,https://arxiv.org/abs/2108.02755,MARL social dilemmas; Incentive & mechanism design,from: project notes
+yes,2021,Scalable Evaluation of Multi-Agent Reinforcement Learning with Melting Pot,Leibo,preprint,https://arxiv.org/abs/2107.06857,MARL social dilemmas,from: project notes
+yes,2021,Reinforcement Learning with State Observation Costs in Action-Contingent Noiselessly Observable Markov Decision Processes,Nam,journalArticle,,MARL social dilemmas; Costly observation / partial monitoring,added: MARL & oversight (28 Oct)
+yes,2021,Adaptive Incentive Design with Multi-Agent Meta-Gradient Reinforcement Learning,Yang,preprint,https://arxiv.org/abs/2112.10859,MARL social dilemmas; Incentive & mechanism design,added: arXiv sweep 2025-26
+yes,2022,Melting Pot 2.0,Agapiou,preprint,https://arxiv.org/abs/2211.13746,MARL social dilemmas,from: project notes
+yes,2022,Formal Contracts Mitigate Social Dilemmas in Multi-Agent RL,Haupt,preprint,https://arxiv.org/abs/2208.10469,MARL social dilemmas; Incentive & mechanism design,from: project notes
+yes,2022,Oracles & Followers: Stackelberg Equilibria in Deep Multi-Agent Reinforcement Learning,Gerstgrasser,preprint,https://arxiv.org/abs/2210.11942,MARL social dilemmas; Incentive & mechanism design,added: MARL & oversight (28 Oct)
+yes,2023,A learning agent that acquires social norms from public sanctions in decentralized multi-agent settings,Vinitsky,journalArticle,https://doi.org/10.1177/26339137231162025,"Sanctions, norms & institutions",from: project notes
+yes,2023,AI Control: Improving Safety Despite Intentional Subversion,Greenblatt,preprint,https://arxiv.org/abs/2312.06942,AI control & monitoring,from: project notes
+yes,2023,Mediated Multi-Agent Reinforcement Learning,Ivanov,preprint,https://arxiv.org/abs/2306.08419,MARL social dilemmas; Incentive & mechanism design,added: MARL & oversight (28 Oct)
+yes,2023,IQ-Flow: Mechanism Design for Inducing Cooperative Behavior to Self-Interested Agents in Sequential Social Dilemmas,Guresti,preprint,https://arxiv.org/abs/2302.14604,MARL social dilemmas; Incentive & mechanism design,added: arXiv sweep 2025-26
+yes,2023,Investigating the Impact of Direct Punishment on the Emergence of Cooperation in Multi-Agent Reinforcement Learning Systems,Dasgupta,preprint,https://arxiv.org/abs/2301.08278,"MARL social dilemmas; Sanctions, norms & institutions",added: arXiv sweep 2025-26
+yes,2023,Inducing Stackelberg Equilibrium through Spatio-Temporal Sequential Decision-Making in Multi-Agent Reinforcement Learning,Zhang,preprint,https://arxiv.org/abs/2304.10351,MARL social dilemmas; Incentive & mechanism design,added: arXiv sweep 2025-26
+yes,2024,Cooperate or Collapse: Emergence of Sustainable Cooperation in a Society of LLM Agents,Piatti,preprint,https://arxiv.org/abs/2404.16698,LLM agents: cooperation & games; Commons & resources,from: project notes
+yes,2024,Principal-Agent Reinforcement Learning: Orchestrating AI Agents with Contracts,Ivanov,preprint,https://arxiv.org/abs/2407.18074,MARL social dilemmas; Incentive & mechanism design,from: project notes
+yes,2024,Large Legislative Models: Towards Efficient AI Policymaking in Economic Simulations,Gasztowtt,preprint,https://arxiv.org/abs/2410.08345,MARL social dilemmas; Incentive & mechanism design,from: project notes
+yes,2024,Games for AI Control: Models of Safety Evaluations of AI Deployment Protocols,Griffin,preprint,https://arxiv.org/abs/2409.07985,AI control & monitoring,from: project notes
+yes,2024,Monitored Markov Decision Processes,Parisi,preprint,https://arxiv.org/abs/2402.06819,AI control & monitoring; MARL social dilemmas; Costly observation / partial monitoring,added: MARL & oversight (28 Oct)
+yes,2024,Social Environment Design,Zhang,preprint,https://arxiv.org/abs/2402.14090,MARL social dilemmas; Incentive & mechanism design,added: MARL & oversight (28 Oct)
+yes,2024,Carbon Market Simulation with Adaptive Mechanism Design,Wang,preprint,https://arxiv.org/abs/2406.07875,Incentive & mechanism design,added: arXiv sweep 2025-26
+yes,2025,Multi-Agent Risks from Advanced AI,Hammond,preprint,https://arxiv.org/abs/2502.14143,Other / background,from: project notes
+yes,2025,Corrupted by Reasoning: Reasoning Language Models Become Free-Riders in Public Goods Games,Piedrahita,preprint,https://arxiv.org/abs/2506.23276,LLM agents: cooperation & games,from: project notes
+yes,2025,SocialJax: An Evaluation Suite for Multi-agent Reinforcement Learning in Sequential Social Dilemmas,Guo,preprint,https://arxiv.org/abs/2503.14576,MARL social dilemmas,from: project notes
+yes,2025,Control Tax: The Price of Keeping AI in Check,Terekhov,preprint,https://arxiv.org/abs/2506.05296,AI control & monitoring; Incentive & mechanism design,added: arXiv sweep 2025-26
+yes,2026,Institutional AI: Governing LLM Collusion in Multi-Agent Cournot Markets via Public Governance Graphs,Syrnikov,preprint,https://arxiv.org/abs/2601.11369,"AI control & monitoring; Sanctions, norms & institutions; LLM agents: cooperation & games",from: project notes
+yes,2026,When Local Monitors Miss Compositional Harm: Diagnosing Distributed Backdoors in Multi-Agent Systems,Hu,preprint,https://arxiv.org/abs/2607.11751,AI control & monitoring,from: project notes
+yes,2026,"Why Do AI Agents Break Rules? How Framing, Context, and Social Signals Shape Compliance",Okamoto,preprint,https://arxiv.org/abs/2608.12323,"Sanctions, norms & institutions",from: project notes
+yes,2026,BRA-Audit: Budgeted Runtime Auditing for LLM Multi-Agent Systems via Cumulative-Exposure Audit-Point Placement,Wang,preprint,https://arxiv.org/abs/2608.14668,Auditing & security games; LLM agents: cooperation & games,from: project notes
+yes,2026,Multi-Agent AI Control: Distributed Attacks Hamper Per-Instance Monitors,Makins,preprint,https://arxiv.org/abs/2607.07368,AI control & monitoring,from: project notes
+yes,2026,"One Human, $N$ Agents: Audit-Budget Allocation for LLM Agent Fleets under Miscalibrated, Correlated Confidence",Zavattari,preprint,https://arxiv.org/abs/2607.28317,Auditing & security games; LLM agents: cooperation & games,from: project notes
+yes,2026,Optimally Auditing Adversarial Agents,Das,preprint,https://arxiv.org/abs/2604.25085,Auditing & security games,from: project notes
+yes,2026,When Does Randomized Oversight Align AI Agents That Can Conceal?,Gans,preprint,https://arxiv.org/abs/2609.38262,Auditing & security games,from: project notes
+yes,2026,Norm Enforcement for AI Agents: Robustly Shaping Behavior in Multi-Agent Systems,Ye,preprint,https://arxiv.org/abs/2607.09766,"MARL social dilemmas; Sanctions, norms & institutions",from: project notes
+yes,2026,When Agents Act Unwatched: The Reduced-Supervision Paradox in Agentic AI,Shi,preprint,https://arxiv.org/abs/2609.29547,MARL social dilemmas,from: project notes
+yes,2026,Evaluating Collective Behaviour of Hundreds of LLM Agents,Willis,preprint,https://arxiv.org/abs/2602.16662,MARL social dilemmas; LLM agents: cooperation & games,from: project notes
+yes,2026,Why LLM Agents Collapse Without Oversight: The Enforcement Gap as the Mechanism Behind Emergence World Failures,Wang,preprint,https://arxiv.org/abs/2609.15293,"Incentive & mechanism design; Sanctions, norms & institutions; LLM agents: cooperation & games",from: project notes
+yes,2026,OpenSocialJax: Evaluating Social Adaptation in Sequential Social Dilemmas with Open-Ended Environmental Dynamics,Guo,preprint,https://arxiv.org/abs/2610.13710,MARL social dilemmas,from: project notes
+yes,2026,Is Anyone Enforcing the Cartel? What Reinforcement Learning Teaches LLM Agents in Markets,Tran,preprint,https://arxiv.org/abs/2610.28787,MARL social dilemmas; LLM agents: cooperation & games,added: arXiv sweep 2025-26
+yes,2026,Blindfold: Keeping the Audit Coin Secret from LLM Agents,Zhu,preprint,https://arxiv.org/abs/2610.37055,Auditing & security games; LLM agents: cooperation & games,added: arXiv sweep 2025-26
+yes,2026,Adaptive Punishment for Cooperation in Mixed-Motive Games,Tang,preprint,https://arxiv.org/abs/2605.24516,"Sanctions, norms & institutions",added: arXiv sweep 2025-26
+yes,2026,Restitution Over Deterrence: Formal Enforcement for LLM Commons Governance,Bell,conferencePaper,https://icml.cc/virtual/2026/78631,"Sanctions, norms & institutions; LLM agents: cooperation & games; Commons & resources",from: project notes
+,1959,Chance-Constrained Programming,Charnes,journalArticle,https://doi.org/10.1287/mnsc.6.1.73,Other / background,from: project notes
+,1968,Crime and Punishment: An Economic Approach,Becker,journalArticle,https://doi.org/10.1086/259394,"Sanctions, norms & institutions",from: project notes
+,1970,The Optimum Enforcement of Laws,Stigler,journalArticle,https://doi.org/10.1086/259646,"Sanctions, norms & institutions",added: MARL & oversight (28 Oct)
+,1972,Income tax evasion: a theoretical analysis,Allingham,journalArticle,https://doi.org/10.1016/0047-2727(72)90010-2,Incentive & mechanism design,from: project notes
+,1973,"Hockey Helmets, Concealed Weapons, and Daylight Saving",Schelling,journalArticle,https://doi.org/10.1177/002200277301700302,Other / background,from: project notes
+,1978,Exploiting natural populations in an uncertain world,May,journalArticle,https://doi.org/10.1016/0025-5564(78)90097-4,Other / background,from: project notes
+,1979,Optimal contracts and competitive markets with costly state verification,Townsend,journalArticle,https://doi.org/10.1016/0022-0531(79)90031-0,Incentive & mechanism design; Auditing & security games,from: project notes
+,1985,Income tax compliance in a principal-agent framework,Reinganum,journalArticle,https://doi.org/10.1016/0047-2727(85)90035-0,"Incentive & mechanism design; Sanctions, norms & institutions",from: project notes
+,1988,Enforcement leverage when penalties are restricted,Harrington,journalArticle,https://doi.org/10.1016/0047-2727(88)90003-5,"Sanctions, norms & institutions",from: project notes
+,1990,Governing the Commons,Ostrom,journalArticle,https://doi.org/10.1017/CBO9780511807763,"Sanctions, norms & institutions; Commons & resources",from: project notes
+,1992,Covenants with and without a Sword: Self-Governance Is Possible,Ostrom,journalArticle,https://doi.org/10.2307/1964229,"Sanctions, norms & institutions",from: project notes
+,1993,"Uncertainty, Resource Exploitation, and Conservation: Lessons from History",Ludwig,journalArticle,https://doi.org/10.1126/science.260.5104.17,Commons & resources,from: project notes
+,2000,A Fine is a Price,Gneezy,journalArticle,https://doi.org/10.1086/468061,Other / background,from: project notes
+,2002,Chapter 51 Inspection games,Avenhaus,bookSection,https://doi.org/10.1016/S1574-0005(02)03014-X,Auditing & security games,from: project notes
+,2006,Dynamic behaviour in tax evasion: An experimental approach,Mittone,journalArticle,https://doi.org/10.1016/j.socec.2005.11.065,Incentive & mechanism design,added: MARL & oversight (28 Oct)
+,2008,Value-based policy teaching with active indirect elicitation,Zhang,book,,Incentive & mechanism design,added: MARL & oversight (28 Oct)
+,2008,Deployed ARMOR protection: the application of a game theoretic model for security at the Los Angeles International Airport,Pita,journalArticle,https://doi.org/10.5555/1402795.1402819,Other / background,added: MARL & oversight (28 Oct)
+,2008,"Sequences of audits, tax compliance, and taxpaying strategies",Kastlunger,journalArticle,https://doi.org/10.1016/j.joep.2008.10.004,"Incentive & mechanism design; Sanctions, norms & institutions; Auditing & security games",added: MARL & oversight (28 Oct)
+,2010,Lab Experiments for the Study of Social-Ecological Systems,Janssen,journalArticle,https://doi.org/10.1126/science.1183532,Other / background,from: project notes
+,2011,Computing Optimal Randomized Resource Allocations for Massive Security Games,Kiekintveld,bookSection,https://doi.org/10.1017/cbo9780511973031.008,Auditing & security games; Commons & resources,added: MARL & oversight (28 Oct)
+,2014,Recursive Inspection Games,Stengel,preprint,https://arxiv.org/abs/1412.0129,Auditing & security games,from: project notes
+,2015,When security games go green: designing defender strategies to prevent poaching and illegal fishing,Fang,journalArticle,,Auditing & security games,added: MARL & oversight (28 Oct)
+,2016,Concrete Problems in AI Safety,Amodei,preprint,https://arxiv.org/abs/1606.06565,Other / background,from: project notes
+,2016,Estimating fisheries reference points from catch and resilience,Froese,journalArticle,https://doi.org/10.1111/faf.12190,Commons & resources,from: project notes
+,2016,Learning to Communicate with Deep Multi-Agent Reinforcement Learning,Foerster,preprint,https://arxiv.org/abs/1605.06676,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2017,Runaway Feedback Loops in Predictive Policing,Ensign,preprint,https://arxiv.org/abs/1706.09847,Other / background,from: project notes
+,2017,Analysing Congestion Problems in Multi-agent Reinforcement Learning,Rădulescu,preprint,https://arxiv.org/abs/1702.08736,MARL social dilemmas,from: project notes
+,2017,Learning with Opponent-Learning Awareness,Foerster,preprint,https://arxiv.org/abs/1709.04326,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2017,Consequentialist conditional cooperation in social dilemmas with imperfect information,Peysakhovich,preprint,https://arxiv.org/abs/1710.06975,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2017,Maintaining cooperation in complex social dilemmas using deep reinforcement learning,Lerer,preprint,https://arxiv.org/abs/1707.01068,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2017,Prosocial learning agents solve generalized Stag Hunts better than selfish ones,Peysakhovich,preprint,https://arxiv.org/abs/1709.02865,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2017,Proximal Policy Optimization Algorithms,Schulman,preprint,https://arxiv.org/abs/1707.06347,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2018,Social Influence as Intrinsic Motivation for Multi-Agent Deep Reinforcement Learning,Jaques,preprint,https://arxiv.org/abs/1810.08647,MARL social dilemmas,from: project notes
+,2018,AI safety via debate,Irving,preprint,https://arxiv.org/abs/1805.00899,Scalable oversight,from: project notes
+,2018,Stackelberg Security Games: Looking Beyond a Decade of Success,Sinha,journalArticle,https://doi.org/10.24963/ijcai.2018/775,Incentive & mechanism design; Auditing & security games,added: MARL & oversight (28 Oct)
+,2019,Learning Reciprocity in Complex Sequential Social Dilemmas,Eccles,preprint,https://arxiv.org/abs/1903.08082,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2019,Partner Selection for the Emergence of Cooperation in Multi-Agent Systems Using Reinforcement Learning,Anastassacos,preprint,https://arxiv.org/abs/1902.03185,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2019,Escaping the State of Nature: A Hobbesian Approach to Cooperation in Multi-agent Reinforcement Learning,Long,preprint,https://arxiv.org/abs/1906.09874,MARL social dilemmas,added: arXiv sweep 2025-26
+,2019,Bi-level Actor-Critic for Multi-agent Coordination,Zhang,preprint,https://arxiv.org/abs/1909.03510,MARL social dilemmas,added: arXiv sweep 2025-26
+,2020,A game-theoretic analysis of networked system control for common-pool resource management using multi-agent reinforcement learning,Pretorius,preprint,https://arxiv.org/abs/2010.07777,AI control & monitoring; MARL social dilemmas; Commons & resources,from: project notes
+,2020,DeepMind Lab2D,Beattie,preprint,https://arxiv.org/abs/2011.07027,MARL social dilemmas,from: project notes
+,2020,Social diversity and social preferences in mixed-motive reinforcement learning,McKee,preprint,https://arxiv.org/abs/2002.02325,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2020,Emergent Reciprocity and Team Formation from Randomized Uncertain Social Preferences,Baker,preprint,https://arxiv.org/abs/2011.05373,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2020,Emergent Social Learning via Multi-agent Reinforcement Learning,Ndousse,preprint,https://arxiv.org/abs/2010.00581,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2020,Is Independent Learning All You Need in the StarCraft Multi-Agent Challenge?,Witt,preprint,https://arxiv.org/abs/2011.09533,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2020,Active Measure Reinforcement Learning for Observation Cost Minimization,Bellinger,preprint,https://arxiv.org/abs/2005.12697,MARL social dilemmas; Costly observation / partial monitoring,added: MARL & oversight (28 Oct)
+,2020,Dynamics of collective action to conserve a large common-pool resource,Andersson,preprint,https://arxiv.org/abs/2012.00892,Commons & resources,added: arXiv sweep 2025-26
+,2020,Inducing Cooperative behaviour in Sequential-Social dilemmas through Multi-Agent Reinforcement Learning using Status-Quo Loss,Badjatiya,preprint,https://arxiv.org/abs/2001.05458,MARL social dilemmas,added: arXiv sweep 2025-26
+,2021,Safe Multi-Agent Reinforcement Learning via Shielding,Elsayed-Aly,preprint,https://arxiv.org/abs/2101.11196,MARL social dilemmas,from: project notes
+,2021,Deep Reinforcement Learning at the Edge of the Statistical Precipice,Agarwal,preprint,https://arxiv.org/abs/2108.13264,MARL social dilemmas; Eval methodology & validity,from: project notes
+,2021,Quantifying the effects of environment and population diversity in multi-agent reinforcement learning,McKee,preprint,https://arxiv.org/abs/2102.08370,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2021,Normative Disagreement as a Challenge for Cooperative AI,Stastny,preprint,https://arxiv.org/abs/2111.13872,Other / background,added: MARL & oversight (28 Oct)
+,2021,"The Surprising Effectiveness of PPO in Cooperative, Multi-Agent Games",Yu,preprint,https://arxiv.org/abs/2103.01955,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2021,Improved Cooperation by Exploiting a Common Signal,Danassis,preprint,https://arxiv.org/abs/2102.02304,Other / background,added: arXiv sweep 2025-26
+,2021,AI-driven Prices for Externalities and Sustainability in Production Markets,Danassis,preprint,https://arxiv.org/abs/2106.06060,MARL social dilemmas; Commons & resources,added: arXiv sweep 2025-26
+,2021,Exploring the Impact of Tunable Agents in Sequential Social Dilemmas,O'Callaghan,preprint,https://arxiv.org/abs/2101.11967,MARL social dilemmas,added: arXiv sweep 2025-26
+,2021,Improving Social Welfare While Preserving Autonomy via a Pareto Mediator,McAleer,preprint,https://arxiv.org/abs/2106.03927,Incentive & mechanism design,added: arXiv sweep 2025-26
+,2022,"AI for Global Climate Cooperation: Modeling Global Climate Negotiations, Agreements, and Long-Term Cooperation in RICE-N",Zhang,preprint,https://arxiv.org/abs/2208.07004,Other / background,from: project notes
+,2022,Human-centred mechanism design with Democratic AI,Koster,journalArticle,https://doi.org/10.1038/s41562-022-01383-x,Incentive & mechanism design; MARL social dilemmas,from: project notes
+,2022,Measuring Progress on Scalable Oversight for Large Language Models,Bowman,preprint,https://arxiv.org/abs/2211.03540,Scalable oversight; LLM agents: cooperation & games,from: project notes
+,2022,Spurious normativity enhances learning of compliance and enforcement behavior in artificial agents,Köster,journalArticle,https://doi.org/10.1073/pnas.2106028118,"Sanctions, norms & institutions",from: project notes
+,2022,The AI Economist: Taxation policy design via two-level deep multiagent reinforcement learning,Zheng,journalArticle,https://doi.org/10.1126/sciadv.abk2607,MARL social dilemmas; Incentive & mechanism design,from: project notes
+,2022,Model-Free Opponent Shaping,Lu,preprint,https://arxiv.org/abs/2205.01447,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2022,Adaptive Model Design for Markov Decision Process,Siyu,journalArticle,,Other / background,added: MARL & oversight (28 Oct)
+,2022,RPM: Generalizable Behaviors for Multi-Agent Reinforcement Learning,Qiu,preprint,https://arxiv.org/abs/2210.09646,MARL social dilemmas,added: arXiv sweep 2025-26
+,2022,Cooperative Artificial Intelligence,Baumann,preprint,https://arxiv.org/abs/2202.09859,MARL social dilemmas,added: arXiv sweep 2025-26
+,2023,Large Language Models as Simulated Economic Agents: What Can We Learn from Homo Silicus?,Horton,preprint,https://arxiv.org/abs/2301.07543,LLM agents: cooperation & games,from: project notes
+,2023,Weak-to-Strong Generalization: Eliciting Strong Capabilities With Weak Supervision,Burns,preprint,https://arxiv.org/abs/2312.09390,Scalable oversight; MARL social dilemmas,from: project notes
+,2023,Resolving social dilemmas with minimal reward transfer,Willis,preprint,https://arxiv.org/abs/2310.12928,MARL social dilemmas,from: project notes
+,2023,Do the Rewards Justify the Means? Measuring Trade-Offs Between Rewards and Ethical Behavior in the MACHIAVELLI Benchmark,Pan,preprint,https://arxiv.org/abs/2304.03279,Eval methodology & validity,from: project notes
+,2023,Welfare Diplomacy: Benchmarking Language Model Cooperation,Mukobi,preprint,https://arxiv.org/abs/2310.08901,MARL social dilemmas; LLM agents: cooperation & games; Eval methodology & validity,from: project notes
+,2023,A Review of Cooperation in Multi-agent Learning,Du,preprint,https://arxiv.org/abs/2312.05162,MARL social dilemmas,from: project notes
+,2023,"Generative agent-based modeling with actions grounded in physical, social, or digital space using Concordia",Vezhnevets,preprint,https://arxiv.org/abs/2312.03664,LLM agents: cooperation & games,from: project notes
+,2023,Generative Agents: Interactive Simulacra of Human Behavior,Park,preprint,https://arxiv.org/abs/2304.03442,LLM agents: cooperation & games,from: project notes
+,2023,Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena,Zheng,preprint,https://arxiv.org/abs/2306.05685,Scalable oversight; LLM agents: cooperation & games,from: project notes
+,2023,Sketching a Model on Fisheries Enforcement and Compliance -- A Survey,Coelho,preprint,https://arxiv.org/abs/2306.16960,"Sanctions, norms & institutions; Commons & resources",from: project notes
+,2023,Large Language Models can Strategically Deceive their Users when Put Under Pressure,Scheurer,preprint,https://arxiv.org/abs/2311.07590,LLM agents: cooperation & games,from: project notes
+,2023,JaxMARL: Multi-Agent RL Environments and Algorithms in JAX,Rutherford,preprint,https://arxiv.org/abs/2311.10090,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2023,Steering No-Regret Learners to a Desired Equilibrium,Zhang,preprint,https://arxiv.org/abs/2306.05221,Other / background,added: MARL & oversight (28 Oct)
+,2023,Act-Then-Measure: Reinforcement Learning for Partially Observable Environments with Active Measuring,Krale,preprint,https://arxiv.org/abs/2303.08271,MARL social dilemmas; Costly observation / partial monitoring,added: MARL & oversight (28 Oct)
+,2023,Can Large Language Models Serve as Rational Players in Game Theory? A Systematic Analysis,Fan,preprint,https://arxiv.org/abs/2312.05488,LLM agents: cooperation & games,added: MARL & oversight (28 Oct)
+,2023,Theory of Mind for Multi-Agent Collaboration via Large Language Models,Li,preprint,https://arxiv.org/abs/2310.10701,MARL social dilemmas; LLM agents: cooperation & games,added: MARL & oversight (28 Oct)
+,2023,Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design or: How I learned to start worrying about prompt formatting,Sclar,preprint,https://arxiv.org/abs/2310.11324,LLM agents: cooperation & games; Eval methodology & validity,added: MARL & oversight (28 Oct)
+,2023,Tax compliance after an audit: Higher or lower?,Kasper,journalArticle,https://doi.org/10.1016/j.jebo.2023.01.013,"MARL social dilemmas; Incentive & mechanism design; Sanctions, norms & institutions; Auditing & security games",added: MARL & oversight (28 Oct)
+,2023,Foundations of Cooperative AI,Conitzer,journalArticle,https://doi.org/10.1609/aaai.v37i13.26791,MARL social dilemmas,added: MARL & oversight (28 Oct)
+,2023,Heterogeneous Social Value Orientation Leads to Meaningful Diversity in Sequential Social Dilemmas,Madhushani,preprint,https://arxiv.org/abs/2305.00768,MARL social dilemmas,added: arXiv sweep 2025-26
+,2024,Nicer Than Humans: How do Large Language Models Behave in the Prisoner's Dilemma?,Fontana,preprint,https://arxiv.org/abs/2406.13605,LLM agents: cooperation & games,from: project notes
+,2024,Algorithmic Collusion by Large Language Models,Fish,preprint,https://arxiv.org/abs/2404.00806,AI control & monitoring; LLM agents: cooperation & games,from: project notes
+,2024,Visibility into AI Agents,Chan,preprint,https://arxiv.org/abs/2401.13138,Other / background,from: project notes
+,2024,Agent Smith: A Single Image Can Jailbreak One Million Multimodal LLM Agents Exponentially Fast,Gu,preprint,https://arxiv.org/abs/2402.08567,LLM agents: cooperation & games; MAS safety & contagion,from: project notes
+,2024,"Can LLM-Augmented autonomous agents cooperate?, An evaluation of their cooperative capabilities through Melting Pot",Mosquera,preprint,https://arxiv.org/abs/2403.11381,MARL social dilemmas; LLM agents: cooperation & games,from: project notes
+,2024,Debating with More Persuasive LLMs Leads to More Truthful Answers,Khan,preprint,https://arxiv.org/abs/2402.06782,LLM agents: cooperation & games,from: project notes
+,2024,Secret Collusion among AI Agents: Multi-Agent Deception via Steganography,Motwani,preprint,https://arxiv.org/abs/2402.07510,AI control & monitoring; MAS safety & contagion,from: project notes
+,2024,Frontier Models are Capable of In-context Scheming,Meinke,preprint,https://arxiv.org/abs/2412.04984,AI control & monitoring,from: project notes
+,2024,"Incentives to Build Houses, Trade Houses, or Trade House Building Skills in Simulated Worlds under Various Governing Systems or Institutions: Comparing Multi-agent Reinforcement Learning to Generative Agent-based Model",Dizaji,preprint,https://arxiv.org/abs/2411.17724,"MARL social dilemmas; Incentive & mechanism design; Sanctions, norms & institutions; LLM agents: cooperation & games",from: project notes
+,2024,Alignment faking in large language models,Greenblatt,preprint,https://arxiv.org/abs/2412.14093,LLM agents: cooperation & games,from: project notes
+,2024,Adaptive Deployment of Untrusted LLMs Reduces Distributed Threats,Wen,preprint,https://arxiv.org/abs/2411.17693,AI control & monitoring; LLM agents: cooperation & games,from: project notes
+,2024,Emergent social conventions and collective bias in LLM populations,Ashery,preprint,https://arxiv.org/abs/2410.08948,LLM agents: cooperation & games,from: project notes
+,2024,Hypothetical Minds: Scaffolding Theory of Mind for Multi-Agent Tasks with Large Language Models,Cross,preprint,https://arxiv.org/abs/2407.07086,MARL social dilemmas; LLM agents: cooperation & games,from: project notes
+,2024,Prompt Infection: LLM-to-LLM Prompt Injection within Multi-Agent Systems,Lee,preprint,https://arxiv.org/abs/2410.07283,LLM agents: cooperation & games; MAS safety & contagion,from: project notes
+,2024,On scalable oversight with weak LLMs judging strong LLMs,Kenton,preprint,https://arxiv.org/abs/2407.04622,Scalable oversight; LLM agents: cooperation & games,from: project notes
+,2024,Cultural Evolution of Cooperation among LLM Agents,Vallinder,preprint,https://arxiv.org/abs/2412.10270,LLM agents: cooperation & games,from: project notes
+,2024,Subversion Strategy Eval: Can language models statelessly strategize to subvert control protocols?,Mallen,preprint,https://arxiv.org/abs/2412.12480,AI control & monitoring; LLM agents: cooperation & games,from: project notes
+,2024,Hidden in Plain Text: Emergence & Mitigation of Steganographic Collusion in LLMs,Mathew,preprint,https://arxiv.org/abs/2410.03768,AI control & monitoring; LLM agents: cooperation & games; MAS safety & contagion,from: project notes
+,2024,Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training,Hubinger,preprint,https://arxiv.org/abs/2401.05566,MARL social dilemmas; LLM agents: cooperation & games,added: MARL & oversight (28 Oct)
+,2024,Towards evaluations-based safety cases for AI scheming,Balesni,preprint,https://arxiv.org/abs/2411.03336,AI control & monitoring,added: MARL & oversight (28 Oct)
+,2024,AgentMonitor: A Plug-and-Play Framework for Predictive and Secure Multi-Agent Systems,Chan,preprint,https://arxiv.org/abs/2408.14972,Other / background,added: MARL & oversight (28 Oct)
+,2024,NetSafe: Exploring the Topological Safety of Multi-agent Networks,Yu,preprint,https://arxiv.org/abs/2410.15686,MAS safety & contagion,added: MARL & oversight (28 Oct)
+,2024,Flooding Spread of Manipulated Knowledge in LLM-Based Multi-Agent Communities,Ju,preprint,https://arxiv.org/abs/2407.07791,LLM agents: cooperation & games; MAS safety & contagion,added: MARL & oversight (28 Oct)
+,2024,How Far Are We on the Decision-Making of LLMs? Evaluating LLMs' Gaming Ability in Multi-Agent Environments,Huang,preprint,https://arxiv.org/abs/2403.11807,LLM agents: cooperation & games,added: MARL & oversight (28 Oct)
+,2024,OCMDP: Observation-Constrained Markov Decision Process,Wang,preprint,https://arxiv.org/abs/2411.07087,Costly observation / partial monitoring,added: arXiv sweep 2025-26
+,2024,Using deep reinforcement learning to promote sustainable human behaviour on a common pool resource problem,Koster,preprint,https://arxiv.org/abs/2404.15059,MARL social dilemmas; Commons & resources,added: arXiv sweep 2025-26
+,2024,The Problem of Social Cost in Multi-Agent General Reinforcement Learning: Survey and Synthesis,Ng,preprint,https://arxiv.org/abs/2412.02091,MARL social dilemmas,added: arXiv sweep 2025-26
+,2024,An Agent-Centric Perspective on Norm Enforcement and Sanctions,Yan,preprint,https://arxiv.org/abs/2403.15128,"Sanctions, norms & institutions",added: arXiv sweep 2025-26
+,2024,Evolution of Social Norms in LLM Agents using Natural Language,Horiguchi,preprint,https://arxiv.org/abs/2409.00993,"Sanctions, norms & institutions; LLM agents: cooperation & games",added: arXiv sweep 2025-26
+,2024,Algorithmic Contract Design with Reinforcement Learning Agents,Concha,preprint,https://arxiv.org/abs/2408.09686,MARL social dilemmas; Incentive & mechanism design,added: arXiv sweep 2025-26
+,2024,Aligning Individual and Collective Objectives in Multi-Agent Cooperation,Li,preprint,https://arxiv.org/abs/2402.12416,Other / background,added: arXiv sweep 2025-26
+,2025,Playing repeated games with large language models,Akata,journalArticle,https://doi.org/10.1038/s41562-025-02172-y,LLM agents: cooperation & games,from: project notes
+,2025,Law in Silico: Simulating Legal Society with LLM-Based Agents,Wang,preprint,https://arxiv.org/abs/2510.24442,MARL social dilemmas; LLM agents: cooperation & games,from: project notes
+,2025,Do LLMs trust AI regulation? Emerging behaviour of game-theoretic LLM agents,Buscemi,preprint,https://arxiv.org/abs/2504.08640,Incentive & mechanism design; LLM agents: cooperation & games,from: project notes
+,2025,Reasoning Models Don't Always Say What They Think,Chen,preprint,https://arxiv.org/abs/2505.05410,Other / background,from: project notes
+,2025,The Role of Social Learning and Collective Norm Formation in Fostering Cooperation in LLM Multi-Agent Systems,Gupta,preprint,https://arxiv.org/abs/2510.14401,"Sanctions, norms & institutions; LLM agents: cooperation & games",from: project notes
+,2025,A Benchmark for Scalable Oversight Protocols,Sudhir,preprint,https://arxiv.org/abs/2504.03731,Scalable oversight; Eval methodology & validity,from: project notes
+,2025,Ctrl-Z: Controlling AI Agents via Resampling,Bhatt,preprint,https://arxiv.org/abs/2504.10374,AI control & monitoring,from: project notes
+,2025,Stress Testing Deliberative Alignment for Anti-Scheming Training,Schoen,preprint,https://arxiv.org/abs/2509.15541,AI control & monitoring,from: project notes
+,2025,Quantifying the Self-Interest Level of Markov Social Dilemmas,Willis,preprint,https://arxiv.org/abs/2501.16138,MARL social dilemmas,from: project notes
+,2025,Evaluating Control Protocols for Untrusted AI Agents,Kutasov,preprint,https://arxiv.org/abs/2511.02997,AI control & monitoring,from: project notes
+,2025,Scaling Laws For Scalable Oversight,Engels,preprint,https://arxiv.org/abs/2504.18530,Scalable oversight,from: project notes
+,2025,Large Language Models Often Know When They Are Being Evaluated,Needham,preprint,https://arxiv.org/abs/2505.23836,LLM agents: cooperation & games; Eval methodology & validity,from: project notes
+,2025,Reliable Weak-to-Strong Monitoring of LLM Agents,Kale,preprint,https://arxiv.org/abs/2508.19461,AI control & monitoring; Scalable oversight; LLM agents: cooperation & games,from: project notes
+,2025,Investigating Tax Evasion Emergence Using Dual Large Language Model and Deep Reinforcement Learning Powered Agent-based Simulation,Lazebnik,preprint,https://arxiv.org/abs/2501.18177,MARL social dilemmas; Incentive & mechanism design; LLM agents: cooperation & games,from: project notes
+,2025,TaxAgent: How Large Language Model Designs Fiscal Policy,Wang,preprint,https://arxiv.org/abs/2506.02838,Incentive & mechanism design; LLM agents: cooperation & games,from: project notes
+,2025,SHADE-Arena: Evaluating Sabotage and Monitoring in LLM Agents,Kutasov,preprint,https://arxiv.org/abs/2506.15740,AI control & monitoring; LLM agents: cooperation & games,from: project notes
+,2025,"Do as We Do, Not as You Think: the Conformity of Large Language Models",Weng,preprint,https://arxiv.org/abs/2501.13381,LLM agents: cooperation & games,from: project notes
+,2025,Will Systems of LLM Agents Cooperate: An Investigation into a Social Dilemma,Willis,preprint,https://arxiv.org/abs/2501.16173,MARL social dilemmas; LLM agents: cooperation & games,from: project notes
+,2025,Monitoring Reasoning Models for Misbehavior and the Risks of Promoting Obfuscation,Baker,preprint,https://arxiv.org/abs/2503.11926,AI control & monitoring,from: project notes
+,2025,Investigating Prosocial Behavior Theory in LLM Agents under Policy-Induced Inequities,Zhou,preprint,https://arxiv.org/abs/2505.15857,LLM agents: cooperation & games,from: project notes
+,2025,Agentic Misalignment: How LLMs Could Be Insider Threats,Lynch,preprint,https://arxiv.org/abs/2510.05179,AI control & monitoring; LLM agents: cooperation & games,from: project notes
+,2025,The PIMMUR Principles: Ensuring Validity in Collective Behavior of LLM Societies,Zhou,preprint,https://arxiv.org/abs/2509.18052,LLM agents: cooperation & games; Eval methodology & validity,from: project notes
+,2025,Combining Cost-Constrained Runtime Monitors for AI Safety,Hua,preprint,https://arxiv.org/abs/2507.15886,AI control & monitoring,from: project notes
+,2025,Temporal Preferences in Language Models for Long-Horizon Assistance,Mazyaki,preprint,https://arxiv.org/abs/2509.09704,LLM agents: cooperation & games,from: project notes
+,2025,Evaluating Generalization Capabilities of LLM-Based Agents in Mixed-Motive Scenarios Using Concordia,Smith,preprint,https://arxiv.org/abs/2512.03318,LLM agents: cooperation & games,from: project notes
+,2025,LLM Economist: Large Population Models and Mechanism Design in Multi-Agent Generative Simulacra,Karten,preprint,https://arxiv.org/abs/2507.15815,MARL social dilemmas; Incentive & mechanism design; LLM agents: cooperation & games,from: project notes
+,2025,LLMs are Capable of Misaligned Behavior Under Explicit Prohibition and Surveillance,Ivanov,preprint,https://arxiv.org/abs/2507.02977,LLM agents: cooperation & games,from: project notes
+,2025,Evaluating Cooperative Resilience in Multiagent Systems: A Comparison Between Humans and LLMs,Chacon-Chamorro,preprint,https://arxiv.org/abs/2512.11689,MARL social dilemmas; LLM agents: cooperation & games,from: project notes
+,2025,Chain of Thought Monitorability: A New and Fragile Opportunity for AI Safety,Korbak,preprint,https://arxiv.org/abs/2507.11473,AI control & monitoring; MARL social dilemmas,from: project notes
+,2025,Reputation as a Solution to Cooperation Collapse in LLM-based MASs,Ren,preprint,https://arxiv.org/abs/2505.05029,"Sanctions, norms & institutions; LLM agents: cooperation & games",from: project notes
+,2025,An anatomical review of the common pool resource game,Malézieux,journalArticle,https://doi.org/10.1017/eec.2024.6,Commons & resources,from: project notes
+,2025,Delegation to artificial intelligence can increase dishonest behaviour,Köbis,journalArticle,https://doi.org/10.1038/s41586-025-09505-x,Other / background,from: project notes
+,2025,Navigating Social Dilemmas with LLM-based Agents via Consideration of Future Consequences,Nguyen,conferencePaper,https://doi.org/10.24963/ijcai.2025/26,MARL social dilemmas; LLM agents: cooperation & games,from: project notes
+,2025,G-Safeguard: A Topology-Guided Security Lens and Treatment on LLM-based Multi-agent Systems,Wang,preprint,https://arxiv.org/abs/2502.11127,LLM agents: cooperation & games; MAS safety & contagion,added: MARL & oversight (28 Oct)
+,2025,Red-Teaming LLM Multi-Agent Systems via Communication Attacks,He,preprint,https://arxiv.org/abs/2502.14847,AI control & monitoring; LLM agents: cooperation & games,added: MARL & oversight (28 Oct)
+,2025,How to evaluate control measures for LLM agents? A trajectory from today to superintelligence,Korbak,preprint,https://arxiv.org/abs/2504.05259,AI control & monitoring; LLM agents: cooperation & games,added: arXiv sweep 2025-26
+,2025,Adaptive Attacks on Trusted Monitors Subvert AI Control Protocols,Terekhov,preprint,https://arxiv.org/abs/2510.09462,AI control & monitoring,added: arXiv sweep 2025-26
+,2025,Optimizing AI Agent Attacks With Synthetic Data,Loughridge,preprint,https://arxiv.org/abs/2511.02823,Other / background,added: arXiv sweep 2025-26
+,2025,BashArena: A Control Setting for Highly Privileged AI Agents,Kaufman,preprint,https://arxiv.org/abs/2512.15688,AI control & monitoring,added: arXiv sweep 2025-26
+,2025,"Uncertainty, bias and the institution bootstrapping problem",Anagnou,preprint,https://arxiv.org/abs/2504.21579,"Sanctions, norms & institutions",added: arXiv sweep 2025-26
+,2025,Validating Generative Agent-Based Models of Social Norm Enforcement: From Replication to Novel Predictions,Cross,preprint,https://arxiv.org/abs/2507.22049,"MARL social dilemmas; Sanctions, norms & institutions; LLM agents: cooperation & games",added: arXiv sweep 2025-26
+,2025,Everyone Contributes! Incentivizing Strategic Cooperation in Multi-LLM Systems via Sequential Public Goods Games,Liang,preprint,https://arxiv.org/abs/2508.02076,MARL social dilemmas; Incentive & mechanism design; LLM agents: cooperation & games,added: arXiv sweep 2025-26
+,2025,The Power of Stories: Narrative Priming Shapes How LLM Agents Collaborate and Compete,Großmann,preprint,https://arxiv.org/abs/2505.03961,LLM agents: cooperation & games,added: arXiv sweep 2025-26
+,2025,Deceptive Automated Interpretability: Language Models Coordinating to Fool Oversight Systems,Lermen,preprint,https://arxiv.org/abs/2504.07831,LLM agents: cooperation & games,added: arXiv sweep 2025-26
+,2025,Beyond the high score: Prosocial ability profiles of multi-agent populations,Tesic,preprint,https://arxiv.org/abs/2509.14485,MARL social dilemmas,added: arXiv sweep 2025-26
+,2025,GRPO-GCC: Enhancing Cooperation in Spatial Public Goods Games via Group Relative Policy Optimization with Global Cooperation Constraint,Yang,preprint,https://arxiv.org/abs/2510.08607,MARL social dilemmas,added: arXiv sweep 2025-26
+,2025,Fair Contracts in Principal-Agent Games with Heterogeneous Types,Tłuczek,preprint,https://arxiv.org/abs/2506.15887,Incentive & mechanism design,added: arXiv sweep 2025-26
+,2025,Fair Cooperation in Mixed-Motive Games via Conflict-Aware Gradient Adjustment,Kim,preprint,https://arxiv.org/abs/2508.17696,MARL social dilemmas,added: arXiv sweep 2025-26
+,2025,Emergence of Fair Leaders via Mediators in Multi-Agent Reinforcement Learning,Dodwadmath,preprint,https://arxiv.org/abs/2508.02421,MARL social dilemmas; Incentive & mechanism design,added: arXiv sweep 2025-26
+,2026,"Social Catalysts, Not Moral Agents: The Illusion of Alignment in LLM Societies",Hu,preprint,https://arxiv.org/abs/2602.02598,LLM agents: cooperation & games,from: project notes
+,2026,Incentive-Aware AI Safety via Strategic Resource Allocation: A Stackelberg Security Games Perspective,Kim,preprint,https://arxiv.org/abs/2602.07259,Incentive & mechanism design; Auditing & security games; Commons & resources,from: project notes
+,2026,The Best-Laid SCHEMEs: Coordinated Sabotage and Monitoring in Multi-Agent Systems,Radev,preprint,https://arxiv.org/abs/2605.29178,AI control & monitoring,from: project notes
+,2026,SODE: Analyzing Social Dynamics in LLM Agents,Jung,preprint,https://arxiv.org/abs/2605.23949,LLM agents: cooperation & games,from: project notes
+,2026,Contract-Based Compositional Shielding for Safe Multi-Agent Reinforcement Learning,Adalat,preprint,https://arxiv.org/abs/2606.14130,MARL social dilemmas; Incentive & mechanism design,from: project notes
+,2026,AI Alignment via Incentives and Correction,Agarwal,preprint,https://arxiv.org/abs/2605.01643,Incentive & mechanism design,from: project notes
+,2026,CoopEval: Benchmarking Cooperation-Sustaining Mechanisms and LLM Agents in Social Dilemmas,Tewolde,preprint,https://arxiv.org/abs/2604.15267,MARL social dilemmas; Incentive & mechanism design; LLM agents: cooperation & games; Eval methodology & validity,from: project notes
+,2026,Is Lying an Emergent Behaviour in LLMs? Evidence from Gaslighting AI agents in a Sustainability Game,Bhandary,preprint,https://arxiv.org/abs/2606.28456,LLM agents: cooperation & games; Commons & resources,from: project notes
+,2026,Emergent Collusion in Long-Horizon LLM Agent Interaction,Shi,preprint,https://arxiv.org/abs/2609.24967,AI control & monitoring; LLM agents: cooperation & games,from: project notes
+,2026,Temporal Preference Concepts and their Functions in a Large Language Model,Rios-Sialer,preprint,https://arxiv.org/abs/2606.05194,LLM agents: cooperation & games,from: project notes
+,2026,LLM Agents as Static Level-k Players in Behavioural Games,Teo,preprint,https://arxiv.org/abs/2606.27845,LLM agents: cooperation & games,from: project notes
+,2026,"Collective Loss of Control in LLM Agent Systems: An Epidemic Account of Mutation, Contagion, and Recovery",Wu,preprint,https://arxiv.org/abs/2609.18460,AI control & monitoring; LLM agents: cooperation & games; MAS safety & contagion,from: project notes
+,2026,Draining the Energy Commons: Self-Defeating Over-Appropriation as a Coordination Failure in Agentic LLM Collectives,Syrnikov,preprint,https://arxiv.org/abs/2607.22188,LLM agents: cooperation & games; Commons & resources,from: project notes
+,2026,A Benchmark for Strategic Auditee Gaming Under Continuous Compliance Monitoring,Burnat,preprint,https://arxiv.org/abs/2605.06340,"AI control & monitoring; Sanctions, norms & institutions; Auditing & security games; Eval methodology & validity",from: project notes
+,2026,When can we trust untrusted monitoring? A safety case sketch across collusion strategies,Gardner-Challis,preprint,https://arxiv.org/abs/2602.20628,AI control & monitoring,from: project notes
+,2026,GT-HarmBench: Benchmarking AI Safety Risks Through the Lens of Game Theory,Cobben,preprint,https://arxiv.org/abs/2602.12316,Eval methodology & validity,from: project notes
+,2026,Mind Viruses: Self-Propagating Ideas in Multi-Agent LLM Systems,Papadopoulos,preprint,https://arxiv.org/abs/2608.10218,LLM agents: cooperation & games; MAS safety & contagion,from: project notes
+,2026,"Bosses, Kings, and the Commons: Cooperation Under Power Asymmetry in LLM Societies",Borah,preprint,https://arxiv.org/abs/2605.29062,LLM agents: cooperation & games; Commons & resources,from: project notes
+,2026,SchemeArena: Factorized Stress Testing of Scheming in LLM Agents,Ruan,preprint,https://arxiv.org/abs/2609.08126,AI control & monitoring; LLM agents: cooperation & games,from: project notes
+,2026,Can Agents Adapt Their Institutions And Sacrifice Themselves During Collapse? Executable Self-Governance in a GovSim Commons,Rehm,preprint,https://arxiv.org/abs/2609.22600,"Sanctions, norms & institutions; Commons & resources",from: project notes
+,2026,Paying for Honesty Without Knowing the Truth: Reputation-Penalty Design for LLM Marketplace Agents,Yang,preprint,https://arxiv.org/abs/2607.28330,"Sanctions, norms & institutions; LLM agents: cooperation & games",from: project notes
+,2026,Beyond Scalar Rewards: Dense Feedback for LLM Policy Synthesis in Sequential Social Dilemmas,Gallego,preprint,https://arxiv.org/abs/2603.19453,MARL social dilemmas; LLM agents: cooperation & games,from: project notes
+,2026,Evaluating Cooperation in LLM Social Groups through Elected Leadership,Faulkner,preprint,https://arxiv.org/abs/2604.11721,LLM agents: cooperation & games,from: project notes
+,2026,Colosseum: Auditing Collusion in Cooperative Multi-Agent Systems,Nakamura,preprint,https://arxiv.org/abs/2602.15198,AI control & monitoring; Auditing & security games,from: project notes
+,2026,A Case Study on Emergent Cheating and Whistleblowing in Autonomous Research Swarms,Paglieri,preprint,https://arxiv.org/abs/2609.04170,Other / background,from: project notes
+,2026,Training Small LLMs as Spatial Multi-Agent Policies,Mao,preprint,https://arxiv.org/abs/2608.01425,MARL social dilemmas; LLM agents: cooperation & games,from: project notes
+,2026,Decomposing and Measuring Evaluation Awareness,Li,preprint,https://arxiv.org/abs/2605.23055,Eval methodology & validity,from: project notes
+,2026,Basic Legibility Protocols Improve Trusted Monitoring,Sreevatsa,preprint,https://arxiv.org/abs/2602.10153,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,TraceGuard: Structured Multi-Dimensional Monitoring as a Collusion-Resistant Control Protocol,Nguyen,preprint,https://arxiv.org/abs/2604.03968,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,MonitoringBench: Semi-Automated Red-Teaming for Agent Monitoring,Jotautaitė,preprint,https://arxiv.org/abs/2605.09684,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,Ensemble Monitoring for AI Control: Diverse Signals Outweigh More Compute,Koran,preprint,https://arxiv.org/abs/2605.15377,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,The Distributed Detectability Band Against Marginal-Preserving Attacks,Qinqin,preprint,https://arxiv.org/abs/2606.10456,Other / background,added: arXiv sweep 2025-26
+,2026,Bootstrapped Monitoring: Leveraging Transparent Reasoning to Oversee Stronger AI Agents,Xiao,preprint,https://arxiv.org/abs/2606.11998,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,Distributed Attacks in Persistent-State AI Control,Hills,preprint,https://arxiv.org/abs/2607.02514,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,GDM AI Control Roadmap,Phuong,preprint,https://arxiv.org/abs/2607.13087,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,ResearchArena: Evaluating Sabotage and Monitoring in Automated AI R&D,Libon,preprint,https://arxiv.org/abs/2607.19321,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,Control OSWorld: An AI Control Environment for GUI Computer Use Agents,Rio,preprint,https://arxiv.org/abs/2610.03818,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,Red-Teaming Multi-Agent Attacks for Loss-of-Control Risks,Kitaoka,preprint,https://arxiv.org/abs/2610.24052,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,How Intervention History Changes AI Agent Sabotage on Subsequent Tasks,Saeedi,preprint,https://arxiv.org/abs/2610.26935,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,Honeypots for AI Agent Insider Threats,Wehner,preprint,https://arxiv.org/abs/2610.26664,AI control & monitoring; MARL social dilemmas,added: arXiv sweep 2025-26
+,2026,Attack Selection in Agentic AI Control Evaluations Meaningfully Decreases Safety,Ge-Wang,preprint,https://arxiv.org/abs/2606.06529,AI control & monitoring,added: arXiv sweep 2025-26
+,2026,Strategic Calibration in LLM Multi-Agent Systems: Audited Pivot Scoring for Truthful Elicitation,Zhou,preprint,https://arxiv.org/abs/2610.33728,Auditing & security games; LLM agents: cooperation & games,added: arXiv sweep 2025-26
+,2026,Exploring cooperation mechanisms via deep reinforcement learning in network common-pool resource games,Qin,preprint,https://arxiv.org/abs/2606.05867,MARL social dilemmas; Incentive & mechanism design; Commons & resources,added: arXiv sweep 2025-26
+,2026,Prompt framing governs LLM default following in collective-action,Montero-Porras,preprint,https://arxiv.org/abs/2610.03253,"MARL social dilemmas; Sanctions, norms & institutions; LLM agents: cooperation & games",added: arXiv sweep 2025-26
+,2026,A Serious-Game Testbed for Self-Governing Human-Machine Institutions,Berger,preprint,https://arxiv.org/abs/2610.36989,"Sanctions, norms & institutions",added: arXiv sweep 2025-26
+,2026,Constitutional Arms Races in the Public Goods Game: Co-Evolving LLM Constitutions Under Cooperation-Defection Pressure,Kumar,preprint,https://arxiv.org/abs/2605.26448,LLM agents: cooperation & games,added: arXiv sweep 2025-26
+,2026,Beyond Accuracy: How Procedural Traces Shift the Decision Criterion of LLM Overseers,Chen,preprint,https://arxiv.org/abs/2609.18204,LLM agents: cooperation & games,added: arXiv sweep 2025-26
+,2026,Learning to Report Unsafe Tasks in a Multi-Agent Game,Casheekar,preprint,https://arxiv.org/abs/2610.09002,Other / background,added: arXiv sweep 2025-26
+,2026,OpenClaw Agents on Moltbook: Risky Instruction Sharing and Norm Enforcement in an Agent-Only Social Network,Manik,preprint,https://arxiv.org/abs/2602.02625,"Sanctions, norms & institutions",added: arXiv sweep 2025-26
+,2026,Coopetition-Gym v1: A Formally Grounded Platform for Mixed-Motive Multi-Agent Reinforcement Learning under Strategic Coopetition,Pant,preprint,https://arxiv.org/abs/2605.02063,MARL social dilemmas,added: arXiv sweep 2025-26
+,2026,Dynamic Incentivized Cooperation under Changing Rewards,Altmann,preprint,https://arxiv.org/abs/2601.06382,MARL social dilemmas; Incentive & mechanism design,added: arXiv sweep 2025-26
+,2026,Fairness over Equality: Correcting Social Incentives in Asymmetric Sequential Social Dilemmas,Demir,preprint,https://arxiv.org/abs/2602.15407,MARL social dilemmas; Incentive & mechanism design,added: arXiv sweep 2025-26
+,2026,Discovering Cooperative Pipelines: Autoresearch for Sequential Social Dilemmas,Gallego,preprint,https://arxiv.org/abs/2605.30003,MARL social dilemmas,added: arXiv sweep 2025-26
+,2026,Integrated Altruistic and Fairness Preference Induces Advanced Mutual Cooperation in Sequential Social Dilemmas,Wei,preprint,https://arxiv.org/abs/2607.04710,MARL social dilemmas,added: arXiv sweep 2025-26
+,2026,Why Study Emergent Behavior When You Can Regulate It? Aligning Multi-Agent Systems with Reward Prediction,Caftory,preprint,https://arxiv.org/abs/2608.07280,MARL social dilemmas; Incentive & mechanism design,added: arXiv sweep 2025-26
+,2026,Conditioning LLMs on Social Value Orientation improves behavioural alignment in a sequential social dilemma,Saponara,preprint,https://arxiv.org/abs/2610.01667,MARL social dilemmas; LLM agents: cooperation & games,added: arXiv sweep 2025-26
+,2026,Self-Referenced Social Preferences: Cooperation without Observing Others Rewards,Mohamed,preprint,https://arxiv.org/abs/2610.07881,MARL social dilemmas,added: arXiv sweep 2025-26
+,2026,Agentic Misalignment Deterrence: Incorporating Probability and Stakeholders to Decision-Making,Konuganti,conferencePaper,,"Sanctions, norms & institutions; LLM agents: cooperation & games",from: project notes

@@ -1,0 +1,91 @@
+{
+  "study": "R1a",
+  "computed_utc": "2026-10-14T15:27:35Z",
+  "seed": 26102340,
+  "games_per_n": 2000,
+  "definition": "e_pred = (mean payoff Selfish - mean payoff Collective) / (mean non-final-round D Selfish - mean non-final-round D Collective), per agent per game, fine-free games at the starting mix",
+  "models": [
+    "claude-haiku-4-5",
+    "gemini-3.1-flash-lite-preview",
+    "gpt-5.4-mini"
+  ],
+  "per_n": {
+    "64": {
+      "n": 64,
+      "games": 2000,
+      "agents": 128000,
+      "selfish_agents": 64042,
+      "mean_payoff_selfish": 18.770917396841234,
+      "mean_payoff_collective": 15.559695787445643,
+      "mean_nonfinal_D_selfish": 10.001873770338216,
+      "mean_nonfinal_D_collective": 6.663669908377373,
+      "delta_payoff": 3.211221609395592,
+      "delta_D": 3.338203861960843,
+      "e_pred": 0.9619609053802177,
+      "e_pred_boot95_descriptive": [
+        0.9333458463366836,
+        0.994789710569705
+      ],
+      "welfare_efficiency_at_start_mix": 0.3464831651114216,
+      "myopic_gain_full_stock": 2.0,
+      "myopic_F_star": {
+        "0.1": 20.0,
+        "0.25": 8.0
+      },
+      "forward_looking_gain": 1.97,
+      "fines": {
+        "q0.1_e0.5": 4.809804526901089,
+        "q0.1_e0.75": 7.214706790351633,
+        "q0.1_e1.0": 9.619609053802177,
+        "q0.1_e1.25": 12.02451131725272,
+        "q0.1_e1.5": 14.429413580703265,
+        "q0.1_e2.0": 19.239218107604355,
+        "q0.25_e0.5": 1.9239218107604354,
+        "q0.25_e0.75": 2.885882716140653,
+        "q0.25_e1.0": 3.847843621520871,
+        "q0.25_e1.25": 4.809804526901089,
+        "q0.25_e1.5": 5.771765432281306,
+        "q0.25_e2.0": 7.695687243041742
+      }
+    },
+    "4": {
+      "n": 4,
+      "games": 2000,
+      "agents": 8000,
+      "selfish_agents": 3951,
+      "mean_payoff_selfish": 26.816068677265996,
+      "mean_payoff_collective": 29.178685104393896,
+      "mean_nonfinal_D_selfish": 6.686408504176158,
+      "mean_nonfinal_D_collective": 2.6539886391701653,
+      "delta_payoff": -2.3626164271279,
+      "delta_D": 4.032419865005993,
+      "e_pred": -0.5859053635835585,
+      "e_pred_boot95_descriptive": [
+        -0.7234737555544534,
+        -0.4414905615861004
+      ],
+      "welfare_efficiency_at_start_mix": 0.6318907346433185,
+      "myopic_gain_full_stock": 2.0,
+      "myopic_F_star": {
+        "0.1": 20.0,
+        "0.25": 8.0
+      },
+      "forward_looking_gain": 1.3,
+      "fines": {
+        "q0.1_e0.5": -2.9295268179177922,
+        "q0.1_e0.75": -4.394290226876689,
+        "q0.1_e1.0": -5.8590536358355845,
+        "q0.1_e1.25": -7.32381704479448,
+        "q0.1_e1.5": -8.788580453753378,
+        "q0.1_e2.0": -11.718107271671169,
+        "q0.25_e0.5": -1.171810727167117,
+        "q0.25_e0.75": -1.7577160907506755,
+        "q0.25_e1.0": -2.343621454334234,
+        "q0.25_e1.25": -2.9295268179177922,
+        "q0.25_e1.5": -3.515432181501351,
+        "q0.25_e2.0": -4.687242908668468
+      }
+    }
+  },
+  "runtime_s": 16.2
+}

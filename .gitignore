@@ -26,3 +26,17 @@ results/
 *.run.xml
 *.synctex.gz
 *.toc
+
+# Local scratch
+tmp/
+
+# Slide renders and Office lock files (27 Oct 2026)
+notes/slides/**/render*/
+~$*
+
+# KU interview deck renders contain personal details; kept local only
+notes/slides/style_kit_ku/examples/
+
+# downloaded PDFs for offline reading (copyrighted; not for git)
+notes/icml27_lit_review/papers/
+notes/icml27_lit_review/*.zip

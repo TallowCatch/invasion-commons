@@ -1,0 +1,28 @@
+{
+ "experiment": "R4",
+ "profile": "full",
+ "seeds": {
+  "pop": 1880000000,
+  "weather": 1881000000,
+  "reviewer": 1882000000,
+  "audit": 1883000000
+ },
+ "lie": 0.5,
+ "target": 50.0,
+ "seconds": 5.619366884231567,
+ "frozen": {
+  "game": "comp",
+  "kappa": 32.0,
+  "lam": 1.6,
+  "lam_add": 22.917041234151657,
+  "r": 1.0,
+  "sigma": 3.0
+ },
+ "files": {
+  "episodes.jsonl.gz": "1ea02e6b97a02706028c717d7b834364e0b57fb383117d1b45f120eab3afe306"
+ },
+ "source": {
+  "experiments/oversight/run_r4_river_grid.py": "e263f3037879732f9fd28d8aded383056e9e57137a0ef4c21f07008ade5e783f",
+  "fishery_sim/two_reagent.py": "3828fc4c1727e5c26026817f0896af1fae3b543e8fc504eec0b69ee365823378"
+ }
+}

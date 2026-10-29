@@ -1,0 +1,35 @@
+{
+ "study": "L5",
+ "rule": "F* = smallest fine on GRID with F/6 > g1; F- = the grid step below",
+ "grid": [
+  6,
+  12,
+  18,
+  24,
+  30,
+  36,
+  42,
+  48
+ ],
+ "models": {
+  "deepseek-v4.1-flash:cloud": {
+   "g1_E": 5.405144694533762,
+   "n_overtake_steps_E": 311,
+   "F_star_E": 36,
+   "F_minus_E": 30,
+   "E0_overtake_rate": [
+    0.7946212121212122,
+    0.7639621212121213,
+    0.8216666666666667
+   ],
+   "gate": {
+    "valid_first_try": 1.0,
+    "mean_comprehension": 3.0,
+    "passed": true
+   },
+   "qualifies": true,
+   "run_stage2": true,
+   "frozen_at": "2026-10-12T15:38:45Z"
+  }
+ }
+}
