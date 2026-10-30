@@ -69,7 +69,7 @@ So the candidate gap is: **the MARL planner and enforcement papers let the inter
 
 **LLM commons enforcement:**
 
-15. Bell & Madisetti 2026, *Restitution Over Deterrence* (ICML 2026)
+15. Bell & Madisetti 2026, *Restitution Over Deterrence* (ICML 2026 workshop on Technical AI Governance, not the main conference; no open PDF)
 
 You already know Willis et al. 2026 and GovSim, so put them on the map without rereading.
 
