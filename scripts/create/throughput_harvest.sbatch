@@ -2,7 +2,8 @@
 # Throughput check on CREATE: IPPO on SocialJax Harvest (open), 7 agents, individual rewards (the dilemma),
 # at the default 256 parallel envs. Two runs of 1 and 3 updates (1 update = 256 envs x 1000 steps);
 # (time of 3 - time of 1) / 2 = seconds per update without compile time, so a 1e8-step run takes about
-# 390 updates x that. Not a study. Runs on `gpu`: on interruptible_gpu job 38654092 was preempted after 8 min.
+# 390 updates x that (job 38654239: 1 update 445 s, 3 updates 356 s, so start-up time dominates short runs;
+# run longer with: sbatch --export=ALL,UPDATE_LIST="21" ~/throughput_harvest.sbatch). Not a study. Runs on `gpu`: on interruptible_gpu job 38654092 was preempted after 8 min.
 #   sbatch ~/throughput_harvest.sbatch
 # Output: /scratch/users/$USER/<jobid>.out
 #SBATCH --job-name=sj_speed
@@ -24,7 +25,7 @@ cd "$ROOT/SocialJax"
 export PYTHONPATH=$PWD:${PYTHONPATH:-}
 
 nvidia-smi --query-gpu=name,memory.total --format=csv
-for UPDATES in 1 3; do
+for UPDATES in ${UPDATE_LIST:-1 3}; do
   STEPS=$((UPDATES * 256 * 1000))
   START=$(date +%s)
   python algorithms/train.py --algo IPPO --env harvest_open reward=individual \
