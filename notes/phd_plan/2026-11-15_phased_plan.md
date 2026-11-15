@@ -170,11 +170,12 @@ All are in the Zotero collection ICML unless marked.
 | 4 | Ge-Wang et al. 2026; Terekhov et al. 2025 | Attackers choosing when to strike; adaptive attacks on monitors |
 | 4 | Makins et al. 2026 | Distributed attacks beat per-agent monitors |
 | 4 | Parisi et al. 2024, Monitored MDPs | Learning when rewards are only sometimes observed |
-| 5 | Engels et al. 2025, Scaling Laws for Scalable Oversight | Capability gap on an Elo scale; nested oversight |
+| 5 | Engels et al. 2025, Scaling Laws for Scalable Oversight (**matrix row 27, foundational**) | An Elo per role (overseer "Guard" vs evader "Houdini") plotted against general capability; their own limitation is that they only test single-step oversight, and ours is sequential; design lesson: the overseer should start ahead and gain more from capability than the evader |
+| 5 | Willis, Du, Leibo & Luck 2025, Will Systems of LLM Agents Cooperate? (**matrix row 28, foundational**) | LLMs write inspectable strategies rather than acting move by move; evolution as the test of which behaviour wins; the lineage behind our R1a/R1b runs |
 | 5 | Kenton et al. 2024; Burns et al. 2023; Kale et al. 2025 | Weak models judging or monitoring strong ones |
 | 5 | Koran et al. 2026, Ensemble Monitoring | Monitoring cost: diverse signals beat more compute |
 | 5 | Guo et al. 2026, OpenSocialJax | LLM players in SocialJax |
-| 5 | Wang et al. 2026, BazaarBench (**add to Zotero**) | C2C market, failure types, judge cost |
+| 5 | Wang et al. 2026, BazaarBench (**matrix row 29, read; add to Zotero**) | C2C market with violations checkable from records (selling unowned items, promising one item twice); no live overseer; the judge alone used about $6,500 of tokens over 48 runs |
 
 ## Questions for Yali
 
@@ -184,10 +185,37 @@ All are in the Zotero collection ICML unless marked.
 4. **Split:** phases 1–4 for ICML, and weaker/costed overseer for the next paper?
 5. **GPU credit:** we have the free `gpu` partition, but `er_prj_inf_du` has 0 credit and `/scratch/prj/inf_du` is 99% full.
 
-## This week
+## Exactly what to do, week by week (to ICML, about 22 Jan 2027)
 
-- [ ] Check the CREATE smoke job; note steps per second.
-- [ ] Write the Harvest overseer wrapper (phase 1): the rule, k-of-N checks, two consequences, and logging of missed vs wrongly stopped.
-- [ ] Scripted bots (restrained, greedy, sneaky) and a first k × penalty heatmap.
-- [ ] Add BazaarBench and any missing scalable-oversight papers to Zotero (collection ICML).
-- [ ] Send Yali the five questions above.
+**Week 1, 16–22 Nov: build the wrapper (phase 0–1).**
+- [ ] Check the CREATE smoke job (`cat /scratch/users/k26108758/38280051.out`); note steps per second.
+- [ ] Install SocialJax locally (CPU JAX is enough for scripted bots) and read `harvest_open.py`: how eating is recorded, the freeze mechanism, individual vs shared rewards.
+- [ ] Write the overseer wrapper: the rule (eating an apple with fewer than m apples within two squares), k-of-N checks with four choosers (random, round-robin, targeted, all-seeing), two consequences (reward penalty F, freeze T), and per-step logs of missed over-harvesting, wrongly stopped harvesting, apples alive, welfare and checks used. Unit tests.
+- [ ] Scripted bots: restrained, greedy, sneaky (greedy only when not checked recently).
+- [ ] Email Yali the five questions below; ask to be introduced to Ziyan and Shuqing about BazaarBench.
+
+**Week 2, 23–29 Nov: first results with bots (phase 1).**
+- [ ] Schelling diagram with no overseer, then with it, to show the overseer removes the dilemma.
+- [ ] Pick m from the diagram.
+- [ ] Heatmap of orchard survival over k × penalty.
+- [ ] Random vs round-robin vs targeted against the sneaky bot.
+- [ ] One-page write-up for Yali.
+
+**Weeks 3–4, 30 Nov–13 Dec: learning agents (phases 2–3, CREATE).**
+- [ ] IPPO with individual rewards and no overseer; save the checkpoint once agents over-harvest.
+- [ ] Switch the overseer on, from scratch and from that checkpoint, at k = 0, 1, 2, 3, 7.
+- [ ] Switch-off test.
+- [ ] The overseer sets its own penalty (watch first).
+
+**Weeks 5–7, 14 Dec–3 Jan: agents that dodge, and a weaker overseer (phase 4, plus 5a in RL).**
+- [ ] Agents that can see who was checked; random vs targeted vs randomised-targeted vs a learned overseer.
+- [ ] Two or three rounds of the red-team loop.
+- [ ] Shrink the learned overseer's network and plot cooperation against overseer size.
+- [ ] The cost frontier (cooperation against checks spent).
+
+**Weeks 8–10, 4–22 Jan: write the ICML paper.**
+- [ ] Claim: a budgeted overseer that chooses whom to check keeps learning agents cooperating in Harvest, holds up when they learn to dodge it, and degrades in a measurable way as it gets weaker or cheaper.
+
+**After ICML:** phase 5b–5d, with an LLM overseer smaller than the LLM players, token budgets of 1, 10 and 100 units, and BazaarBench, then phase 6.
+
+**Biggest risk:** IPPO training time on CREATE. The smoke job's steps per second decide whether the weeks 3–7 sweeps fit. If they don't, cut k to {0, 2, 7} and use fewer seeds before cutting any phase.
