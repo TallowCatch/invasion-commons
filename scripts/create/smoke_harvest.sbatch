@@ -13,8 +13,11 @@
 set -euo pipefail
 
 ROOT=/scratch/users/$USER/socialjax_work
-module load python/3.11.6-gcc-13.2.0
+# Some interruptible_gpu nodes do not carry this module name; the venv's python points straight at the
+# /software build, so carry on without the module and stop only if that python does not run.
+module load python/3.11.6-gcc-13.2.0 2>/dev/null || echo "module python/3.11.6 not found on $(hostname); using the venv python"
 source "$ROOT/venv/bin/activate"
+python -c "import sys; print('python', sys.version.split()[0], 'on', '$(hostname)')"
 cd "$ROOT/SocialJax"
 export PYTHONPATH=$PWD:${PYTHONPATH:-}
 
