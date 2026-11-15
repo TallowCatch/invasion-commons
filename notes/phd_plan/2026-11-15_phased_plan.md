@@ -1,6 +1,6 @@
 # Phased plan: a budgeted overseer in SocialJax, then a weaker and costed overseer (15 Nov 2026)
 
-This plan builds on the six steps in the 2 Nov deck (`notes/slides/2026-11-02_lit_review_progress/`, slide 13) and adds Yali's three notes from the meeting:
+This plan builds on the six steps in the 2 Nov deck (`notes/slides/2026-11-02_lit_review_progress/`, slide 13) and integrates **Yali's feedback** from the meeting (three points):
 1. **How strong does the overseer need to be?** Test its power by size and intelligence: can a smaller or less capable overseer still keep the agents in check? Open question: how do we bound the evaluation?
 2. **Look at BazaarBench** (a C2C market) and put a cost on the overseer in tokens (for example 1 unit against 10 units).
 3. **Plan the agents and experiments in more detail:** how the overseer operates, and random against targeted checks.
@@ -13,7 +13,7 @@ It replaces the ordering in `2026-10-27_calibrated_overseer_plan.md`. Plain lang
 
 An overseer watches a group of learning agents in a shared-resource game but can only look at some of them, some of the time, and each look costs something. We build it, measure how much sight, intelligence and spending it needs to keep the group cooperating, and make it robust to agents that learn to dodge it.
 
-## The three dials of overseer power (Yali's note 1)
+## The three dials of overseer power (Yali's feedback, point 1)
 
 Every experiment is a point on three dials. Keeping them separate answers "how do we bound the evaluation?".
 
@@ -97,7 +97,7 @@ This needs CREATE GPUs.
 - Watch first, with no penalty, to estimate how much over-harvesting gains an agent. Then set the penalty just above that, as in our Fishery L3/L4, where the prediction held.
 - **Question:** does the prediction still hold with learning agents and space?
 
-### Phase 4: agents try to beat it, random against targeted (deck step 4; Yali's note 3)
+### Phase 4: agents try to beat it, random against targeted (deck step 4; Yali's feedback, point 3)
 
 This is the core contribution.
 
@@ -114,7 +114,7 @@ This is the core contribution.
 - **Red team loop:** train agents against the overseer, then improve the overseer against those agents, and repeat (the double-oracle method from Wang et al. 2019).
 - **Expectation from our own data:** in T1, always checking the largest reporter caught 25% of liars while random checks caught 100%. Predictable targeting can backfire. The question is when targeting beats random once agents adapt.
 
-### Phase 5: a weaker overseer and a costed overseer (Yali's notes 1 and 2)
+### Phase 5: a weaker overseer and a costed overseer (Yali's feedback, points 1 and 2)
 
 **5a. Smarts, RL version:** shrink the overseer (a smaller network, less training) while the agents stay the same, and the reverse. Plot cooperation against the capability gap.
 
@@ -177,7 +177,16 @@ All are in the Zotero collection ICML unless marked.
 | 5 | Guo et al. 2026, OpenSocialJax | LLM players in SocialJax |
 | 5 | Wang et al. 2026, BazaarBench (**matrix row 29, read; add to Zotero**) | C2C market with violations checkable from records (selling unowned items, promising one item twice); no live overseer; the judge alone used about $6,500 of tokens over 48 runs |
 
-## Questions for Yali
+## How each piece of Yali's feedback is being acted on
+
+| Feedback | What we do | Where it is so far |
+|---|---|---|
+| 1. Test the overseer's power by size and intelligence: can a smaller or less capable overseer keep agents in check? | Three dials (sight, smarts, spend). For the scripted overseer, smarts = how often a check misses over-harvesting or flags normal harvesting; for a learned overseer, network size; for an LLM overseer, model size, scored Engels-style. | `miss_rate` and `false_alarm_rate` are in the wrapper (15 Nov); the network-size and LLM versions come in phases 4–5 |
+| 1b. How do we bound the evaluation? | All-seeing overseer as the ceiling, no overseer as the floor, a trained red team as the worst case, and one cost unit, so results read as "share of the gap recovered, at this cost" | The wrapper runs the floor (`none`) and ceiling (`all`) with the same code as every budgeted chooser |
+| 2. BazaarBench: put a token cost on the overseer (1 unit vs 10 units) | Each check costs a base amount plus an amount per step of history it reads, so a longer look costs more. BazaarBench itself is phase 5d. | `cost_per_check` and `cost_per_step_seen` are in the wrapper (15 Nov) |
+| 3. A more detailed plan of agents and experiments: how the overseer operates, random vs targeted | The operating loop above, five ways of choosing whom to check (random, round-robin, by catch history, by location, all), and bots that react to being watched | Wrapper, bots and a first preview (`notes/socialjax/README.md`): targeting by history saves the orchard from one greedy bot at 2 checks per step; targeting by location is beaten by sneaky bots |
+
+## Things to confirm with Yali
 
 1. **Bounding the evaluation:** is "all-seeing overseer as upper bound, none as lower bound, trained red team as worst case, one cost currency" the right frame?
 2. **Cost unit:** should a check cost 1 unit for the RL phases, with tokens only for LLM overseers? Or tokens throughout?
@@ -187,12 +196,12 @@ All are in the Zotero collection ICML unless marked.
 
 ## Exactly what to do, week by week (to ICML, about 22 Jan 2027)
 
-**Week 1, 16–22 Nov: build the wrapper (phase 0–1).**
-- [ ] Check the CREATE smoke job (`cat /scratch/users/k26108758/38280051.out`); note steps per second.
-- [ ] Install SocialJax locally (CPU JAX is enough for scripted bots) and read `harvest_open.py`: how eating is recorded, the freeze mechanism, individual vs shared rewards.
-- [ ] Write the overseer wrapper: the rule (eating an apple with fewer than m apples within two squares), k-of-N checks with four choosers (random, round-robin, targeted, all-seeing), two consequences (reward penalty F, freeze T), and per-step logs of missed over-harvesting, wrongly stopped harvesting, apples alive, welfare and checks used. Unit tests.
-- [ ] Scripted bots: restrained, greedy, sneaky (greedy only when not checked recently).
-- [ ] Email Yali the five questions below; ask to be introduced to Ziyan and Shuqing about BazaarBench.
+**Week 1, 16–22 Nov: build the wrapper (phase 0–1).** Wrapper, bots, tests and a preview done on 15 Nov (`notes/socialjax/README.md`).
+- [ ] Check the CREATE smoke job (blocked on 15 Nov: SSH needs a fresh MFA approval at portal.arc.kcl.ac.uk/mfa) (`cat /scratch/users/k26108758/38280051.out`); note steps per second.
+- [x] Install SocialJax locally (CPU JAX is enough for scripted bots) and read `harvest_open.py`: how eating is recorded, the freeze mechanism, individual vs shared rewards.
+- [x] Write the overseer wrapper: the rule (eating an apple with fewer than m apples within two squares), k-of-N checks with four choosers (random, round-robin, targeted, all-seeing), two consequences (reward penalty F, freeze T), and per-step logs of missed over-harvesting, wrongly stopped harvesting, apples alive, welfare and checks used. Unit tests.
+- [x] Scripted bots: restrained, greedy, sneaky (greedy only when not checked recently).
+- [ ] Send Yali the update: how each feedback point is being acted on (table above), the bot preview, and the items to confirm below; ask to be introduced to Ziyan and Shuqing about BazaarBench.
 
 **Week 2, 23–29 Nov: first results with bots (phase 1).**
 - [ ] Schelling diagram with no overseer, then with it, to show the overseer removes the dilemma.
