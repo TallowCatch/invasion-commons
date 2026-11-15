@@ -12,6 +12,15 @@ bash scripts/socialjax_local_setup.sh   # clones SocialJax into external/SocialJ
 
 One 1,000-step episode takes about 1.6 s on an M1 CPU. The SocialJax environment id is `harvest_common_open`; training scripts call it `harvest_open`.
 
+## CREATE (GPU training)
+
+- **Smoke job 38280051** (`scripts/create/smoke_harvest.sbatch`, 28 Oct):
+  - Completed with exit code 0 in 7 min 46 s on an NVIDIA A40 (`interruptible_gpu`, node erc-hpc-comp127), at about 6 GB of memory.
+  - It was IPPO on Harvest Open, 8 parallel envs, 200k steps; the training loop, GIF saving and JAX on the GPU all worked.
+  - CREATE runs the same SocialJax commit as the laptop (18e2171).
+- **Reward setting:** SocialJax's Harvest IPPO config defaults to `reward: common` (one shared team reward), which removes the dilemma. Our runs must pass **`reward=individual`**. The smoke job used the default.
+- **Throughput job 38654061** (`scripts/create/throughput_harvest.sbatch`): individual rewards at the default 256 parallel envs, 2 vs 6 updates, to get seconds per update without compile time. Result: see below.
+
 ## What the code does
 
 | File | What it is |
