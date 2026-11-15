@@ -99,4 +99,4 @@ What it suggests (scripted bots only; they don't learn, and greedy bots ignore c
 - **Sneaky bots** (greedy once unchecked for 20 steps) **beat location targeting.** It keeps checking agents in bare patches and leaves the rest unwatched (141 apples, 0/5 alive). Random, round-robin and history keep them honest. Note that "history" works like round-robin here because no one gets caught. This is the Harvest version of our Fishery T1 result: predictable targeting can be exploited.
 - **Seven greedy bots strip the orchard whatever the overseer does.** A freeze after the fact is too late when everyone defects.
 
-Next (week 2): a Schelling diagram with and without the overseer, choose m, the heatmap of k × consequence, and sneaky bots with different patience. Then IPPO on CREATE.
+Week 2 (done 15 Nov): `week2_bots/results.md`: m = 3, Schelling diagrams, k × freeze and k × penalty heatmaps. Next: IPPO on CREATE.

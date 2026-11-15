@@ -30,6 +30,14 @@ def run_episode(overseer, key, codes, steps, min_neighbours=3, sneaky_after=20, 
     return s_end, trace
 
 
+def run_seeds(overseer, seeds, codes, steps, **bot_kwargs):
+    """Summaries of one episode per seed, run together with vmap."""
+    keys = jax.vmap(jax.random.PRNGKey)(jnp.asarray(list(seeds)))
+    s_end, trace = jax.vmap(lambda k: run_episode(overseer, k, codes, steps=steps, **bot_kwargs))(keys)
+    return [summarise(jax.tree.map(lambda x, i=i: x[i], s_end), {f: v[i] for f, v in trace.items()})
+            for i in range(len(seeds))]
+
+
 def gini(x):
     x = np.sort(np.asarray(x, float))
     if x.sum() == 0:
@@ -51,6 +59,8 @@ def summarise(s_end, trace):
         steps=steps,
         apples_eaten=int(eaten.sum()),
         eaten_per_agent=eaten.tolist(),
+        caught_per_agent=t["caught"].sum(0).tolist(),
+        penalty_per_agent=t["penalty"].sum(0).tolist(),
         net_reward=float((t["raw_reward"] - t["penalty"]).sum()),
         violations=violations,
         detected=detected,

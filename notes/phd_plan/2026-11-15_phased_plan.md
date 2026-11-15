@@ -203,11 +203,11 @@ All are in the Zotero collection ICML unless marked.
 - [x] Scripted bots: restrained, greedy, sneaky (greedy only when not checked recently).
 - [ ] Send Yali the update: how each feedback point is being acted on (table above), the bot preview, and the items to confirm below; ask to be introduced to Ziyan and Shuqing about BazaarBench.
 
-**Week 2, 23–29 Nov: first results with bots (phase 1).**
-- [ ] Schelling diagram with no overseer, then with it, to show the overseer removes the dilemma.
-- [ ] Pick m from the diagram.
-- [ ] Heatmap of orchard survival over k × penalty.
-- [ ] Random vs round-robin vs targeted against the sneaky bot.
+**Week 2, 23–29 Nov: first results with bots (phase 1).** Done 15 Nov: `notes/socialjax/week2_bots/results.md` (m = 3; it is a dilemma by the greed condition; k × penalty ≈ 7 apples is where greed stops paying; history targeting needs k = 2 where random needs k = 6).
+- [x] Schelling diagram with no overseer, then with it, to show the overseer removes the dilemma.
+- [x] Pick m from the diagram.
+- [x] Heatmap of orchard survival over k × penalty.
+- [x] Random vs round-robin vs targeted against the sneaky bot.
 - [ ] One-page write-up for Yali.
 
 **Weeks 3–4, 30 Nov–13 Dec: learning agents (phases 2–3, CREATE).**
