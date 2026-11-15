@@ -1,16 +1,16 @@
 #!/bin/bash -l
 # Throughput check on CREATE: IPPO on SocialJax Harvest (open), 7 agents, individual rewards (the dilemma),
-# at the default 256 parallel envs. Two runs of 2 and 6 updates (1 update = 256 envs x 1000 steps);
-# (time of 6 - time of 2) / 4 = seconds per update without compile time, so a 1e8-step run takes about
-# 390 updates x that. Not a study.
+# at the default 256 parallel envs. Two runs of 1 and 3 updates (1 update = 256 envs x 1000 steps);
+# (time of 3 - time of 1) / 2 = seconds per update without compile time, so a 1e8-step run takes about
+# 390 updates x that. Not a study. Runs on `gpu`: on interruptible_gpu job 38654092 was preempted after 8 min.
 #   sbatch ~/throughput_harvest.sbatch
 # Output: /scratch/users/$USER/<jobid>.out
 #SBATCH --job-name=sj_speed
-#SBATCH --partition=interruptible_gpu
+#SBATCH --partition=gpu
 #SBATCH --gpus=1
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=4
-#SBATCH --time=01:30:00
+#SBATCH --time=02:00:00
 #SBATCH --output=/scratch/users/%u/%j.out
 set -euo pipefail
 
@@ -24,11 +24,11 @@ cd "$ROOT/SocialJax"
 export PYTHONPATH=$PWD:${PYTHONPATH:-}
 
 nvidia-smi --query-gpu=name,memory.total --format=csv
-for UPDATES in 2 6; do
+for UPDATES in 1 3; do
   STEPS=$((UPDATES * 256 * 1000))
   START=$(date +%s)
   python algorithms/train.py --algo IPPO --env harvest_open reward=individual \
     NUM_ENVS=256 TOTAL_TIMESTEPS=$STEPS WANDB_MODE=disabled SEED=1 > "/scratch/users/$USER/${SLURM_JOB_ID}_u${UPDATES}.log" 2>&1
   END=$(date +%s)
-  echo "UPDATES=$UPDATES STEPS=$STEPS SECONDS=$((END - START))"
+  echo "UPDATES=$UPDATES STEPS=$STEPS SECONDS=$((END - START))" | tee -a "/scratch/users/$USER/${SLURM_JOB_ID}_timing.txt"
 done
