@@ -65,3 +65,15 @@ Each update is one episode in each of the 256 envs.
 - If no arm beats arm A, check the penalty scale before going on.
 
 A pilot of two runs (arm A and arm B k = 2, c = 1, seed 1, 2e7 steps) checks the GPU path and logging first. Its results are not analysed.
+
+## Amendment 1 (15 Nov, after the pilot, before stage 1)
+
+- **Pilot** (seed 1, 2e7 steps, H200, about 4 min each; not analysed as a result): both runs completed and logged correctly. The no-overseer learners stripped the orchard within 10 updates.
+- **The planned switch-off test cannot work for penalty-only overseers.** With learning stopped, a penalty changes rewards but not actions, so "overseer on" and "overseer off" episodes are identical. The pilot showed exactly this.
+- **Replaced by stage 3, switch-off training:**
+  - start from the final policy of each stage 1 arm: random c = 1 for every k, the freeze arm, and history;
+  - train 5e7 steps with **no overseer**;
+  - 6 arms × 3 seeds = 18 runs.
+  - Q6 becomes: does over-harvesting return once the agents keep learning without the overseer?
+- The end-of-run evaluation is kept, because it still matters for the freeze arm, where a freeze changes actions.
+- **Timing:** a 1e8-step run takes about 20 min on an H200, so all stages fit in a day.
