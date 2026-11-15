@@ -19,7 +19,21 @@ One 1,000-step episode takes about 1.6 s on an M1 CPU. The SocialJax environment
   - It was IPPO on Harvest Open, 8 parallel envs, 200k steps; the training loop, GIF saving and JAX on the GPU all worked.
   - CREATE runs the same SocialJax commit as the laptop (18e2171).
 - **Reward setting:** SocialJax's Harvest IPPO config defaults to `reward: common` (one shared team reward), which removes the dilemma. Our runs must pass **`reward=individual`**. The smoke job used the default.
-- **Throughput job 38654061** (`scripts/create/throughput_harvest.sbatch`): individual rewards at the default 256 parallel envs, 2 vs 6 updates, to get seconds per update without compile time. Result: see below.
+- **Throughput** (`scripts/create/throughput_harvest.sbatch`): IPPO, individual rewards, the default 256 parallel envs. One update = 256 envs x 1,000 steps; a 1e8-step run is about 390 updates.
+
+  | Job | GPU | Updates | Wall time (including start-up) |
+  |---|---|---|---|
+  | 38654061 | — | — | Failed in 5 s: node without the python module (fixed) |
+  | 38654092 | A100 80GB | 2 | Preempted on `interruptible_gpu` after 8 min |
+  | 38654239 | A100 40GB | 1 / 3 | 445 s / 356 s (start-up varies more than the work, so no per-update number) |
+  | 38654514 | H200 | 21 | 421 s |
+
+- **What this means:**
+  - Start-up (compiling, loading, saving a GIF) takes several minutes and varies between runs.
+  - On an H200, an update costs at most 20 s even if start-up were free. So a full 1e8-step run takes **at most about 2.2 h, and probably about 1 h**. That is at least about 12,800 environment steps per second (5.4M steps in 421 s).
+  - On an A100 40GB, the 3-update run bounds it at 120 s per update, but that bound is loose. A full run is probably a few hours.
+  - The `gpu` partition hands out different GPUs (A100 40GB, then H200). Pin one type with `--constraint` when timing matters.
+  - Use `gpu`, not `interruptible_gpu`, for long runs; otherwise they need to checkpoint and resume.
 
 ## What the code does
 

@@ -197,7 +197,7 @@ All are in the Zotero collection ICML unless marked.
 ## Exactly what to do, week by week (to ICML, about 22 Jan 2027)
 
 **Week 1, 16–22 Nov: build the wrapper (phase 0–1).** Wrapper, bots, tests and a preview done on 15 Nov (`notes/socialjax/README.md`).
-- [ ] Check the CREATE smoke job (blocked on 15 Nov: SSH needs a fresh MFA approval at portal.arc.kcl.ac.uk/mfa) (`cat /scratch/users/k26108758/38280051.out`); note steps per second.
+- [x] Check the CREATE smoke job (38280051 completed on an A40) and measure speed: a full 1e8-step IPPO run takes at most about 2.2 h on an H200 (job 38654514). Runs must pass `reward=individual`; SocialJax's Harvest default is a shared reward. Details in `notes/socialjax/README.md`.
 - [x] Install SocialJax locally (CPU JAX is enough for scripted bots) and read `harvest_open.py`: how eating is recorded, the freeze mechanism, individual vs shared rewards.
 - [x] Write the overseer wrapper: the rule (eating an apple with fewer than m apples within two squares), k-of-N checks with four choosers (random, round-robin, targeted, all-seeing), two consequences (reward penalty F, freeze T), and per-step logs of missed over-harvesting, wrongly stopped harvesting, apples alive, welfare and checks used. Unit tests.
 - [x] Scripted bots: restrained, greedy, sneaky (greedy only when not checked recently).
@@ -227,4 +227,4 @@ All are in the Zotero collection ICML unless marked.
 
 **After ICML:** phase 5b–5d, with an LLM overseer smaller than the LLM players, token budgets of 1, 10 and 100 units, and BazaarBench, then phase 6.
 
-**Biggest risk:** IPPO training time on CREATE. The smoke job's steps per second decide whether the weeks 3–7 sweeps fit. If they don't, cut k to {0, 2, 7} and use fewer seeds before cutting any phase.
+**Training time (measured 15 Nov):** a full IPPO run takes at most about 2.2 h on an H200, so the weeks 3–7 sweeps fit. For example, 5 values of k × 2 starts × 3 seeds = 30 runs is about 30–65 GPU-hours, spread over parallel jobs on the free `gpu` partition. The remaining risk is queueing, not speed.
