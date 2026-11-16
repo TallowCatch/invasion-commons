@@ -100,3 +100,7 @@ What it suggests (scripted bots only; they don't learn, and greedy bots ignore c
 - **Seven greedy bots strip the orchard whatever the overseer does.** A freeze after the fact is too late when everyone defects.
 
 Week 2 (done 15 Nov): `week2_bots/results.md`: m = 3, Schelling diagrams, k × freeze and k × penalty heatmaps. Next: IPPO on CREATE.
+
+Phase 2 with IPPO learners (stage 1 done 16 Nov): `phase2_ippo/results.md`. With no overseer the learners strip the orchard in every env (68 apples). Random checks save it once k × penalty reaches 7 apples, at any k, and a 3.5-apple level does nothing. A 50-step freeze fails. History targeting matches random at the end but learns faster. Location targeting fails (5% of over-harvests caught). Stages 2 (overseer switched on late) and 3 (switched off) are queued.
+
+CREATE note (16 Nov): node arc-hpc-comp035 shows no GPU, so jobs there silently ran on the CPU. The array script now stops if JAX sees no GPU, and jobs exclude that node.

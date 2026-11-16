@@ -23,6 +23,9 @@ NAME=$(cut -f1 <<< "$LINE")
 ARGS=$(cut -f2 <<< "$LINE")
 OUT=/scratch/users/$USER/ippo_overseer/$NAME
 if [ -f "$OUT/summary.json" ]; then echo "$NAME already done"; exit 0; fi
-nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
+nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || true
+# 16 Nov: on arc-hpc-comp035 no GPU was visible and JAX silently ran on the CPU until the 8 h limit. Fail fast instead.
+python -c "import jax, sys; b = jax.default_backend(); print('jax backend:', b); sys.exit(b != 'gpu')" \
+    || { echo "no GPU visible on $(hostname); stopping"; exit 1; }
 echo "$NAME: $ARGS"
 python -m experiments.socialjax.train_ippo_overseer --out "$OUT" $ARGS

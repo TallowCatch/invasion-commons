@@ -1,5 +1,28 @@
 # What we have learned, and what should come next
 
+## Update 15, 15–16 November 2026: the SocialJax overseer, first learning-agent results
+
+- **Direction (15 Nov):** the main line is a budgeted overseer in SocialJax Harvest (`notes/phd_plan/2026-11-15_phased_plan.md`). Yali's feedback is built in as three dials: sight (k, window), smarts (miss and false-alarm rates; overseer size later) and spend (cost per check and per step seen).
+- **Wrapper and bots** (`overseer/socialjax/`, 15 tests).
+- **Week 2 with bots** (`notes/socialjax/week2_bots/results.md`):
+  - m = 3;
+  - Harvest is a dilemma by the greed condition;
+  - k × penalty ≈ 7 apples is where greed stops paying;
+  - history targeting needs k = 2 where random needs k = 6 at a 50-step freeze.
+- **Phase 2 stage 1 with IPPO learners on CREATE** (`notes/socialjax/phase2_ippo/results.md`, F17):
+  - no overseer kills the orchard every time;
+  - a sharp threshold between k × P = 3.5 and 7 apples, at every k;
+  - k = 1 with a 14-apple penalty is enough;
+  - freeze fails;
+  - history is faster than random but ends level;
+  - location targeting fails (a bad proxy).
+- **Next:**
+  - stages 2–3 (late switch-on; switch-off with continued learning), queued;
+  - a finer threshold sweep;
+  - phase 3 (the overseer sets its own penalty);
+  - phase 4 (agents that see checks).
+- **Costs:** CREATE GPU time only; no Ollama credit used (about $9.35 left).
+
 ## Update 14, 27 October 2026: the workshop paper is paused; a PhD contribution plan
 
 - Ameer paused the workshop paper to develop a working contribution with a proper schedule.

@@ -210,10 +210,12 @@ All are in the Zotero collection ICML unless marked.
 - [x] Random vs round-robin vs targeted against the sneaky bot.
 - [ ] One-page write-up for Yali.
 
-**Weeks 3–4, 30 Nov–13 Dec: learning agents (phases 2–3, CREATE).**
-- [ ] IPPO with individual rewards and no overseer; save the checkpoint once agents over-harvest.
-- [ ] Switch the overseer on, from scratch and from that checkpoint, at k = 0, 1, 2, 3, 7.
-- [ ] Switch-off test.
+**Weeks 3–4, 30 Nov–13 Dec: learning agents (phases 2–3, CREATE).** Stage 1 done 16 Nov: `notes/socialjax/phase2_ippo/results.md` (no overseer: orchard dies in every env; a sharp threshold at k × P between 3.5 and 7 apples at every k; k = 1 with a 14-apple penalty eats 515 apples, more than restrained bots; freeze 50 fails; history = random at the end but much faster; location targeting fails, catching 5% of over-harvests).
+- [x] IPPO with individual rewards and no overseer; save the checkpoint once agents over-harvest.
+- [x] Switch the overseer on from scratch at k = 1, 2, 4, 7 × three penalty levels (stage 1).
+- [ ] Switch the overseer on from the over-harvesting checkpoint (stage 2, queued).
+- [ ] Switch-off test (stage 3: agents keep learning with the overseer removed; queued).
+- [ ] Finer sweep at k × P = 4, 5, 6 apples to place the learners' threshold.
 - [ ] The overseer sets its own penalty (watch first).
 
 **Weeks 5–7, 14 Dec–3 Jan: agents that dodge, and a weaker overseer (phase 4, plus 5a in RL).**
