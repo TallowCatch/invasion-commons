@@ -82,16 +82,15 @@ def penalty_bars():
             r = t[f"B_random_k{k}_c{c}"]["apples_eaten"]
             x = 1 + j + (i - 1.5) * w
             ax.bar(x, r["mean"], w, color=col, edgecolor="white", linewidth=0.8,
-                   label=f"{k} of 7 agents checked per step" if j == 0 else None)
+                   label=f"{k} of the 7 agents checked each step" if j == 0 else None)
             ax.errorbar(x, r["mean"], [[r["mean"] - r["lo"]], [r["hi"] - r["mean"]]], color="#333333", lw=1.2, capsize=0)
-    for x, txt in ((0, "orchard died\nin every run"), (1, "orchard died\nin every run"),
-                   (2, "orchard survived\nin every run"), (3, "orchard survived\nin every run")):
+    for x, txt in ((0, "the orchard died\nin every run"), (1, "the orchard died\nin every run"),
+                   (2, "the orchard survived\nin every run"), (3, "the orchard survived\nin every run")):
         y = 95 if x < 2 else 560
         ax.text(x, y, txt, ha="center", va="bottom" if x < 2 else "bottom", fontsize=11, color="#555555", style="italic")
     ax.set_xticks(range(4), ["no overseer", "0.5", "1", "2"])
     ax.set_ylim(0, 620)
-    ax.set(xlabel="expected penalty per over-harvest (apples) = chance of being checked × penalty",
-           ylabel="apples eaten per game")
+    ax.set(xlabel="average penalty for each over-harvest (apples)", ylabel="apples collected per game")
     ax.legend(loc="upper left", frameon=False, bbox_to_anchor=(0.0, 0.92))
     ax.grid(axis="x", visible=False)
     fig.tight_layout()
@@ -111,10 +110,27 @@ def targeting_curve():
         x = np.arange(cs.shape[1]) * 256_000 / 1e6
         ax.plot(x, cs.mean(0), color=col, lw=2.6, label=name)
         ax.fill_between(x, cs.min(0), cs.max(0), color=col, alpha=0.15, lw=0)
-    ax.set(xlabel="training steps (millions)", ylabel="apples eaten per game")
+    ax.set(xlabel="training steps (millions)", ylabel="apples collected per game")
     ax.legend(loc="center right", frameon=False, bbox_to_anchor=(1.0, 0.45))
     fig.tight_layout()
     fig.savefig(OUT / "targeting_apples.png", dpi=200)
+    plt.close(fig)
+
+
+def bots_chart():
+    """What a bot that holds back and a greedy bot each collect, by how many of the 7 hold back (week 2, no overseer)."""
+    plt.rcParams.update({"font.size": 13, "axes.labelsize": 13, "legend.fontsize": 12})
+    d = json.load(open("notes/socialjax/week2_bots/summary.json"))["schelling"]["none"]
+    ls = sorted(int(x) for x in d)
+    fig, ax = plt.subplots(figsize=(6.2, 5.0))
+    for key, col, lab in (("R_c", BLUE, "a bot that holds back"), ("R_d", ORANGE, "a greedy bot")):
+        pts = [(l, d[str(l)][key]) for l in ls if d[str(l)][key] == d[str(l)][key]]  # drop NaN (no such bot)
+        ax.plot([p[0] for p in pts], [p[1] for p in pts], "-o", color=col, lw=2.4, ms=6, label=lab)
+    ax.set_xticks(range(8))
+    ax.set(xlabel="how many of the 7 bots hold back", ylabel="apples collected per bot")
+    ax.legend(loc="upper left", frameon=False)
+    fig.tight_layout()
+    fig.savefig(OUT / "bots_dilemma.png", dpi=200)
     plt.close(fig)
 
 
@@ -123,3 +139,4 @@ if __name__ == "__main__":
     abstracts()
     penalty_bars()
     targeting_curve()
+    bots_chart()
