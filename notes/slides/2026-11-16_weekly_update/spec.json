@@ -17,26 +17,26 @@
         "Supervision meeting · King's College London",
         "16 November 2026"
       ],
-      "notes": "This is my update since the last meeting: the papers I read, how I'm planning to bound the evaluation, and the first results with learning agents."
+      "notes": "This is my update since the last meeting: the papers, how I'm bounding the evaluation, how I built the setup, the first results, and how I'm testing random against targeted checks."
     },
     {
       "type": "numbered",
       "title": "What we discussed last time",
       "items": [
         {
-          "head": "Read BazaarBench",
-          "text": "The paper on LLM agents trading in a simulated marketplace, and what it costs to check what they do."
+          "head": "Read BazaarBench; re-read two core papers",
+          "text": "BazaarBench was new to me (charging the overseer for tokens, 1 vs 10 units). I re-read Engels et al. and Willis et al."
         },
         {
-          "head": "Go back over the core scalable oversight papers",
-          "text": "The papers on whether a weaker overseer can keep a stronger system in check."
+          "head": "Bound the evaluation",
+          "text": "Can a smaller or less capable overseer still keep the agents in check, and what should it be compared against?"
         },
         {
-          "head": "Work out how to bound the evaluation",
-          "text": "How to tell whether a smaller or less capable overseer still keeps the agents in check."
+          "head": "Random vs targeted checks",
+          "text": "A more detailed plan of the experiments: how the overseer works, and whether it should check at random or target agents."
         }
       ],
-      "notes": "Last time we agreed on three things. Read BazaarBench. Go back over the core scalable oversight papers. And work out how to bound the evaluation, so I can say how weak an overseer can be and still work."
+      "notes": "Last time there were three points. First, read BazaarBench, which was new to me, with the idea of putting a token cost on the overseer, and go back over two papers I'd read before. Second, how to bound the evaluation: whether a smaller or less capable overseer can still keep the agents in check. Third, a more detailed plan for the experiments, especially random against targeted checks. The slides follow that order."
     },
     {
       "type": "split",
@@ -59,7 +59,7 @@
           "text": "One overseer watches one opponent, once. The opponent never learns, and checking costs nothing."
         }
       ],
-      "notes": "This is the main scalable oversight paper I went back to. They measure how well a weaker AI can oversee a stronger one. Each model gets an Elo rating for each game. Elo is the chess rating system: a 400-point gap means the stronger side wins about 10 times out of 11. A chain of overseers means a weak model checks a slightly stronger one, which checks a stronger one again, and so on. Even with that, at a 400-point gap oversight succeeds between 9.4 and 51.7 percent of the time, depending on the game. What I take from it is a way to measure 'how much weaker' an overseer is. What's missing for me: it's one overseer against one opponent in a single round, the opponent doesn't learn, and nobody pays for checking."
+      "notes": "This is the main scalable oversight paper I went back to. They measure how well a weaker AI can oversee a stronger one. Each model gets an Elo rating for each game. Elo is the chess rating system: a 400-point gap means the stronger side wins about 10 times out of 11. A chain of overseers means a weak model checks a slightly stronger one, which checks a stronger one again, and so on. Even with that, at a 400-point gap oversight succeeds between 9.4 and 51.7 percent of the time, depending on the game. What I take from it is a way to measure how much weaker an overseer is. What's missing for me: it's one overseer against one opponent in a single round, the opponent doesn't learn, and nobody pays for checking."
     },
     {
       "type": "split",
@@ -82,7 +82,7 @@
           "text": "Nobody oversees the agents. It is a two-player game rather than a shared resource, and the strategies never learn."
         }
       ],
-      "notes": "The second paper is from Richard and Yali. In the Prisoner's Dilemma each player does better by betraying the other, but both do better if both cooperate. Here LLMs write whole strategies as code, and then a simple evolution process copies the strategies that earn more, so you see which kind takes over. Depending on the model, aggression can take over: from a mostly aggressive start it wins in 35 to 66 percent of runs. I've already used their follow-up code for my earlier audit results. What's missing for me is any kind of overseer."
+      "notes": "The second paper is from Richard and Yali. In the Prisoner's Dilemma each player does better by betraying the other, but both do better if both cooperate. Here LLMs write whole strategies as code, and then a simple evolution process copies the strategies that earn more, so you see which kind takes over. Depending on the model, aggression can take over: from a mostly aggressive start it wins in 35 to 66 percent of runs. I used their follow-up code for my earlier audit studies. What's missing for me is any kind of overseer."
     },
     {
       "type": "split",
@@ -105,80 +105,167 @@
           "text": "The check happens after the market has run, so agents never react to it. A live overseer with a token budget is the open question."
         }
       ],
-      "notes": "BazaarBench is from Ziyan, Shuqing and Yali. It's a realistic setting: 100 LLM traders, with every unsafe act checkable from the market records. When the agents are told to exploit others, the share of completed sales that should never have gone through more than doubles. Two things matter for me. First, checking is expensive: the LLM judge cost about 6,500 dollars for 48 runs, so the cost of monitoring is real. Second, the check is done offline, after the market runs, so the agents never react to being checked. An overseer that checks some traders each day, with a fixed token budget, for example 1 unit against 10 units, is exactly what's missing."
+      "notes": "BazaarBench is from Ziyan, Shuqing and Yali, and it was new to me. It's a realistic setting: 100 LLM traders, with every unsafe act checkable from the market records. When the agents are told to exploit others, the share of completed sales that should never have gone through more than doubles. Two things matter for me. First, checking is expensive: the LLM judge cost about 6,500 dollars for 48 runs, so the cost of monitoring is real. Second, the check is done offline, after the market runs, so the agents never react to being checked. An overseer that checks some traders each day with a fixed token budget, say 1 unit against 10 units, is what's missing."
     },
     {
-      "type": "numbered",
+      "type": "cards",
       "title": "How I'm bounding the evaluation",
-      "items": [
+      "cards": [
         {
+          "label": "AI Control, Greenblatt et al. 2024",
           "head": "Two reference points",
-          "text": "No overseer is the bottom. An overseer that checks every agent every step is the top. Every weaker overseer sits between them."
+          "text": "They place every protocol between never using the risky model (100% safe, 2% useful) and only auditing the first 2% of outputs (15% safe). My bottom is no overseer; my top is checking every agent every step."
         },
         {
-          "head": "Make the overseer weaker, one thing at a time",
-          "text": "It checks fewer agents, it makes mistakes (misses cheaters, flags honest agents), or it pays for each check, like a token budget."
+          "label": "Engels et al. 2025",
+          "head": "A weaker overseer",
+          "text": "They measure oversight against the skill gap. I weaken my overseer one way at a time: fewer checks, mistakes (missing cheaters, flagging honest agents), a smaller network."
         },
         {
-          "head": "Make the agents harder to oversee",
-          "text": "The hardest test is agents that can see who is being checked and learn to cheat when they aren't."
+          "label": "BazaarBench 2026",
+          "head": "A cost for checking",
+          "text": "Checking there costs real money. I charge my overseer per check and per step of history it reads, so a budget of 1 unit can be compared with 10."
+        },
+        {
+          "label": "AI Control, Greenblatt et al. 2024",
+          "head": "A worst-case opponent",
+          "text": "Their red team builds the best attack the overseer could face. Mine will be agents trained to get around the overseer."
         }
       ],
-      "notes": "This is how I'm answering the bounding question. I always compare against two reference points: no overseer at all, and an overseer that checks everyone every step, which is the best any overseer could do. Then I weaken the overseer one way at a time: fewer checks, more mistakes, or a cost per check, so I can see which kind of weakness hurts most. Finally, the hardest case is agents trained to get around the overseer. Today's results cover the two reference points and checking fewer agents. Mistakes, costs and the dodging agents come next."
+      "takeaway": "So far I've measured the two reference points and checking fewer agents. Mistakes, cost and the trained opponents come next.",
+      "notes": "For the bounding question I borrowed the structure from the literature. AI Control, by Greenblatt and colleagues at Redwood, evaluates every safety protocol between two simple ones: never use the risky model, which is completely safe but barely useful, and audit only the first 2 percent of its outputs, which is useful but only 15 percent safe. Then a red team builds the strongest attack it can, which gives the worst case. My version: no overseer is the bottom, an overseer that checks everyone every step is the top, and the worst case will be agents trained to beat the overseer. To make the overseer weaker I follow Engels et al., but instead of one skill number I weaken it one way at a time: fewer checks, more mistakes, or a smaller network. The cost side comes from BazaarBench: every check and every step of history the overseer reads costs something, so I can compare a budget of 1 unit with 10."
     },
     {
-      "type": "split",
-      "title": "What I built: Harvest with an overseer",
-      "image": "figures/harvest_setup.png",
-      "caption": "The Harvest game at the start of a round: 7 agents (triangles) and apples (red). Circles mark the 2 agents checked this step.",
-      "imageSide": "right",
-      "textW": 5.0,
-      "blocks": [
+      "type": "method",
+      "title": "How I built it",
+      "stepsW": 6.6,
+      "steps": [
         {
-          "head": "The game",
-          "text": "7 agents collect apples for 1,000 steps. Apples only regrow next to other apples, so stripping a patch kills it for good. Each agent keeps what it eats."
+          "head": "Started from SocialJax",
+          "text": "The Harvest game and the IPPO trainer come from SocialJax (Guo, Shi, Willis et al., ICLR 2026). I didn't change the game: 7 agents, 1,000-step rounds, each agent keeps its own apples."
         },
         {
-          "head": "The rule",
-          "text": "Don't eat an apple that has fewer than 3 apples within two squares. Breaking it is over-harvesting."
+          "head": "Wrote an overseer that wraps the game",
+          "text": "My own code sits between the agents and the game. Each step it reads the map, picks k agents to check, and takes apples off anyone it catches over-harvesting."
         },
         {
-          "head": "The overseer",
-          "text": "Each step it checks a few of the 7 agents, picked at random or targeted, and takes apples away from anyone it catches. Agents can't see who is checked."
+          "head": "Took the rule from the game itself",
+          "text": "An empty square regrows fastest with 3 or more apples nearby, so an eat breaks the rule if fewer than 3 apples are within two squares. Scripted bots confirmed 3 works best."
+        },
+        {
+          "head": "Trained on the KCL GPU cluster (CREATE)",
+          "text": "IPPO: the 7 agents share one network, each learning from its own reward. 100M steps per run, 20–40 minutes on one GPU, 3 runs per setting."
         }
       ],
-      "notes": "This is the setup. It's the Harvest game from SocialJax, which is Yali's group's library of these games. Seven agents walk around a grid eating apples. Apples only grow back if there are other apples nearby, so if agents strip a patch it's gone for the rest of the game. Each agent keeps its own apples, so taking the last apple pays you and hurts everyone else. That's the social dilemma. I added an overseer. Each step it checks a few agents. If a checked agent just broke the rule, it loses some apples as a penalty. I first tested it with simple scripted bots. One greedy bot among six well-behaved ones kills the orchard every time, and greed stops paying once the expected penalty reaches about 7 apples."
+      "cardTitle": "The formulas",
+      "quantities": [
+        {
+          "sym": "regrow",
+          "meaning": "empty square regrows with chance 2.5%, 0.5%, 0.1%, 0 per step with 3+, 2, 1, 0 apples nearby"
+        },
+        {
+          "sym": "n",
+          "meaning": "apples within two squares of the eaten apple, counted before the move",
+          "italic": true
+        },
+        {
+          "sym": "n < 3",
+          "meaning": "the eat is an over-harvest",
+          "italic": true
+        },
+        {
+          "sym": "r − 7P",
+          "meaning": "reward of a caught over-harvester: one apple pays 7, so a penalty of P apples removes 7P",
+          "italic": true
+        },
+        {
+          "sym": "k / 7",
+          "meaning": "chance an over-harvest is checked, with k random checks per step",
+          "italic": true
+        },
+        {
+          "sym": "(k/7)·P",
+          "meaning": "expected penalty per over-harvest, in apples",
+          "italic": true,
+          "highlight": true
+        }
+      ],
+      "notes": "This is how it's built. The game and the training code are SocialJax, from Yali's group. Richard is one of the authors. I didn't change the game. Richard's own code from the Willis paper is what I used for my earlier Fishery-style audit studies, not here. What I wrote is the overseer: a wrapper around the game. Each step it looks at the map, chooses which agents to check, and changes the reward of anyone it catches. The rule comes from the game's own regrowth: an empty square only regrows if apples are nearby, fastest with 3 or more within two squares. So eating an apple that leaves fewer than 3 neighbours is over-harvesting. I count the neighbours on the map the agent saw before it moved, so honest agents never get flagged. In SocialJax one apple is worth 7 reward, so a penalty of P apples takes 7P off the reward. With random checks, an over-harvest gets checked with chance k over 7, so the expected penalty is k over 7 times P. That's the number that matters in the results. Training is IPPO: each agent learns by trial and error from its own reward, and here all seven share one network."
+    },
+    {
+      "type": "figure2",
+      "title": "Finding 1: one greedy bot wrecks the orchard",
+      "images": [
+        {
+          "image": "figures/harvest_setup.png",
+          "caption": "The Harvest map at the start of a round: 7 agents (triangles), apples (red); circles mark 2 agents checked this step."
+        },
+        {
+          "image": "figures/schelling_no_overseer.png",
+          "caption": "Scripted bots, no overseer, 10 runs per point: apples per agent for restrained (blue) and greedy (orange) bots."
+        }
+      ],
+      "takeaway": "All 7 holding back: 71.5 apples each; all greedy: 9.6. One greedy bot kills the orchard in 10 of 10 runs. Greed stops paying at about 1 apple of expected penalty.",
+      "notes": "Before training anything I checked the game with simple scripted bots that don't learn: restrained bots that follow the rule and greedy bots that take the nearest apple. The chart is a Schelling diagram: along the bottom is how many of the 7 hold back, and it shows what a restrained bot and a greedy bot each earn. If everyone holds back, each gets 71.5 apples; if everyone is greedy, 9.6. But with 6 restrained, the greedy one earns 30.1 against their 9.2, so each agent is tempted to be greedy. That makes it a real social dilemma. It's also very fragile: one greedy bot kills the orchard in every run. Finally, with a greedy bot that can't adapt, greed stops paying once each over-harvest costs about one apple on average, whatever the number of checks. That told me where to set the penalties for the learning agents."
     },
     {
       "type": "figure",
-      "title": "Finding 1: the size of the expected penalty matters, not the number of checks",
+      "title": "Finding 2: the expected penalty matters, not the number of checks",
       "image": "figures/penalty_threshold.png",
-      "caption": "Learning agents, 100M training steps, 3 runs per bar (bars: average; lines: lowest to highest run). Expected penalty = chance of being checked × penalty per catch.",
-      "takeaway": "Below 7 apples nothing changes, even when every agent is checked. At 7 or more the orchard always survives, and checking 1 agent works almost as well as checking all 7.",
-      "notes": "These are learning agents, trained with IPPO. That's the standard method in SocialJax, where each agent learns by trial and error from its own reward. Training ran on the KCL GPU cluster, CREATE. With no overseer they strip the orchard in every game and eat only 68 apples. The expected penalty is the chance of being checked times the penalty, which is what an agent can expect to lose each time it over-harvests. At 3.5 apples nothing changes, even when all 7 agents are checked every step. At 7 the orchard survives in every run, and at 14 the agents eat more than seven well-behaved bots. So what matters is the expected penalty, not how many agents are checked: checking 1 agent with a big penalty gets 515 apples, against 530 for checking everyone. That's the 'checks fewer agents' part of the bounds. It only holds while the overseer makes no mistakes, which I test next."
+      "caption": "Learning agents (IPPO), 100M training steps, 3 runs per bar: bar = average, line = lowest to highest run. Two of the 4-check bars have 2 runs so far.",
+      "takeaway": "At 0.5 apples nothing changes, even when every agent is checked. At 1 apple or more the orchard always survives, and 1 check per step works almost as well as 7.",
+      "notes": "These are learning agents. With no overseer they strip the orchard in every game and eat only 68 apples. The expected penalty is the chance of being checked times the penalty, so it's what an agent expects to lose per over-harvest. I tried an expected 0.5, 1 and 2 apples, each with 1, 2, 4 or all 7 agents checked per step, so with 1 check the penalty per catch is 7 times bigger than with 7 checks. At half an apple nothing changes, even when every agent is checked every step. At 1 apple the orchard survives in every run, and at 2 the agents eat about 515 to 530 apples. So the switch is between half an apple and one apple, which is about the apple an over-harvest gains. And checking 1 agent with a big penalty works almost as well as checking everyone. That only holds while the overseer makes no mistakes, which is the next thing to test."
+    },
+    {
+      "type": "cards",
+      "title": "Random vs targeted: how I'm testing it",
+      "notes": "This is the plan for random against targeted, and why it's in this order. All versions use the same number of checks, so only the choice of whom to check differs. Repeat offenders first works like this: every agent has a suspicion score that goes up by one when it's caught and fades by 5 percent each step, and the overseer checks the agents with the highest scores. By location means checking the agents standing where the fewest apples are left. I start with agents that can't see who is checked, because that's the cleanest test of whether targeting finds cheaters better. If it doesn't help there, it won't help anywhere. Then I let agents see who is checked, because that's where targeting can backfire: my Fishery result showed predictable checking can be gamed. The last step is the security-game idea: target, but with enough randomness that agents can't predict it.",
+      "cards": [
+        {
+          "label": "Step 1",
+          "head": "Same checks, different choosers",
+          "text": "Random; taking turns; repeat offenders first (a score that rises when caught and fades over time); by location (where the fewest apples are left)."
+        },
+        {
+          "label": "Step 2 · now",
+          "head": "Agents can't see the checks",
+          "text": "Does targeting find over-harvesters better at all? With scripted bots, repeat offenders first saved the orchard with 2 checks where random needed 6."
+        },
+        {
+          "label": "Step 3",
+          "head": "Agents can see who is checked",
+          "text": "Predictable checks can be dodged. In my Fishery study, always checking the biggest reporter caught 25% of liars; random checks caught 100%."
+        },
+        {
+          "label": "Step 4",
+          "head": "Targeting plus randomness",
+          "text": "Keeps checks hard to predict, the idea behind security games (Wang et al., 2019). Blindfold (Zhu et al., 2026): audits fail once agents can tell they're audited."
+        }
+      ],
+      "takeaway": "Each step only changes one thing, so I can tell why targeting helps or fails."
     },
     {
       "type": "split",
-      "title": "Finding 2: targeting needs a good signal",
+      "title": "Finding 3: targeting needs a good signal",
       "image": "figures/targeting_apples.png",
       "caption": "During training, 2 agents checked each step, 3 runs (line: average; band: lowest to highest run).",
       "imageSide": "right",
       "textW": 4.8,
       "blocks": [
         {
-          "head": "Checking repeat offenders is faster",
-          "text": "Checking agents caught before saves the orchard much sooner than random checks, but both end up in the same place (about 460–470 apples)."
+          "head": "Repeat offenders first is faster",
+          "text": "It saves the orchard much sooner than random checks, but both end up in the same place (about 460–470 apples)."
         },
         {
-          "head": "Checking by location fails",
-          "text": "It catches 5% of over-harvesting, against 28% for random checks, because it checks agents on bare ground while cheaters stand by the last apples."
+          "head": "By location fails",
+          "text": "It catches 5% of over-harvesting, against 28% for random checks, because it checks agents on bare ground while over-harvesters stand by the last apples."
         },
         {
           "head": "Freezing doesn't work",
           "text": "Freezing caught agents for 50 steps, instead of taking apples, never saves the orchard."
         }
       ],
-      "notes": "Here I compared ways of choosing whom to check, always with 2 checks per step. Every version first collapses, because the agents learn that eating pays before they learn the penalty. Checking agents that were caught before recovers much faster than random checks, but they end in the same place. That's because all seven agents share one brain, so there's no single repeat offender to follow. Checking agents by where they stand does worse than random. It checks agents on empty ground, but someone who has just over-harvested is standing right next to the last apples. That happens from the very start, so it's a bad choice of signal, not agents learning to hide. Freezing caught agents instead of fining them didn't work at all."
+      "notes": "These are the first results of that plan, with agents that can't see the checks, 2 checks per step and an expected penalty of 1 apple. Every version first collapses, because the agents learn that eating pays before they learn the penalty. Repeat offenders first recovers much faster than random but ends in the same place. That's because the seven agents share one network, so there's no single repeat offender to follow. By location does worse than random: it checks agents on empty ground, but an agent that has just over-harvested is standing next to the last apples. That happens from the very start, so it's a bad signal, not agents learning to hide. Freezing caught agents instead of fining them didn't work at all."
     },
     {
       "type": "numbered",
@@ -199,12 +286,12 @@
       "type": "questions",
       "title": "Questions",
       "questions": [
-        "Is no overseer at the bottom, checking everyone at the top, and agents trained to dodge it as the hardest test a sensible way to bound the evaluation?",
+        "Is no overseer at the bottom, checking everyone at the top, and agents trained to dodge it as the worst case a sensible way to bound the evaluation?",
         "To make the overseer weaker in RL, which is most convincing: fewer checks, more mistakes, or a smaller network than the agents?",
         "One check with a big penalty almost matches checking everyone. Is that worth pushing, or only interesting once the overseer makes mistakes?",
         "Could I talk to Ziyan or Shuqing about adding a live overseer with a token budget to BazaarBench later on?"
       ],
-      "notes": "A few questions I'd like your view on."
+      "notes": "A few questions I'd like a view on."
     },
     {
       "type": "closing",

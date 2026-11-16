@@ -21,22 +21,23 @@ Run on CREATE on 15–16 Nov 2026, under `protocol.md` (with Amendment 1).
 
 ## Main table
 
-| Overseer | k × P (apples) | Apples eaten | Orchard alive | Over-harvests | Share of eats that over-harvest | Caught | Apples left at end |
+| Overseer | Expected penalty per over-harvest (apples) | Apples eaten | Orchard alive | Over-harvests | Share of eats that over-harvest | Caught | Apples left at end |
 |---|---|---|---|---|---|---|---|
 | None (arm A) | – | 68 [67, 68] | 0.00 | 30 | 45% | – | 0 |
-| Random, c = 0.5, any k | 3.5 | 68 [68, 68] | 0.00 | 27–29 | 40–42% | 4–27 | 0 |
-| Random k = 1, c = 1 | 7 | 441 [411, 457] | 1.00 | 50 | 11% | 7 | 23 |
-| Random k = 2, c = 1 | 7 | 458 [441, 470] | 1.00 | 39 | 9% | 11 | 24 |
-| Random k = 4, c = 1 | 7 | 476 [454, 493] | 1.00 | 39 | 8% | 22 | 26 |
-| Random k = 7, c = 1 | 7 | 477 [468, 483] | 1.00 | 35 | 7% | 35 | 26 |
-| Random k = 1, c = 2 | 14 | 515 [506, 530] | 1.00 | 7 | 1.4% | 1 | 29 |
-| Random k = 2, c = 2 | 14 | 527 [517, 540] | 1.00 | 6 | 1.2% | 2 | 29 |
-| Random k = 4, c = 2 (2 seeds) | 14 | 528 [523, 534] | 1.00 | 5 | 1.0% | 3 | 29 |
-| Random k = 7, c = 2 | 14 | 530 [522, 536] | 1.00 | 5 | 1.0% | 5 | 29 |
+| Random, c = 0.5, any k | 0.5 | 68 [68, 68] | 0.00 | 27–29 | 40–42% | 4–27 | 0 |
+| Random k = 1, c = 1 | 1 | 441 [411, 457] | 1.00 | 50 | 11% | 7 | 23 |
+| Random k = 2, c = 1 | 1 | 458 [441, 470] | 1.00 | 39 | 9% | 11 | 24 |
+| Random k = 4, c = 1 | 1 | 476 [454, 493] | 1.00 | 39 | 8% | 22 | 26 |
+| Random k = 7, c = 1 | 1 | 477 [468, 483] | 1.00 | 35 | 7% | 35 | 26 |
+| Random k = 1, c = 2 | 2 | 515 [506, 530] | 1.00 | 7 | 1.4% | 1 | 29 |
+| Random k = 2, c = 2 | 2 | 527 [517, 540] | 1.00 | 6 | 1.2% | 2 | 29 |
+| Random k = 4, c = 2 (2 seeds) | 2 | 528 [523, 534] | 1.00 | 5 | 1.0% | 3 | 29 |
+| Random k = 7, c = 2 | 2 | 530 [522, 536] | 1.00 | 5 | 1.0% | 5 | 29 |
 | Random k = 2, freeze 50 (arm C) | – | 77 [75, 78] | 0.00 | 32 | 41% | 9 | 0 |
-| History k = 2, c = 1 (arm D) | 7 | 470 [460, 483] | 1.00 | 32 | 7% | 9 | 26 |
-| Location k = 2, c = 1 (arm D) | 7 | 150 [122, 179] | 1.00 | 77 | 51% | 4 | 6 |
+| History k = 2, c = 1 (arm D) | 1 | 470 [460, 483] | 1.00 | 32 | 7% | 9 | 26 |
+| Location k = 2, c = 1 (arm D) | 1 (if checks were random) | 150 [122, 179] | 1.00 | 77 | 51% | 4 | 6 |
 
+- **Expected penalty per over-harvest** = chance the over-harvest is checked × penalty per catch = (k/7) × P = c apples. (Corrected 16 Nov: an earlier version of this file and of the protocol called k × P the expected penalty; k × P is 7 times it. The runs are unchanged.)
 - **"Over-harvests" is a count**, and it can rise when the orchard lives, because there are more apples to eat. The share column (over-harvests ÷ apples eaten) is the fairer comparison.
 - **"Orchard alive" means at least one apple is left at the end.** The location arm passes that test with about 6 apples left.
 
@@ -47,14 +48,14 @@ Run on CREATE on 15–16 Nov 2026, under `protocol.md` (with Amendment 1).
 - The agents settle at 68 apples per episode, against 500 for restrained bots. 45% of their eats break the m = 3 rule.
 - The setting therefore has a problem for the overseer to fix, so the "what would change the plan" condition is not triggered.
 
-**Q2. Which k × P protects the orchard, and is it the expected penalty that matters?**
-- **It is a sharp threshold set by k × P, as predicted.**
-  - At k × P = 3.5 apples, nothing changes at any k (68 apples, orchard dead). That holds even at k = 7, where every over-harvest is caught with a 0.5-apple penalty.
-  - At k × P = 7 every run saves the orchard (441–477 apples).
-  - At 14 the agents eat 515–530 apples, more than seven restrained bots (500), and only about 1% of their eats break the rule.
-- **The learners' threshold lies between 3.5 and 7 apples.** This is consistent with week 2's break-even of about 7 apples for scripted bots, though this sweep cannot place it more finely than that. A finer sweep (k × P = 4, 5, 6) would.
-- **The cheapest working overseer is k = 1 with a 14-apple penalty:** 1,000 checks per episode, 515 apples. Checking all 7 agents every step (7,000 checks) at the same expected penalty adds only 15 apples.
-- **Second-order effect of k at k × P = 7:** more checks with smaller penalties do a little better (k = 1: 441 [411, 457]; k = 7: 477 [468, 483]; the seed ranges do not overlap). A plausible reason is that a learner sees a steadier signal when catches are frequent and small. With 3 seeds this is a lead, not a result.
+**Q2. Which expected penalty protects the orchard, and is it the expected penalty that matters?**
+- **It is a sharp threshold set by the expected penalty, as predicted.**
+  - At an expected 0.5 apples per over-harvest, nothing changes at any k (68 apples, orchard dead). That holds even at k = 7, where every over-harvest is caught with a 0.5-apple penalty.
+  - At 1 apple every run saves the orchard (441–477 apples).
+  - At 2 apples the agents eat 515–530 apples, more than seven restrained bots (500), and only about 1% of their eats break the rule.
+- **The learners' threshold lies between 0.5 and 1 apple per over-harvest,** roughly the apple the over-harvest gains. This is consistent with week 2's break-even for scripted bots (about 0.9–1.1 apples; k × P ≈ 7), though this sweep cannot place it more finely than that. A finer sweep (0.6, 0.7, 0.8, 0.9 apples) would.
+- **The cheapest working overseer is k = 1 with a 14-apple penalty per catch (2 apples expected per over-harvest):** 1,000 checks per episode, 515 apples. Checking all 7 agents every step (7,000 checks) at the same expected penalty adds only 15 apples.
+- **Second-order effect of k at 1 apple expected:** more checks with smaller penalties do a little better (k = 1: 441 [411, 457]; k = 7: 477 [468, 483]; the seed ranges do not overlap). A plausible reason is that a learner sees a steadier signal when catches are frequent and small. With 3 seeds this is a lead, not a result.
 
 **Q3. Freeze or penalty?**
 - **The penalty wins clearly.** Random k = 2 with a 50-step freeze does nothing useful: 77 apples, orchard dead in every seed, and 41% of eats still break the rule.
@@ -96,6 +97,6 @@ Run on CREATE on 15–16 Nov 2026, under `protocol.md` (with Amendment 1).
 
 ## What this means for the next steps
 
-1. **Phase 3 (the overseer sets its own penalty) has a clear target.** k × P must be above about 7 apples per over-harvest, and the overseer can learn it by watching. A finer sweep at k × P = 4–6 would pin down the threshold for learners.
+1. **Phase 3 (the overseer sets its own penalty) has a clear target.** The expected penalty must be above about 1 apple per over-harvest (k × P above about 7), and the overseer can learn it by watching. A finer sweep between 0.5 and 1 apple would pin down the threshold for learners.
 2. **Phase 4 is well motivated by the location result.** A targeted rule can be worse than random even before agents adapt. The red-team loop should include a proxy-targeted overseer as a known weak baseline and test whether history targeting stays ahead once agents can see checks.
 3. **Freeze is dropped as the main consequence.** Phases 3–5 will use the reward penalty.

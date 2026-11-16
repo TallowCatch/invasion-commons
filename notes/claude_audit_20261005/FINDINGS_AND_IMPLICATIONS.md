@@ -187,7 +187,7 @@ Started 14 October 2026.
 
 - **Found** (SocialJax Harvest Open, 7 IPPO agents with individual rewards, 1e8 steps, 3 seeds; rule m = 3; perfect inspector; agents cannot see checks):
   - **No overseer:** the orchard dies in every env (68 apples per episode; 45% of eats break the rule).
-  - **Random checks:** k × penalty of 3.5 apples changes nothing at any k (even k = 7). At 7 every run saves the orchard (441–477 apples). At 14 the agents eat 515–530, more than 7 restrained bots (500).
+  - **Random checks** (expected penalty per over-harvest = k/7 × penalty): an expected 0.5 apples changes nothing at any k (even k = 7). At 1 apple every run saves the orchard (441–477 apples). At 2 the agents eat 515–530, more than 7 restrained bots (500).
   - **Cheapest working overseer:** k = 1 with a 14-apple penalty (515 apples with 1,000 checks per episode, against 530 with 7,000).
   - **A 50-step freeze at k = 2 fails** (77 apples).
   - **History targeting** ends level with random but protects the orchard much sooner.
@@ -196,9 +196,9 @@ Started 14 October 2026.
   - The Fishery result "the expected fine decides" (L4, F14) carries over to learning agents in a spatial game, with a threshold near the scripted-bot break-even (about 7 apples).
   - The budget question becomes how large a penalty one check can carry. That depends on false alarms, which are not yet tested.
   - Targeting is only as good as its proxy (as in Fishery T1).
-- **Paper must say.** This is the baseline result for the ICML overseer paper: a budgeted overseer works against learners once k × P is above the threshold. Targeting needs a good signal, and its gains here are speed, not end state, because parameter-shared agents have no persistent cheater.
+- **Paper must say.** This is the baseline result for the ICML overseer paper: a budgeted overseer works against learners once the expected penalty is above the threshold (about 1 apple per over-harvest, the apple it gains). Targeting needs a good signal, and its gains here are speed, not end state, because parameter-shared agents have no persistent cheater.
 - **Evidence.** `notes/socialjax/phase2_ippo/results.md`, `summary.json`, `fig_checks_by_penalty.png`, `fig_learning_curves.png`.
-- **Status:** open. Two k = 4 cells have 2 of 3 seeds (reruns queued). Late switch-on and switch-off (stages 2–3) are pending, and so is a finer sweep at k × P = 4–6.
+- **Status:** open. Two k = 4 cells have 2 of 3 seeds (reruns queued). Late switch-on and switch-off (stages 2–3) are pending, and so is a finer sweep between 0.5 and 1 apple expected. (Wording corrected 16 Nov: k × P is 7 times the expected penalty.)
 
 ---
 

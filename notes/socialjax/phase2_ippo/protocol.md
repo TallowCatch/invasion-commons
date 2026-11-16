@@ -77,3 +77,9 @@ A pilot of two runs (arm A and arm B k = 2, c = 1, seed 1, 2e7 steps) checks the
   - Q6 becomes: does over-harvesting return once the agents keep learning without the overseer?
 - The end-of-run evaluation is kept, because it still matters for the freeze arm, where a freeze changes actions.
 - **Timing:** a 1e8-step run takes about 20 min on an H200, so all stages fit in a day.
+
+## Amendment 2 (16 Nov, after stage 1; wording only)
+
+- The protocol called k × P "the expected penalty per over-harvest". That is wrong by a factor of 7. Under random checks an over-harvest is checked with chance k/7, so the expected penalty is (k/7) × P = c apples.
+- The three levels are therefore an expected 0.5, 1 and 2 apples per over-harvest (k × P = 3.5, 7, 14). Week 2's break-even k × P ≈ 7 is an expected penalty of about 1 apple.
+- The runs, the arms and the predictions are unchanged. Only the label changes. `results.md` uses the corrected wording.

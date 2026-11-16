@@ -8,7 +8,7 @@ Needs:
 - the three paper PDFs in notes/icml27_lit_review/papers/Read properly/ (git-ignored; from arXiv 2504.18530,
   2501.16173 and 2610.06748). The abstract images are git-ignored too.
 
-harvest_setup.png is made by notes/slides/2026-11-16_yali_update/make_figures.py.
+harvest_setup.png and schelling_no_overseer.png are made by notes/slides/2026-11-16_yali_update/make_figures.py.
 """
 import glob
 import json
@@ -68,26 +68,31 @@ def abstracts():
 
 
 def penalty_bars():
+    """Apples eaten at each expected penalty, one bar per number of checks. Bars are seed means; whiskers the seed range."""
     plt.rcParams.update({"font.size": 13, "axes.labelsize": 13, "legend.fontsize": 12})
     t = json.load(open("notes/socialjax/phase2_ippo/summary.json"))["arms"]
-    fig, ax = plt.subplots(figsize=(9, 5.2))
+    blues = ("#c6dbef", "#6baed6", "#2171b5", "#08306b")  # 1, 2, 4, 7 checks: light to dark
+    fig, ax = plt.subplots(figsize=(9, 5.0))
     n = t["A_none"]["apples_eaten"]
-    ax.bar(0, n["mean"], 0.5, color=INK2, yerr=[[n["mean"] - n["lo"]], [n["hi"] - n["mean"]]], capsize=3)
-    w = 0.19
-    for i, (k, col) in enumerate(zip((1, 2, 4, 7), (YELLOW, BLUE, VIOLET, AQUA))):
+    ax.bar(0, n["mean"], 0.55, color="#9e9e9e", edgecolor="white")
+    ax.errorbar(0, n["mean"], [[n["mean"] - n["lo"]], [n["hi"] - n["mean"]]], color="#333333", lw=1.2, capsize=0)
+    w = 0.2
+    for i, (k, col) in enumerate(zip((1, 2, 4, 7), blues)):
         for j, c in enumerate((0.5, 1.0, 2.0)):
             r = t[f"B_random_k{k}_c{c}"]["apples_eaten"]
-            ax.bar(1 + j + (i - 1.5) * w, r["mean"], w, color=col, capsize=2,
-                   yerr=[[r["mean"] - r["lo"]], [r["hi"] - r["mean"]]],
-                   label=f"{k} of 7 checked each step" if j == 0 else None)
-    ax.axhline(500, color=INK2, ls="--", lw=1.3)
-    ax.text(-0.35, 510, "7 well-behaved scripted bots: 500", color=INK2, fontsize=11.5, va="bottom")
-    for x in (0, 1):
-        ax.text(x, 95, "orchard\ndies", ha="center", color=ORANGE, fontsize=11.5, weight="bold")
-    ax.set_xticks(range(4), ["no overseer", "3.5", "7", "14"])
-    ax.set_ylim(0, 590)
-    ax.set(xlabel="expected penalty per over-harvest (apples)", ylabel="apples eaten per game")
-    ax.legend(loc="upper left", bbox_to_anchor=(0.0, 0.86), frameon=False)
+            x = 1 + j + (i - 1.5) * w
+            ax.bar(x, r["mean"], w, color=col, edgecolor="white", linewidth=0.8,
+                   label=f"{k} of 7 agents checked per step" if j == 0 else None)
+            ax.errorbar(x, r["mean"], [[r["mean"] - r["lo"]], [r["hi"] - r["mean"]]], color="#333333", lw=1.2, capsize=0)
+    for x, txt in ((0, "orchard died\nin every run"), (1, "orchard died\nin every run"),
+                   (2, "orchard survived\nin every run"), (3, "orchard survived\nin every run")):
+        y = 95 if x < 2 else 560
+        ax.text(x, y, txt, ha="center", va="bottom" if x < 2 else "bottom", fontsize=11, color="#555555", style="italic")
+    ax.set_xticks(range(4), ["no overseer", "0.5", "1", "2"])
+    ax.set_ylim(0, 620)
+    ax.set(xlabel="expected penalty per over-harvest (apples) = chance of being checked × penalty",
+           ylabel="apples eaten per game")
+    ax.legend(loc="upper left", frameon=False, bbox_to_anchor=(0.0, 0.92))
     ax.grid(axis="x", visible=False)
     fig.tight_layout()
     fig.savefig(OUT / "penalty_threshold.png", dpi=200)

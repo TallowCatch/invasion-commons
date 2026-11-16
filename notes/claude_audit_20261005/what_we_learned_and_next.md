@@ -7,11 +7,11 @@
 - **Week 2 with bots** (`notes/socialjax/week2_bots/results.md`):
   - m = 3;
   - Harvest is a dilemma by the greed condition;
-  - k × penalty ≈ 7 apples is where greed stops paying;
+  - greed stops paying at an expected penalty of about 1 apple per over-harvest (k × penalty ≈ 7);
   - history targeting needs k = 2 where random needs k = 6 at a 50-step freeze.
 - **Phase 2 stage 1 with IPPO learners on CREATE** (`notes/socialjax/phase2_ippo/results.md`, F17):
   - no overseer kills the orchard every time;
-  - a sharp threshold between k × P = 3.5 and 7 apples, at every k;
+  - a sharp threshold between an expected 0.5 and 1 apple per over-harvest, at every k (corrected wording 16 Nov: k × P is 7 times the expected penalty);
   - k = 1 with a 14-apple penalty is enough;
   - freeze fails;
   - history is faster than random but ends level;

@@ -77,14 +77,14 @@ Fig. (a), (c): the greedy agent against the restrained agents in the same group 
 | Break-even penalty per catch (apples) | 7.6 | 3.6 | 2.4 | 1.7 | 1.3 | 1.1 | 1.0 |
 | k × break-even | 7.6 | 7.2 | 7.2 | 6.8 | 6.5 | 6.8 | 6.8 |
 
-- **Fewer checks need a proportionally bigger penalty:** k × penalty stays at about 7 apples. With a greedy agent that cannot dodge, deterrence depends on the expected penalty per over-harvest (chance of a check × penalty), not on either alone.
+- **Fewer checks need a proportionally bigger penalty:** k × penalty stays at about 7 apples, which is an expected penalty of about 1 apple per over-harvest (chance of a check k/7 × penalty; corrected wording 16 Nov). With a greedy agent that cannot dodge, deterrence depends on the expected penalty per over-harvest (chance of a check × penalty), not on either alone.
 - This is the same pattern as the Fishery LLM study (L4: "the expected fine decides").
 - Against "everyone restrains" (fig. (b)) greed never pays, as explained above.
 
 ## What this means for the next step (IPPO on CREATE)
 
 1. **Rule and settings:** use m = 3, individual rewards, window 1.
-2. **Consequence:** a reward penalty is what a learning agent responds to. Sweep k × penalty around k × penalty ≈ 7 apples (49 reward), which is the line where greed stops paying against fixed greedy behaviour.
+2. **Consequence:** a reward penalty is what a learning agent responds to. Sweep k × penalty around k × penalty ≈ 7 apples (an expected penalty of about 1 apple per over-harvest; 49 reward), which is the line where greed stops paying against fixed greedy behaviour.
 3. **Freeze vs penalty:** compare them. A freeze also protects the orchard directly but needs 50+ steps.
 4. **Targeting:** expect it to help against agents that over-harvest openly (at a 50-step freeze, history needs k = 2 where random needs k = 6) and to be exploitable by agents that learn when they are unwatched. That is the phase 4 red-team test.
 5. **Caveat:** these bots never respond to penalties and see the whole map; the learning agents will do neither.

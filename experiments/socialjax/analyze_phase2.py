@@ -68,10 +68,10 @@ def fig_grid(table):
             if not np.isnan(v):
                 ax.text(b, a, fmt.format(v), ha="center", va="center", fontsize=7.5,
                         color="white" if v > 0.6 * vmax else INK)
-        ax.set_xticks(range(len(LEVELS)), [f"{c}x\n(k x P = {7 * c:g})" for c in LEVELS])
+        ax.set_xticks(range(len(LEVELS)), [f"{c:g} apple{"s" if c != 1 else ""}\n(k x P = {7 * c:g})" for c in LEVELS])
         ax.set_yticks(range(len(KS)), KS)
         ax.grid(False)
-        ax.set(xlabel="expected penalty per over-harvest (apples), vs week 2's break-even",
+        ax.set(xlabel="expected penalty per over-harvest (apples) = k/7 x penalty",
                ylabel="agents checked per step (k of 7)")
         base_txt = f"; no overseer: {fmt.format(base[key]['mean'])}" if base else ""
         ax.set_title(f"{'(a)' if key == 'apples_eaten' else '(b)'} {lab}{base_txt}", fontsize=8.5)
@@ -99,7 +99,7 @@ def fig_curves(runs):
     stage1 = [("A_none", INK2, "no overseer"), ("B_random_k2_c1.0", BLUE, "random k=2, penalty 3.5"),
               ("C_freeze50_k2", ORANGE, "random k=2, freeze 50"), ("D_history_k2_c1.0", AQUA, "history k=2, penalty 3.5"),
               ("D_location_k2_c1.0", YELLOW, "location k=2, penalty 3.5")]
-    stage2 = [("R_none", INK2, "still no overseer")] + [(f"R_random_k{k}_c1.0", col, f"random k={k}, k x P = 7")
+    stage2 = [("R_none", INK2, "still no overseer")] + [(f"R_random_k{k}_c1.0", col, f"random k={k}, expected penalty 1 apple")
                                                          for k, col in zip(KS, (YELLOW, BLUE, VIOLET, AQUA))] + \
              [("R_freeze50_k2", ORANGE, "random k=2, freeze 50"), ("R_history_k2_c1.0", "#1a6b4c", "history k=2")]
     stage3 = [(f"S_off_after_B_random_k{k}_c1.0", col, f"after random k={k}") for k, col in

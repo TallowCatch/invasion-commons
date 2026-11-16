@@ -11,7 +11,7 @@ import argparse
 
 SEEDS = (1, 2, 3)
 KS = (1, 2, 4, 7)
-LEVELS = (0.5, 1.0, 2.0)  # expected penalty per over-harvest, k x P, in units of 7 apples
+LEVELS = (0.5, 1.0, 2.0)  # expected penalty per over-harvest in apples: (k/7) x P, so P = 7c/k (k x P = 7c)
 
 
 def penalty(k, c):
