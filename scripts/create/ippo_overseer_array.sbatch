@@ -8,7 +8,7 @@
 #SBATCH --gpus=1
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=4
-#SBATCH --time=08:00:00
+#SBATCH --time=02:00:00  # a 1e8-step run takes 18-38 min; short limits start sooner (16 Nov)
 #SBATCH --output=/scratch/users/%u/ippo_overseer/logs/%A_%a.out
 set -euo pipefail
 
