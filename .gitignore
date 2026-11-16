@@ -44,3 +44,8 @@ notes/icml27_lit_review/*.zip
 # SocialJax clone and its CPU venv (scripts/socialjax_local_setup.sh); pinned commit is recorded in notes/socialjax/
 external/SocialJax/
 .venv-socialjax/
+
+# Weekly update decks embed screenshots of papers' first pages; keep those and the built decks local (16 Nov 2026)
+notes/slides/*_weekly_update/figures/abstract_*
+notes/slides/*_weekly_update/*.pptx
+notes/slides/*_weekly_update/*.pdf
