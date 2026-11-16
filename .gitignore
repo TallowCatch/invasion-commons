@@ -49,3 +49,6 @@ external/SocialJax/
 notes/slides/*_weekly_update/figures/abstract_*
 notes/slides/*_weekly_update/*.pptx
 notes/slides/*_weekly_update/*.pdf
+# Talk scripts with slide pictures embed the paper screenshots too (16 Nov 2026)
+notes/slides/*_weekly_update/script_slides/
+notes/slides/*_weekly_update/talk_script_with_slides.docx

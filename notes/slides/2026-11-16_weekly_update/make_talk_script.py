@@ -6,15 +6,33 @@ Numbers come from notes/socialjax/phase2_ippo/results.md, notes/socialjax/week2_
 from pathlib import Path
 
 from docx import Document
+from PIL import Image
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt, RGBColor
 
 NAVY = RGBColor(0x06, 0x27, 0x46)
-OUT = Path(__file__).parent / "talk_script.docx"
+HERE = Path(__file__).parent
+OUT = HERE / "talk_script_with_slides.docx"
+SHOTS = HERE / "script_slides"  # slide-NN.png rendered from the Final deck (render_pptx.sh); git-ignored
+PX = 1600 / 13.333  # rendered pixels per slide inch
+# Close-ups placed right above the paragraph that talks about them: (slide, paragraph index) -> box in slide inches
+CLOSEUPS = {
+    (7, 1): (7.5, 1.4, 12.8, 6.95),    # "The model, written out" card
+    (8, 0): (0.55, 1.7, 12.8, 3.75),   # the design problem
+    (8, 1): (0.55, 3.9, 12.8, 6.75),   # cost, eta, worst case
+    (9, 0): (6.8, 1.35, 12.8, 6.1),    # the bots chart
+    (10, 0): (0.55, 1.3, 7.9, 5.95),   # the bar chart
+    (10, 1): (8.1, 1.3, 12.8, 4.4),    # deterrence condition
+    (10, 2): (8.1, 4.35, 12.8, 6.35),  # honest-loss prediction
+    (11, 2): (0.4, 6.0, 12.9, 6.5),    # random vs mixed formula line
+    (12, 0): (6.3, 1.4, 12.8, 6.05),   # the training curves
+    (12, 1): (5.9, 6.05, 12.8, 6.9),   # catch-rate formula
+}
 
 TITLE = "Talk script: Weekly Update"
-INTRO = ("Supervision meeting, 16 November 2026. Each slide has what I say, then the questions I might get and how I'd "
-         "answer them. A sheet of numbers to have ready is at the end.")
+INTRO = ("Supervision meeting, 16 November 2026. Each slide is shown, then what I say, with close-ups of the part of the "
+         "slide each paragraph is about, then the questions I might get and how I'd answer them. A sheet of numbers to "
+         "have ready is at the end.")
 
 SLIDES = [
     ("Weekly Update", [
@@ -342,9 +360,22 @@ def main():
     heading(TITLE, 18, 0)
     p = d.add_paragraph(INTRO)
     p.runs[0].italic = True
+    crops = SHOTS / "closeups"
+    crops.mkdir(exist_ok=True)
     for i, (title, spoken, qa) in enumerate(SLIDES, 1):
         heading(f"Slide {i}: {title}", 13)
-        for para in spoken:
+        shot = SHOTS / f"slide-{i:02d}.png"
+        if shot.exists():
+            d.add_picture(str(shot), width=Inches(5.2))
+            d.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        for j, para in enumerate(spoken):
+            box = CLOSEUPS.get((i, j))
+            if box and shot.exists():
+                c = crops / f"slide-{i:02d}_{j}.png"
+                Image.open(shot).crop(tuple(int(v * PX) for v in box)).save(c)
+                w = min(4.6, (box[2] - box[0]) * 0.62)
+                d.add_picture(str(c), width=Inches(w))
+                d.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
             d.add_paragraph(para).paragraph_format.space_after = Pt(6)
         if qa:
             h = d.add_paragraph()
