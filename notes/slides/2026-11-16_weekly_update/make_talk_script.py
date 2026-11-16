@@ -15,6 +15,73 @@ HERE = Path(__file__).parent
 OUT = HERE / "talk_script_with_slides.docx"
 SHOTS = HERE / "script_slides"  # slide-NN.png rendered from the Final deck (render_pptx.sh); git-ignored
 PX = 1600 / 13.333  # rendered pixels per slide inch
+# What every symbol in a close-up means, shown in a small table under that close-up
+SYMBOLS = {
+    (7, 1): [
+        ("p(n)", "chance an empty apple square grows back this step"),
+        ("n", "apples within two squares of the spot (the 12 squares around it)"),
+        ("i, t", "which agent, and which step of the game"),
+        ("v(i,t)", "1 if agent i over-harvested at step t, otherwise 0"),
+        ("1[ … ]", "equals 1 when the thing in the brackets is true, otherwise 0"),
+        ("C(t), |C(t)| ≤ k", "the set of agents checked at step t, and at most k of them"),
+        ("Pr(caught | v = 1)", "chance of being caught given a real over-harvest, which is 1 minus the miss rate"),
+        ("α (alpha)", "miss rate, the chance a real over-harvest isn't caught (0 so far)"),
+        ("β (beta)", "false-alarm rate, the chance an honest move is flagged (0 so far)"),
+        ("r(i,t)", "the game's reward, 7 for each apple taken"),
+        ("r̃(i,t) (r tilde)", "the reward after any penalty, which is what the agent learns from"),
+        ("P", "penalty per catch, in apples, so 7P in reward"),
+        ("caught(i,t)", "1 if agent i was caught at step t"),
+        ("π(i) (pi)", "agent i's policy, its way of choosing moves"),
+        ("max over π, E[ … ]", "the agent picks the policy that makes the average total largest"),
+        ("Σ γ^t (gamma)", "add up rewards over the game, each step counting a bit less (γ = 0.99, about 100 steps ahead)"),
+    ],
+    (8, 0): [
+        ("θ_O (theta O)", "the overseer's settings, which are how many to check (k), how it picks them, the penalty P"),
+        ("W(θ_O, π*)", "apples collected per game with those settings, once the agents have learned"),
+        ("π* (pi star)", "the agents' best reply, what they end up doing against these settings"),
+        ("U(π; θ_O)", "the agents' own score, their reward after penalties"),
+        ("arg max", "the choice that gives the largest value"),
+        ("λ (lambda)", "how many apples one unit of cost is worth, the trade-off between the two"),
+        ("Cost(θ_O), B", "what the overseer spends, and the budget it must stay within"),
+        ("s.t.", "'subject to', the conditions that must hold"),
+    ],
+    (8, 1): [
+        ("Σ over t, Σ over i in C(t)", "add up over every step and every agent checked at that step"),
+        ("c_check", "cost of one check"),
+        ("c_hist, w", "cost of each past step a check reads, and how many past steps it reads (w = 1 so far)"),
+        ("η (eta)", "0 means no better than no overseer, 1 means as good as checking everyone"),
+        ("W_none, W_all", "apples with no overseer (68) and with every agent checked every step (530 at 2 apples)"),
+        ("W_worst", "the overseer's score against the toughest agents"),
+        ("min over Π_adapt", "the lowest score over all agents that can see the checks and adapt to them"),
+    ],
+    (10, 1): [
+        ("k", "agents checked per step"),
+        ("N", "number of agents, 7"),
+        ("k/N", "chance a given agent is checked at a step, with random checks"),
+        ("α (alpha)", "miss rate (0 so far)"),
+        ("P", "penalty per catch, in apples"),
+        ("g", "what one over-harvest gains the agent, about 1 apple for the bots"),
+        ("(k/N)(1 − α)P ≥ g", "the average penalty is at least the gain, so over-harvesting stops paying"),
+    ],
+    (10, 2): [
+        ("β (beta)", "false-alarm rate, the chance a checked honest agent is wrongly flagged"),
+        ("(k/N) β P", "average apples an honest agent loses per step (chance checked × chance wrongly flagged × penalty)"),
+    ],
+    (11, 2): [
+        ("q(i)", "agent i's chance of being checked at a step"),
+        ("q(i) = k/N", "random checks give every agent the same chance"),
+        ("g(i)", "what over-harvesting gains agent i"),
+        ("max over q, min over i", "pick the chances so that even the agent least deterred is still deterred"),
+        ("Σ q(i) = k", "the chances add up to the number of checks"),
+    ],
+    (12, 1): [
+        ("q(i,t)", "agent i's chance of being checked at step t"),
+        ("v(i,t) = 1", "the moments when agent i actually over-harvests"),
+        ("E[ A | B ]", "the average of A, counting only the moments where B is true"),
+        ("catch rate", "how often over-harvests get checked; random checks give 2 in 7, about 0.29"),
+    ],
+}
+
 # Close-ups placed right above the paragraph that talks about them: (slide, paragraph index) -> box in slide inches
 CLOSEUPS = {
     (7, 1): (7.5, 1.4, 12.8, 6.95),    # "The model, written out" card
@@ -30,9 +97,9 @@ CLOSEUPS = {
 }
 
 TITLE = "Talk script: Weekly Update"
-INTRO = ("Supervision meeting, 16 November 2026. Each slide is shown, then what I say, with close-ups of the part of the "
-         "slide each paragraph is about, then the questions I might get and how I'd answer them. A sheet of numbers to "
-         "have ready is at the end.")
+INTRO = ("Supervision meeting, 16 November 2026. Each slide is shown, then what I say, with a close-up of the part of the "
+         "slide each paragraph is about and, under each formula, what its symbols mean. The questions I might get and the "
+         "numbers to have ready are at the end.")
 
 SLIDES = [
     ("Weekly Update", [
@@ -362,7 +429,23 @@ def main():
     p.runs[0].italic = True
     crops = SHOTS / "closeups"
     crops.mkdir(exist_ok=True)
-    for i, (title, spoken, qa) in enumerate(SLIDES, 1):
+
+    def small_table(rows, widths):
+        t = d.add_table(rows=0, cols=len(widths))
+        t.style = "Table Grid"
+        for row in rows:
+            cells = t.add_row().cells
+            for c, txt, w in zip(cells, row, widths):
+                c.text = txt
+                c.width = Inches(w)
+                for p in c.paragraphs:
+                    p.paragraph_format.space_after = Pt(0)
+                    for r in p.runs:
+                        r.font.size = Pt(9.5)
+            cells[0].paragraphs[0].runs[0].bold = True
+        d.add_paragraph().paragraph_format.space_after = Pt(0)
+
+    for i, (title, spoken, _) in enumerate(SLIDES, 1):
         heading(f"Slide {i}: {title}", 13)
         shot = SHOTS / f"slide-{i:02d}.png"
         if shot.exists():
@@ -376,20 +459,31 @@ def main():
                 w = min(4.6, (box[2] - box[0]) * 0.62)
                 d.add_picture(str(c), width=Inches(w))
                 d.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
+            if (i, j) in SYMBOLS:
+                h = d.add_paragraph()
+                r = h.add_run("What the symbols mean")
+                r.bold, r.italic = True, True
+                r.font.size = Pt(10)
+                r.font.color.rgb = RGBColor(0x55, 0x52, 0x4E)
+                h.paragraph_format.space_after = Pt(2)
+                small_table(SYMBOLS[(i, j)], (1.7, 4.8))
             d.add_paragraph(para).paragraph_format.space_after = Pt(6)
-        if qa:
-            h = d.add_paragraph()
-            r = h.add_run("If I'm asked")
-            r.bold, r.italic = True, True
-            r.font.color.rgb = RGBColor(0x55, 0x52, 0x4E)
-            for q, a in qa:
-                pq = d.add_paragraph()
-                pq.paragraph_format.left_indent = Inches(0.25)
-                pq.paragraph_format.space_after = Pt(0)
-                pq.add_run(q).bold = True
-                pa = d.add_paragraph(a)
-                pa.paragraph_format.left_indent = Inches(0.25)
-                pa.paragraph_format.space_after = Pt(6)
+
+    d.add_page_break()
+    heading("Questions I might get", 16, 0)
+    p = d.add_paragraph("Grouped by slide. Skim these, no need to memorise them.")
+    p.runs[0].italic = True
+    for i, (title, _, qa) in enumerate(SLIDES, 1):
+        if not qa:
+            continue
+        heading(f"Slide {i}: {title}", 12, 8)
+        for q, a in qa:
+            pq = d.add_paragraph()
+            pq.paragraph_format.space_after = Pt(0)
+            pq.add_run(q).bold = True
+            pa = d.add_paragraph(a)
+            pa.paragraph_format.left_indent = Inches(0.25)
+            pa.paragraph_format.space_after = Pt(6)
     heading("Numbers to have ready", 13)
     t = d.add_table(rows=1, cols=3)
     t.style = "Light Grid Accent 1"
