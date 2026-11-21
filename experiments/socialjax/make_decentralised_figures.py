@@ -66,7 +66,7 @@ def grouped(ax, cells, pop, fn, groups, variants, ylabel, title, pct=False, lege
         ax.set_ylim(*ylim)
     if headroom != 1.0:
         ax.set_ylim(top=ax.get_ylim()[1] * headroom)
-    if pct:
+    if pct and ylim:
         ax.set_yticks(range(0, 101, 20))
     if legend:
         ax.legend(fontsize=6.5, ncol=1, loc="upper left")
