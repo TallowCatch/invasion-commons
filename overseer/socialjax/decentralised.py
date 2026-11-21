@@ -15,10 +15,11 @@ agents act:
   4. a check finds what it can with probability 1 - miss_rate, and wrongly flags an honest act (with nothing pending)
      with probability false_alarm_rate, exactly as in the central wrapper (harvest_overseer.py);
   5. a caught agent pays `penalty` and/or is frozen for `freeze_steps` steps;
-  6. with `share=True`, every `share_every` steps each overseer sends its suspicion scores and its "steps since I
-     last checked each agent" to each neighbouring region (one message per neighbour, `cost_per_message` each), and
-     each overseer keeps the higher suspicion and the more recent check. Only the "history" chooser uses these
-     scores, so sharing changes nothing under random or round-robin checks.
+  6. with `share=True`, every `share_every` steps each overseer sends its suspicion scores to each neighbouring
+     region (one message per neighbour, `cost_per_message` each), and each overseer keeps the higher score. With
+     `share_coverage=True` the message also carries "steps since I last checked each agent", and each overseer
+     keeps the more recent check, so overseers stop re-checking agents a neighbour has just checked. Only the
+     "history" chooser uses these scores, so sharing changes nothing under random or round-robin checks.
 
 Independent overseers know only their own checks and catches. With R = 1 this is the central overseer, and it
 reproduces HarvestOverseer step for step (tests/test_decentralised_overseer.py).
@@ -59,6 +60,7 @@ class DecConfig:
     region_k: tuple = field(default_factory=tuple)  # per-region budgets; empty = k split equally
     share: bool = False
     share_every: int = 1
+    share_coverage: bool = False  # also share when each agent was last checked
     cost_per_message: float = 1.0
     presume: bool = False  # flag acts that look like violations in what the record shows
 
@@ -258,7 +260,8 @@ class DecentralisedOverseer:
             nb_susp = jnp.where(nb[:, :, None], suspicion[None, :, :], -jnp.inf).max(1)
             nb_since = jnp.where(nb[:, :, None], belief_since[None, :, :], jnp.iinfo(jnp.int32).max).min(1)
             suspicion = jnp.where(share_now, jnp.maximum(suspicion, nb_susp), suspicion)
-            belief_since = jnp.where(share_now, jnp.minimum(belief_since, nb_since), belief_since)
+            if cfg.share_coverage:
+                belief_since = jnp.where(share_now, jnp.minimum(belief_since, nb_since), belief_since)
             comm = jnp.where(share_now, self.links * cfg.cost_per_message, 0.0)
 
         s_next = DecState(
