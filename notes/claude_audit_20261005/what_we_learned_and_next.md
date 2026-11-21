@@ -1,5 +1,21 @@
 # What we have learned, and what should come next
 
+## Update 16, 21–22 November 2026: decentralised overseers, Coins and Clean Up (scripted bots)
+
+- **Built** (branch `claude/decentralised-games`):
+  - regional overseers sharing one budget, either independent or sharing scores with neighbours at a message cost; R = 1 reproduces the central overseer exactly (test);
+  - ports to Coins (rule: don't take the other player's coin) and Clean Up (rule: don't eat while polluted unless you cleaned in the last 100 steps);
+  - migrator bots, which cheat where the local overseer has not looked;
+  - a doubled Harvest map with 14 agents;
+  - the trainer with `--env`, `--regions`, `--share`.
+- **Found with bots** (F19; `notes/socialjax/DECENTRALISED_SUMMARY.md`):
+  - splitting wastes budget;
+  - migrators gain about 5× more over-harvests;
+  - sharing suspicion helps, while sharing coverage invites migration;
+  - in Clean Up a check must read the rule's whole window, and presuming guilt collapses the commons.
+- **Next:** 159 IPPO runs on CREATE (`notes/socialjax/DECENTRALISED_README.md`), pilot first. Territory ("don't zap another player") is the next port.
+- **Costs:** laptop CPU only; no Ollama credit used (about $9.35 left).
+
 ## Update 15, 15–16 November 2026: the SocialJax overseer, first learning-agent results
 
 - **Direction (15 Nov):** the main line is a budgeted overseer in SocialJax Harvest (`notes/phd_plan/2026-11-15_phased_plan.md`). Yali's feedback is built in as three dials: sight (k, window), smarts (miss and false-alarm rates; overseer size later) and spend (cost per check and per step seen).

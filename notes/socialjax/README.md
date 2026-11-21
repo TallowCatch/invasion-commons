@@ -103,4 +103,9 @@ Week 2 (done 15 Nov): `week2_bots/results.md`: m = 3, Schelling diagrams, k × f
 
 Phase 2 with IPPO learners (stage 1 done 16 Nov): `phase2_ippo/results.md`. With no overseer the learners strip the orchard in every env (68 apples). Random checks save it once an over-harvest costs an expected 1 apple (chance of a check k/7 × penalty), at any k, and 0.5 apples does nothing. A 50-step freeze fails. History targeting matches random at the end but learns faster. Location targeting fails (5% of over-harvests caught). Stages 2 (overseer switched on late) and 3 (switched off) are queued.
 
+Decentralised overseers and two more games (22 Nov):
+- `DECENTRALISED_README.md` (code, CPU commands, GPU job lists);
+- `DECENTRALISED_SUMMARY.md` (what was found);
+- per-game protocols and results in `harvest/`, `coins/`, `cleanup/`.
+
 CREATE note (16 Nov): node arc-hpc-comp035 shows no GPU, so jobs there silently ran on the CPU. The array script now stops if JAX sees no GPU, and jobs exclude that node.
