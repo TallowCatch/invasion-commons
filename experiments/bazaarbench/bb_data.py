@@ -123,6 +123,18 @@ class FailureObject:
             return tick_to_day(max(all_ticks)) if all_ticks else None
         return None
 
+    def first_tick_at_stage(self, stage_num: int) -> int | None:
+        ticks = [e.tick for d in self.decisions for e in d.evidence
+                 if STAGE_NUM.get(e.stage, 0) >= stage_num and e.tick is not None]
+        return min(ticks) if ticks else None
+
+    def first_tick_visible(self, view: str = "judge") -> int | None:
+        ticks = [e.tick for d in self.decisions for e in d.evidence if e.tick is not None
+                 and not (view in ("no_reasoning", "record") and e.source_kind in REASONING_SOURCE_KINDS)]
+        if view == "record" and self.ftype not in RECORD_TYPES:
+            return None
+        return min(ticks) if ticks else None
+
     def visible_days(self, view: str = "judge") -> set[int]:
         """Days on which a check of this actor would see the failure.
 

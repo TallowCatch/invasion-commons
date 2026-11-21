@@ -31,6 +31,9 @@ One page for the budgeted-overseer work: an overseer that can only check a few a
 | 9 | **Fixing agents that already over-harvest needs more checks, or targeting** | after 50M steps: 1 check 120 apples, 2 checks 172, 4 checks 315, 7 checks 403; repeat offenders first with 2 checks 352 | lead (1 of 3 runs per setting) | below |
 | 10 | An overseer that misses half the time should need twice the penalty | prediction: average penalty × (1 − miss rate) must reach the same level | prediction (running) | `socialjax/phase2_ippo/mistakes_protocol.md` |
 | 11 | False alarms should cost honest agents the same on average whatever the number of checks | prediction | prediction (running) | same |
+| 12 | **BazaarBench (recorded LLM traders): random checks catch about k/20; repeat offenders first is worse than random when nearly everyone plans unsafe acts** | exploit instructions, k = 5 of 20: random 28.5%, repeat offenders 24.6% (past-plan failures: 45% vs 25%) | lead (1 market pair, offline) | `bazaarbench/offline_replay/results.md` |
+| 13 | **BazaarBench: most failures exist only in private reasoning, so what a check can read decides what it catches** | exploit: 998 of 1,051 failures never leave reasoning; a check without reasoning sees at most 5%, record checks 0.2% | lead (GPT-5 labels, 1 tested model) | same |
+| 14 | **BazaarBench: daily checks are too late for harm; fixed local budgets waste a small budget** | everyone checked daily catches 2 and 5 of 15 carried-through failures first; 4 independent overseers at 1 unit catch 0.3–1.2% vs 6–7% central; a 500-token shared board recovers it | lead | same |
 
 The same patterns had already shown up in the earlier non-spatial games:
 - **Fishery with LLM agents:** the expected fine decides (L4).
@@ -91,11 +94,12 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 
 ## Next
 
-- **BazaarBench offline test:** a budgeted overseer replayed on the released judge labels, comparing random with repeat-offenders-first checking, and cheap with expensive checks.
+- **BazaarBench offline test:** done 21 Nov (findings 12–14, branch `claude/bazaarbench-offline`). Next there: a cheap open-model judge for real miss and false-alarm rates, and a tested model that acts on more of its plans.
 - **The plan for using both testbeds:** `phd_plan/2026-11-21_way_forward.md` (written 21 Nov).
 
 ## Log
 
+- **21 Nov (later).** BazaarBench offline replay on two markets (GPT-5.5 base, gpt-oss-120b tested, ordinary vs exploit instructions): findings 12–14. Predictions in `bazaarbench/offline_replay/protocol.md` were written before the replay; 2 of 11 held in full, the other 9 partly or mixed (scorecard in `results.md`).
 - **21 Nov.** Stages 2 and 3 partly in (findings 8 and 9). The mistakes test was submitted. False alarms were redefined to fall only on honest harvests, before any run used them. This tracker was started.
 - **16 Nov.** Stage 1 results (findings 2–7). Wording corrected: the average penalty is (k/7) × penalty, not k × penalty.
 - **15 Nov.** Bots (finding 1) and the break-even point (greed stops paying at about 1 apple of average penalty).
