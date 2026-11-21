@@ -215,3 +215,29 @@ def test_cleanup_short_looks_cannot_prove_free_riding(rules):
     assert long["detected"] > 0
     assert presumed["detected"] == presumed["violations"]  # presuming guilt catches every free-ride ...
     assert presumed["presumed_wrong"] > 0  # ... and flags honest agents who cleaned before the look began
+
+
+# ------------------------------------------------------------------------------------------------ GPU job lists
+def test_gpu_job_lists_parse_with_the_trainer():
+    """Every line of the decentralised job lists (and stage 1) parses with the trainer's own arguments and gives a
+    valid overseer config; names are unique; random checks get the stated average penalty."""
+    import re
+    import shlex
+
+    from experiments.socialjax import decentralised_runs, phase2_runs
+    from experiments.socialjax.train_ippo_overseer import parser
+
+    n_agents = {"harvest": 7, "harvest_large": 14, "coins": 2, "cleanup": 7}
+    names = []
+    for fn in decentralised_runs.LISTS.values():
+        for run, args in fn():
+            a = parser().parse_args(["--out", "x"] + shlex.split(args))
+            DecConfig(k=a.k, chooser=a.chooser if a.k > 0 else "none", window=a.window, regions=a.regions,
+                      layout=a.layout, share=a.share, presume=a.presume)
+            c = re.search(r"_c([0-9.]+)", run)
+            if c and a.chooser == "random":
+                assert a.k / n_agents[a.env] * a.penalty_apples == pytest.approx(float(c.group(1)), rel=1e-3)
+            names.append(run)
+    assert len(names) == len(set(names)) == 4 + 69 + 21 + 45 + 24
+    for _, args in phase2_runs.stage1():
+        parser().parse_args(["--out", "x"] + shlex.split(args))

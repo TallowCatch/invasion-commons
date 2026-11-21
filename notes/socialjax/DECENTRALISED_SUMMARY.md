@@ -27,7 +27,7 @@ And does the overseer carry over to other SocialJax games?
    | Coins | 2 (SocialJax hard-codes two players) | don't take a coin of the other player's colour | one step; read exactly off the rewards (test) |
    | Clean Up | 7 | don't eat while pollution > 0.2 unless you cleaned (removed dirt) in the last 100 steps | needs 100 steps of record; a shorter look can't prove it, or must presume guilt |
 3. **Bots for every game** (`game_bots.py`): honest, greedy, sneaky (cheats once nobody has checked it for 20 steps) and the new **migrator** (cheats only in regions whose own overseer has not checked it for 20 steps, and is drawn to them). Under one overseer the migrator is exactly the sneaky bot (test).
-4. **Tests:** `tests/test_decentralised_overseer.py`, 26 tests. The original 15 in `tests/test_socialjax_overseer.py` still pass.
+4. **Tests:** `tests/test_decentralised_overseer.py`, 27 tests, including one that parses every GPU job line with the trainer. The original 15 in `tests/test_socialjax_overseer.py` still pass.
 5. **Bot sweeps**, with protocols and predictions committed before the runs:
    - Harvest: 31 conditions × 4 populations × 10 seeds;
    - Harvest on the doubled map: 21 × 4 × 5;

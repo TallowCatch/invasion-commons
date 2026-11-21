@@ -233,7 +233,7 @@ def make_eval(cfg, ov_cfg, num_envs):
     return jax.jit(run)
 
 
-def main():
+def parser():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
     ap.add_argument("--k", type=int, default=0)
@@ -260,7 +260,11 @@ def main():
     ap.add_argument("--clean-window", type=int, default=100, help="Clean Up rule: W steps")
     ap.add_argument("--pollution-threshold", type=float, default=0.2, help="Clean Up rule: pollution threshold")
     ap.add_argument("--cost-per-step-seen", type=float, default=0.0)
-    a = ap.parse_args()
+    return ap
+
+
+def main():
+    a = parser().parse_args()
 
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
