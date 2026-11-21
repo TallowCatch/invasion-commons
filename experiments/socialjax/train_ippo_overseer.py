@@ -213,13 +213,16 @@ def main():
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--init-params", default=None, help="msgpack of a previous run's final params")
     ap.add_argument("--eval-envs", type=int, default=64)
+    ap.add_argument("--miss-rate", type=float, default=0.0, help="chance a check misses a real over-harvest")
+    ap.add_argument("--false-alarm", type=float, default=0.0, help="chance a check flags an honest harvest")
     a = ap.parse_args()
 
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     chooser = a.chooser if a.k > 0 or a.chooser == "all" else "none"
     ov_cfg = OverseerConfig(k=a.k, chooser=chooser, min_neighbours=a.min_neighbours, window=a.window,
-                            penalty=a.penalty_apples * APPLE_REWARD, freeze_steps=a.freeze)
+                            penalty=a.penalty_apples * APPLE_REWARD, freeze_steps=a.freeze,
+                            miss_rate=a.miss_rate, false_alarm_rate=a.false_alarm)
     cfg = dict(total_steps=a.total_steps, num_envs=a.num_envs, seed=a.seed, init_params=a.init_params)
     init = Path(a.init_params).read_bytes() if a.init_params else None
     (out / "config.json").write_text(json.dumps(dict(cfg, overseer=asdict(ov_cfg), penalty_apples=a.penalty_apples,

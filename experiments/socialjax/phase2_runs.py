@@ -4,6 +4,7 @@
   python -m experiments.socialjax.phase2_runs stage2 --checkpoints DIR > runs_stage2.tsv   (DIR holds A_seed*/)
   python -m experiments.socialjax.phase2_runs stage3 --checkpoints DIR > runs_stage3.tsv   (switch-off training)
   python -m experiments.socialjax.phase2_runs pilot > runs_pilot.tsv
+  python -m experiments.socialjax.phase2_runs mistakes > runs_mistakes.tsv   (phase2_ippo/mistakes_protocol.md)
 """
 from __future__ import annotations
 
@@ -27,6 +28,16 @@ def stage1():
         yield f"C_freeze50_k2_seed{s}", f"--k 2 --chooser random --freeze 50 --seed {s}"
         for ch in ("history", "location"):
             yield f"D_{ch}_k2_c1.0_seed{s}", f"--k 2 --chooser {ch} --penalty-apples {penalty(2, 1.0)} --seed {s}"
+
+
+def mistakes():
+    """Imperfect overseer, from scratch, 1e8 steps: misses (alpha) and false alarms on honest harvests (beta)."""
+    for s in SEEDS:
+        for k in (1, 7):
+            for c in (1.0, 2.0):
+                p = penalty(k, c)
+                yield f"M_miss50_k{k}_c{c}_seed{s}", f"--k {k} --chooser random --penalty-apples {p} --miss-rate 0.5 --seed {s}"
+                yield f"F_alarm25_k{k}_c{c}_seed{s}", f"--k {k} --chooser random --penalty-apples {p} --false-alarm 0.25 --seed {s}"
 
 
 def stage2(checkpoints):
@@ -55,10 +66,10 @@ def pilot():
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=("stage1", "stage2", "stage3", "pilot"))
+    ap.add_argument("stage", choices=("stage1", "stage2", "stage3", "pilot", "mistakes"))
     ap.add_argument("--checkpoints", default="/scratch/users/k26108758/ippo_overseer")
     a = ap.parse_args()
     runs = {"stage1": stage1, "pilot": pilot, "stage2": lambda: stage2(a.checkpoints),
-            "stage3": lambda: stage3(a.checkpoints)}[a.stage]()
+            "stage3": lambda: stage3(a.checkpoints), "mistakes": mistakes}[a.stage]()
     for name, args in runs:
         print(f"{name}\t{args}")

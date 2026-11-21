@@ -8,8 +8,10 @@ probability 2.5% / 0.5% / 0.1% per step when 3+ / 2 / 1 apples are near it, and 
 Each step, after the agents act:
   1. every agent's over-harvesting this step goes into its evidence window (the last `window` steps);
   2. the overseer picks k agents to check (`chooser`), and sees each checked agent's window;
-  3. a check finds the violations with probability 1 - miss_rate, and raises a false alarm on a clean agent with
-     probability false_alarm_rate (both 0 by default: a perfect inspector);
+  3. a check finds the violations with probability 1 - miss_rate, and wrongly flags an honest harvest (an apple
+     taken within the rule this step, with no violation in the window) with probability false_alarm_rate (both 0 by
+     default: a perfect inspector). Changed 21 Nov 2026 from "any clean agent": a flag on an agent that did nothing
+     is noise it cannot act on, while misjudging honest harvesting is the mistake that discourages honest work;
   4. a caught agent pays `penalty` (subtracted from its reward) and/or is frozen for `freeze_steps` steps
      (its actions are replaced by `stay`);
   5. violations that leave the window unchecked, or that a check fails to see, count as missed.
@@ -62,7 +64,7 @@ class OverseerConfig:
     penalty: float = 0.0  # reward removed from a caught agent (one apple pays num_agents)
     freeze_steps: int = 0  # steps a caught agent is held still
     miss_rate: float = 0.0  # chance a check fails to see violations that are there
-    false_alarm_rate: float = 0.0  # chance a check flags an agent with none
+    false_alarm_rate: float = 0.0  # chance a check flags an honest harvest as a violation
     suspicion_decay: float = 0.95  # for the "history" chooser
     cost_per_check: float = 1.0
     cost_per_step_seen: float = 0.0
@@ -144,7 +146,7 @@ class HarvestOverseer:
         seen = jax.random.uniform(k_miss, (n,)) >= cfg.miss_rate
         alarm = jax.random.uniform(k_alarm, (n,)) < cfg.false_alarm_rate
         detected = checked & (pending > 0) & seen
-        false_alarm = checked & (pending == 0) & alarm
+        false_alarm = checked & (pending == 0) & eaten & alarm  # an honest harvest misjudged
         caught = detected | false_alarm
 
         detected_count = jnp.where(detected, pending, 0)

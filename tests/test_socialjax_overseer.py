@@ -100,6 +100,8 @@ def test_imperfect_inspector(env):
     jumpy = episode(env, ("restrained",) * 7, chooser="all", false_alarm_rate=1.0)
     assert jumpy["wrongly_stopped"] > 0
     assert jumpy["wrongly_stopped"] + jumpy["detected"] <= jumpy["checks"]
+    # false alarms only fall on honest harvests, never on agents that took nothing
+    assert jumpy["wrongly_stopped"] <= jumpy["apples_eaten"]
 
 
 def test_restrained_bots_keep_the_orchard_greedy_bots_strip_it(env):
