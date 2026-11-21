@@ -1,0 +1,23 @@
+{
+ "experiment": "S1b",
+ "profile": "full",
+ "params": {
+  "contexts": 64,
+  "train_contexts": 8,
+  "horizon": 80,
+  "reviewer_draws": 400,
+  "ref_draws": 2000
+ },
+ "seconds": 593.6291627883911,
+ "n_episodes": 7168,
+ "files": {
+  "episodes.jsonl.gz": "47e8dc1ee8c5c55b69847de07aa88e8965e57d204560c54be5161d30193e6bdb",
+  "adaptive_search.json": "5d3b8c254a069d48027bb76976bf0e2c1430d607baa5566197602b8cbf716fca"
+ },
+ "source": {
+  "fishery_sim/calibrated_oversight.py": "27fcea3db0fd795c7814f76eb7346113d6730478e4fa96147ee608122e85e909",
+  "experiments/claude_oversight_common.py": "6df0e104d50b47f01f220b9794e60575688492e2dc7033c088844b0a9053be5a",
+  "experiments/run_s1_reporting_audit.py": "cc44dfee29efba8aa9fad265ebf46b872ddaf7d990b65c5fcd70ba4d15ea2a85",
+  "experiments/run_s1b_ablation_msy.py": "2bf5202c878a2718b1ab6ce8ce1741b4b3a500ff15af47db83fcae316493e68c"
+ }
+}

@@ -6,7 +6,7 @@ from dataclasses import asdict
 import numpy as np
 import pytest
 
-from experiments.run_actor_pressure_pilot import (
+from experiments.archive.harvest_2026q2.run_actor_pressure_pilot import (
     all_jobs, candidates_for, choose_candidates, episode_block, mask_identity,
     partners_for, plan,
 )
@@ -47,7 +47,7 @@ def test_selection_uses_training_scores_only_and_is_nested(monkeypatch):
         return dict(final_payoffs=np.array([candidate_id] + [0] * (game.n_agents - 1)),
                     garden_failure_event=0)
 
-    monkeypatch.setattr("experiments.run_actor_pressure_pilot.run_harvest_episode", fake_run)
+    monkeypatch.setattr("experiments.archive.harvest_2026q2.run_actor_pressure_pilot.run_harvest_episode", fake_run)
     selected = choose_candidates(cfg, 0)
     assert selected["selected"] == {"1": 0, "8": 7}
     assert selected["train_scores"] == list(range(8))

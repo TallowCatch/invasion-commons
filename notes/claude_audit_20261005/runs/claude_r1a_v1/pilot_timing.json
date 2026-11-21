@@ -1,0 +1,16 @@
+{
+  "computed_utc": "2026-10-14T15:29:30Z",
+  "runs": 2,
+  "generations": 200,
+  "n": 64,
+  "e": 0,
+  "processes": 2,
+  "wall_s": 64.1,
+  "per_run_s": [
+    63.52,
+    44.95
+  ],
+  "per_generation_s": 0.271175,
+  "host_cpus": 8,
+  "note": "pilot runs use run indices 9000-9001 (seeds R1A_BASE + 9000..9001); not analysed"
+}

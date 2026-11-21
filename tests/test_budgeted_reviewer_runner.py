@@ -3,7 +3,7 @@ import json
 import pandas as pd
 import pytest
 
-from experiments.run_budgeted_reviewer import (
+from experiments.common.run_budgeted_reviewer import (
     jobs_for, plan, run, verify_completion,
 )
 

@@ -1,0 +1,527 @@
+[
+ {
+  "game": "harvest",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": true,
+  "sanction": "excl+fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -105.23991884730319,
+   "0.5": -105.23991884730319,
+   "0.75": -105.23991884730319
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": true,
+  "sanction": "fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -584.6350943905469,
+   "0.5": -585.316461925991,
+   "0.75": -585.7787514961071
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": true,
+  "sanction": "none",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": 66.36490560945313,
+   "0.5": 65.68353807400896,
+   "0.75": 65.2212485038929
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": false,
+  "sanction": "excl+fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -105.23991884730319,
+   "0.5": -105.23991884730319,
+   "0.75": -105.23991884730319
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": false,
+  "sanction": "fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -585.0364547480083,
+   "0.5": -585.5234695241917,
+   "0.75": -586.2064245592358
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": false,
+  "sanction": "none",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": 65.96354525199175,
+   "0.5": 65.47653047580835,
+   "0.75": 64.79357544076426
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "targ1",
+  "part": "A",
+  "belief": true,
+  "sanction": "excl+fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -129.42568885219688,
+   "0.5": -186.17343925860848,
+   "0.75": -209.99782478123288
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "targ1",
+  "part": "A",
+  "belief": true,
+  "sanction": "fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -49.3619970656174,
+   "0.5": -77.38031046398939,
+   "0.75": -105.28085098228979
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "targ1",
+  "part": "A",
+  "belief": true,
+  "sanction": "none",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": 67.6380029343826,
+   "0.5": 66.61968953601061,
+   "0.75": 65.71914901771022
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "targ1",
+  "part": "A",
+  "belief": false,
+  "sanction": "excl+fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -129.42568885219688,
+   "0.5": -186.17343925860848,
+   "0.75": -209.99782478123288
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "targ1",
+  "part": "A",
+  "belief": false,
+  "sanction": "fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -73.53645474800825,
+   "0.5": -111.52346952419165,
+   "0.75": -131.70642455923576
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "targ1",
+  "part": "A",
+  "belief": false,
+  "sanction": "none",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": 65.96354525199175,
+   "0.5": 65.47653047580835,
+   "0.75": 64.79357544076426
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "peer",
+  "part": "A",
+  "belief": true,
+  "sanction": "excl+fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -336.0,
+   "0.5": -336.0,
+   "0.75": -336.0
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "peer",
+  "part": "A",
+  "belief": true,
+  "sanction": "fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -1852.2209193508045,
+   "0.5": -1852.2209193508045,
+   "0.75": -1852.2209193508045
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "peer",
+  "part": "A",
+  "belief": true,
+  "sanction": "none",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": 67.77908064919555,
+   "0.5": 67.77908064919555,
+   "0.75": 67.77908064919555
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "peer",
+  "part": "A",
+  "belief": false,
+  "sanction": "excl+fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -336.0,
+   "0.5": -336.0,
+   "0.75": -336.0
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "peer",
+  "part": "A",
+  "belief": false,
+  "sanction": "fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": -1854.0364547480083,
+   "0.5": -1854.5234695241916,
+   "0.75": -1855.2064245592358
+  }
+ },
+ {
+  "game": "harvest",
+  "protocol": "peer",
+  "part": "A",
+  "belief": false,
+  "sanction": "none",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 67.77908064919555,
+   "0.25": 65.96354525199175,
+   "0.5": 65.47653047580835,
+   "0.75": 64.79357544076426
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": true,
+  "sanction": "excl+fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": -372.50381364713405,
+   "0.5": -372.50381364713405,
+   "0.75": -372.50381364713405
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": true,
+  "sanction": "fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": -679.2177940957372,
+   "0.5": -262.46182645152317,
+   "0.75": -133.0661480383626
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": true,
+  "sanction": "none",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": 391.7822059042627,
+   "0.5": 241.5381735484768,
+   "0.75": 193.9338519616374
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": false,
+  "sanction": "excl+fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": -372.50381364713405,
+   "0.5": -372.50381364713405,
+   "0.75": -372.50381364713405
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": false,
+  "sanction": "fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": -368.0079375521117,
+   "0.5": -132.2429280439868,
+   "0.75": -78.40589343662435
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "rand2",
+  "part": "A",
+  "belief": false,
+  "sanction": "none",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": 279.9920624478883,
+   "0.5": 196.2570719560132,
+   "0.75": 178.09410656337565
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "peer",
+  "part": "A",
+  "belief": true,
+  "sanction": "excl+fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": -672.0,
+   "0.5": -672.0,
+   "0.75": -672.0
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "peer",
+  "part": "A",
+  "belief": true,
+  "sanction": "fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": -3357.718182031959,
+   "0.5": -3357.718182031959,
+   "0.75": -3357.718182031959
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "peer",
+  "part": "A",
+  "belief": true,
+  "sanction": "none",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": 482.2818179680413,
+   "0.5": 482.2818179680413,
+   "0.75": 482.2818179680413
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "peer",
+  "part": "A",
+  "belief": false,
+  "sanction": "excl+fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": -672.0,
+   "0.5": -672.0,
+   "0.75": -672.0
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "peer",
+  "part": "A",
+  "belief": false,
+  "sanction": "fine",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": -1628.0079375521118,
+   "0.5": -793.7429280439869,
+   "0.75": -571.9058934366244
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "peer",
+  "part": "A",
+  "belief": false,
+  "sanction": "none",
+  "target": "one_step",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 482.2818179680413,
+   "0.25": 279.9920624478883,
+   "0.5": 196.2570719560132,
+   "0.75": 178.09410656337565
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "report",
+  "part": "B",
+  "belief": true,
+  "sanction": "excl+fine",
+  "target": "msy",
+  "d_star": 0.25,
+  "train_scores": {
+   "0.0": 1179.9589291440589,
+   "0.25": 1188.2374180228921,
+   "0.5": 1184.245757022034,
+   "0.75": 1172.7583756339036
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "rand1",
+  "part": "B",
+  "belief": true,
+  "sanction": "excl+fine",
+  "target": "msy",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 1179.9589291440589,
+   "0.25": 106.74515126905521,
+   "0.5": 107.21165377955073,
+   "0.75": 107.21165377955073
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "rand2",
+  "part": "B",
+  "belief": true,
+  "sanction": "excl+fine",
+  "target": "msy",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 1179.9589291440589,
+   "0.25": -372.50381364713405,
+   "0.5": -372.50381364713405,
+   "0.75": -372.50381364713405
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "peer",
+  "part": "B",
+  "belief": true,
+  "sanction": "excl+fine",
+  "target": "msy",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 1179.9589291440589,
+   "0.25": -672.0,
+   "0.5": -672.0,
+   "0.75": -672.0
+  }
+ },
+ {
+  "game": "fishery",
+  "protocol": "peer_collude",
+  "part": "B",
+  "belief": true,
+  "sanction": "excl+fine",
+  "target": "msy",
+  "d_star": 0.0,
+  "train_scores": {
+   "0.0": 1179.9589291440589,
+   "0.25": 718.3216609848891,
+   "0.5": 709.8288319668313,
+   "0.75": 709.5870524989971
+  }
+ }
+]

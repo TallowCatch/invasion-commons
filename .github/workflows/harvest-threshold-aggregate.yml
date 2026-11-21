@@ -86,7 +86,7 @@ jobs:
 
       - name: Merge threshold replay summaries
         run: |
-          python -m experiments.merge_threshold_replay_shards \
+          python -m experiments.archive.harvest_2026q2.merge_threshold_replay_shards \
             --input-dir downloaded \
             --merged-prefix "results/runs/threshold_replay/curated/${{ steps.config.outputs.output_name }}" \
             --summary-csv "results/runs/showcase/curated/${{ steps.config.outputs.output_name }}.csv" \
@@ -94,7 +94,7 @@ jobs:
 
       - name: Analyze threshold replay grid
         run: |
-          python -m experiments.analyze_threshold_replay_grid \
+          python -m experiments.paper_v5.analyze_threshold_replay_grid \
             --input-csv "results/runs/showcase/curated/${{ steps.config.outputs.output_name }}.csv" \
             --output-prefix "results/runs/showcase/curated/${{ steps.config.outputs.output_name }}"
 

@@ -1,0 +1,907 @@
+{
+ "A": {
+  "cells": [
+   {
+    "regime": "none",
+    "q": null,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 107.73664902500113,
+     "ci": [
+      101.6016977626837,
+      113.73514297481972
+     ]
+    },
+    "honest_per_agent": 43.72379614063095,
+    "total_harvest": 1379.2087461051212,
+    "target_breaking": 1.0,
+    "audits_per_context": 0.0,
+    "catches_per_context": 0.0,
+    "collapsed": 0,
+    "net_c0": 1379.2087461051212,
+    "net_c0.02": 1379.2087461051212,
+    "net_c0.05": 1379.2087461051212,
+    "net_c0.1": 1379.2087461051212,
+    "net_c0.2": 1379.2087461051212
+   },
+   {
+    "regime": "fine",
+    "q": 0.01,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 89.92414902500113,
+     "ci": [
+      83.26963634048353,
+      96.26403193904945
+     ]
+    },
+    "honest_per_agent": 43.72379614063095,
+    "total_harvest": 1379.2087461051212,
+    "target_breaking": 1.0,
+    "audits_per_context": 4.453125,
+    "catches_per_context": 2.96875,
+    "collapsed": 0,
+    "net_c0": 1379.2087461051212,
+    "net_c0.02": 1379.1196836051213,
+    "net_c0.05": 1378.986089855121,
+    "net_c0.1": 1378.763433605121,
+    "net_c0.2": 1378.318121105121,
+    "gain_minus_none": {
+     "estimate": -17.8125,
+     "ci": [
+      -20.4375,
+      -15.375
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   {
+    "regime": "fine",
+    "q": 0.02,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 69.58039902500113,
+     "ci": [
+      62.016475373076375,
+      77.25389085406145
+     ]
+    },
+    "honest_per_agent": 43.72379614063095,
+    "total_harvest": 1379.2087461051212,
+    "target_breaking": 1.0,
+    "audits_per_context": 9.65625,
+    "catches_per_context": 6.359375,
+    "collapsed": 0,
+    "net_c0": 1379.2087461051212,
+    "net_c0.02": 1379.015621105121,
+    "net_c0.05": 1378.7259336051213,
+    "net_c0.1": 1378.2431211051212,
+    "net_c0.2": 1377.2774961051211,
+    "gain_minus_none": {
+     "estimate": -38.15625,
+     "ci": [
+      -42.09375,
+      -34.3125
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   {
+    "regime": "fine",
+    "q": 0.05,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 8.736649025001125,
+     "ci": [
+      0.32587969536987665,
+      17.19190406250262
+     ]
+    },
+    "honest_per_agent": 43.72379614063095,
+    "total_harvest": 1379.2087461051212,
+    "target_breaking": 1.0,
+    "audits_per_context": 24.828125,
+    "catches_per_context": 16.5,
+    "collapsed": 0,
+    "net_c0": 1379.2087461051212,
+    "net_c0.02": 1378.712183605121,
+    "net_c0.05": 1377.9673398551213,
+    "net_c0.1": 1376.725933605121,
+    "net_c0.2": 1374.2431211051212,
+    "gain_minus_none": {
+     "estimate": -99.0,
+     "ci": [
+      -104.25,
+      -93.84140624999999
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   {
+    "regime": "fine",
+    "q": 0.1,
+    "d_star": 0.0,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ]
+    },
+    "honest_per_agent": 104.80876327632285,
+    "total_harvest": 1393.6420313515036,
+    "target_breaking": 0.0,
+    "audits_per_context": 46.15625,
+    "catches_per_context": 0.0,
+    "collapsed": 0,
+    "net_c0": 1393.6420313515036,
+    "net_c0.02": 1392.7189063515038,
+    "net_c0.05": 1391.334218851504,
+    "net_c0.1": 1389.0264063515037,
+    "net_c0.2": 1384.4107813515038,
+    "gain_minus_none": {
+     "estimate": -107.73664902500113,
+     "ci": [
+      -113.84762855618435,
+      -101.69681626013016
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -1.0,
+     "ci": [
+      -1.0,
+      -1.0
+     ]
+    }
+   },
+   {
+    "regime": "fine",
+    "q": 0.16666666666666666,
+    "d_star": 0.0,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ]
+    },
+    "honest_per_agent": 104.80876327632285,
+    "total_harvest": 1393.6420313515036,
+    "target_breaking": 0.0,
+    "audits_per_context": 80.78125,
+    "catches_per_context": 0.0,
+    "collapsed": 0,
+    "net_c0": 1393.6420313515036,
+    "net_c0.02": 1392.0264063515037,
+    "net_c0.05": 1389.6029688515039,
+    "net_c0.1": 1385.5639063515036,
+    "net_c0.2": 1377.4857813515039,
+    "gain_minus_none": {
+     "estimate": -107.73664902500113,
+     "ci": [
+      -113.57291307080337,
+      -101.87122606252802
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -1.0,
+     "ci": [
+      -1.0,
+      -1.0
+     ]
+    }
+   },
+   {
+    "regime": "fine",
+    "q": 0.3333333333333333,
+    "d_star": 0.0,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ]
+    },
+    "honest_per_agent": 104.80876327632285,
+    "total_harvest": 1393.6420313515036,
+    "target_breaking": 0.0,
+    "audits_per_context": 159.078125,
+    "catches_per_context": 0.0,
+    "collapsed": 0,
+    "net_c0": 1393.6420313515036,
+    "net_c0.02": 1390.4604688515037,
+    "net_c0.05": 1385.6881251015038,
+    "net_c0.1": 1377.7342188515038,
+    "net_c0.2": 1361.826406351504,
+    "gain_minus_none": {
+     "estimate": -107.73664902500113,
+     "ci": [
+      -113.63217119974851,
+      -101.6850335108248
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -1.0,
+     "ci": [
+      -1.0,
+      -1.0
+     ]
+    }
+   },
+   {
+    "regime": "memory",
+    "q": 0.01,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 97.33152733186071,
+     "ci": [
+      91.49742682953378,
+      103.32301280395237
+     ]
+    },
+    "honest_per_agent": 51.18732274712805,
+    "total_harvest": 1383.7306776249748,
+    "target_breaking": 0.988671875,
+    "audits_per_context": 4.453125,
+    "catches_per_context": 2.96875,
+    "collapsed": 0,
+    "net_c0": 1383.7306776249748,
+    "net_c0.02": 1383.641615124975,
+    "net_c0.05": 1383.5080213749748,
+    "net_c0.1": 1383.285365124975,
+    "net_c0.2": 1382.8400526249748,
+    "gain_minus_none": {
+     "estimate": -10.405121693140408,
+     "ci": [
+      -13.514286554666521,
+      -7.551741605886097
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -0.011328125000000022,
+     "ci": [
+      -0.022070312500000022,
+      -0.0027343749999999556
+     ]
+    }
+   },
+   {
+    "regime": "memory",
+    "q": 0.02,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 84.9860636660006,
+     "ci": [
+      78.90518877370967,
+      91.23705420606332
+     ]
+    },
+    "honest_per_agent": 58.640711536915745,
+    "total_harvest": 1386.2919915386901,
+    "target_breaking": 0.926171875,
+    "audits_per_context": 9.65625,
+    "catches_per_context": 6.34375,
+    "collapsed": 0,
+    "net_c0": 1386.2919915386901,
+    "net_c0.02": 1386.0988665386903,
+    "net_c0.05": 1385.8091790386902,
+    "net_c0.1": 1385.3263665386903,
+    "net_c0.2": 1384.3607415386903,
+    "gain_minus_none": {
+     "estimate": -22.75058535900052,
+     "ci": [
+      -27.17881143563595,
+      -18.42204554062204
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -0.07382812500000002,
+     "ci": [
+      -0.1123046875,
+      -0.03964843750000002
+     ]
+    }
+   },
+   {
+    "regime": "memory",
+    "q": 0.05,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 65.23828586594291,
+     "ci": [
+      58.558708541877984,
+      72.01850577998952
+     ]
+    },
+    "honest_per_agent": 70.9927526569584,
+    "total_harvest": 1391.248295978718,
+    "target_breaking": 0.6880859375,
+    "audits_per_context": 24.828125,
+    "catches_per_context": 16.40625,
+    "collapsed": 0,
+    "net_c0": 1391.248295978718,
+    "net_c0.02": 1390.7517334787178,
+    "net_c0.05": 1390.0068897287179,
+    "net_c0.1": 1388.7654834787177,
+    "net_c0.2": 1386.2826709787178,
+    "gain_minus_none": {
+     "estimate": -42.498363159058215,
+     "ci": [
+      -48.81478305052208,
+      -36.21157193053074
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -0.3119140625,
+     "ci": [
+      -0.3775439453125,
+      -0.24413574218749998
+     ]
+    }
+   },
+   {
+    "regime": "memory",
+    "q": 0.1,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 54.438960335809114,
+     "ci": [
+      47.90849756954141,
+      61.328230819247786
+     ]
+    },
+    "honest_per_agent": 77.70420029145922,
+    "total_harvest": 1393.871865717586,
+    "target_breaking": 0.532421875,
+    "audits_per_context": 46.15625,
+    "catches_per_context": 30.234375,
+    "collapsed": 0,
+    "net_c0": 1393.871865717586,
+    "net_c0.02": 1392.9487407175857,
+    "net_c0.05": 1391.5640532175858,
+    "net_c0.1": 1389.2562407175856,
+    "net_c0.2": 1384.6406157175857,
+    "gain_minus_none": {
+     "estimate": -53.29768868919201,
+     "ci": [
+      -59.898990540284224,
+      -46.48822012830918
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -0.46757812499999996,
+     "ci": [
+      -0.5437548828125,
+      -0.38944824218749996
+     ]
+    }
+   },
+   {
+    "regime": "memory",
+    "q": 0.16666666666666666,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 48.21821842980651,
+     "ci": [
+      41.205714303262376,
+      55.60670387583999
+     ]
+    },
+    "honest_per_agent": 81.96340081312725,
+    "total_harvest": 1396.1695248549192,
+    "target_breaking": 0.448046875,
+    "audits_per_context": 80.78125,
+    "catches_per_context": 54.078125,
+    "collapsed": 0,
+    "net_c0": 1396.1695248549192,
+    "net_c0.02": 1394.553899854919,
+    "net_c0.05": 1392.1304623549192,
+    "net_c0.1": 1388.091399854919,
+    "net_c0.2": 1380.013274854919,
+    "gain_minus_none": {
+     "estimate": -59.51843059519461,
+     "ci": [
+      -67.28423139222099,
+      -52.35854210828874
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -0.551953125,
+     "ci": [
+      -0.6378955078125,
+      -0.46366699218749996
+     ]
+    }
+   },
+   {
+    "regime": "memory",
+    "q": 0.3333333333333333,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 44.69523867311133,
+     "ci": [
+      37.60103433178377,
+      52.08313014785258
+     ]
+    },
+    "honest_per_agent": 84.85191509479043,
+    "total_harvest": 1398.4235736615503,
+    "target_breaking": 0.387890625,
+    "audits_per_context": 159.078125,
+    "catches_per_context": 104.453125,
+    "collapsed": 0,
+    "net_c0": 1398.4235736615503,
+    "net_c0.02": 1395.2420111615504,
+    "net_c0.05": 1390.4696674115503,
+    "net_c0.1": 1382.5157611615502,
+    "net_c0.2": 1366.6079486615504,
+    "gain_minus_none": {
+     "estimate": -63.041410351889795,
+     "ci": [
+      -70.81003127162762,
+      -55.44900364014744
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -0.612109375,
+     "ci": [
+      -0.7023486328125,
+      -0.5113232421875
+     ]
+    }
+   },
+   {
+    "regime": "fine+memory",
+    "q": 0.01,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 79.51902733186071,
+     "ci": [
+      72.61663073079058,
+      85.99129059472308
+     ]
+    },
+    "honest_per_agent": 51.18732274712805,
+    "total_harvest": 1383.7306776249748,
+    "target_breaking": 0.988671875,
+    "audits_per_context": 4.453125,
+    "catches_per_context": 2.96875,
+    "collapsed": 0,
+    "net_c0": 1383.7306776249748,
+    "net_c0.02": 1383.641615124975,
+    "net_c0.05": 1383.5080213749748,
+    "net_c0.1": 1383.285365124975,
+    "net_c0.2": 1382.8400526249748,
+    "gain_minus_none": {
+     "estimate": -28.21762169314041,
+     "ci": [
+      -33.164554140987924,
+      -23.554601820419734
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -0.011328125000000022,
+     "ci": [
+      -0.021874999999999978,
+      -0.0025341796875000032
+     ]
+    }
+   },
+   {
+    "regime": "fine+memory",
+    "q": 0.02,
+    "d_star": 0.75,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 46.923563666000604,
+     "ci": [
+      38.03242271421185,
+      55.453136237014945
+     ]
+    },
+    "honest_per_agent": 58.640711536915745,
+    "total_harvest": 1386.2919915386901,
+    "target_breaking": 0.926171875,
+    "audits_per_context": 9.65625,
+    "catches_per_context": 6.34375,
+    "collapsed": 0,
+    "net_c0": 1386.2919915386901,
+    "net_c0.02": 1386.0988665386903,
+    "net_c0.05": 1385.8091790386902,
+    "net_c0.1": 1385.3263665386903,
+    "net_c0.2": 1384.3607415386903,
+    "gain_minus_none": {
+     "estimate": -60.813085359000524,
+     "ci": [
+      -68.03589813027291,
+      -53.68566847651209
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -0.07382812500000002,
+     "ci": [
+      -0.11191406250000002,
+      -0.039643554687500006
+     ]
+    }
+   },
+   {
+    "regime": "fine+memory",
+    "q": 0.05,
+    "d_star": 0.0,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ]
+    },
+    "honest_per_agent": 104.80876327632285,
+    "total_harvest": 1393.6420313515036,
+    "target_breaking": 0.0,
+    "audits_per_context": 24.828125,
+    "catches_per_context": 0.0,
+    "collapsed": 0,
+    "net_c0": 1393.6420313515036,
+    "net_c0.02": 1393.1454688515037,
+    "net_c0.05": 1392.4006251015037,
+    "net_c0.1": 1391.159218851504,
+    "net_c0.2": 1388.6764063515038,
+    "gain_minus_none": {
+     "estimate": -107.73664902500113,
+     "ci": [
+      -113.95038858468462,
+      -101.65110341207507
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -1.0,
+     "ci": [
+      -1.0,
+      -1.0
+     ]
+    }
+   },
+   {
+    "regime": "fine+memory",
+    "q": 0.1,
+    "d_star": 0.0,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ]
+    },
+    "honest_per_agent": 104.80876327632285,
+    "total_harvest": 1393.6420313515036,
+    "target_breaking": 0.0,
+    "audits_per_context": 46.15625,
+    "catches_per_context": 0.0,
+    "collapsed": 0,
+    "net_c0": 1393.6420313515036,
+    "net_c0.02": 1392.7189063515038,
+    "net_c0.05": 1391.334218851504,
+    "net_c0.1": 1389.0264063515037,
+    "net_c0.2": 1384.4107813515038,
+    "gain_minus_none": {
+     "estimate": -107.73664902500113,
+     "ci": [
+      -113.83180495162284,
+      -101.60051820345153
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -1.0,
+     "ci": [
+      -1.0,
+      -1.0
+     ]
+    }
+   },
+   {
+    "regime": "fine+memory",
+    "q": 0.16666666666666666,
+    "d_star": 0.0,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ]
+    },
+    "honest_per_agent": 104.80876327632285,
+    "total_harvest": 1393.6420313515036,
+    "target_breaking": 0.0,
+    "audits_per_context": 80.78125,
+    "catches_per_context": 0.0,
+    "collapsed": 0,
+    "net_c0": 1393.6420313515036,
+    "net_c0.02": 1392.0264063515037,
+    "net_c0.05": 1389.6029688515039,
+    "net_c0.1": 1385.5639063515036,
+    "net_c0.2": 1377.4857813515039,
+    "gain_minus_none": {
+     "estimate": -107.73664902500113,
+     "ci": [
+      -113.78914109624006,
+      -101.46054385557095
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -1.0,
+     "ci": [
+      -1.0,
+      -1.0
+     ]
+    }
+   },
+   {
+    "regime": "fine+memory",
+    "q": 0.3333333333333333,
+    "d_star": 0.0,
+    "reaction": "continue",
+    "cheater_gain": {
+     "estimate": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ]
+    },
+    "honest_per_agent": 104.80876327632285,
+    "total_harvest": 1393.6420313515036,
+    "target_breaking": 0.0,
+    "audits_per_context": 159.078125,
+    "catches_per_context": 0.0,
+    "collapsed": 0,
+    "net_c0": 1393.6420313515036,
+    "net_c0.02": 1390.4604688515037,
+    "net_c0.05": 1385.6881251015038,
+    "net_c0.1": 1377.7342188515038,
+    "net_c0.2": 1361.826406351504,
+    "gain_minus_none": {
+     "estimate": -107.73664902500113,
+     "ci": [
+      -113.90991944719664,
+      -101.69006074997465
+     ]
+    },
+    "breaking_minus_none": {
+     "estimate": -1.0,
+     "ci": [
+      -1.0,
+      -1.0
+     ]
+    }
+   }
+  ],
+  "q_star": {
+   "fine_c0": {
+    "q_star": 0.1,
+    "net": 1393.6420313515036,
+    "best_is_no_audits": false
+   },
+   "memory_c0": {
+    "q_star": 0.3333333333333333,
+    "net": 1398.4235736615503,
+    "best_is_no_audits": false
+   },
+   "fine+memory_c0": {
+    "q_star": 0.05,
+    "net": 1393.6420313515036,
+    "best_is_no_audits": false
+   },
+   "fine_c0.02": {
+    "q_star": 0.1,
+    "net": 1392.7189063515038,
+    "best_is_no_audits": false
+   },
+   "memory_c0.02": {
+    "q_star": 0.3333333333333333,
+    "net": 1395.2420111615504,
+    "best_is_no_audits": false
+   },
+   "fine+memory_c0.02": {
+    "q_star": 0.05,
+    "net": 1393.1454688515037,
+    "best_is_no_audits": false
+   },
+   "fine_c0.05": {
+    "q_star": 0.1,
+    "net": 1391.334218851504,
+    "best_is_no_audits": false
+   },
+   "memory_c0.05": {
+    "q_star": 0.16666666666666666,
+    "net": 1392.1304623549192,
+    "best_is_no_audits": false
+   },
+   "fine+memory_c0.05": {
+    "q_star": 0.05,
+    "net": 1392.4006251015037,
+    "best_is_no_audits": false
+   },
+   "fine_c0.1": {
+    "q_star": 0.1,
+    "net": 1389.0264063515037,
+    "best_is_no_audits": false
+   },
+   "memory_c0.1": {
+    "q_star": 0.1,
+    "net": 1389.2562407175856,
+    "best_is_no_audits": false
+   },
+   "fine+memory_c0.1": {
+    "q_star": 0.05,
+    "net": 1391.159218851504,
+    "best_is_no_audits": false
+   },
+   "fine_c0.2": {
+    "q_star": 0.1,
+    "net": 1384.4107813515038,
+    "best_is_no_audits": false
+   },
+   "memory_c0.2": {
+    "q_star": 0.05,
+    "net": 1386.2826709787178,
+    "best_is_no_audits": false
+   },
+   "fine+memory_c0.2": {
+    "q_star": 0.05,
+    "net": 1388.6764063515038,
+    "best_is_no_audits": false
+   }
+  },
+  "fine+memory_minus_fine_honest_q0.01": {
+   "estimate": 7.463526606497094,
+   "ci": [
+    5.701714195237947,
+    9.498120753542352
+   ]
+  },
+  "fine+memory_minus_fine_honest_q0.02": {
+   "estimate": 14.916915396284796,
+   "ci": [
+    12.469664095991403,
+    17.31484575718468
+   ]
+  },
+  "hypotheses": {
+   "A_H1_below_none": true,
+   "A_H1_nonincreasing": true,
+   "A_H1_gains": [
+    97.33152733186071,
+    84.9860636660006,
+    65.23828586594291,
+    54.438960335809114,
+    48.21821842980651,
+    44.69523867311133
+   ],
+   "A_H2": true,
+   "A_H3": true,
+   "A_H3_dstar": {
+    "0.01": 0.75,
+    "0.02": 0.75,
+    "0.05": 0.75,
+    "0.1": 0.0,
+    "0.1667": 0.0,
+    "0.3333": 0.0
+   },
+   "A_H4": true,
+   "A_H5": true,
+   "A_H6": true
+  }
+ },
+ "B": {
+  "search": [
+   {
+    "game": "harvest",
+    "target": "one_step",
+    "d_star": 0.0,
+    "train_scores": {
+     "0.0": 67.77908064919555,
+     "0.25": 67.37797093542642,
+     "0.5": 66.79116851287012,
+     "0.75": 66.11472321588818
+    }
+   },
+   {
+    "game": "fishery",
+    "target": "one_step",
+    "d_star": 0.0,
+    "train_scores": {
+     "0.0": 482.2818179680413,
+     "0.25": 482.2818179680413,
+     "0.5": 482.2818179680413,
+     "0.75": 482.2818179680413
+    }
+   },
+   {
+    "game": "fishery",
+    "target": "msy",
+    "d_star": 0.5,
+    "train_scores": {
+     "0.0": 1179.9589291440589,
+     "0.25": 1179.9589291440589,
+     "0.5": 1180.4211461609343,
+     "0.75": 1180.3303350505748
+    }
+   }
+  ],
+  "harvest_one_step": {
+   "d_star": 0.0
+  },
+  "fishery_one_step": {
+   "d_star": 0.0
+  },
+  "fishery_msy": {
+   "d_star": 0.5,
+   "liar_gain": {
+    "estimate": 0.24984284185894268,
+    "ci": [
+     -0.08910872642038957,
+     0.6319611401378101
+    ]
+   },
+   "unsafe_fixed_diff": {
+    "estimate": 0.0,
+    "ci": [
+     0.0,
+     0.0
+    ]
+   },
+   "breaking_diff": {
+    "estimate": 0.035546875,
+    "ci": [
+     0.030859375,
+     0.040625
+    ]
+   },
+   "honest_diff": {
+    "estimate": -0.002648134593667084,
+    "ci": [
+     -0.09745842660224323,
+     0.0884417099809133
+    ]
+   }
+  },
+  "hypotheses": {
+   "B_H1": false
+  }
+ }
+}

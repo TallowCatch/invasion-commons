@@ -1,0 +1,15 @@
+{
+  "computed_utc": "2026-10-14T15:30:13Z",
+  "generations": 50,
+  "processes": 7,
+  "wall_s": 34.4,
+  "per_generation_s": {
+    "n4_base": 0.3892,
+    "n4_q0.1_e1.25": 0.6424,
+    "n4_q0.25_e1.25": 0.6686,
+    "n64_q0.1_e1.25": 0.3146,
+    "n64_q0.25_e1.25": 0.3362,
+    "n64_q0.1_e2.0": 0.31980000000000003
+  },
+  "note": "timing probes, run indices 9100+, not analysed"
+}

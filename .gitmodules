@@ -1,3 +1,6 @@
 [submodule "external/GovSim"]
 	path = external/GovSim
 	url = https://github.com/giorgiopiatti/GovSim.git
+[submodule "external/emergent_llm"]
+	path = external/emergent_llm
+	url = https://github.com/willis-richard/emergent_llm

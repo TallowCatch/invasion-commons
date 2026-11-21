@@ -1,0 +1,80 @@
+% Paper exhibits with draft captions. Every number in a caption is read from saved run tables
+% (experiments/oversight/make_paper_exhibits.py and the per-study results notes).
+% Plain-language rule: every technical term used here is defined in the Key terms table.
+
+\begin{table}[H]
+  \centering\small
+  \caption{\textbf{Key terms.} The words used in the figures and tables, in plain language.}
+  \label{tab:glossary}
+  \input{tables/table0_glossary.tex}
+\end{table}
+
+\begin{table}[H]
+  \centering\small
+  \caption{\textbf{The three games.} Following GovSim (\textsc{Fishery}, \textsc{Pasture}, \textsc{Pollution}), each game is named after its resource. All three follow the step in Figure~\ref{fig:step}; they differ in how agents' actions add up to harm. In \textsc{River}, two pollutants do little damage alone and much more together, like the synergistic chemical mixtures of ecotoxicology (Cedergreen 2014).}
+  \label{tab:games}
+  \resizebox{\textwidth}{!}{\input{tables/table1_games.tex}}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \resizebox{\textwidth}{!}{\input{figures/fig_networks.tex}}
+  \caption{How harm connects the agents in each game. (a)~\textsc{Fishery} is a star: six agents draw on one stock, so each agent's catch lowers what all can take next round; the reviewer's single shared cut (dashed ring) also links every agent, in all three games. (b)~\textsc{Forest} is a ring: each agent cuts its own plot, and over-cutting damages the two neighbouring plots ($0.12$ of the excess each). (c)~\textsc{River} is a mixing junction: three agents discharge reagent $X$ and three reagent $Y$; damage $\kappa XY+\lambda(X+Y)$ comes mainly from the two together, so no single discharge looks harmful on its own.}
+  \label{fig:networks}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig2_reviewer.pdf}
+  \caption{\textbf{What the reviewer aims for, and what it knows, decide how well it protects the resource.} Top row, \textsc{Fishery}: (a)~fish stock over one run when the reviewer sees all requests (4 greedy agents; line: middle run, band: 80\% of 64 populations). With only the safety line, the stock is fished down to just above 10; with the MSY target it stays near 70. (b)~Total harvest in six settings (``4g 0.7'' = 4 greedy agents, regrowth 0.7; $^\dagger$ the pilot setting). The MSY target gives more wherever the safety line limits anything (1,394 against 544 in the pilot setting). (c)~Share of runs in which the stock collapsed when the reviewer's model is wrong: 41\% (regrowth overestimated) and 78\% (an unknown tipping point) with the safety line, 0\% with the MSY target. Bottom row, \textsc{Forest}: (d)~risky requests let through and (e)~safe requests blocked, when one part of the reviewer's model is wrong. The direction of the error decides the mistake: thinking regrowth is faster lets 82\% of risky requests through; thinking it slower blocks 42\% of safe ones. The cautious local reviewer blocks most safe requests in every case. (f)~A joint reviewer that learns the model while running lets through 16\% of risky requests early and 2.5\% late. Error bars: 95\% intervals.}
+  \label{fig:reviewer}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig3_audits.pdf}
+  \caption{\textbf{What makes audits work: memory, an expected fine above the gain, and audits that reach everyone.} (a)~Under-reporters in nine settings (one random audit per step, no fines). Auditing without memory barely reduces harm; remembering each caught lie removes most of it. $^*$\textsc{Fishery}: steps above the MSY limit; \textsc{Forest}: steps below the safety line. (b)~\textsc{Fishery}: the expected fine at which cheaters stop ($e^*$) against the break-even predicted from no-check runs ($g^*$, the gain from one step of cheating). Filled: five settings, predicted before the search (R3). Open: the pilot setting at audit rates from 1/6 to 0.02 and with audits that miss three cheats in four (S3). Every point lies within one grid step (shaded) of the prediction. (c)~Cheaters' gain as the audit rate rises, under five audit rules (fine 6; bands: 95\% intervals). A fine stops cheating from an audit rate of 0.10; memory alone leaves about half the gain; tightening everyone's cut to allow for known cheaters makes cheating pay more than with no audits. (d)~Harvest per honest agent at the same audit rate (1/6) and fine (24): random audits stop cheating; predictable audits (every agent on every sixth step) leave honest agents worse off than no audits (28.8 against 40.9). (e)~Harm left, as a share of the harm with no audits, when one audit per step (with memory) is aimed at random, at the largest report, or, in \textsc{Forest}, at the plot doing worst against prediction. Numbers above the bars: the share of liars ever caught. Aiming at the largest report keeps auditing the same agent, so in \textsc{Fishery} only 25\% of liars are ever caught and harm stays at 97\% of the no-audit level. Error bars: 95\% intervals.}
+  \label{fig:audits}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig4_llm_agents.pdf}
+  \caption{\textbf{Language-model fishers stop over-taking only when the expected fine exceeds their gain.} \textsc{Fishery}, MSY target, 20 rounds; four of six fishers are language models, audited with probability 1/6 per round; 10 populations per cell. (a)~Share of the models' rounds in which they caught more than their allowance, against the fine $F$ (expected fine $e = F/6$; fines of 12--30~t are from L3, gpt-oss and Nemotron only). gpt-oss and Nemotron over-take in 51--92\% of rounds for every $e$ up to 1.33~t. Over-taking then falls steadily, and is at most 2\% from the first fine above their measured gain from one round of over-taking ($g$ = 4.48 and 4.74~t, dotted lines; shaded: $e > g$ for both). The stopping fine predicted from $g$ before L3 ran ($F = 30$) was exact for Nemotron and one step early for gpt-oss ($F = 24$). Gemma over-takes little at every fine; Mistral Large 3 (an added fourth family, open triangles) never over-takes. (b)~What the two rule-following fishers catch over the 20 rounds: 3--25~t while fines are far below the gain, and 32--37~t once over-taking stops. (c)~The same comparison when the rules leave out the sentence that over-taking is allowed (silent) or say it in other words (reworded): a 36~t fine stops over-taking under every wording. (d)~What an over-take step is (post hoc): gpt-oss and Nemotron mostly catch more than they asked for, while Gemma almost only keeps its request after the reviewer cut it. Error bars: 95\% intervals over populations.}
+  \label{fig:llm}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig5_spine.pdf}
+  \caption{\textbf{Each kind of agent stops cheating when the expected fine outweighs the gain it acts on.} Shaded: the expected fine exceeds the gain on the horizontal axis. (a)~Simulated cheaters choose one cheating level for the whole game, so they are scaled by their whole-game net gain $g^*$ (gain over complying, per round of cheating). In five \textsc{Fishery} settings they stop at $e/g^* = 1.0$--$1.2$, as predicted before the search (R3). (b)~Language-model agents decide every round, and are scaled by their one-round gain $g_1$ (extra tonnes in that round), measured with no fine. They stop close to $e/g_1 = 1$: the stopping fine predicted from $g_1$ before L3 ran was exact for Nemotron and one grid step early for gpt-oss. They begin to cut back from about $e/g_1 = 0.4$. Measured by the whole-game gain, they keep cheating far past the point where it pays. Over-taking loses gpt-oss fish over the game ($g^* < 0$), and Nemotron's whole-game break-even (dotted) lies at $e/g_1 = 0.15$. They act on the gain of the round, not of the game. Filled: L2; open: L3. Error bars: 95\% intervals over populations.}
+  \label{fig:spine}
+\end{figure}
+
+\begin{table}[H]
+  \centering\small
+  \caption{\textbf{How this work relates to the closest prior work.} $^{a}$Becker 1968; Harrington 1988; inspection games (Avenhaus et al.\ 2002). $^{b}$Greenblatt et al.\ 2023. Random audits: audits at random with stated odds. Memory: later treatment depends on past offences. Predicted threshold: the fine at which cheating stops is predicted before it is tested. For this work: in simulation (R3, 5 of 5 settings) and, for language models, in L3. \checkmark: yes; (\checkmark): partly (Greenblatt et al.: an audit budget, not stated odds; Ye \& Steinhardt: a fishery is one of three environments, and memory tracks the reliability of reporters; Okamoto et al.: audit likelihood given in words, one fine on each side of break-even; inspection games: an inspector and one inspectee, or a few). Sources and the depth checked are listed in the novelty notes of the repository.}
+  \label{tab:positioning}
+  \input{tables/table3_positioning.tex}
+\end{table}
+
+\begin{table}[H]
+  \centering\small
+  \caption{\textbf{The settings of every study, side by side.} All simulations: 80 rounds and 64 new populations. Language-model studies: 20 rounds and 10 populations. Audits are random, with probability 1/6 per agent and round (T1 and C1: one audit per round). Statistics: paired bootstrap over populations, 4,000 resamples. $^a$\textsc{Fishery}: stock below 50 after fishing; \textsc{Forest}: more than a 5\% chance that mean plot health falls below 10 (both half capacity); R1 also reports the old one-step line (stock $\geq 10$), which the \textsc{Fishery} parts of S1 and S1b used. $^b$Chosen by search to maximise the cheaters' payoff over the whole game on training populations. $^c$S4 and S5 cut a caught agent's allowance by the share of the cut it took back; L2 cuts it by its mean tonnes over the allowance. $^d$\textsc{Fishery} and \textsc{Forest} as in $^a$; \textsc{River}: quality below 30 (pre-registered) and below 50 (re-measured). $^e$Part A compares reviewers built for the 30 line, so 30 is kept; Part B is also reported at 50.}
+  \label{tab:settings}
+  \resizebox{\textwidth}{!}{\input{tables/table4_settings.tex}}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/figA1_llm_behaviour.pdf}
+  \caption{\textbf{Appendix, post hoc: how the language-model agents over-take} (L2, gpt-oss and Nemotron; analyses chosen after the results were seen). (a)~After over-taking, the chance of over-taking again in the next round barely depends on whether the agent was caught, with a fine below its gain or with no fine. Audits are independent, so a rational agent should not change; people often comply less right after an audit (the ``bomb-crater'' effect; Mittone 2006; Kastlunger et al.\ 2009). (b)~When they over-take, they mostly take the 6~t maximum: under a flat fine nothing deters taking more once over (no marginal deterrence; Stigler 1970). Error bars: 95\% Wilson intervals over agent-rounds, which are not independent; descriptive only.}
+  \label{fig:a1}
+\end{figure}
+
+\begin{table}[H]
+  \centering\small
+  \caption{\textbf{Audit rules compared} (\textsc{Fishery}, MSY target, 64 new populations). Cheaters' extra harvest: how much more the four cheaters get than if they complied, over 80 steps. Harvest per honest agent: what each honest agent gets. Checks per step include the extra checks that ``memory + extra checks'' spends watching known cheaters. Bold: best in column.}
+  \label{tab:regimes}
+  \resizebox{\textwidth}{!}{\input{tables/table2_regimes.tex}}
+\end{table}

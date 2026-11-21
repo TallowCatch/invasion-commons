@@ -1,0 +1,8 @@
+{
+ "gpt-oss:120b-cloud": {
+  "pilot_overtake_rate": 0.04,
+  "fine": 0.0,
+  "rule": "F=0 if <15%, 24 if >85%, else 12",
+  "frozen_at": "2026-10-12T20:57:36Z"
+ }
+}

@@ -26,7 +26,7 @@ for bank_csv in "${banks[@]}"; do
   seed="$((BASE_SEED + i * 12))"
   output_prefix="${stem}_map"
   echo "Evaluating bank: ${bank_csv}"
-  python -m experiments.run_harvest_llm_governance_map \
+  python -m experiments.archive.harvest_2026q2.run_harvest_llm_governance_map \
     --bank-csv "${bank_csv}" \
     --scenarios "${SCENARIOS}" \
     --conditions "${CONDITIONS}" \

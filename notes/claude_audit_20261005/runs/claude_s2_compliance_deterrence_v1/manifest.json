@@ -1,0 +1,40 @@
+{
+ "experiment": "S2",
+ "profile": "full",
+ "params": {
+  "contexts": 64,
+  "train_contexts": 8,
+  "horizon": 80,
+  "reviewer_draws": 400,
+  "ref_draws": 2000
+ },
+ "seeds": {
+  "fishery_pop": 800000000,
+  "harvest_pop": 810000000,
+  "weather": 820000000,
+  "reviewer": 830000000,
+  "reference": 840000000,
+  "audit": 845000000,
+  "train_fishery_pop": 850000000,
+  "train_harvest_pop": 860000000,
+  "train_weather": 870000000
+ },
+ "fines": [
+  0.0,
+  6.0,
+  12.0,
+  24.0
+ ],
+ "fishery_target": "msy",
+ "seconds": 396.1990559101105,
+ "n_episodes": 5120,
+ "files": {
+  "episodes.jsonl.gz": "7e10fe8c7df13cc7d404b4592995aa22a6736ff41e4ff00a7b5b2657bd6837c7",
+  "adaptive_search.json": "0ea535f046a5965b2affc3b0a6a6943a2dbea296e6594031fff48b4411be2d9d"
+ },
+ "source": {
+  "fishery_sim/calibrated_oversight.py": "27fcea3db0fd795c7814f76eb7346113d6730478e4fa96147ee608122e85e909",
+  "experiments/claude_oversight_common.py": "6df0e104d50b47f01f220b9794e60575688492e2dc7033c088844b0a9053be5a",
+  "experiments/run_s2_compliance_deterrence.py": "37a2be4d7447f3a52a99e16100941d2d9744e94240740857e45ae70e75bf2cd3"
+ }
+}

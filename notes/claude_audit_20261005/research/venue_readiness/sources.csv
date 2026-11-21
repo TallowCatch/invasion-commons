@@ -1,0 +1,68 @@
+file,title,url,type,credibility
+01_aaai27_conference_dates.md,"AAAI-27 conference page: dates, location, main-track timeline",https://aaai.org/conference/aaai/aaai-27/,primary/official,5
+02_aaai27_main_track_call.md,AAAI-27 Main Technical Track call,https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/,primary/official,5
+03_aaai27_review_process_arxiv.md,AAAI-27 review process: double-blind and arXiv policy,https://aaai.org/conference/aaai/aaai-27/review-process/,primary/official,5
+04_aaai27_workshops_call_program.md,AAAI-27 workshops: call and program overview,https://aaai.org/conference/aaai/aaai-27/workshops-call/,primary/official,5
+05_aaai27_workshops_fitting.md,AAAI-27 workshop list: workshops relevant to this paper,https://aaai.org/conference/aaai/aaai-27/aaai-27-workshop-program-list/,primary/official (AAAI list) and organiser sites (primary fo,4
+06_icml_2026_basis_and_2027_status.md,ICML: 2026 official dates and policies (basis for 2027 estimate); 2027 status,https://icml.cc/Conferences/2026/Dates,primary/official,5
+07_icml_2026_position_track.md,ICML 2026 position paper track (basis for 2027),https://icml.cc/Conferences/2026/CallForPositionPapers,primary/official,5
+08_neurips_2026_basis_and_2027_status.md,NeurIPS: 2026 official dates and policies (basis for 2027); 2027 status,https://neurips.cc/Conferences/2026/Dates,primary/official (2026); 2027 not announced,5
+09_iclr_2027.md,ICLR 2027,https://www.iclr.cc/Conferences/2027/CallForPapers,primary/official,5
+10_aamas_2027.md,"AAMAS 2027 (26th), Hanoi",https://warwick.ac.uk/fac/sci/dcs/aamas2027/calls/call-for-main-track/,primary/official (organiser site),5
+11_ijcai_2027.md,IJCAI-27 (Kyoto),https://www.ijcai.org/future_conferences,"primary/official (dates, location); deadline not official",5
+12_facct_2027.md,ACM FAccT 2027 call for papers,https://facctconference.org/2027/cfp.html,primary/official,5
+13_aies.md,"AIES (AAAI/ACM Conference on AI, Ethics, and Society)",https://www.aies-conference.com/2025/call-for-papers/,primary/official,5
+14_satml_2027.md,SaTML 2027,https://satml.org,primary/official,5
+15_ec_uai_ecai_colm.md,"ACM EC, UAI, ECAI, COLM: official 2026 bases and 2027 status",https://ec26.sigecom.org/,primary/official (2026 editions); ECAI and COLM 2027 deadlin,5
+16_aggregator_opencurious_estimates.md,OpenCurious AI conference deadline tracker (secondary source for 2027 estimates),https://www.opencurious.com/ai-conference-deadlines,discussion/aggregator (NOT official),2
+17_tmlr.md,TMLR (Transactions on Machine Learning Research),https://jmlr.org/tmlr/,primary/official,5
+18_journals_jair_aij_jaamas_jasss_pnas_nature.md,"Journals: JAIR, AIJ, JAAMAS, JASSS, PNAS Nexus, Nature family",https://www.jair.org/index.php/jair/about,"JAIR, AIJ, PNAS Nexus = primary/official; JAAMAS, JASSS, Nat",5
+19_workshops_iclr_icml_aamas.md,Workshops at ICLR/ICML 2027 and AAMAS 2027 (status) and ICML 2026 examples,https://iclr.cc/Conferences/2027/CallForWorkshops,"primary/official (ICML 2026, ICLR workshop guide); search sn",4
+20_piatti2024_govsim_paper.md,Cooperate or Collapse: Emergence of Sustainable Cooperation in a Society of LLM Agents (GovSim) — paper,https://arxiv.org/abs/2404.16698,peer-reviewed conference paper (primary),5
+21_govsim_neurips2024_reviews.md,GovSim — NeurIPS 2024 official reviews and author responses (OpenReview),https://openreview.net/forum?id=0zWzJj6lO3,public peer reviews (primary),5
+22_re_govsim_tmlr2025.md,"[Re] Cooperate or Collapse (reproducibility study) — TMLR 2025, with author responses",https://openreview.net/forum?id=EWWxSkUchO,journal paper + review-response thread (primary),4
+23_ye_steinhardt2026_norm_enforcement.md,Norm Enforcement for AI Agents: Robustly Shaping Behavior in Multi-Agent Systems,https://arxiv.org/abs/2607.09766,preprint + workshop acceptance (primary),4
+24_okamoto2026_why_agents_break_rules.md,"Why Do AI Agents Break Rules? How Framing, Context, and Social Signals Shape Compliance",https://arxiv.org/abs/2608.12323,preprint + workshop acceptance (primary),4
+25_bracale2026_energy_commons.md,Draining the Energy Commons: Self-Defeating Over-Appropriation as a Coordination Failure in Agentic LLM Collectives,https://arxiv.org/abs/2607.22188,preprint (primary),3
+26_guzman2025_corrupted_by_reasoning_colm.md,Corrupted by Reasoning: Reasoning Language Models Become Free-Riders in Public Goods Games — paper + COLM 2025 reviews,https://arxiv.org/abs/2506.23276,peer-reviewed conference paper + public reviews (primary),5
+27_scheurer2024_strategic_deception.md,Large Language Models can Strategically Deceive their Users when Put Under Pressure,https://arxiv.org/abs/2311.07590,workshop paper (primary),4
+28_greenblatt2024_ai_control.md,AI Control: Improving Safety Despite Intentional Subversion,https://arxiv.org/abs/2312.06942,peer-reviewed conference paper (primary),5
+29_konuganti2026_agentic_misalignment_deterrence.md,Agentic Misalignment Deterrence: Incorporating Probability and Stakeholders to Decision-Making,https://openreview.net/forum?id=z9Bbff0YlE,workshop paper abstract (primary),3
+30_govsim_selfgovernance2026.md,Can Agents Adapt Their Institutions And Sacrifice Themselves During Collapse? Executable Self-Governance in a GovSim Com,https://arxiv.org/abs/2609.22600,preprint (primary) — newest GovSim follow-up,3
+31_akata2025_repeated_games_nhb.md,Playing repeated games with large language models,https://doi.org/10.1038/s41562-025-02172-y,journal article (preprint version read; published version pa,5
+32_miller2024_error_bars.md,Adding Error Bars to Evals: A Statistical Approach to Language Model Evaluations,https://arxiv.org/abs/2411.00640,methods guidance,4
+33_sclar2024_prompt_format_sensitivity.md,Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design (or: How I learned to start worrying abou,https://arxiv.org/abs/2310.11324,peer-reviewed methods paper (see also file 68 by another age,5
+34_pimmur2025_validity_llm_societies.md,The PIMMUR Principles: Ensuring Validity in Collective Behavior of LLM Societies,https://arxiv.org/abs/2509.18052,methodological critique / systematic audit,4
+35_horton_homo_silicus.md,Large Language Models as Simulated Economic Agents: What Can We Learn from Homo Silicus?,https://arxiv.org/abs/2301.07543,methods/position paper (economics),4
+36_ye_cao2026_robustness_audits.md,Stop Drawing Scientific Claims from LLM Social Simulations Without Robustness Audits,https://arxiv.org/abs/2605.18890,position paper with case studies,3
+37_machiavelli_icml2023_reviews_not_public.md,Do the Rewards Justify the Means? Measuring Trade-Offs Between Rewards and Ethical Behavior in the MACHIAVELLI Benchmark,,venue record only,4
+40_ollama_pricing_page.md,Ollama pricing page,https://ollama.com/pricing,official vendor pricing page,5
+41_ollama_cloud_page_per_token_prices.md,"Ollama cloud page: per-token prices, concurrency and queue",https://ollama.com/cloud,official vendor page,5
+42_ollama_docs_cloud.md,Ollama docs: Cloud,https://docs.ollama.com/cloud,official documentation,5
+43_ollama_blog_transparent_pricing.md,"Ollama blog: Ollama's transparent pricing (31 Aug 2026), plus blog index",https://ollama.com/blog/transparent-pricing,official vendor blog,5
+44_ollama_cloud_model_list.md,Ollama cloud model list,https://ollama.com/search?c=cloud,official vendor catalogue (search page via fetch tool; /api/,5
+45_openrouter_models_api.md,"OpenRouter models API (prices per token, converted to USD per 1M)",https://openrouter.ai/api/v1/models,official marketplace API,4
+46_anthropic_pricing_docs.md,Anthropic API pricing,https://platform.claude.com/docs/en/about-claude/pricing,official vendor documentation (full page text saved by fetch,5
+47_openai_api_pricing.md,OpenAI API pricing,https://developers.openai.com/api/docs/pricing,official vendor pricing page (via fetch tool; short-context ,4
+48_google_gemini_pricing.md,Gemini API pricing,https://ai.google.dev/gemini-api/docs/pricing,official vendor documentation,5
+49_together_ai_pricing.md,Together AI pricing (open-model serverless inference),https://www.together.ai/pricing,official vendor pricing page,4
+50_openai_researcher_access_program.md,OpenAI Researcher Access Program,https://grants.openai.com/prog/openai_researcher_access_program/,"official programme pages, content known only through web-sea",3
+51_anthropic_external_researcher_access.md,Anthropic External Researcher Access Program,https://support.claude.com/en/articles/9125743-what-is-the-external-researcher-access-program,official support article,5
+52_google_gemini_academic_program.md,Google Gemini Academic Program (Gemini for Research),https://ai.google.dev/gemini-api/docs/gemini-for-research,official developer documentation,5
+53_nvidia_academic_grant_program.md,NVIDIA Academic Grant Program,https://www.nvidia.com/en-us/industries/higher-education-research/academic-grant-program/,official vendor page,5
+54_third_party_ollama_pricing_corroboration.md,Third-party corroboration of Ollama's 2026 pricing change,https://devtoolpicks.com/blog/best-ollama-cloud-alternatives-indie-hackers-2026,independent blog / tool review,3
+55_institutional_ai_cournot_governance.md,55 — Institutional AI: Governing LLM Collusion in Multi-Agent Cournot Markets via Public Governance Graphs,https://arxiv.org/abs/2601.11369,"arXiv preprint (cs), empirical LLM multi-agent study",3
+56_becker_agents_repo_null.md,56 — penseralabs/becker-agents (GitHub repository) — re-check for results,https://github.com/penseralabs/becker-agents,"code repository (eval harness), no paper",2
+57_okamoto_model_overlap_conflict.md,57 — Why Do AI Agents Break Rules? (re-read for model overlap with our LLM set),https://arxiv.org/abs/2608.12323,peer-reviewed conference paper (AIES 2026),4
+58_sode_short_horizon_reasoning_models.md,58 — SODE: Analyzing Social Dynamics in LLM Agents,https://arxiv.org/abs/2605.23949,"arXiv preprint, benchmark (iterated games; direct/indirect r",3
+59_energy_commons_myopia_term.md,"59 — Draining the Energy Commons (re-read for use of ""myopic"")",https://arxiv.org/abs/2607.22188,"arXiv preprint, LLM CPR experiment",3
+60_strategic_auditee_gaming_benchmark.md,60 — A Benchmark for Strategic Auditee Gaming Under Continuous Compliance Monitoring,https://arxiv.org/abs/2605.06340,"arXiv preprint (cs.CY), formal model + simulator (scripted a",3
+61_enforcement_gap_detection_vs_enforcement.md,61 — Why LLM Agents Collapse Without Oversight: The Enforcement Gap,https://arxiv.org/abs/2609.15293,"arXiv preprint (cs.AI), single author, agent-security settin",2
+62_alignment_incentives_correction_auditor.md,62 — AI Alignment via Incentives and Correction,https://arxiv.org/abs/2605.01643,"arXiv preprint, theory + LLM coding pipeline experiment",4
+63_repunet_reputation_llm_mas.md,63 — Reputation as a Solution to Cooperation Collapse in LLM-based MASs (RepuNet),https://arxiv.org/abs/2505.05029,peer-reviewed conference paper (AAMAS 2026),4
+64_memory_curse_llm_cooperation.md,64 — The Memory Curse: How Expanded Recall Erodes Cooperative Intent in LLM Agents,https://arxiv.org/abs/2605.08060,"arXiv preprint (7 LLMs, 4 games, 500 rounds)",4
+65_pimmur_validity_llm_societies.md,65 — The PIMMUR Principles: Ensuring Validity in Collective Behavior of LLM Societies,https://arxiv.org/abs/2509.18052,"arXiv preprint, pre-registered systematic audit + replicatio",4
+66_construct_validity_agent_commerce.md,66 — When Guardrails Look Effective: Construct Validity Failures in LLM Agent Commerce Evaluation,https://arxiv.org/abs/2609.01519,workshop submission (preprint),3
+67_evaluation_awareness.md,"67 — Evaluation awareness: ""Large Language Models Often Know When They Are Being Evaluated"" and ""Decomposing and Measuri",https://arxiv.org/abs/2505.23836.,arXiv preprints (benchmarks),4
+68_sclar_prompt_format_sensitivity.md,68 — Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design,https://arxiv.org/abs/2310.11324,peer-reviewed (ICLR 2024),5
+69_carp_reputation_penalty_llm_merchants.md,69 — Paying for Honesty Without Knowing the Truth: Reputation-Penalty Design for LLM Marketplace Agents (CARP),https://arxiv.org/abs/2607.28330,"arXiv preprint, mechanism design + LLM agent experiments",3
