@@ -92,7 +92,7 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 ## Next
 
 - **BazaarBench offline test:** a budgeted overseer replayed on the released judge labels, comparing random with repeat-offenders-first checking, and cheap with expensive checks.
-- **The plan for using both testbeds:** `phd_plan/2026-11-21_way_forward.md`.
+- **The plan for using both testbeds:** `phd_plan/2026-11-21_way_forward.md` (written 21 Nov).
 
 ## Log
 
