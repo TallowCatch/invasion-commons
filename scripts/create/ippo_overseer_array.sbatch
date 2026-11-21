@@ -3,6 +3,8 @@
 # RUNS is a TSV from experiments/socialjax/phase2_runs.py; task i runs line i (1-based).
 #   sbatch --array=1-48%8 --export=ALL,RUNS=$HOME/ippo/runs_stage1.tsv ~/ippo/ippo_overseer_array.sbatch
 # public_gpu allows 8 GPUs per user, hence %8. Output: /scratch/users/$USER/ippo_overseer/<run name>/
+# REPO (optional, 22 Nov) points at another checkout, e.g. the decentralised-games branch
+# (notes/socialjax/DECENTRALISED_README.md); the default is $WORK/invasion-commons as before.
 #SBATCH --job-name=ippo_ov
 #SBATCH --partition=gpu
 #SBATCH --gpus=1
@@ -16,7 +18,7 @@ set -euo pipefail
 WORK=/scratch/users/$USER/socialjax_work
 module load python/3.11.6-gcc-13.2.0 2>/dev/null || echo "module python/3.11.6 not found on $(hostname); using the venv python"
 source "$WORK/venv/bin/activate"
-cd "$WORK/invasion-commons"
+cd "${REPO:-$WORK/invasion-commons}"
 export PYTHONPATH=$PWD:$WORK/SocialJax:${PYTHONPATH:-}
 
 LINE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$RUNS")
