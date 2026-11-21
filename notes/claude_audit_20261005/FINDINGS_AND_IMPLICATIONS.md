@@ -200,6 +200,17 @@ Started 14 October 2026.
 - **Evidence.** `notes/socialjax/phase2_ippo/results.md`, `summary.json`, `fig_checks_by_penalty.png`, `fig_learning_curves.png`.
 - **Status:** open. Two k = 4 cells have 2 of 3 seeds (reruns queued). Late switch-on and switch-off (stages 2–3) are pending, and so is a finer sweep between 0.5 and 1 apple expected. (Wording corrected 16 Nov: k × P is 7 times the expected penalty.)
 
+## F18. In Harvest, removing the overseer brings over-harvesting straight back, and fixing agents that already over-harvest needs frequent checks or targeting [lead; stages 2–3, 21 Nov]
+
+- **Found** (interim; 9 of 18 switch-off runs, 7 of 21 switch-on runs, seed 1 only):
+  - **Switch-off:** every arm falls from 408–482 apples to 68 with the orchard dead, within about 5–12M steps of continued learning.
+  - **Switch-on** at an average penalty of 1 apple, after 50M steps: random k = 1/2/4/7 give 120/172/315/403 apples; history k = 2 gives 352; freeze gives 76.
+- **What it means.**
+  - With learning agents in a spatial game, compliance is not conversion (as F16 found for LLM strategies). The overseer has to stay.
+  - The average penalty (F17) decides whether deterrence holds in the long run. But how quickly an overseer repairs existing over-harvesting depends on how often it checks and on targeting, so budget and targeting matter more for repair than for prevention.
+- **Evidence.** `notes/socialjax/phase2_ippo/results.md`; `notes/OVERSEER_TRACKER.md`.
+- **Status:** open (reruns of 25 crashed runs queued).
+
 ---
 
 *Index entry:* this file is referenced from `what_we_learned_and_next.md` and from Ameer's Claude memory.

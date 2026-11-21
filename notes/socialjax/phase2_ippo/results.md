@@ -76,7 +76,24 @@ Run on CREATE on 15–16 Nov 2026, under `protocol.md` (with Amendment 1).
   - It rises to about 22% around update 20 and then falls back to 5–6%. That later fall may be learned exploitation, but this design cannot separate the two.
   - This is the same lesson as Fishery T1 (always checking the largest reporter caught 25% of liars, against 100% for random) and the week 2 sneaky bots: **targeting on a proxy can be worse than random, even when agents cannot see the checks.**
 
-**Q5 and Q6 (stages 2 and 3)** are queued and will be added here.
+**Q5 and Q6 (stages 2 and 3): interim, 21 Nov.** Plain-English summary in `notes/OVERSEER_TRACKER.md`, findings 8–9.
+
+25 runs crashed in seconds on node comp040 (CUDA error) and are rerunning (jobs 38794336–38). So far:
+
+- **Q6, switching the overseer off (9 of 18 runs, every arm has at least one seed).** Over-harvesting returns completely. Agents at 408–482 apples fall to 68, with the orchard dead in every run, within about 5–12M of the 50M steps. That holds after random checks at every k, after repeat offenders first, and after the freeze. The prediction ("some over-harvesting returns") is confirmed and exceeded: all of it returns.
+- **Q5, switching the overseer on for over-harvesters (7 of 21 runs, seed 1 only).** It works, but how fast depends on k and targeting, unlike in stage 1. At an average penalty of 1 apple after 50M steps:
+
+| Overseer | Apples | Orchard alive |
+|---|---|---|
+| none | 68 | 0.00 |
+| random k = 1 | 120 | 0.32 |
+| random k = 2 | 172 | 0.92 |
+| random k = 4 | 315 | 1.00 |
+| random k = 7 | 403 | 1.00 |
+| history k = 2 | 352 | 1.00 |
+| freeze 50, k = 2 | 76 | 0.00 |
+
+  The prediction ("yes with c ≥ 1, but more slowly than starting with it") holds for k ≥ 2. The dependence on k and targeting was not predicted. Some runs were still improving at 50M steps.
 
 ## Run problems
 
