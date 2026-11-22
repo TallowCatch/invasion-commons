@@ -7,6 +7,8 @@ Cloud model through the signed-in local daemon, with the shared token cap and lo
       --token-cap 1500000 --token-log results/llm_overseer/cloud_tokens.tsv
 Smoke test on a few items:
   python -m experiments.llm_overseer.run_judge --model qwen2.5-0.5b --limit 50 --out-dir results/llm_overseer/smoke
+Reason mode on the w = 1 Harvest items only (what the RL runs use):
+  python -m experiments.llm_overseer.run_judge --model qwen2.5-7b --mode reason --datasets harvest --windows 1
 Other backends: --backend transformers --model Qwen/Qwen2.5-0.5B-Instruct (CPU), or --backend vllm (CREATE).
 
 Output: <out-dir>/<tag>_<mode>.jsonl (resumes if it exists).
@@ -30,6 +32,9 @@ def load_items(a):
         harvest = S.harvest_subset(S.load_jsonl(a.harvest), per_label=a.harvest_per_label, seed=a.seed)
     if "bazaar" in a.datasets:
         bazaar = S.bazaar_subset(S.load_jsonl(a.bazaar), per_label=a.bazaar_per_label, seed=a.seed)
+    if a.windows:
+        keep = {int(w) for w in a.windows.split(",")}
+        harvest = [e for e in harvest if e["window"] in keep]
     items = S.items(harvest, bazaar)
     if a.limit:  # spread a small smoke test over every dataset and rendering
         step = max(1, len(items) // a.limit)
@@ -53,6 +58,7 @@ def main():
     ap.add_argument("--harvest-per-label", type=int, default=30)
     ap.add_argument("--bazaar-per-label", type=int, default=12)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--windows", default="", help="Harvest windows to keep, e.g. 1 (default: all)")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--max-items", type=int, default=600, help="hard cap on items per model (cloud cap: 600)")
     ap.add_argument("--token-cap", type=int, default=None)
