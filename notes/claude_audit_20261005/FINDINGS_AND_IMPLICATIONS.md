@@ -260,4 +260,20 @@ Started 14 October 2026.
 
 ---
 
+## F22. LLM inspectors: a step at 7B, and what the inspector is shown matters as much as its size [lead; 600 fixed items, 22 Nov]
+
+- **Found** (protocol written before any run; Qwen2.5 0.5B–7B local, gpt-oss 20B/120B cloud):
+  - At w = 1, inspectors are near perfect or useless. Qwen ≤ 3B gives the same answer every time; Qwen 7B and both gpt-oss models are perfect on text summaries.
+  - On raw maps, where the inspector must count apples itself, plain Qwen 7B misses every violation; only gpt-oss protects (120B: α 0.03). Brief reasoning rescues 3B on summaries and brings 7B on raw maps to the threshold, at 35–90× the output tokens.
+  - Longer records hurt even strong models (α + β_eat up to 0.27–0.31 at w = 50). A check costs about 330 tokens on a summary and 900 on raw maps with gpt-oss.
+  - BazaarBench: all models agree poorly with GPT-5's labels (α + β 0.70–0.83), largely over whether a privately written plan counts as a violation.
+- **What it means.**
+  - "Overseer capability" is not one dial: model size, what the record shows, and reasoning budget each move the inspector across C1's protect/fail line.
+  - Bounded evaluation needs the inspector's α, β measured on the rendering it will actually see.
+  - BazaarBench labels need a public rubric before they can serve as ground truth.
+- **Next.** 40 RL runs with LLM inspectors (listed, not submitted).
+- **Evidence.** `notes/llm_overseer/SUMMARY.md`, `results/tables.md`, `protocol.md`; code `overseer/llm/`, `experiments/llm_overseer/`.
+
+---
+
 *Index entry:* this file is referenced from `what_we_learned_and_next.md` and from Ameer's Claude memory.
