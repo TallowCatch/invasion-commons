@@ -21,6 +21,13 @@ agents act:
      keeps the more recent check, so overseers stop re-checking agents a neighbour has just checked. Only the
      "history" chooser uses these scores, so sharing changes nothing under random or round-robin checks.
 
+Choosers: none, all, random, round_robin, history, location, and mixed (added 22 Nov): each step each overseer
+flips its own coin, and with probability mixed_eps checks at random within its region, otherwise by history.
+With reveal_checks=True (added 22 Nov, the worst case) every agent's observation also shows who was checked last step
+(by any overseer) and when it was last checked itself (overseer/socialjax/reveal.py). check_prob(state) gives each
+agent's chance of being checked in the coming step from the public state (the rules, budgets and records, not the
+coin flips), taking its region to be the one it stands in now: what the scripted "dodger" cheats on.
+
 Independent overseers know only their own checks and catches. With R = 1 this is the central overseer, and it
 reproduces HarvestOverseer step for step (tests/test_decentralised_overseer.py).
 
@@ -39,8 +46,9 @@ import numpy as np
 from flax import struct
 
 from overseer.socialjax.regions import LAYOUTS, neighbours, region_grid
+from overseer.socialjax.reveal import REVEAL_CHANNELS, augment, topk_chance
 
-CHOOSERS = ("none", "all", "random", "round_robin", "history", "location")
+CHOOSERS = ("none", "all", "random", "round_robin", "history", "location", "mixed")
 
 
 @dataclass(frozen=True)
@@ -63,6 +71,8 @@ class DecConfig:
     share_coverage: bool = False  # also share when each agent was last checked
     cost_per_message: float = 1.0
     presume: bool = False  # flag acts that look like violations in what the record shows
+    mixed_eps: float = 0.3  # for the "mixed" chooser: chance an overseer's checks this step are random
+    reveal_checks: bool = False  # agents see who was checked last step (reveal.py)
 
     def __post_init__(self):
         if self.chooser not in CHOOSERS:
@@ -74,6 +84,8 @@ class DecConfig:
         if self.region_k and (len(self.region_k) != self.regions or sum(self.region_k) != self.k
                               or min(self.region_k) < 0):
             raise ValueError("region_k needs one non-negative budget per region, summing to k")
+        if not 0.0 <= self.mixed_eps <= 1.0:
+            raise ValueError("mixed_eps must be in [0, 1]")
 
     def budgets(self):
         """(base budget per region, number of extra checks handed to random regions each step)."""
@@ -128,10 +140,21 @@ class DecentralisedOverseer:
                         rr_ptr=jnp.zeros(R, jnp.int32), window=zi, win_suspect=zi, win_clear=zi, win_region=zi,
                         t=jnp.zeros((), jnp.int32))
 
+    def obs_shape(self):
+        """Shape of one agent's observation (the game's, plus the reveal channels if reveal_checks)."""
+        shape = tuple(self.env.observation_space()[0].shape)
+        return shape[:-1] + (shape[-1] + REVEAL_CHANNELS,) if self.cfg.reveal_checks else shape
+
+    def _reveal(self, obs, s, checked):
+        if not self.cfg.reveal_checks:
+            return obs
+        return augment(obs, self.env, s.env_state, checked, s.since_check)
+
     @partial(jax.jit, static_argnums=0)
     def reset(self, key):
         obs, env_state = self.env.reset(key)
-        return obs, self._fresh(env_state)
+        s = self._fresh(env_state)
+        return self._reveal(obs, s, jnp.zeros(self.n, bool)), s
 
     def regions_of(self, env_state):
         locs = self.rules.positions(env_state)
@@ -154,8 +177,12 @@ class DecentralisedOverseer:
         if c == "random":
             perm = jax.random.permutation(key, n)
             base_score = -jnp.zeros(n, jnp.int32).at[perm].set(idx).astype(jnp.float32)  # earlier in perm first
-        elif c in ("history", "location"):
+        elif c in ("history", "location", "mixed"):
             noise = 1e-6 * jax.random.uniform(key, (n,))  # random tie-break
+        if c == "mixed":  # each overseer's own coin; the random part as in "random", from another key
+            coins = jax.random.uniform(jax.random.fold_in(key, 1), (R,)) < self.cfg.mixed_eps
+            perm = jax.random.permutation(jax.random.fold_in(key, 2), n)
+            rand_score = -jnp.zeros(n, jnp.int32).at[perm].set(idx).astype(jnp.float32)
         for r in range(R):
             kk = self.kmax[r]
             if kk == 0:
@@ -167,12 +194,50 @@ class DecentralisedOverseer:
                 score = -((idx - s.rr_ptr[r]) % n).astype(jnp.float32)
             elif c == "history":  # caught before, then the longest unchecked (as this overseer knows it)
                 score = s.suspicion[r] + 1e-3 * s.belief_since[r] + noise
+            elif c == "mixed":
+                score = jnp.where(coins[r], rand_score, s.suspicion[r] + 1e-3 * s.belief_since[r] + noise)
             else:  # "location": the game's own sign of where violations happen
                 score = loc_score + noise
             vals, top = jax.lax.top_k(jnp.where(in_r, score, -jnp.inf), kk)
             take = (jnp.arange(kk) < budget[r]) & jnp.isfinite(vals)
             mask = mask | jnp.zeros(n, bool).at[top].set(take)
         return mask, budget
+
+    def check_prob(self, s):
+        """(N,) each agent's chance of being checked in the coming step, from the public state s: the overseers'
+        rules and budgets and the record of checks and catches, but not their coin flips. An agent's region is taken
+        to be the one it stands in now (it may move first). "location" depends on where agents move, so it is given
+        as the random chance. A region's spare check (k not a multiple of R) goes to it with chance extra / R."""
+        n, c, R = self.n, self.cfg.chooser, self.R
+        if c == "none":
+            return jnp.zeros(n)
+        if c == "all":
+            return jnp.ones(n)
+        region = self.regions_of(s.env_state)
+        idx = jnp.arange(n)
+        p = jnp.zeros(n)
+        share = self.extra / R
+        for r in range(R):
+            if self.kmax[r] == 0:
+                continue
+            in_r = region == r
+            m = in_r.sum()
+
+            def chance(b, r=r, in_r=in_r, m=m):
+                flat = jnp.where(in_r, jnp.minimum(b, m) / jnp.maximum(m, 1), 0.0)
+                if c in ("random", "location"):
+                    return flat
+                if c == "round_robin":
+                    return topk_chance(-((idx - s.rr_ptr[r]) % n).astype(jnp.float32), in_r, b)
+                targeted = topk_chance(s.suspicion[r] + 1e-3 * s.belief_since[r], in_r, b)
+                if c == "history":
+                    return targeted
+                return self.cfg.mixed_eps * flat + (1 - self.cfg.mixed_eps) * targeted
+
+            b = self.base[r]
+            p_r = chance(b) if not self.extra else (1 - share) * chance(b) + share * chance(b + 1)
+            p = p + p_r
+        return p
 
     def _next_rr(self, s, checked, region):
         if self.cfg.chooser != "round_robin":
@@ -284,4 +349,5 @@ class DecentralisedOverseer:
                     unused_r=(jnp.zeros(R, jnp.int32) if cfg.chooser in ("none", "all") else budget - checks_r),
                     violations_r=(onehot * violation[:, None]).sum(0), detected_r=detected_r, missed_r=missed_r,
                     cost_r=checks_r * per_check, comm_cost=comm)
+        obs = self._reveal(obs, s_next, jnp.where(done, False, checked))
         return obs, s_next, raw - penalty, dones, info
