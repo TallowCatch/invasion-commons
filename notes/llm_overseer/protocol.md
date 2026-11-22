@@ -25,6 +25,8 @@ Running an LLM inside 1e8-step RL is infeasible. So this study **measures each m
   - **raw:** per step, the move; on steps where it took an apple, the 5 × 5 map around that apple as it was before the move, in ASCII. The judge has to count the apples in the right 12 cells itself (the prompt shows which 12 cells count).
 - **Length:** summary 126 / 405 / 1,490 characters at w = 1 / 10 / 50; raw 456 / 923 / 2,654.
 
+**Amendment 1 (22 Nov, after the 50-item smoke test, before any full run).** A test found that in 478 of 7,090 eats the centre of the raw map showed empty ground: SocialJax regrows apples at the start of a step, before agents move, so the apple taken had regrown on that very step and is not on the previous map (which is the map the wrapper judges). The raw rendering now always draws the centre as the apple taken; the 12 cells around it are unchanged, and so are the labels and the summary rendering. The dataset was rebuilt and the smoke test rerun. The partial 0.5B full run started before the fix was discarded.
+
 ## 2. BazaarBench judging set
 
 `overseer/llm/bazaar_records.py`, built by `experiments/llm_overseer/make_bazaar_dataset.py` from the offline-replay download (`data/bazaarbench/`, git-ignored). The texts are not committed; the index of chosen pairs with the GPT-5 labels is (`experiments/llm_overseer/data/bazaar_index.tsv`).

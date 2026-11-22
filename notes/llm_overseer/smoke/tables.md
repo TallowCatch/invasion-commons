@@ -6,8 +6,8 @@
 
 | Model | Mode | Rendering | α | β | β_eat | said YES | no verdict | tokens in / out | s per check |
 |---|---|---|---|---|---|---|---|---|---|
-| qwen2.5-0.5b | direct | summary | 0.56 [0.27, 0.81] | 0.50 [0.19, 0.81] | 0.60 | 0.47 | 0.00 | 447 / 2 | 0.4 |
-| qwen2.5-0.5b | direct | raw | 0.00 [0.00, 0.30] | 1.00 [0.61, 1.00] | 1.00 | 1.00 | 0.00 | 827 / 2 | 0.4 |
+| qwen2.5-0.5b | direct | summary | 0.56 [0.27, 0.81] | 0.50 [0.19, 0.81] | 0.60 | 0.47 | 0.00 | 447 / 2 | 0.1 |
+| qwen2.5-0.5b | direct | raw | 0.00 [0.00, 0.30] | 1.00 [0.61, 1.00] | 1.00 | 1.00 | 0.00 | 828 / 2 | 0.3 |
 
 ## Harvest by window (full subset: 30 violation and 30 honest records per cell)
 

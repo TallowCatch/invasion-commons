@@ -17,6 +17,11 @@ Two renderings of the same record:
 - raw: per step, the move; on steps where it took an apple, the 5 x 5 map patch around that apple as it was just
   before the move, in ASCII. The judge has to count the apples in the right 12 cells itself.
 
+The map "before the move" is the previous step's map, as the wrapper judges it. SocialJax regrows apples at the start
+of a step, before agents move, so about 7% of eats (478 of 7,090 in the dataset) take an apple that regrew on that
+very step and is not on the previous map. The centre cell is always drawn as the apple taken; the 12 cells around it
+are the previous map, which is what the label counts.
+
 Needs JAX and SocialJax (scripts/socialjax_local_setup.sh).
 """
 from __future__ import annotations
@@ -143,7 +148,9 @@ def render_raw(ep: dict, agent: int, t0: int, t1: int) -> str:
         mv = move_name(pre, post)
         if ep["eaten"][t, agent]:
             lines.append(f"step {t + 1}: {mv} onto an apple and took it. Map just before the move:")
-            lines.append(patch_text(patch(ep["pre_grid"][t], post)))
+            cells = patch(ep["pre_grid"][t], post)
+            cells[PATCH_RADIUS][PATCH_RADIUS] = "A"  # the apple taken (it may have regrown on this very step)
+            lines.append(patch_text(cells))
         else:
             lines.append(f"step {t + 1}: {mv}; took no apple")
     return "\n".join(lines)
