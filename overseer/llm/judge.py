@@ -91,9 +91,13 @@ class TransformersBackend:
                     tokens_out=int(new.shape[0]), seconds=time.time() - t0, model=self.model, done_reason=None)
 
 
-def vllm_generate(model, item_messages, max_tokens, tensor_parallel=1, max_model_len=16384):
-    """Batch inference with vLLM (optional CREATE path; not run so far). One result dict per item."""
+def vllm_generate(model, item_messages, max_tokens, tensor_parallel=None, max_model_len=16384):
+    """Batch inference with vLLM (optional CREATE path; not run so far). One result dict per item.
+    tensor_parallel defaults to the number of visible GPUs (2 for the 32B model)."""
     from vllm import LLM, SamplingParams
+    if tensor_parallel is None:
+        import torch
+        tensor_parallel = max(1, torch.cuda.device_count())
     llm = LLM(model=model, tensor_parallel_size=tensor_parallel, max_model_len=max_model_len, seed=0)
     params = SamplingParams(temperature=0, max_tokens=max_tokens)
     t0 = time.time()
