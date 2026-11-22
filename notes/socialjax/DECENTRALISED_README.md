@@ -12,7 +12,7 @@ Built 21–22 Nov 2026 on branch `claude/decentralised-games`. Summary of result
 | `overseer/socialjax/game_bots.py` | Honest, greedy, sneaky, random and migrator bots for each game |
 | `overseer/socialjax/harvest_bots.py` | Harvest bots, now with the migrator |
 | `overseer/socialjax/game_rollout.py` | Jitted episode runner (`run_seeds`) and episode summary with per-region measures |
-| `tests/test_decentralised_overseer.py` | 26 tests (R = 1 equals the central overseer; regions; budgets; sharing; each game's rule; bots) |
+| `tests/test_decentralised_overseer.py` | 27 tests (R = 1 equals the central overseer; regions; budgets; sharing; each game's rule; bots; every GPU job line parses with the trainer) |
 | `experiments/socialjax/run_decentralised_bots.py` | The CPU bot sweeps |
 | `experiments/socialjax/analyze_decentralised.py`, `make_decentralised_figures.py` | Tables and figures |
 | `experiments/socialjax/train_ippo_overseer.py` | IPPO trainer, now with `--env`, `--regions`, `--share` and the budget split |
@@ -76,7 +76,28 @@ $P --out results/runs/train_smoke/harvest_large_R4 --env harvest_large --k 4 --c
    --regions 4 --share --total-steps 8e3 --num-envs 4 --eval-envs 2
 ```
 
-SMOKE_TIMINGS
+CPU wall time for the 2-update runs (8e3 steps), with four runs sharing 8 cores. The PPO updates (2 epochs x 500 minibatches) dominate:
+
+| Run | Training time | What the untrained policy did (evaluation with the overseer on) |
+|---|---|---|
+| Harvest, 2 strips, sharing | 328 s | 222 apples, 51 over-harvests, 13 caught, 1,980 checks, 500 communication units |
+| Coins, 2 halves, random | 219 s | 83 coins, 42 thefts, 19 caught, 787 checks + 213 unused |
+| Clean Up, 50-step look, presume | 672 s | 0 apples: random agents never clean, pollution 0.81 |
+| Harvest, 14 agents, 4 strips, sharing | 1,050 s | 443 apples, 94 over-harvests, 31 caught, 3,966 checks + 34 unused, 1,500 communication units |
+
+**The requested 1e5-step check** (Harvest, 2 strips, repeat offenders first with sharing, 25 updates of 4 envs):
+- It finished in 7,714 s (2.1 h) of CPU time, mostly while sharing the laptop with the other runs. There were no errors.
+- `config.json`, `metrics.npz`, `params.msgpack` and `summary.json` were all written.
+- Over its last 10 updates, each episode logged:
+  - 147 apples and 50 over-harvests, of which 16 were caught;
+  - checks split 996 / 987 between the two strips, with catches split 8.3 / 7.6.
+- The evaluation episodes gave:
+  - 121 apples and 47 over-harvests, of which 15 were caught;
+  - 1,998 checks and 2 unused;
+  - 500 communication units;
+  - the orchard alive in 1 of 4 envs.
+- Nothing is learned in 1e5 steps (stage 1 needed about 1e7). This only checks that the code runs end to end.
+- With a penalty and no freeze, the "with overseer" and "overseer off" evaluations take the same actions, so apples and over-harvests are identical by construction. This is the same as in stage 1 (phase 2 protocol, Amendment 1).
 
 ## GPU jobs on CREATE
 
