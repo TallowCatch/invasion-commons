@@ -25,6 +25,12 @@ Built 22–23 Nov 2026 on branch `claude/separate-nets-worstcase`. Protocol and 
    --separate-nets --reveal-checks --k 2 --chooser mixed --penalty-apples 3.5 --total-steps 1e5 --num-envs 4 --eval-envs 4
 ```
 
+**CPU check, 23 Nov** (the command above: separate nets, visible checks, mixed checks; 25 updates of 4 envs, M1 laptop, sharing the CPU with the test suite for its first 5 min):
+- It ran end to end in 3,810 s of training plus the two evaluations. `config.json`, `metrics.npz`, `params.msgpack` and `summary.json` were written; the 8 MB `params.msgpack` was then deleted to save disk.
+- Its last 10 updates averaged 178 apples and 47 over-harvests per episode, 15 of them caught. Over-harvests per agent ranged from 5.2 to 8.5.
+- The evaluation with the overseer on gave 193 apples, 53 over-harvests, 16 caught, 2,000 checks, orchard alive in 4 of 4 envs. With the overseer off it gave 178 apples and 50 over-harvests.
+- Nothing is learned in 1e5 steps; this only shows the code runs. With a penalty and no freeze, the two evaluations differ only through the policy's sampled actions and the reveal channels (which are all zero with the overseer off).
+
 ## GPU jobs on CREATE
 
 1e8 steps, seeds 1–3, Harvest, k = 2, P = 3.5 apples (average penalty 1 apple under random checks).
