@@ -1,5 +1,7 @@
 # Decentralised overseers in sequential social dilemmas (draft, 23 Nov 2026)
 
+**Confirmed 22 Nov (Ameer):** "decentralised" means the sense of the two Du papers: several overseers working from local information, with communication at a cost. Separately, the overseer's capability is studied with an LLM inspector ladder (`notes/llm_overseer/`).
+
 **Why this exists.** Yali's feedback is that the formulation must be general, not tied to SocialJax. The direction is now **decentralised overseers**: several overseers, each covering part of the system, sharing one total budget. This note does three things:
 1. it records how Yali's group sets up decentralised problems (section 1);
 2. it writes the decentralised overseer problem the same way (sections 2–4);
