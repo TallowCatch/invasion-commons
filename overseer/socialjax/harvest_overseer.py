@@ -15,6 +15,14 @@ Each step, after the agents act:
   4. a caught agent pays `penalty` (subtracted from its reward) and/or is frozen for `freeze_steps` steps
      (its actions are replaced by `stay`);
   5. violations that leave the window unchecked, or that a check fails to see, count as missed.
+Choosers: none, all, random, round_robin (predictable), history (agents caught before, then the longest unchecked),
+location (agents standing where the fewest apples are left) and mixed (added 22 Nov: each step, with probability
+mixed_eps the k checks are random, otherwise by history; the security-games idea of a randomised commitment, Wang et
+al. 2019).
+With reveal_checks=True (added 22 Nov, the worst case) each agent's observation also shows who was checked last step
+and when it was last checked itself (overseer/socialjax/reveal.py). check_prob(state) gives each agent's chance of
+being checked in the coming step, given everything public (the rule, the record of checks and catches, not the coin
+flips): what a scripted "dodger" (harvest_bots.py) cheats on.
 Cost (the "spend" dial): each check costs cost_per_check plus cost_per_step_seen for every step of history it reads,
 so a longer look (a bigger window, e.g. an LLM reading more of an agent's trajectory) costs more.
 
@@ -30,11 +38,13 @@ import jax
 import jax.numpy as jnp
 from flax import struct
 
+from overseer.socialjax.reveal import REVEAL_CHANNELS, augment, topk_chance
+
 APPLE = 3  # socialjax.environments.common_harvest.harvest_open.Items.apple
 STAY = 6  # Actions.stay
 NEIGHBOURHOOD = ((-1, 0), (1, 0), (0, -1), (0, 1), (-2, 0), (2, 0), (0, -2), (0, 2),
                  (-1, -1), (-1, 1), (1, -1), (1, 1))  # harvest_open.py, count_apple
-CHOOSERS = ("none", "all", "random", "round_robin", "history", "location")
+CHOOSERS = ("none", "all", "random", "round_robin", "history", "location", "mixed")
 
 
 def make_harvest_env(num_inner_steps=1000, **kwargs):
@@ -68,12 +78,16 @@ class OverseerConfig:
     suspicion_decay: float = 0.95  # for the "history" chooser
     cost_per_check: float = 1.0
     cost_per_step_seen: float = 0.0
+    mixed_eps: float = 0.3  # for the "mixed" chooser: chance a step's checks are random rather than by history
+    reveal_checks: bool = False  # agents see who was checked last step (reveal.py)
 
     def __post_init__(self):
         if self.chooser not in CHOOSERS:
             raise ValueError(f"chooser must be one of {CHOOSERS}, not {self.chooser!r}")
         if self.k < 0 or self.window < 1:
             raise ValueError("need k >= 0 and window >= 1")
+        if not 0.0 <= self.mixed_eps <= 1.0:
+            raise ValueError("mixed_eps must be in [0, 1]")
 
 
 @struct.dataclass
@@ -99,10 +113,21 @@ class HarvestOverseer:
                              window=jnp.zeros((n, w), jnp.int32), suspicion=jnp.zeros(n, jnp.float32),
                              rr_ptr=jnp.zeros((), jnp.int32))
 
+    def obs_shape(self):
+        """Shape of one agent's observation (the game's, plus the reveal channels if reveal_checks)."""
+        shape = tuple(self.env.observation_space()[0].shape)
+        return shape[:-1] + (shape[-1] + REVEAL_CHANNELS,) if self.cfg.reveal_checks else shape
+
+    def _reveal(self, obs, s, checked):
+        if not self.cfg.reveal_checks:
+            return obs
+        return augment(obs, self.env, s.env_state, checked, s.since_check)
+
     @partial(jax.jit, static_argnums=0)
     def reset(self, key):
         obs, env_state = self.env.reset(key)
-        return obs, self._fresh(env_state)
+        s = self._fresh(env_state)
+        return self._reveal(obs, s, jnp.zeros(self.n, bool)), s
 
     def _choose(self, key, s, near):
         n, k, c = self.n, self.k, self.cfg.chooser
@@ -116,11 +141,39 @@ class HarvestOverseer:
         if c == "round_robin":
             return mask.at[(s.rr_ptr + jnp.arange(k)) % n].set(True)
         noise = 1e-6 * jax.random.uniform(key, (n,))  # random tie-break
-        if c == "history":  # agents caught before, then the longest unchecked
-            score = s.suspicion + 1e-3 * s.since_check + noise
+        if c in ("history", "mixed"):  # agents caught before, then the longest unchecked
+            score = self._history_score(s) + noise
         else:  # "location": agents standing where the fewest apples are left
             score = -near.astype(jnp.float32) + noise
-        return mask.at[jax.lax.top_k(score, k)[1]].set(True)
+        targeted = mask.at[jax.lax.top_k(score, k)[1]].set(True)
+        if c != "mixed":
+            return targeted
+        coin = jax.random.uniform(jax.random.fold_in(key, 1), (1,))[0] < self.cfg.mixed_eps
+        randomly = mask.at[jax.random.permutation(jax.random.fold_in(key, 2), n)[:k]].set(True)
+        return jnp.where(coin, randomly, targeted)
+
+    @staticmethod
+    def _history_score(s):
+        return s.suspicion + 1e-3 * s.since_check
+
+    def check_prob(self, s):
+        """(N,) each agent's chance of being checked in the coming step, from the public state s (the chooser's rule,
+        the record of checks and catches) but not its coin flips. "location" depends on where agents move, so it is
+        given as k/N."""
+        n, k, c = self.n, self.k, self.cfg.chooser
+        if c == "none" or k == 0:
+            return jnp.zeros(n)
+        if c == "all":
+            return jnp.ones(n)
+        flat = jnp.full(n, k / n)
+        if c in ("random", "location"):
+            return flat
+        if c == "round_robin":
+            return jnp.zeros(n).at[(s.rr_ptr + jnp.arange(k)) % n].set(1.0)
+        targeted = topk_chance(self._history_score(s), jnp.ones(n, bool), k)
+        if c == "history":
+            return targeted
+        return self.cfg.mixed_eps * flat + (1 - self.cfg.mixed_eps) * targeted
 
     @partial(jax.jit, static_argnums=0)
     def step(self, key, s, actions):
@@ -166,4 +219,5 @@ class HarvestOverseer:
                     raw_reward=raw, penalty=penalty, frozen=frozen > 0,
                     apples=jnp.sum(env_state.grid == APPLE),
                     cost=checked.sum() * (cfg.cost_per_check + cfg.cost_per_step_seen * cfg.window))
+        obs = self._reveal(obs, s_next, jnp.where(done, False, checked))
         return obs, s_next, raw - penalty, dones, info

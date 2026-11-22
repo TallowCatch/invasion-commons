@@ -229,7 +229,9 @@ def test_gpu_job_lists_parse_with_the_trainer():
 
     n_agents = {"harvest": 7, "harvest_large": 14, "coins": 2, "cleanup": 7}
     names = []
-    for fn in decentralised_runs.LISTS.values():
+    for name, fn in decentralised_runs.LISTS.items():
+        if name in ("worstcase_pilot", "separate", "worstcase"):  # tests/test_worstcase.py
+            continue
         for run, args in fn():
             a = parser().parse_args(["--out", "x"] + shlex.split(args))
             DecConfig(k=a.k, chooser=a.chooser if a.k > 0 else "none", window=a.window, regions=a.regions,
