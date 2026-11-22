@@ -31,6 +31,11 @@ One page for the budgeted-overseer work: an overseer that can only check a few a
 | 9 | **Fixing agents that already over-harvest needs more checks, or targeting** | after 50M steps: 1 check 120 apples, 2 checks 172, 4 checks 315, 7 checks 403; repeat offenders first with 2 checks 352 | lead (1 of 3 runs per setting) | below |
 | 10 | An overseer that misses half the time should need twice the penalty | prediction: average penalty × (1 − miss rate) must reach the same level | prediction (running) | `socialjax/phase2_ippo/mistakes_protocol.md` |
 | 11 | False alarms should cost honest agents the same on average whatever the number of checks | prediction | prediction (running) | same |
+| 12 | **Splitting the overseer by region wastes budget** that can't follow the agents | Harvest, 4 strips: 22–29% of checks unused; 2 players in Coins: 26%; random checks lose about that share of catches | solid (bots) | `socialjax/harvest/results.md`, `socialjax/coins/results.md` |
+| 13 | **Agents that cheat where the local overseer hasn't looked gain a lot** | migrators, 2 checks per step: 7 over-harvests a game under one overseer, 37 under 2 regional ones (orchard alive 10/10 vs 1/10) | solid (bots) | `socialjax/harvest/results.md` |
+| 14 | **What overseers share matters:** sharing who was caught helps; sharing who was just checked invites migration | fixed cheater, k = 2: 53% caught alone, 68% sharing suspicion, 75% also sharing coverage; migrators: 12 → 27 over-harvests with coverage sharing | solid (bots) | same |
+| 15 | **A check has to read the rule's whole window** (Clean Up: no eating unless you cleaned in the last 100 steps) | free-rides caught: 0% for looks under 100 steps, 32% at 100, 100% at 150+; presuming guilt on a 10-step look flags 45 honest agents a game and cuts apples from 908 to 196 | solid (bots) | `socialjax/cleanup/results.md` |
+| 16 | In Coins, theft stops paying at exactly the predicted penalty under one overseer, not under split ones | average penalty 1 coin per theft: thief nets 81 coins (honest 83) centrally, 86–88 split | solid (bots) | `socialjax/coins/results.md` |
 
 The same patterns had already shown up in the earlier non-spatial games:
 - **Fishery with LLM agents:** the expected fine decides (L4).
@@ -76,6 +81,21 @@ For comparison, seven well-behaved scripted bots collect 500.
 
 **What it means.** The average penalty decides whether the overseer can work in the long run (finding 3). But how quickly it fixes agents that already misbehave depends on how often it checks, and on targeting. Frequent small penalties are a clearer signal to learn from than rare big ones. Some runs were still improving at the end, so the gap may narrow with longer training.
 
+## Findings 12–16: decentralised overseers and two more games (scripted bots, 22 Nov)
+
+Several overseers, each covering one region of the map, share the same total budget of k checks per step. Each can only check agents in its region. They are either independent or share scores with neighbouring regions, at a cost per message. Code in `overseer/socialjax/decentralised.py`. Games: Harvest (7 agents, and 14 on a doubled map), Coins (2 players) and Clean Up (7 agents).
+
+| | Central overseer | 2 regional overseers | Notes |
+|---|---|---|---|
+| Fixed cheater in Harvest, k = 2, repeat offenders first | 81% caught, orchard alive 10/10 | 53% (5/10); sharing suspicion 68% (8/10) | at k = 4 the split overseers catch as many or more (93% vs 87%) |
+| Migrators in Harvest, k = 2, random | 6.9 over-harvests, 484 apples | 37, 195 apples | they cheat where the local overseer hasn't checked them recently |
+| Sneaky bots in Harvest, k = 2, random | 6.9 over-harvests | 21 | even bots that don't exploit regions gain: a crowded strip checks each agent less often |
+| Thief in Coins, k = 1, random, average penalty 1 coin | nets 81 (honest: 83) | nets 86 | a quarter of the checks are wasted when both players are in one half |
+
+**Clean Up** gives the "hard to see in one check" case (claim C4 in the general formulation), with a dial: the look a check needs equals the rule's window.
+
+**Bots only, so all of this is a lead for the learning-agent runs.** GPU job lists and commands: `socialjax/DECENTRALISED_README.md`. Summary: `socialjax/DECENTRALISED_SUMMARY.md`.
+
 ## What the overseer costs
 
 So far cost is counted in checks per game: 1 check per step is 1,000 checks a game, and checking everyone is 7,000. With a perfect inspector, 1,000 checks recover about 97% of the gap between no overseer and checking everyone (finding 4). That's measured as η = (515 − 68) / (530 − 68).
@@ -96,6 +116,7 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 
 ## Log
 
+- **22 Nov.** Decentralised overseers built, plus Coins and Clean Up ports. Bot sweeps run under protocols written first (findings 12–16). 159 GPU runs listed (`socialjax/DECENTRALISED_README.md`). Branch `claude/decentralised-games`.
 - **21 Nov.** Stages 2 and 3 partly in (findings 8 and 9). The mistakes test was submitted. False alarms were redefined to fall only on honest harvests, before any run used them. This tracker was started.
 - **16 Nov.** Stage 1 results (findings 2–7). Wording corrected: the average penalty is (k/7) × penalty, not k × penalty.
 - **15 Nov.** Bots (finding 1) and the break-even point (greed stops paying at about 1 apple of average penalty).

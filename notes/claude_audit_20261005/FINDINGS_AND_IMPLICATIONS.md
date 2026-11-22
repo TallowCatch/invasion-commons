@@ -213,4 +213,21 @@ Started 14 October 2026.
 
 ---
 
+## F19. Splitting a budgeted overseer by region costs budget and invites migration; what overseers share decides which [lead; scripted bots, 22 Nov]
+
+- **Found** (scripted bots, SocialJax Harvest, Coins and Clean Up; regional overseers at the same total budget as one central overseer; 10 seeds; protocols written first):
+  - **Waste.** Regions with fewer agents than checks leave checks unused: 22–29% with 4 strips in Harvest, 26% in 2-player Coins. Random checks lose about that share of catches. In Coins this is enough to make theft pay again at the penalty where it stops paying centrally (thief 86 vs 81 coins; honest 83).
+  - **Local memory.** Migrator bots, which cheat only where the local overseer has not checked them, over-harvest 37 times a game under 2 regional random overseers, against 7 under one (k = 2).
+  - **Sharing.** Sharing suspicion (who was caught) recovers most of the targeting lost to splitting: a fixed cheater is caught 53% → 68% of the time, against 81% centrally. Sharing coverage (who was just checked) helps a little more against fixed cheaters but invites migration (12 → 27 over-harvests).
+  - **Detectability (Clean Up).** A check proves free-riding only if it reads the rule's whole 100-step window: 0% caught below 100 steps, 32% at 100, 100% at 150+. Presuming guilt on short looks wrongly freezes honest cleaners and collapses the commons (908 → 196 apples).
+- **What it means.**
+  - Decentralisation is not free at a fixed budget.
+  - The communication rule is a design choice with an adversary in mind.
+  - Clean Up gives the general formulation's detectability property (C4) a measurable dial.
+  - Whether learning agents discover migration is the GPU question.
+- **Evidence.** `notes/socialjax/DECENTRALISED_SUMMARY.md`; `notes/socialjax/{harvest,coins,cleanup}/results.md`.
+- **Status:** open (bots only; 159 IPPO runs listed for CREATE).
+
+---
+
 *Index entry:* this file is referenced from `what_we_learned_and_next.md` and from Ameer's Claude memory.
