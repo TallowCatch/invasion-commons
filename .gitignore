@@ -52,3 +52,6 @@ notes/slides/*_weekly_update/*.pdf
 # Talk scripts with slide pictures embed the paper screenshots too (16 Nov 2026)
 notes/slides/*_weekly_update/script_slides/
 notes/slides/*_weekly_update/talk_script_with_slides.docx
+
+# BazaarBench downloads (CC-BY-4.0 data, large; never commit)
+data/bazaarbench/

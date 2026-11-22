@@ -36,6 +36,9 @@ One page for the budgeted-overseer work: an overseer that can only check a few a
 | 14 | **What overseers share matters:** sharing who was caught helps; sharing who was just checked invites migration | fixed cheater, k = 2: 53% caught alone, 68% sharing suspicion, 75% also sharing coverage; migrators: 12 → 27 over-harvests with coverage sharing | solid (bots) | same |
 | 15 | **A check has to read the rule's whole window** (Clean Up: no eating unless you cleaned in the last 100 steps) | free-rides caught: 0% for looks under 100 steps, 32% at 100, 100% at 150+; presuming guilt on a 10-step look flags 45 honest agents a game and cuts apples from 908 to 196 | solid (bots) | `socialjax/cleanup/results.md` |
 | 16 | In Coins, theft stops paying at exactly the predicted penalty under one overseer, not under split ones | average penalty 1 coin per theft: thief nets 81 coins (honest 83) centrally, 86–88 split | solid (bots) | `socialjax/coins/results.md` |
+| 17 | **BazaarBench (recorded LLM traders): random checks catch about k/20; repeat offenders first is worse than random when nearly everyone plans unsafe acts** | exploit instructions, k = 5 of 20: random 28.5%, repeat offenders 24.6% (past-plan failures: 45% vs 25%) | lead (1 market pair, offline) | `bazaarbench/offline_replay/results.md` |
+| 18 | **BazaarBench: most failures exist only in private reasoning, so what a check can read decides what it catches** | exploit: 998 of 1,051 failures never leave reasoning; a check without reasoning sees at most 5%, record checks 0.2% | lead (GPT-5 labels, 1 tested model) | same |
+| 19 | **BazaarBench: daily checks are too late for harm; fixed local budgets waste a small budget** | everyone checked daily catches 2 and 5 of 15 carried-through failures first; 4 independent overseers at 1 unit catch 0.3–1.2% vs 6–7% central; a 500-token shared board recovers it | lead | same |
 
 The same patterns had already shown up in the earlier non-spatial games:
 - **Fishery with LLM agents:** the expected fine decides (L4).
@@ -111,12 +114,13 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 
 ## Next
 
-- **BazaarBench offline test:** a budgeted overseer replayed on the released judge labels, comparing random with repeat-offenders-first checking, and cheap with expensive checks.
+- **BazaarBench offline test:** done 21 Nov (findings 17–19; merged 22 Nov). Next there: a cheap open-model judge for real miss and false-alarm rates, and a tested model that acts on more of its plans.
 - **The plan for using both testbeds:** `phd_plan/2026-11-21_way_forward.md` (written 21 Nov).
 
 ## Log
 
 - **22 Nov.** Decentralised overseers built, plus Coins and Clean Up ports. Bot sweeps run under protocols written first (findings 12–16). 159 GPU runs listed (`socialjax/DECENTRALISED_README.md`). Branch `claude/decentralised-games`.
+- **21 Nov (later).** BazaarBench offline replay on two markets (GPT-5.5 base, gpt-oss-120b tested, ordinary vs exploit instructions): findings 17–19. Predictions in `bazaarbench/offline_replay/protocol.md` were written before the replay; 2 of 11 held in full, the other 9 partly or mixed (scorecard in `results.md`).
 - **21 Nov.** Stages 2 and 3 partly in (findings 8 and 9). The mistakes test was submitted. False alarms were redefined to fall only on honest harvests, before any run used them. This tracker was started.
 - **16 Nov.** Stage 1 results (findings 2–7). Wording corrected: the average penalty is (k/7) × penalty, not k × penalty.
 - **15 Nov.** Bots (finding 1) and the break-even point (greed stops paying at about 1 apple of average penalty).
