@@ -243,4 +243,21 @@ Started 14 October 2026.
 
 ---
 
+## F21. Locality: what makes splitting the overseer cost catches is agents moving between regions and how unevenly they crowd, not where the harm lands [lead; bots and fixed strategies, 22 Nov]
+
+- **Found** (protocol written before any run; 13 of 21 predictions held, 4 in part, 3 failed, 1 untested):
+  - **The existing regional overseer hands records over for free.** An agent's last-w-steps record travels with it, so findings 12–16 and the 159 decentralised GPU runs test only where checks can go. A new `LocalRecordOverseer` (records="local") tests evidence lost at boundaries.
+  - **Measured locality:** crossing rate χ is 0.006–0.07 per agent-step and harm containment ζ is 0.9–1.0 in Harvest; Coins ζ = 0.67; Clean Up ζ = 0.50 with 2 strips (0.26 with 4, 1.00 for a river/orchard split).
+  - **The P_0 formula is exact only if agents never come back** (error ≤ 0.002); with returns it is off by up to 0.73, because agents are caught late rather than never. A Markov version fits within 0.003.
+  - **D1:** ξ_loc ranks the catches lost to local records (Spearman 0.80, 65 points from 7 maps) but only weakly ranks the total gap (0.42). Most of the gap is placement: fixed per-region budgets while agents crowd unevenly (up to 0.20 of violations at w = 1).
+  - **Scale (Willis et al.'s commons, N = 64 and 256):** fixed groups lose nothing (|Δ| ≤ 0.01) despite ξ_loc = 1 − 1/M. An overseer counting only its own group's welfare deters its own group at every M ≥ 4 (derived, not simulated).
+- **What it means.**
+  - Split ξ_loc: χ plus budget density govern catching; ζ governs the overseers' objectives.
+  - Replace P_0 in §5.2 of the formulation with the Markov form; report time-to-catch alongside catch share.
+  - Budgets that follow where agents are are the obvious next test.
+- **Next.** Trained-agent χ and ζ (CREATE script prepared, not submitted); a learning-agent version of the gap.
+- **Evidence.** `notes/socialjax/locality/results.md`, `protocol.md`, `tables.md`; code `overseer/socialjax/{local_records,locality,rooms,corridor}.py`, `experiments/scale/`.
+
+---
+
 *Index entry:* this file is referenced from `what_we_learned_and_next.md` and from Ameer's Claude memory.
