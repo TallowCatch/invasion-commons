@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "title": "Who Watches Whom: reading for a budgeted overseer",
+    "author": "Ameer Alhashemi",
+    "event": "Supervision meeting",
+    "affiliation": "King's College London",
+    "date": "2 November 2026",
+    "email": "k26108758@kcl.ac.uk"
+  },
+  "slides": [
+    {
+      "type": "title",
+      "title": "Who Watches Whom",
+      "subtitle": "What I read for a budgeted overseer in sequential social dilemmas",
+      "footer": [
+        "Ameer Alhashemi",
+        "Supervision meeting · King's College London",
+        "2 November 2026"
+      ]
+    },
+    {
+      "type": "numbered",
+      "title": "What I read for",
+      "items": [
+        {
+          "head": "The question",
+          "text": "Can an overseer that checks only k of N learning agents per step keep cooperation going in a sequential social dilemma (SocialJax Harvest first)?"
+        },
+        {
+          "head": "What it must decide",
+          "text": "Whom to check each step, and what consequence to apply to agents it catches over-harvesting."
+        },
+        {
+          "head": "The test",
+          "text": "Agents that learn to evade it: the overseer has to work against learners, not fixed or scripted agents."
+        },
+        {
+          "head": "What I checked in each paper",
+          "text": "Is there an intervener? Does it see every agent? Does it choose whom to check? Do agents adapt to it?"
+        }
+      ],
+      "notes": "Seven papers read properly and filled into the literature matrix; each answers these four checks."
+    },
+    {
+      "type": "figure",
+      "title": "Every intervener so far sees everyone",
+      "image": "figures/lit_map.png",
+      "caption": "Seven papers scored on the checks that define the gap. \"Partly\" in the first column means matrix games, a not-quite dilemma, or a shared team reward.",
+      "takeaway": "No paper combines learning agents in a dilemma with a budgeted overseer that chooses whom to check against agents that adapt.",
+      "notes": "Baumann's planner, Gasztowtt's LLM tax-setter and Sun's detector all see every agent. Casheekar is the only one with a budget, but its audit plan is fixed and agents never evade it."
+    },
+    {
+      "type": "cards",
+      "title": "Four kinds of paper",
+      "cards": [
+        {
+          "label": "Setting",
+          "head": "The setting",
+          "text": "Leibo 2017, SocialJax, OpenSocialJax: sequential social dilemmas and fast benchmarks. No intervener at all."
+        },
+        {
+          "label": "Sees all",
+          "head": "Planners that see all",
+          "text": "Baumann 2020 and Gasztowtt 2024: a planner or LLM sets rewards or taxes using every agent's actions or harvest."
+        },
+        {
+          "label": "Sees all",
+          "head": "No police, still a watcher",
+          "text": "Sun 2019: peers boycott defectors, but a global detector reads every agent's reward history."
+        },
+        {
+          "label": "Budget",
+          "head": "A budget, but fixed",
+          "text": "Casheekar 2026: random audits on a budget, but a team reward, a plan fixed in advance, and no evasion."
+        }
+      ],
+      "takeaway": "The pieces exist separately; nobody has put a budgeted, choosing overseer against adaptive learners in an SSD."
+    },
+    {
+      "type": "figure",
+      "title": "The two closest papers",
+      "image": "figures/closest_two.png",
+      "caption": "Casheekar is the only paper with a budgeted intervener; Gasztowtt is the only one with an LLM overseer in Harvest.",
+      "takeaway": "Neither chooses whom to check from what it sees, and in neither do agents learn to evade it.",
+      "notes": "Casheekar: certificate-built audit plan 57.4% unsafe completion vs 99.6% for coalition audits, same budget. Gasztowtt: GPT-4o mini converges in 36k steps on Harvest vs 984k for AI Economist."
+    },
+    {
+      "type": "numbered",
+      "title": "The gap and the first study",
+      "items": [
+        {
+          "head": "The gap",
+          "text": "MARL interveners see every agent; budgeted-monitoring work has no learning agents in a social dilemma. Nobody tests an overseer that picks k of N agents against learners that adapt."
+        },
+        {
+          "head": "First study",
+          "text": "A SocialJax Harvest wrapper: the overseer checks k of 7 agents per step, switched on after the team has learned to over-harvest (Casheekar's \"recovery\")."
+        },
+        {
+          "head": "What I'll measure",
+          "text": "Over-harvesting missed and normal harvesting wrongly stopped, as a heatmap over budget k and consequence size (Leibo's Figure 4 style)."
+        },
+        {
+          "head": "Still to read",
+          "text": "AI Control (Greenblatt), Norm Enforcement (Ye), Blindfold (Zhu), IQ-Flow, Vinitsky sanctions, Green Security Games."
+        }
+      ]
+    },
+    {
+      "type": "questions",
+      "title": "Questions for you",
+      "questions": [
+        "Is \"whom to check, against agents that evade\" a strong enough gap, given Casheekar?",
+        "Harvest first, or Clean Up as well?",
+        "Learning agents only, or also LLM agents (OpenSocialJax)?",
+        "Is there GPU credit for SocialJax training runs?"
+      ]
+    },
+    {
+      "type": "closing",
+      "date": "2 November 2026"
+    }
+  ]
+}

@@ -1,0 +1,296 @@
+{
+  "meta": {
+    "title": "Literature Review and Progress",
+    "author": "Ameer Alhashemi",
+    "event": "Supervision meeting",
+    "affiliation": "King's College London",
+    "date": "2 November 2026",
+    "email": "k26108758@kcl.ac.uk"
+  },
+  "slides": [
+    {
+      "type": "title",
+      "title": "Literature Review and Progress",
+      "subtitle": "Scalable oversight in shared-resource games: an overseer that can only check a few agents",
+      "footer": [
+        "Ameer Alhashemi",
+        "Supervision meeting · King's College London",
+        "2 November 2026"
+      ],
+      "notes": "Thanks for making the time. I'll go through the main papers I've read, what I took from each one, where I think the gap is, and then a quick reminder of what I've built so far and where I want to take it next."
+    },
+    {
+      "type": "numbered",
+      "title": "The project in one slide",
+      "items": [
+        {
+          "head": "The problem",
+          "text": "Scalable oversight: nobody can check everything a large group of AI agents does. In shared-resource games like Harvest, each agent gains by taking more, and if all do, the resource collapses."
+        },
+        {
+          "head": "How it's fixed today",
+          "text": "MARL changes what agents want, lets them punish or pay each other, or adds a planner that taxes everyone. All of these assume the fixer sees every agent, all the time."
+        },
+        {
+          "head": "What I'm contributing",
+          "text": "An overseer with a budget: it can only check a few agents at a time, decides whom to check and what happens to cheaters, and is tested against agents that learn to dodge it."
+        }
+      ],
+      "notes": "Quick reminder of what the project is, and where it sits. It's a scalable oversight problem. As AI agents end up working in big groups, nobody can check everything they do, so the question is how a few checks can keep a lot of agents in line. I study that in shared-resource games like Harvest, where every agent does better by taking more, but if they all do, the resource collapses.\n\nMARL already has ways of fixing this. You can change what agents want, let them punish or pay each other, or put a planner on top that taxes everyone. But all of those assume whoever is doing the fixing can see every agent, all the time.\n\nWhat I'm adding is an overseer with a budget. It can only check a few agents at a time, so it has to decide who to check and what happens to anyone it catches, and I test it against agents that learn to dodge it."
+    },
+    {
+      "type": "numbered",
+      "title": "SocialJax (Guo et al., ICLR 2026)",
+      "items": [
+        {
+          "head": "What it is",
+          "text": "Melting Pot-style social dilemma games (Harvest, Clean Up, Coins and more) rewritten in JAX, with standard MARL baselines."
+        },
+        {
+          "head": "What they found",
+          "text": "At least 50× faster than Melting Pot. Sharing rewards helps in most games. In Harvest Open, one greedy agent can wreck the orchard for everyone."
+        },
+        {
+          "head": "What I learned",
+          "text": "This is my platform: Harvest Open is the most fragile game, so it's the clearest test for an overseer. Schelling diagrams check that a game really is a dilemma."
+        },
+        {
+          "head": "What's missing for me",
+          "text": "Every fix changes what agents are rewarded for. There is no outside overseer watching them."
+        }
+      ],
+      "notes": "First, SocialJax, which you know well. It's the Melting Pot-style games rebuilt in JAX, so they run much faster, at least 50 times faster than Melting Pot. The thing that stuck with me is that in Harvest Open a single greedy agent can wreck the orchard for everyone. That makes it the most fragile game, so it's the clearest place to test an overseer, and it's the platform I want to use.\n\nWhat's missing for me is that every fix in the paper changes what the agents are rewarded for. There's nobody outside the game watching them."
+    },
+    {
+      "type": "cards",
+      "title": "Adaptive Mechanism Design (Baumann et al., 2020)",
+      "cards": [
+        {
+          "label": "Paper",
+          "head": "A learning planner",
+          "text": "A planner learns to hand out extra rewards and penalties so that two learning agents cooperate in simple games (Prisoner's Dilemma, Chicken, Stag Hunt)."
+        },
+        {
+          "label": "Found",
+          "head": "Cooperation, then cheaper",
+          "text": "About 99% cooperation with the planner, under 4% without. Once most agents cooperate, punishing the rare cheater costs less than rewarding everyone."
+        },
+        {
+          "label": "Learned",
+          "head": "Some games need ongoing checks",
+          "text": "With the planner switched off, Stag Hunt stays cooperative but Prisoner's Dilemma collapses (0.5%). Some dilemmas need an overseer that stays."
+        },
+        {
+          "label": "Gap",
+          "head": "It sees everything",
+          "text": "The planner sees every agent's action and knows how they learn. The authors list partial observation as future work."
+        }
+      ],
+      "notes": "This one is the closest RL version of what I want to do. A planner learns to hand out extra rewards and penalties so that two learning agents end up cooperating, in Prisoner's Dilemma, Chicken and Stag Hunt. With the planner, cooperation is about 99%, and without it it's under 4%.\n\nTwo things I took from it. Once most agents are cooperating, it's cheaper to punish the odd cheater than to keep rewarding everyone. And when they switch the planner off, Stag Hunt stays cooperative but Prisoner's Dilemma collapses, so some games need an overseer that stays around.\n\nThe gap is that the planner sees every action and even knows how the agents learn. The authors actually list partial observation as future work themselves."
+    },
+    {
+      "type": "numbered",
+      "title": "Large Legislative Models (Gasztowtt et al., 2024)",
+      "items": [
+        {
+          "head": "What it is",
+          "text": "An LLM (GPT-4o mini, Gemini 1.5 Flash) acts as a policymaker: it sets taxes or rewards for 7 RL agents in Harvest and Clean Up."
+        },
+        {
+          "head": "What they found",
+          "text": "The LLM finds good policies with about 10× fewer trials than AI Economist, a learned planner, with similar results. Describing the game to the LLM helps."
+        },
+        {
+          "head": "What I learned",
+          "text": "An LLM can work as an overseer in my exact game, and it learns from a growing prompt of past results rather than retraining."
+        },
+        {
+          "head": "What's missing for me",
+          "text": "The tax uses every agent's harvest at every step, it's one rule for everyone, and agents are reset each round, so they never learn to dodge it."
+        }
+      ],
+      "notes": "This is an LLM acting as the policymaker. It sets taxes or rewards for seven RL agents in Harvest and Clean Up. It finds good policies with about ten times fewer tries than AI Economist, and telling the LLM what the game is about helps.\n\nWhat I took from it is that an LLM overseer can work in exactly my game, and it learns just from a growing prompt of what happened before, with no retraining.\n\nBut the tax is based on every agent's harvest at every step, it's one rule for everyone, and the agents get reset each round, so they never get the chance to learn to dodge it."
+    },
+    {
+      "type": "cards",
+      "title": "Regulation Enforcement (Sun et al., 2019)",
+      "cards": [
+        {
+          "label": "Paper",
+          "head": "No police",
+          "text": "5 agents gather apples on a 20×20 grid with a rule: never hold more than 3 apples. There is no authority, so honest agents boycott anyone flagged as a cheater."
+        },
+        {
+          "label": "Found",
+          "head": "Cheating stops paying",
+          "text": "With a strong enough boycott, the cheater earns less than if it had followed the rule (892 vs 985). A stronger cheater needs a stronger boycott."
+        },
+        {
+          "label": "Learned",
+          "head": "Enforcement has a cost",
+          "text": "Boycotting also costs the honest agents, so too much of it could push them to cheat too. A spatial grid like this is where I want to go."
+        },
+        {
+          "label": "Gap",
+          "head": "Still a watcher",
+          "text": "A central detector reads every agent's history, who cheats is fixed in advance, and no agent tries to hide."
+        }
+      ],
+      "notes": "Sun et al. is a 'no police' paper. Five agents collect apples on a 20 by 20 grid, with a rule not to hold more than three apples. There's no authority, so the honest agents boycott anyone flagged as a cheater, and with a strong enough boycott, cheating stops paying.\n\nTwo things I liked. Boycotting costs the honest agents too, so if you push it too hard you might turn them into cheaters as well. And the 20 by 20 grid is the kind of spatial setup I want to move to.\n\nBut even here, a central detector reads every agent's history. Who cheats is fixed beforehand, and nobody ever tries to hide."
+    },
+    {
+      "type": "numbered",
+      "title": "Learning to Report Unsafe Tasks (Casheekar & Tangirala, 2026)",
+      "items": [
+        {
+          "head": "What it is",
+          "text": "A team shares one reward, so reporting bad work costs everyone and the team learns to stay quiet. A random auditor with a limited budget checks some agents."
+        },
+        {
+          "head": "What they found",
+          "text": "Where the checks go matters: with the same budget, a plan built from their rule let 57% of bad tasks through, against 99.6% for another common plan."
+        },
+        {
+          "head": "What I learned",
+          "text": "Start from a team that already behaves badly and switch the overseer on. Measure both bad behaviour missed and good behaviour wrongly stopped."
+        },
+        {
+          "head": "What's missing for me",
+          "text": "The closest paper: it has a budget. But it's a one-step game, the plan is fixed in advance, and agents can't see or dodge the audits."
+        }
+      ],
+      "notes": "This is the closest paper to my idea. A team shares one reward, so reporting bad work costs everyone, and the team learns to stay quiet. Then a random auditor with a limited budget checks some of the agents. Their main finding is that where you put the checks matters. With the same budget, a well-placed plan let 57% of bad tasks through, against 99.6% for another plan.\n\nTwo things I'm borrowing. Start from a team that's already misbehaving and then switch the overseer on. And measure both the bad behaviour you miss and the good behaviour you wrongly stop.\n\nWhere it differs from mine: it's a one-step game, the audit plan is fixed in advance, and the agents can't see the audits or try to get around them."
+    },
+    {
+      "type": "cards",
+      "title": "Also read",
+      "cards": [
+        {
+          "label": "Leibo 2017",
+          "head": "Sequential social dilemmas",
+          "text": "Defined social dilemmas that play out over time. When apples are scarce, agents learn to zap each other. What matters is which behaviour is easier to learn."
+        },
+        {
+          "label": "OpenSocialJax",
+          "head": "LLM agents in SocialJax",
+          "text": "LLMs play Harvest and Clean Up. No model keeps the orchard alive, and one restrained agent can't save it from four greedy ones."
+        },
+        {
+          "label": "Still to read",
+          "head": "Oversight on a budget",
+          "text": "AI Control (Greenblatt), Norm Enforcement (Ye & Steinhardt), Blindfold (Zhu); then IQ-Flow, public sanctions (Vinitsky), Green Security Games."
+        }
+      ],
+      "notes": "Two more papers that set the scene. Leibo 2017 defined sequential social dilemmas. When apples are scarce, agents learn to zap each other, and the key point is that what matters is which behaviour is easier to learn. OpenSocialJax puts LLM agents in these games. No model keeps the orchard alive, and one well-behaved agent can't save it from four greedy ones. Neither has an overseer, so that's the gap I'm adding to. I've still got the AI control papers to read next."
+    },
+    {
+      "type": "figure",
+      "title": "Where the gap is",
+      "image": "figures/lit_map.png",
+      "notes": "This puts it all together. Each row is a paper and each column is a question. Are there learning agents in a dilemma? Is there an intervener? Does it only see some agents? Does it choose who to check? Do agents learn to evade it?\n\nThe first three papers don't have an intervener at all. The planner papers have one, but it sees everyone. Casheekar is the only one with a budget, but there's no real dilemma between agents and nobody tries to dodge it. The bottom row is what I want to do, and nobody has filled in all five."
+    },
+    {
+      "type": "figure",
+      "title": "What I've built so far",
+      "image": "figures/my_game_round.png",
+      "notes": "Here's what I've built so far. It's a simple game with no grid yet. Six agents share a lake that regrows each round. Each round, every agent asks for a share. The overseer gives each one an allowance that keeps the lake healthy, then they fish, and a cheater takes more than it was allowed. The overseer can only spot-check a few agents at random, and if it catches one, that agent either pays a penalty or gets a smaller share later on.\n\nI ran it first with rule-following bots I wrote, then with language models in four of the six seats over 520 games, and then at scale with 64 evolving strategies on Richard's code."
+    },
+    {
+      "type": "numbered",
+      "title": "What I found so far",
+      "items": [
+        {
+          "head": "A predictable penalty",
+          "text": "Watch agents with no penalty, see how much cheating gains them, and set the average penalty just above it. I predicted 30 before testing; Nemotron stopped exactly there."
+        },
+        {
+          "head": "Some obvious designs backfire",
+          "text": "Announcing checks with no penalty raised cheating (58% of rounds vs 30%). Always checking the biggest agent caught 25% of liars; random checks caught 100%."
+        },
+        {
+          "head": "Agents behave, they don't change",
+          "text": "Under oversight, selfish strategies survive but act well. Remove the overseer and they wreck the resource again."
+        },
+        {
+          "head": "It scales",
+          "text": "With 64 agents on Richard's code, welfare rose from 0.13 to 0.87 with the overseer."
+        }
+      ],
+      "notes": "Four main things came out of it. First, you can predict the penalty that works. You watch agents with no penalty, see how much they gain by cheating, and set the average penalty just above that. I predicted 30 before testing, and Nemotron stopped exactly there.\n\nSecond, some obvious designs backfire. Announcing checks with no penalty made cheating worse, 58% of rounds against 30%. And always checking the biggest agent caught a quarter of the liars, where random checks caught all of them.\n\nThird, agents behave while they're watched, but they don't change. The selfish strategies survive, and if you remove the overseer they go back to wrecking it.\n\nAnd fourth, it holds at scale. With 64 agents on Richard's code, welfare went from 0.13 to 0.87 with the overseer."
+    },
+    {
+      "type": "split",
+      "title": "Next: going spatial",
+      "image": "figures/spatial_overseer.png",
+      "imageSide": "left",
+      "textW": 5.0,
+      "blocks": [
+        {
+          "head": "Why move to a grid",
+          "text": "My games so far have no space. In Harvest, agents move, see only nearby squares, and can strip a patch for good, like Sun et al.'s 20×20 grid."
+        },
+        {
+          "head": "First step",
+          "text": "Add the overseer to SocialJax Harvest as a wrapper: each step it checks k of the 7 agents and applies a consequence to anyone caught over-harvesting."
+        },
+        {
+          "head": "Then",
+          "text": "Train RL agents against it. They will naturally learn to cheat where it isn't looking, which tests how it chooses whom to check."
+        }
+      ],
+      "notes": "Next I want to make it spatial. My games so far have no space, but in Harvest agents move around, only see what's near them, and can strip a patch for good, like the grid in Sun's paper.\n\nThe first step is adding the overseer to SocialJax Harvest as a wrapper. Each step it can check, say, two of the seven agents, and it applies a consequence to anyone caught over-harvesting. Then I train RL agents against it. They'll naturally learn to cheat where it isn't looking, which is exactly the test of how well it chooses who to check."
+    },
+    {
+      "type": "timeline",
+      "title": "The plan",
+      "steps": [
+        {
+          "when": "Step 1",
+          "what": "Overseer in SocialJax Harvest, tested with scripted bots",
+          "done": false
+        },
+        {
+          "when": "Step 2",
+          "what": "Train RL agents against it: how few checks still save the orchard?",
+          "done": false
+        },
+        {
+          "when": "Step 3",
+          "what": "The overseer sets itself up: watch first, then set the penalty",
+          "done": false
+        },
+        {
+          "when": "Step 4",
+          "what": "Agents try to beat it: random vs targeted checks",
+          "done": false
+        },
+        {
+          "when": "Step 5",
+          "what": "LLM players and an LLM overseer (OpenSocialJax)",
+          "done": false
+        },
+        {
+          "when": "Step 6",
+          "what": "Agents that talk: does cheating spread?",
+          "done": false
+        }
+      ],
+      "notes": "Here's the plan in six steps. One, the overseer in SocialJax Harvest with scripted bots. Two, train RL agents against it and see how few checks still save the orchard. Three, let it set itself up: watch first, then set the penalty. Four, let agents try to beat it and compare random against targeted checks. Five, LLM players and an LLM overseer using OpenSocialJax. And six, agents that can talk, to see whether cheating spreads. The first three reuse what already worked in the simple games, and step one runs on my laptop, so I can start straight away."
+    },
+    {
+      "type": "questions",
+      "title": "Questions for you",
+      "questions": [
+        "Given Casheekar, is \"choosing whom to check, against agents that adapt\" still new enough, or should the gap be sharper?",
+        "Should I pitch this to the scalable oversight community, or as a MARL paper with a budgeted overseer?",
+        "For the first spatial result, which is more convincing: that a few checks can save the orchard, or that learning agents find the overseer's blind spots?",
+        "Are there papers, from your group or elsewhere, I should read before I settle the gap?"
+      ],
+      "notes": "A few things I wanted your view on. First, given the Casheekar paper, is choosing who to check against agents that adapt still new enough, or should I make the gap sharper? Second, where should this land: pitched to the scalable oversight community, or as a MARL paper with a budgeted overseer? Third, for the first spatial result, what would convince you more: showing a few checks can save the orchard, or showing that learning agents find the overseer's blind spots? And last, are there papers, from your group or anywhere else, that I should read before I settle the gap?"
+    },
+    {
+      "type": "closing",
+      "date": "2 November 2026"
+    }
+  ]
+}

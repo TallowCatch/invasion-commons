@@ -39,6 +39,7 @@ One page for the budgeted-overseer work: an overseer that can only check a few a
 | 17 | **BazaarBench (recorded LLM traders): random checks catch about k/20; repeat offenders first is worse than random when nearly everyone plans unsafe acts** | exploit instructions, k = 5 of 20: random 28.5%, repeat offenders 24.6% (past-plan failures: 45% vs 25%) | lead (1 market pair, offline) | `bazaarbench/offline_replay/results.md` |
 | 18 | **BazaarBench: most failures exist only in private reasoning, so what a check can read decides what it catches** | exploit: 998 of 1,051 failures never leave reasoning; a check without reasoning sees at most 5%, record checks 0.2% | lead (GPT-5 labels, 1 tested model) | same |
 | 19 | **BazaarBench: daily checks are too late for harm; fixed local budgets waste a small budget** | everyone checked daily catches 2 and 5 of 15 carried-through failures first; 4 independent overseers at 1 unit catch 0.3–1.2% vs 6–7% central; a 500-token shared board recovers it | lead | same |
+| 21 | **Locality: crossings and uneven crowding decide what splitting costs, not where harm lands; the existing regional overseer shares records for free** | ξ_loc ranks catches lost to local records (ρ = 0.80) but not the total gap (0.42); P_0 off by up to 0.73 when agents return (Markov form within 0.003); fixed groups at N = 256 lose ≤ 0.01 | lead (bots, 7 maps) | `socialjax/locality/results.md` |
 
 **Caveat on findings 12–16 and the 159 decentralised GPU runs (found 22 Nov).** In the current regional overseer (`overseer/socialjax/decentralised.py`), an agent's record of its last w steps travels with it, and any overseer's check reads all of it, including steps spent in other regions. So these results are for regional overseers that hand records over to each other for free. They measure only the loss from checks being in the wrong place, not the loss from evidence left behind when an agent crosses a boundary. The latter (the formulation's P_0 and claim D1) needs the local-records overseer being built on branch `claude/locality-scale`.
 
@@ -121,6 +122,7 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 
 ## Log
 
+- **22 Nov (evening).** Locality and scale done (finding 21, F21): crossing and harm locality measured on 11 layouts, the P_0 formula tested against simulation, D1 tested, Willis commons at N = 64 and 256. Branch `claude/locality-scale` merged. Trained-agent locality job prepared, not submitted.
 - **22 Nov (afternoon).** Stages 2–3 complete (findings 8–9 now solid). Mistakes test in (findings 10–11). Decentralised GPU runs submitted: pilot 38810496, then 159 runs that start only if the pilot succeeds (38810497/98/513/515).
 
 - **22 Nov.** Decentralised overseers built, plus Coins and Clean Up ports. Bot sweeps run under protocols written first (findings 12–16). 159 GPU runs listed (`socialjax/DECENTRALISED_README.md`). Branch `claude/decentralised-games`.
