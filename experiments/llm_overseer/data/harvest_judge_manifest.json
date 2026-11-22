@@ -1,0 +1,156 @@
+{
+ "seed": 0,
+ "steps": 1000,
+ "seeds_per_mix": 8,
+ "mixes": [
+  "restrained7",
+  "one_greedy",
+  "two_greedy",
+  "three_sneaky",
+  "all_sneaky",
+  "mixed"
+ ],
+ "per_window": 1000,
+ "windows": {
+  "1": {
+   "violation": {
+    "chosen": 500,
+    "available": {
+     "restrained": 24,
+     "greedy": 587,
+     "sneaky": 539,
+     "random": 1
+    }
+   },
+   "honest_eats": {
+    "chosen": 400,
+    "available": {
+     "restrained": 5248,
+     "greedy": 90,
+     "sneaky": 691
+    }
+   },
+   "honest_idle": {
+    "chosen": 100,
+    "available": {
+     "restrained": 194728,
+     "greedy": 31323,
+     "sneaky": 94770,
+     "random": 7999
+    }
+   }
+  },
+  "10": {
+   "violation": {
+    "chosen": 500,
+    "available": {
+     "restrained": 240,
+     "greedy": 2412,
+     "sneaky": 3162,
+     "random": 10
+    }
+   },
+   "honest_eats": {
+    "chosen": 400,
+    "available": {
+     "restrained": 27249,
+     "greedy": 54,
+     "sneaky": 1825
+    }
+   },
+   "honest_idle": {
+    "chosen": 100,
+    "available": {
+     "restrained": 170711,
+     "greedy": 29246,
+     "sneaky": 90149,
+     "random": 7918
+    }
+   }
+  },
+  "50": {
+   "violation": {
+    "chosen": 500,
+    "available": {
+     "restrained": 970,
+     "greedy": 2752,
+     "sneaky": 7619,
+     "random": 27
+    }
+   },
+   "honest_eats": {
+    "chosen": 400,
+    "available": {
+     "restrained": 54253,
+     "sneaky": 1076
+    }
+   },
+   "honest_idle": {
+    "chosen": 100,
+    "available": {
+     "restrained": 134977,
+     "greedy": 27680,
+     "sneaky": 82601,
+     "random": 7581
+    }
+   }
+  }
+ },
+ "n_examples": 3000,
+ "labels": {
+  "1": {
+   "1": 500,
+   "0": 500
+  },
+  "10": {
+   "1": 500,
+   "0": 500
+  },
+  "50": {
+   "1": 500,
+   "0": 500
+  }
+ },
+ "bot_kinds": {
+  "1": {
+   "greedy:1": 238,
+   "sneaky:1": 237,
+   "restrained:0": 180,
+   "sneaky:0": 180,
+   "greedy:0": 115,
+   "random:0": 25,
+   "restrained:1": 24,
+   "random:1": 1
+  },
+  "10": {
+   "restrained:0": 198,
+   "sneaky:0": 198,
+   "greedy:1": 164,
+   "restrained:1": 163,
+   "sneaky:1": 163,
+   "greedy:0": 79,
+   "random:0": 25,
+   "random:1": 10
+  },
+  "50": {
+   "restrained:0": 225,
+   "sneaky:0": 225,
+   "greedy:1": 158,
+   "restrained:1": 158,
+   "sneaky:1": 157,
+   "random:1": 27,
+   "greedy:0": 25,
+   "random:0": 25
+  }
+ },
+ "chars_summary": {
+  "1": 126,
+  "10": 405,
+  "50": 1490
+ },
+ "chars_raw": {
+  "1": 456,
+  "10": 923,
+  "50": 2654
+ }
+}
