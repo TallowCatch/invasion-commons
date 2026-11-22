@@ -8,7 +8,10 @@ scripts/create/ippo_overseer_array.sbatch (task i runs line i).
   python -m experiments.socialjax.decentralised_runs harvest_large > runs_dec_harvest_large.tsv
   python -m experiments.socialjax.decentralised_runs coins   > runs_dec_coins.tsv
   python -m experiments.socialjax.decentralised_runs cleanup > runs_dec_cleanup.tsv
-  python -m experiments.socialjax.decentralised_runs all     > runs_dec_all.tsv
+  python -m experiments.socialjax.decentralised_runs all     > runs_dec_all.tsv     (the decentralised lists above)
+  python -m experiments.socialjax.decentralised_runs worstcase_pilot > runs_wc_pilot.tsv  (2 short timing runs)
+  python -m experiments.socialjax.decentralised_runs separate  > runs_sn.tsv       (15 runs, separate networks)
+  python -m experiments.socialjax.decentralised_runs worstcase > runs_wc.tsv       (18 runs, separate nets + reveal)
 
 Every arm at a given k has the same total budget: k checks per step, summed over the regions.
 The penalty per catch is set so the average penalty per violation under random checks is c goods:
@@ -89,6 +92,41 @@ def cleanup():
         yield f"DU_R2_share_w150_k2_c1.0_seed{s}", f"{p} --chooser history --window 150 --regions 2 {SHARE}"
 
 
+def separate():
+    """Separate networks vs parameter sharing (notes/socialjax/worstcase/protocol.md), Harvest, k = 2, c = 1 apple.
+    Only the separate-nets arms: the shared arms are stage 1 (B_random_k2_c1.0, D_history_k2_c1.0) and
+    harvest() above (DH_R2_*_k2_c1.0), same code path and seeds."""
+    for s in SEEDS:
+        p = f"--env harvest --k 2 --penalty-apples {penalty(7, 2, 1.0)} --seed {s} --separate-nets"
+        yield f"SN_central_random_k2_c1.0_seed{s}", f"{p} --chooser random"
+        yield f"SN_central_history_k2_c1.0_seed{s}", f"{p} --chooser history"
+        yield f"SN_R2_random_k2_c1.0_seed{s}", f"{p} --chooser random --regions 2"
+        yield f"SN_R2_history_k2_c1.0_seed{s}", f"{p} --chooser history --regions 2"
+        yield f"SN_R2_share_k2_c1.0_seed{s}", f"{p} --chooser history --regions 2 {SHARE}"
+
+
+def worstcase():
+    """The worst case: separate networks and checks visible to every agent (--reveal-checks), Harvest, k = 2,
+    c = 1 apple. Compared with separate() (same nets, checks hidden). R = 2 here hands each agent's whole record to
+    whichever overseer checks it (decentralised.py), so it measures where checks land, not evidence lost at a
+    boundary."""
+    for s in SEEDS:
+        p = f"--env harvest --k 2 --penalty-apples {penalty(7, 2, 1.0)} --seed {s} --separate-nets --reveal-checks"
+        yield f"WC_central_random_k2_c1.0_seed{s}", f"{p} --chooser random"
+        yield f"WC_central_history_k2_c1.0_seed{s}", f"{p} --chooser history"
+        yield f"WC_central_roundrobin_k2_c1.0_seed{s}", f"{p} --chooser round_robin"
+        yield f"WC_central_mixed0.3_k2_c1.0_seed{s}", f"{p} --chooser mixed --mixed-eps 0.3"
+        yield f"WC_R2_random_k2_c1.0_seed{s}", f"{p} --chooser random --regions 2"
+        yield f"WC_R2_share_k2_c1.0_seed{s}", f"{p} --chooser history --regions 2 {SHARE}"
+
+
+def worstcase_pilot():
+    """Two short runs (2e7 steps) to time separate nets with and without reveal_checks before the full lists."""
+    p = f"--env harvest --k 2 --penalty-apples {penalty(7, 2, 1.0)} --seed 1 --separate-nets --total-steps 2e7"
+    yield "pilot_SN_central_random_k2_c1.0", f"{p} --chooser random"
+    yield "pilot_WC_R2_share_k2_c1.0", f"{p} --chooser history --regions 2 {SHARE} --reveal-checks"
+
+
 def pilot():
     """One short run per game (2e7 steps) to check memory and time on the GPU before the full lists."""
     yield "pilot_DH_R2_share_k2_c1.0", f"--env harvest --k 2 --penalty-apples 3.5 --chooser history --regions 2 {SHARE} --seed 1 --total-steps 2e7"
@@ -97,13 +135,15 @@ def pilot():
     yield "pilot_DU_central_random_w150_k2_c1.0", "--env cleanup --k 2 --penalty-apples 3.5 --chooser random --window 150 --cost-per-step-seen 0.01 --seed 1 --total-steps 2e7"
 
 
-LISTS = {"pilot": pilot, "harvest": harvest, "harvest_large": harvest_large, "coins": coins, "cleanup": cleanup}
+LISTS = {"pilot": pilot, "harvest": harvest, "harvest_large": harvest_large, "coins": coins, "cleanup": cleanup,
+         "worstcase_pilot": worstcase_pilot, "separate": separate, "worstcase": worstcase}
+NOT_IN_ALL = ("pilot", "worstcase_pilot", "separate", "worstcase")  # "all" is the decentralised lists only
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("list", choices=tuple(LISTS) + ("all",))
     a = ap.parse_args()
-    names = [x for x in LISTS if x != "pilot"] if a.list == "all" else [a.list]
+    names = [x for x in LISTS if x not in NOT_IN_ALL] if a.list == "all" else [a.list]
     for name in names:
         for run, args in LISTS[name]():
             print(f"{run}\t{args}")

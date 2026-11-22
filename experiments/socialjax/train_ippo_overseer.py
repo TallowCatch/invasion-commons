@@ -10,12 +10,22 @@ sharing, the same CNN actor-critic, PPO loss, GAE and hyperparameters from ippo_
      episode in every parallel env) instead of calling wandb;
   3. it can start from saved parameters (the "agents already over-harvest" start), saves its final parameters, and
      ends with a switch-off test: the trained policy played with the overseer on and with it off.
+Added 22-23 Nov (the worst case; notes/socialjax/worstcase/protocol.md), all off by default so the default path is
+unchanged (tests/test_worstcase.py checks it against the trainer at fca047d):
+  --separate-nets: one network per agent (no parameter sharing). Params and optimiser state are stacked along an
+     agent axis and vmapped, so gradient clipping and Adam never mix agents, and each agent's minibatches hold only
+     its own transitions (the same number of gradient steps per epoch, each on 1/N as many samples).
+     --init-params may be a shared run's params (copied to every agent) or a separate run's.
+  --reveal-checks: every agent sees who was checked last step and when it was last checked itself
+     (overseer/socialjax/reveal.py); --mixed-eps sets the "mixed" chooser's random share.
+Per-agent measures (apples, violations, catches, net reward per agent) are logged in every run.
 
 Protocol: notes/socialjax/phase2_ippo/protocol.md; decentralised runs: notes/socialjax/DECENTRALISED_README.md
 
   python -m experiments.socialjax.train_ippo_overseer --out DIR --k 2 --chooser random --penalty-apples 3.5 \
       [--env harvest|harvest_large|coins|cleanup] [--regions 1] [--layout strips] [--share] [--region-k 1,1] \
-      [--freeze 0] [--total-steps 1e8] [--num-envs 256] [--seed 1] [--init-params PATH]
+      [--freeze 0] [--total-steps 1e8] [--num-envs 256] [--seed 1] [--init-params PATH] \
+      [--separate-nets] [--reveal-checks] [--mixed-eps 0.3]
 
 --penalty-apples is the penalty per catch in the game's goods (apples; coins in Coins): it is multiplied by the
 reward one good pays (num_agents in Harvest and Clean Up, 2 in Coins). The metric names keep Harvest's words
@@ -45,7 +55,8 @@ HPARAMS = dict(LR=5e-4, NUM_STEPS=1000, UPDATE_EPOCHS=2, NUM_MINIBATCHES=500, GA
                CLIP_EPS=0.2, ENT_COEF=0.01, VF_COEF=0.5, MAX_GRAD_NORM=0.5, ACTIVATION="relu", ANNEAL_LR=True)
 EPISODE_FIELDS = ("apples_eaten", "net_reward", "violations", "detected", "missed", "catches", "wrongly_stopped",
                   "penalty_apples", "checks", "apples_mean", "apples_end", "orchard_alive", "comm_cost",
-                  "unused_checks", "checks_r", "catches_r", "violations_r", "missed_r")
+                  "unused_checks", "checks_r", "catches_r", "violations_r", "missed_r", "apples_agent",
+                  "violations_agent", "catches_agent", "net_reward_agent")
 KEEP = ("taken", "raw_reward", "penalty", "violations", "detected_count", "missed_count", "caught", "false_alarms",
         "presumed_wrong", "checked", "resource", "comm_cost", "unused_r", "checks_r", "catches_r", "violations_r",
         "missed_r")
@@ -70,6 +81,9 @@ def episode_measures(info, unit=APPLE_REWARD, last=-2):
 
     def per_region(x):  # (steps, envs, R) -> (R,)
         return x.sum(0).mean(0)
+
+    def per_agent(x):  # (steps, envs, N) -> (N,): each agent's episode total, averaged over envs
+        return x.astype(jnp.float32).sum(0).mean(0)
     apples = info["resource"]
     m = dict(
         apples_eaten=per_env(info["taken"]).mean(),
@@ -90,6 +104,10 @@ def episode_measures(info, unit=APPLE_REWARD, last=-2):
         catches_r=per_region(info["catches_r"]),
         violations_r=per_region(info["violations_r"]),
         missed_r=per_region(info["missed_r"]),
+        apples_agent=per_agent(info["taken"]),
+        violations_agent=per_agent(info["violations"]),
+        catches_agent=per_agent(info["caught"]),
+        net_reward_agent=per_agent(info["raw_reward"] - info["penalty"]),
     )
     if "pollution" in info:
         m["pollution_mean"] = info["pollution"].mean()
@@ -107,28 +125,64 @@ def keep_fields(env):
     return KEEP + extra
 
 
+def policy_fn(network, n, obs_shape, separate):
+    """apply(params, obs) on agent-major obs (n * B, ...) -> (pi, value) with batch (n * B,). With separate nets,
+    params carry a leading agent axis and agent i's rows go through network i."""
+    if not separate:
+        return network.apply
+
+    def apply(params, obs):
+        pi, value = jax.vmap(network.apply)(params, obs.reshape((n, -1) + tuple(obs_shape)))
+        return type(pi)(logits=pi.logits.reshape((-1, pi.logits.shape[-1]))), value.reshape(-1)
+    return apply
+
+
+def init_network(network, key, obs_shape, n, separate, init_params=None):
+    """Fresh params (one set, or n stacked along axis 0), or restored from msgpack bytes. A shared run's params
+    restored into separate nets are copied to every agent."""
+    dummy = jnp.zeros((1, *obs_shape))
+    if not separate:
+        params = network.init(key, dummy)
+        return params if init_params is None else flax.serialization.from_bytes(params, init_params)
+    params = jax.vmap(lambda k: network.init(k, dummy))(jax.random.split(key, n))
+    if init_params is None:
+        return params
+    raw = flax.serialization.msgpack_restore(init_params)
+    one = jax.tree.map(lambda x: x[0], params)
+    if np.asarray(jax.tree.leaves(raw)[0]).shape == jax.tree.leaves(one)[0].shape:  # a shared run's params
+        shared = flax.serialization.from_state_dict(one, raw)
+        return jax.tree.map(lambda x: jnp.broadcast_to(x, (n,) + x.shape), shared)
+    return flax.serialization.from_state_dict(params, raw)
+
+
 def make_train(cfg, ov_cfg, init_params=None):
     h = HPARAMS
     env = make_env(cfg, ov_cfg)
     fields, unit = keep_fields(env), env.rules.reward_unit
     n, e = env.n, cfg["num_envs"]
     actors = n * e
+    separate = bool(cfg.get("separate_nets", False))
     num_updates = int(cfg["total_steps"]) // h["NUM_STEPS"] // e
     minibatch = actors * h["NUM_STEPS"] // h["NUM_MINIBATCHES"]
+    agent_minibatch = e * h["NUM_STEPS"] // h["NUM_MINIBATCHES"]  # separate nets: each agent's own minibatch
+    if separate and agent_minibatch * h["NUM_MINIBATCHES"] != e * h["NUM_STEPS"]:
+        raise ValueError("separate nets need num_envs * NUM_STEPS divisible by NUM_MINIBATCHES")
     network = socialjax_actor_critic()(env.env.action_space().n, activation=h["ACTIVATION"])
-    obs_shape = env.env.observation_space()[0].shape
+    obs_shape = env.obs_shape()
+    apply = policy_fn(network, n, obs_shape, separate)
 
     def lr(count):
         return h["LR"] * (1.0 - (count // (h["NUM_MINIBATCHES"] * h["UPDATE_EPOCHS"])) / num_updates)
 
     def train(rng):
         rng, k_init, k_reset, k_run = jax.random.split(rng, 4)
-        params = network.init(k_init, jnp.zeros((1, *obs_shape)))
-        if init_params is not None:
-            params = flax.serialization.from_bytes(params, init_params)
+        params = init_network(network, k_init, obs_shape, n, separate, init_params)
         tx = optax.chain(optax.clip_by_global_norm(h["MAX_GRAD_NORM"]),
                          optax.adam(learning_rate=lr if h["ANNEAL_LR"] else h["LR"], eps=1e-5))
-        train_state = TrainState.create(apply_fn=network.apply, params=params, tx=tx)
+        if separate:  # one optimiser state per agent: clipping and Adam's moments never mix agents
+            train_state = jax.vmap(lambda p: TrainState.create(apply_fn=network.apply, params=p, tx=tx))(params)
+        else:
+            train_state = TrainState.create(apply_fn=network.apply, params=params, tx=tx)
         obs, state = jax.vmap(env.reset)(jax.random.split(k_reset, e))
 
         def update(runner, _):
@@ -136,7 +190,7 @@ def make_train(cfg, ov_cfg, init_params=None):
                 ts, s, last_obs, rng = carry
                 rng, k_act, k_step = jax.random.split(rng, 3)
                 obs_b = jnp.transpose(last_obs, (1, 0, 2, 3, 4)).reshape(-1, *obs_shape)  # agent-major
-                pi, value = network.apply(ts.params, obs_b)
+                pi, value = apply(ts.params, obs_b)
                 action = pi.sample(seed=k_act)
                 log_prob = pi.log_prob(action)
                 obs, s, reward, done, info = jax.vmap(env.step)(jax.random.split(k_step, e), s,
@@ -149,7 +203,7 @@ def make_train(cfg, ov_cfg, init_params=None):
             ts, s, last_obs, rng, step = runner
             (ts, s, last_obs, rng), (traj, info) = jax.lax.scan(env_step, (ts, s, last_obs, rng), None,
                                                                 h["NUM_STEPS"])
-            _, last_val = network.apply(ts.params, jnp.transpose(last_obs, (1, 0, 2, 3, 4)).reshape(-1, *obs_shape))
+            _, last_val = apply(ts.params, jnp.transpose(last_obs, (1, 0, 2, 3, 4)).reshape(-1, *obs_shape))
 
             def gae_step(carry, t):
                 gae, next_value = carry
@@ -160,18 +214,25 @@ def make_train(cfg, ov_cfg, init_params=None):
             _, adv = jax.lax.scan(gae_step, (jnp.zeros_like(last_val), last_val), traj, reverse=True, unroll=16)
             targets = adv + traj["value"]
 
+            def shuffle(k_perm):
+                """(NUM_MINIBATCHES, mb, ...) minibatches; with separate nets (NUM_MINIBATCHES, n, mb, ...), agent
+                i's drawn only from its own transitions."""
+                if not separate:
+                    batch = jax.tree.map(lambda x: x.reshape((-1,) + x.shape[2:]), (traj, adv, targets))
+                    perm = jax.random.permutation(k_perm, actors * h["NUM_STEPS"])
+                    return jax.tree.map(lambda x: jnp.take(x, perm, axis=0).reshape(
+                        (h["NUM_MINIBATCHES"], minibatch) + x.shape[1:]), batch)
+                return agent_minibatches(k_perm, (traj, adv, targets), n, h["NUM_MINIBATCHES"])
+
             def epoch(carry, _):
                 ts, rng = carry
                 rng, k_perm = jax.random.split(rng)
-                batch = jax.tree.map(lambda x: x.reshape((-1,) + x.shape[2:]), (traj, adv, targets))
-                perm = jax.random.permutation(k_perm, actors * h["NUM_STEPS"])
-                mbs = jax.tree.map(lambda x: jnp.take(x, perm, axis=0).reshape(
-                    (h["NUM_MINIBATCHES"], minibatch) + x.shape[1:]), batch)
+                mbs = shuffle(k_perm)
 
                 def minibatch_step(ts, mb):
                     t, gae, tgt = mb
 
-                    def loss_fn(p):
+                    def loss_fn(p, t, gae, tgt):
                         pi, value = network.apply(p, t["obs"])
                         log_prob = pi.log_prob(t["action"])
                         v_clip = t["value"] + (value - t["value"]).clip(-h["CLIP_EPS"], h["CLIP_EPS"])
@@ -182,7 +243,10 @@ def make_train(cfg, ov_cfg, init_params=None):
                                               ).mean()
                         return a_loss + h["VF_COEF"] * v_loss - h["ENT_COEF"] * pi.entropy().mean()
 
-                    grads = jax.grad(loss_fn)(ts.params)
+                    if separate:
+                        grads = jax.vmap(jax.grad(loss_fn))(ts.params, t, gae, tgt)
+                        return jax.vmap(lambda s_, g: s_.apply_gradients(grads=g))(ts, grads), None
+                    grads = jax.grad(loss_fn)(ts.params, t, gae, tgt)
                     return ts.apply_gradients(grads=grads), None
 
                 ts, _ = jax.lax.scan(minibatch_step, ts, mbs)
@@ -200,6 +264,22 @@ def make_train(cfg, ov_cfg, init_params=None):
     return train, num_updates
 
 
+def agent_minibatches(key, batch, n, num_minibatches):
+    """Separate nets: leaves (T, n * B, ...) stored agent-major -> (num_minibatches, n, T * B / num_minibatches, ...),
+    where row [m, i] holds only agent i's transitions, shuffled with agent i's own permutation."""
+    def per_agent(x):  # (T, n * B, ...) -> (n, T * B, ...)
+        x = x.reshape((x.shape[0], n, -1) + x.shape[2:])
+        return jnp.swapaxes(x, 0, 1).reshape((n, -1) + x.shape[3:])
+    batch = jax.tree.map(per_agent, batch)
+    size = jax.tree.leaves(batch)[0].shape[1]
+    perms = jax.vmap(lambda k: jax.random.permutation(k, size))(jax.random.split(key, n))
+
+    def split(x):
+        x = jax.vmap(lambda xi, pi: jnp.take(xi, pi, axis=0))(x, perms)
+        return jnp.swapaxes(x.reshape((n, num_minibatches, size // num_minibatches) + x.shape[2:]), 0, 1)
+    return jax.tree.map(split, batch)
+
+
 def report(step, m):
     step = int(step)
     if step % 10 == 0:
@@ -213,7 +293,8 @@ def make_eval(cfg, ov_cfg, num_envs):
     fields, unit = keep_fields(env), env.rules.reward_unit
     n = env.n
     network = socialjax_actor_critic()(env.env.action_space().n, activation=HPARAMS["ACTIVATION"])
-    obs_shape = env.env.observation_space()[0].shape
+    obs_shape = env.obs_shape()
+    apply = policy_fn(network, n, obs_shape, bool(cfg.get("separate_nets", False)))
 
     def run(params, rng):
         k_reset, k_run = jax.random.split(rng)
@@ -222,7 +303,7 @@ def make_eval(cfg, ov_cfg, num_envs):
         def step(carry, _):
             s, obs, rng = carry
             rng, k_act, k_step = jax.random.split(rng, 3)
-            pi, _ = network.apply(params, jnp.transpose(obs, (1, 0, 2, 3, 4)).reshape(-1, *obs_shape))
+            pi, _ = apply(params, jnp.transpose(obs, (1, 0, 2, 3, 4)).reshape(-1, *obs_shape))
             action = pi.sample(seed=k_act).reshape(n, num_envs).T
             obs, s, _, _, info = jax.vmap(env.step)(jax.random.split(k_step, num_envs), s, action)
             return (s, obs, rng), {f: info[f] for f in fields}
@@ -260,6 +341,9 @@ def parser():
     ap.add_argument("--clean-window", type=int, default=100, help="Clean Up rule: W steps")
     ap.add_argument("--pollution-threshold", type=float, default=0.2, help="Clean Up rule: pollution threshold")
     ap.add_argument("--cost-per-step-seen", type=float, default=0.0)
+    ap.add_argument("--separate-nets", action="store_true", help="one network and optimiser per agent")
+    ap.add_argument("--reveal-checks", action="store_true", help="agents see who was checked last step")
+    ap.add_argument("--mixed-eps", type=float, default=0.3, help="the mixed chooser's chance of random checks")
     return ap
 
 
@@ -273,14 +357,15 @@ def main():
     rules_kw = {"harvest": harvest_kw, "harvest_large": harvest_kw, "coins": {},
                 "cleanup": dict(clean_window=a.clean_window, threshold=a.pollution_threshold)}[a.env]
     cfg = dict(env=a.env, rules=rules_kw, total_steps=a.total_steps, num_envs=a.num_envs, seed=a.seed,
-               init_params=a.init_params)
+               init_params=a.init_params, separate_nets=a.separate_nets)
     unit = make_rules(a.env, num_inner_steps=10, **rules_kw).reward_unit
     region_k = tuple(int(x) for x in a.region_k.split(",")) if a.region_k else ()
     ov_cfg = DecConfig(k=a.k, chooser=chooser, window=a.window, penalty=a.penalty_apples * unit,
                        freeze_steps=a.freeze, miss_rate=a.miss_rate, false_alarm_rate=a.false_alarm,
                        regions=a.regions, layout=a.layout, region_k=region_k, share=a.share,
                        share_coverage=a.share_coverage, cost_per_message=a.cost_per_message, presume=a.presume,
-                       cost_per_step_seen=a.cost_per_step_seen)
+                       cost_per_step_seen=a.cost_per_step_seen, mixed_eps=a.mixed_eps,
+                       reveal_checks=a.reveal_checks)
     init = Path(a.init_params).read_bytes() if a.init_params else None
     (out / "config.json").write_text(json.dumps(dict(cfg, overseer=asdict(ov_cfg), penalty_apples=a.penalty_apples,
                                                      reward_unit=unit, hparams=HPARAMS, devices=str(jax.devices())),
@@ -296,7 +381,7 @@ def main():
     np.savez(out / "metrics.npz", **{k: np.asarray(v) for k, v in metrics.items()})
 
     switch = {}
-    off = DecConfig(chooser="none", k=0, regions=a.regions, layout=a.layout)
+    off = DecConfig(chooser="none", k=0, regions=a.regions, layout=a.layout, reveal_checks=a.reveal_checks)
     for name, c in (("with_overseer", ov_cfg), ("overseer_off", off)):
         m = make_eval(cfg, c, a.eval_envs)(params, jax.random.PRNGKey(10_000 + a.seed))
         switch[name] = {k: np.asarray(v).tolist() for k, v in m.items()}

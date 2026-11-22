@@ -11,7 +11,6 @@
 #SBATCH --mem=32G
 #SBATCH --cpus-per-task=4
 #SBATCH --time=02:00:00
-#SBATCH --exclude=comp035,comp040
 #SBATCH --output=/scratch/users/%u/ippo_overseer/logs/locality_%j.out
 set -euo pipefail
 
