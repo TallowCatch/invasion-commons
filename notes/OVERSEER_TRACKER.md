@@ -27,10 +27,10 @@ One page for the budgeted-overseer work: an overseer that can only check a few a
 | 5 | Freezing caught agents doesn't work | 77 apples, orchard dead | solid | same |
 | 6 | Checking repeat offenders first is faster, not better, when agents start from scratch | orchard safe by about 13M steps (random: 14–57% of games); both end at 460–470 apples | solid | same |
 | 7 | Targeting on a bad signal is worse than random | checking by location catches 5% of over-harvests, against 28% for random | solid | same |
-| 8 | **Remove the overseer and over-harvesting comes straight back** | every setting falls back to 68 apples and a dead orchard within about 5–12M steps | lead (9 of 18 runs; the rest rerunning) | below |
-| 9 | **Fixing agents that already over-harvest needs more checks, or targeting** | after 50M steps: 1 check 120 apples, 2 checks 172, 4 checks 315, 7 checks 403; repeat offenders first with 2 checks 352 | lead (1 of 3 runs per setting) | below |
-| 10 | An overseer that misses half the time should need twice the penalty | prediction: average penalty × (1 − miss rate) must reach the same level | prediction (running) | `socialjax/phase2_ippo/mistakes_protocol.md` |
-| 11 | False alarms should cost honest agents the same on average whatever the number of checks | prediction | prediction (running) | same |
+| 8 | **Remove the overseer and over-harvesting comes straight back** | every setting falls back to 68 apples and a dead orchard within about 5–12M steps | solid (18 of 18 runs) | below |
+| 9 | **Fixing agents that already over-harvest needs more checks, or targeting** | after 50M steps: 1 check 149 apples, 2 checks 197, 4 checks 274, 7 checks 325; repeat offenders first with 2 checks 348, and very consistent | solid (3 runs each) | below |
+| 10 | **An overseer that misses half the time needs twice the penalty** | misses 50%: 1 apple average penalty now fails (68 apples, dead), 2 apples works (479 at k = 7, matching the perfect inspector at 1 apple) | solid (3 runs each) | `socialjax/phase2_ippo/results.md` |
+| 11 | **False alarms cost honest agents the same per honest apple whatever the number of checks, but with a mistaken overseer, few big checks do worse than many small ones** | about 0.25 apples wrongly fined per legal apple at k = 1 and k = 7; apples at the same average penalty, k = 1 vs 7: 342 vs 479 (misses), 382 vs 482 and 470 vs 509 (false alarms); the threshold for learners is between 0.5 and 0.75 | solid (3 runs each) | same |
 | 12 | **Splitting the overseer by region wastes budget** that can't follow the agents | Harvest, 4 strips: 22–29% of checks unused; 2 players in Coins: 26%; random checks lose about that share of catches | solid (bots) | `socialjax/harvest/results.md`, `socialjax/coins/results.md` |
 | 13 | **Agents that cheat where the local overseer hasn't looked gain a lot** | migrators, 2 checks per step: 7 over-harvests a game under one overseer, 37 under 2 regional ones (orchard alive 10/10 vs 1/10) | solid (bots) | `socialjax/harvest/results.md` |
 | 14 | **What overseers share matters:** sharing who was caught helps; sharing who was just checked invites migration | fixed cheater, k = 2: 53% caught alone, 68% sharing suspicion, 75% also sharing coverage; migrators: 12 → 27 over-harvests with coverage sharing | solid (bots) | same |
@@ -62,7 +62,7 @@ For comparison, seven well-behaved scripted bots collect 500.
 
 ## Findings 8 and 9: switching the overseer off and on (stages 2 and 3, still filling in)
 
-**Switching it off** (agents trained with the overseer, then 50M more steps without it):
+**Switching it off** (agents trained with the overseer, then 50M more steps without it; 18 of 18 runs):
 
 | Trained with | Apples before | Apples after | Orchard |
 |---|---|---|---|
@@ -70,16 +70,16 @@ For comparison, seven well-behaved scripted bots collect 500.
 | repeat offenders first, 2 checks | 466 | 68 | dead |
 | freeze | 70 | 68 | dead (it never worked) |
 
-**Switching it on** (agents that learned to over-harvest with no overseer, then 50M steps with it, average penalty 1 apple, 1 run each so far):
+**Switching it on** (agents that learned to over-harvest with no overseer, then 50M steps with it, average penalty 1 apple, 3 runs each):
 
 | Overseer switched on | Apples at the end | Orchard survives |
 |---|---|---|
 | none | 68 | 0% |
-| 1 random check | 120 | 32% |
-| 2 random checks | 172 | 92% |
-| 4 random checks | 315 | 100% |
-| 7 random checks | 403 | 100% |
-| 2 checks, repeat offenders first | 352 | 100% |
+| 1 random check | 149 (120–172) | 58% |
+| 2 random checks | 197 (125–293) | 80% |
+| 4 random checks | 274 (241–315) | 100% |
+| 7 random checks | 325 (244–403) | 100% |
+| 2 checks, repeat offenders first | 348 (346–352) | 100% |
 | 2 checks, 50-step freeze | 76 | 0% |
 
 **What it means.** The average penalty decides whether the overseer can work in the long run (finding 3). But how quickly it fixes agents that already misbehave depends on how often it checks, and on targeting. Frequent small penalties are a clearer signal to learn from than rare big ones. Some runs were still improving at the end, so the gap may narrow with longer training.
@@ -118,6 +118,8 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 - **The plan for using both testbeds:** `phd_plan/2026-11-21_way_forward.md` (written 21 Nov).
 
 ## Log
+
+- **22 Nov (afternoon).** Stages 2–3 complete (findings 8–9 now solid). Mistakes test in (findings 10–11). Decentralised GPU runs submitted: pilot 38810496, then 159 runs that start only if the pilot succeeds (38810497/98/513/515).
 
 - **22 Nov.** Decentralised overseers built, plus Coins and Clean Up ports. Bot sweeps run under protocols written first (findings 12–16). 159 GPU runs listed (`socialjax/DECENTRALISED_README.md`). Branch `claude/decentralised-games`.
 - **21 Nov (later).** BazaarBench offline replay on two markets (GPT-5.5 base, gpt-oss-120b tested, ordinary vs exploit instructions): findings 17–19. Predictions in `bazaarbench/offline_replay/protocol.md` were written before the replay; 2 of 11 held in full, the other 9 partly or mixed (scorecard in `results.md`).

@@ -209,7 +209,7 @@ Started 14 October 2026.
   - With learning agents in a spatial game, compliance is not conversion (as F16 found for LLM strategies). The overseer has to stay.
   - The average penalty (F17) decides whether deterrence holds in the long run. But how quickly an overseer repairs existing over-harvesting depends on how often it checks and on targeting, so budget and targeting matter more for repair than for prevention.
 - **Evidence.** `notes/socialjax/phase2_ippo/results.md`; `notes/OVERSEER_TRACKER.md`.
-- **Status:** open (reruns of 25 crashed runs queued).
+- **Status:** verified (22 Nov, all 39 runs). Switch-off 18/18 return to 68 apples. Switch-on at 1 apple: k = 1/2/4/7 give 149/197/274/325, history k = 2 gives 348 [346–352].
 
 ---
 
@@ -227,6 +227,19 @@ Started 14 October 2026.
   - Whether learning agents discover migration is the GPU question.
 - **Evidence.** `notes/socialjax/DECENTRALISED_SUMMARY.md`; `notes/socialjax/{harvest,coins,cleanup}/results.md`.
 - **Status:** open (bots only; 159 IPPO runs listed for CREATE).
+
+## F20. An imperfect overseer: misses scale the deterrent as predicted, and few-big-check overseers fall behind many-small-check ones [verified; mistakes test, 22 Nov]
+
+- **Found** (Harvest, IPPO, 1e8 steps, 3 seeds per cell; protocol written before the runs):
+  - **Misses 50%:** an average penalty of 1 apple behaves like 0.5 (orchard dead, 68 apples); 2 apples behaves like 1 (k = 7: 479 against 477 for the perfect inspector at 1 apple).
+  - **False alarms on 25% of honest harvests:** the orchard survives at both c = 1 (effective 0.75) and c = 2. So the learners' threshold lies between 0.5 and 0.75 apples.
+  - **Honest cost:** wrongful fines are about 0.25 apples per legal apple at both k = 1 and k = 7, as C2 predicts.
+  - **Few big checks fall behind:** at the same average penalty, k = 1 does worse than k = 7 in every mistakes arm, with seed ranges not overlapping (342 vs 479; 382 vs 482; 470 vs 509).
+- **What it means.**
+  - C1 holds with misses.
+  - "One check is nearly as good as checking everyone" (F17) holds only for a perfect inspector. With mistakes, uneven losses (rare, large, sometimes wrongful fines) slow learning, so budget spread matters for a realistic overseer.
+  - This is the first "less capable overseer" result for the bounded evaluation.
+- **Evidence.** `notes/socialjax/phase2_ippo/results.md` (mistakes section), `mistakes_protocol.md`.
 
 ---
 

@@ -76,24 +76,39 @@ Run on CREATE on 15–16 Nov 2026, under `protocol.md` (with Amendment 1).
   - It rises to about 22% around update 20 and then falls back to 5–6%. That later fall may be learned exploitation, but this design cannot separate the two.
   - This is the same lesson as Fishery T1 (always checking the largest reporter caught 25% of liars, against 100% for random) and the week 2 sneaky bots: **targeting on a proxy can be worse than random, even when agents cannot see the checks.**
 
-**Q5 and Q6 (stages 2 and 3): interim, 21 Nov.** Plain-English summary in `notes/OVERSEER_TRACKER.md`, findings 8–9.
+**Q5 and Q6 (stages 2 and 3): complete, 22 Nov** (3 seeds each; 25 runs that crashed on node comp040 were rerun). Plain-English summary: `notes/OVERSEER_TRACKER.md`, findings 8–9.
 
-25 runs crashed in seconds on node comp040 (CUDA error) and are rerunning (jobs 38794336–38). So far:
-
-- **Q6, switching the overseer off (9 of 18 runs, every arm has at least one seed).** Over-harvesting returns completely. Agents at 408–482 apples fall to 68, with the orchard dead in every run, within about 5–12M of the 50M steps. That holds after random checks at every k, after repeat offenders first, and after the freeze. The prediction ("some over-harvesting returns") is confirmed and exceeded: all of it returns.
-- **Q5, switching the overseer on for over-harvesters (7 of 21 runs, seed 1 only).** It works, but how fast depends on k and targeting, unlike in stage 1. At an average penalty of 1 apple after 50M steps:
+- **Q6, switching the overseer off (18 of 18 runs).** Over-harvesting returns completely in every run. Agents at 408–482 apples fall to 68, with the orchard dead, after random checks at every k, after repeat offenders first, and after the freeze. Prediction ("some returns"): confirmed and exceeded.
+- **Q5, switching the overseer on for over-harvesters** (average penalty 1 apple, 50M steps; mean [seed range]):
 
 | Overseer | Apples | Orchard alive |
 |---|---|---|
 | none | 68 | 0.00 |
-| random k = 1 | 120 | 0.32 |
-| random k = 2 | 172 | 0.92 |
-| random k = 4 | 315 | 1.00 |
-| random k = 7 | 403 | 1.00 |
-| history k = 2 | 352 | 1.00 |
+| random k = 1 | 149 [120, 172] | 0.58 [0.32, 0.72] |
+| random k = 2 | 197 [125, 293] | 0.80 [0.48, 1.00] |
+| random k = 4 | 274 [241, 315] | 1.00 |
+| random k = 7 | 325 [244, 403] | 1.00 |
+| history k = 2 | 348 [346, 352] | 1.00 |
 | freeze 50, k = 2 | 76 | 0.00 |
 
-  The prediction ("yes with c ≥ 1, but more slowly than starting with it") holds for k ≥ 2. The dependence on k and targeting was not predicted. Some runs were still improving at 50M steps.
+  The prediction ("yes with c ≥ 1, but more slowly than starting with it") holds for k ≥ 4, and only partly for k = 1–2, where the orchard is still dead in some games after 50M steps. Not predicted: how fast agents are repaired depends on k and on targeting. History k = 2 beats random k = 7 on average and is far more consistent across seeds.
+
+## Mistakes test (`mistakes_protocol.md`, 22 Nov, 24 runs, 3 seeds each)
+
+Mean [seed range]; all orchards in the c = 2 and F rows are alive in every run.
+
+| Arm | Effective average penalty (1 − α − β)·c | k = 1 apples | k = 7 apples | Prediction | Held? |
+|---|---|---|---|---|---|
+| misses 50%, c = 1 | 0.5 | 69 [68, 69], dead | 68, dead | dies | yes |
+| misses 50%, c = 2 | 1.0 | 342 [310, 361] | 479 [474, 481] | survives, close to perfect c = 1 (441–477) | yes at k = 7; survives but lower at k = 1 |
+| false alarms 25%, c = 1 | 0.75 | 382 [357, 401] | 482 [466, 497] | open | survives: the threshold for learners is between 0.5 and 0.75 |
+| false alarms 25%, c = 2 | 1.5 | 470 [457, 488] | 509 [500, 516] | survives | yes |
+
+- **C1 (misses scale the deterrent) holds.** Halving the catch rate makes 1 apple behave like 0.5 (orchard dead) and 2 apples behave like 1 (orchard alive). At k = 7 the numbers even match the perfect-inspector runs: 479 against 477.
+- **C2 (the cost to honest agents) holds per honest harvest.** Each legal apple was wrongly fined about 0.25 apples on average at both k:
+  - k = 1, c = 1: about 11 wrong flags a game × 7 apples, over about 316 legal apples;
+  - k = 7, c = 1: about 112 flags × 1 apple, over about 447 legal apples.
+- **But with an imperfect overseer, few big checks do clearly worse than many small ones at the same average penalty.** k = 1 is below k = 7 in every mistakes arm, with seed ranges not overlapping: 342 vs 479, 382 vs 482, 470 vs 509. With a perfect inspector the gap was small (441 vs 477). The protocol listed this as the outcome meaning "learners care about how uneven the losses are, not just the average". So "one check is almost as good as checking everyone" (finding 4) holds only for a perfect inspector.
 
 ## Run problems
 
