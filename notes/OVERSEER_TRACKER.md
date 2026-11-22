@@ -121,6 +121,7 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 
 ## Log
 
+- **23 Nov.** Separate networks and the worst case (agents see who is checked) built on branch `claude/separate-nets-worstcase`: `--separate-nets`, `--reveal-checks`, the `mixed` chooser, `check_prob`, and `just_checked` and `dodger` bots. Protocol with predictions written first (`socialjax/worstcase/protocol.md`). Bot preview (`socialjax/worstcase/results.md`): with checks visible, a dodger is never caught by round robin or history, cannot gain from random checks at c = 1, is caught 7–13% of the time under mixed (ε = 0.3), and finds crowded strips under 2-strip random checks. Cheating still kills the orchard and leaves the dodger with half the apples it gets by holding back. 33 GPU runs listed (15 separate-nets, 18 worst case), not submitted.
 - **22 Nov (afternoon).** Stages 2–3 complete (findings 8–9 now solid). Mistakes test in (findings 10–11). Decentralised GPU runs submitted: pilot 38810496, then 159 runs that start only if the pilot succeeds (38810497/98/513/515).
 
 - **22 Nov.** Decentralised overseers built, plus Coins and Clean Up ports. Bot sweeps run under protocols written first (findings 12–16). 159 GPU runs listed (`socialjax/DECENTRALISED_README.md`). Branch `claude/decentralised-games`.
