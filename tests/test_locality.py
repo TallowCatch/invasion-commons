@@ -147,3 +147,19 @@ def test_corridor_crossing_bot_hits_its_rate():
     t = L.collect_trace(ov, act, jax.random.PRNGKey(0), 900, keep_grid=False)
     assert L.crossing_rate(L.regions_of(t["pos"], ov.region_grid)) == pytest.approx(0.2, abs=0.02)
     assert t["violation"].mean() == pytest.approx(0.1, abs=0.02)
+
+
+# ------------------------------------------------------------------ scale (Willis et al.'s commons, M groups)
+def test_group_budgets_and_audits():
+    G = pytest.importorskip("experiments.scale.groups")
+    rng = np.random.default_rng(0)
+    for K, M in ((8, 4), (32, 64), (5, 3)):
+        assert G.budgets(K, M, rng).sum() == K
+        assert G.budgets(K, M, rng, weights=np.arange(M)).sum() == K
+    g = G.assign_groups(64, 4, rng)
+    assert np.bincount(g).tolist() == [16] * 4
+    D = np.ones((20, 64), bool)  # everyone always defects: every audit catches
+    r = G.audit(D, g, 8, "random", rng)
+    assert r["audits"] == 8 * 19 and r["caught"] == 8 * 19
+    v = G.own_group_view(64, 1)
+    assert v["own_gain"] == v["total_gain"] > 0

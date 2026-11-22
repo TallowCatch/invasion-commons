@@ -247,7 +247,11 @@ def gap_points(gap_rows, loc_rows):
             s_ev = (1 - lr["chi"]) ** (w - 1)
             xi = 1 - s_ev * z
         lo, hi = boot(c, rs)
-        pts.append(dict(testbed=tb, layout=layout, w=w, population=pop, records=rec, central=sc, dec=sd,
+        q = rs[0]["config"]["k"] / len(rs[0]["taken_per_agent"])
+        chi = lr["chi"] if lr else np.nan
+        from overseer.socialjax.locality import p_central, p_independent
+        p_gap = p_central(q, w) - p_independent(q, chi, w) if np.isfinite(chi) else np.nan
+        pts.append(dict(formula_gap=p_gap, q=q,testbed=tb, layout=layout, w=w, population=pop, records=rec, central=sc, dec=sd,
                         delta=sc - sd, delta_lo=lo, delta_hi=hi, eta_central=eta(wc), eta_dec=eta(wd),
                         delta_eta=eta(wc) - eta(wd), xi=xi, evidence_lost=1 - s_ev if np.isfinite(s_ev) else np.nan,
                         chi=lr["chi"] if lr else np.nan, zeta=lr["zeta"] if lr else np.nan,
@@ -278,14 +282,62 @@ def print_gap(pts):
                 rho, n = spearman([p[pred] for p in sel], [p["delta"] for p in sel])
                 name = "ξ_loc = 1 − Λ_w" if pred == "xi" else "1 − S_w (evidence leaves, no ζ)"
                 print(f"| {rec} | {popset} | {name} | {f(rho, 2)} | {n} |")
+    comp = evidence_component(pts)
+    print("\n### The part of the gap that comes from records staying local (regional with hand-over − regional "
+          "with local records), against what predicts it\n")
+    print("| Populations | predictor | ρ | points |")
+    print("|---|---|---|---|")
+    for popset, keep in (("1 greedy, all sneaky", lambda p: "migrator" not in p["population"]),
+                         ("all migrator", lambda p: "migrator" in p["population"])):
+        sel = [p for p in comp if keep(p)]
+        for pred, name in (("xi", "ξ_loc = 1 − Λ_w"), ("evidence_lost", "1 − S_w"),
+                           ("formula_gap", "P_C − P_0 (formula, q = K/N, measured χ)")):
+            rho, n = spearman([p[pred] for p in sel], [p["component"] for p in sel])
+            print(f"| {popset} | {name} | {f(rho, 2)} | {n} |")
+    print("\n| Testbed | Regions | w | Population | χ | ξ_loc | P_C − P_0 | lost by local records |")
+    print("|---|---|---|---|---|---|---|---|")
+    for p in sorted(comp, key=lambda p: (TESTBEDS.index(p["testbed"]), p["layout"], p["population"], p["w"])):
+        if "migrator" in p["population"]:
+            continue
+        print(f"| {NAMES[p['testbed']]} | {p['layout']} | {p['w']} | {p['population']} | {f(p['chi'], 4)} | "
+              f"{f(p['xi'])} | {f(p['formula_gap'])} | {f(p['component'])} |")
+
+
+def evidence_component(pts):
+    """Per (testbed, layout, w, population): catch share with hand-over minus with local records."""
+    idx = {(p["testbed"], p["layout"], p["w"], p["population"], p["records"]): p for p in pts}
+    out = []
+    for p in pts:
+        if p["records"] != "local":
+            continue
+        h = idx.get((p["testbed"], p["layout"], p["w"], p["population"], "handover"))
+        if h is None or p["violations_dec"] < 20 or h["violations_dec"] < 20:
+            continue
+        out.append(dict(p, component=h["dec"] - p["dec"]))
+    return out
 
 
 def fig_gap(pts, path):
     import matplotlib.pyplot as plt
-    fig, ax = plt.subplots(1, 3, figsize=(13, 4), sharey=True)
+    fig, axs = plt.subplots(2, 2, figsize=(11, 8.5))
+    ax = [axs[0, 0], axs[0, 1], axs[1, 1]]
     panels = (("local", lambda p: "migrator" not in p["population"], "(a) Records stay local (κ = 0)"),
               ("handover", lambda p: "migrator" not in p["population"], "(b) Records travel (existing code)"),
-              ("local", lambda p: "migrator" in p["population"], "(c) Migrators, records stay local"))
+              ("local", lambda p: "migrator" in p["population"], "(d) Migrators, records stay local"))
+    comp = [p for p in evidence_component(pts) if "migrator" not in p["population"]]
+    c3 = axs[1, 0]
+    for p in comp:
+        c = COLOURS[TESTBEDS.index(p["testbed"])]
+        c3.plot(p["formula_gap"], p["component"], MARKERS[p["w"]], color=c, ms=5,
+                mfc=c if "greedy" in p["population"] else "white")
+    c3.plot([0, 0.2], [0, 0.2], color="#52514e", lw=0.8)
+    rho, n = spearman([p["formula_gap"] for p in comp], [p["component"] for p in comp])
+    c3.set_title(f"(c) Catches lost because records stay local\nSpearman ρ = {f(rho, 2)} over {n} points",
+                 loc="left", fontsize=10)
+    c3.set_xlabel("predicted P_C − P_0 (q = K/N, measured χ)")
+    c3.set_ylabel("share caught: hand-over − local records")
+    c3.grid(alpha=0.25)
+    c3.spines[["top", "right"]].set_visible(False)
     for k, (rec, keep, title) in enumerate(panels):
         sel = [p for p in pts if p["records"] == rec and keep(p) and p["violations_central"] >= 20
                and p["violations_dec"] >= 20]
@@ -301,13 +353,14 @@ def fig_gap(pts, path):
         ax[k].set_xlim(-0.03, 1.03)
         ax[k].grid(alpha=0.25)
         ax[k].spines[["top", "right"]].set_visible(False)
-    ax[0].set_ylabel("Δ_dec: share caught, central − regional")
+    for a in ax:
+        a.set_ylabel("Δ_dec: share caught, central − regional")
     from matplotlib.lines import Line2D
     h = [Line2D([], [], color=COLOURS[TESTBEDS.index(t)], marker="o", ls="", label=NAMES[t]) for t in TESTBEDS]
     h += [Line2D([], [], color="#52514e", marker=m, ls="", label=f"w = {w}") for w, m in MARKERS.items()]
     h += [Line2D([], [], color="#52514e", marker="o", mfc="white", ls="", label="hollow: all sneaky")]
     fig.legend(handles=h, loc="lower center", ncol=6, fontsize=7, frameon=False)
-    fig.tight_layout(rect=(0, 0.12, 1, 1))
+    fig.tight_layout(rect=(0, 0.06, 1, 1))
     fig.savefig(path, dpi=150)
     plt.close(fig)
 
