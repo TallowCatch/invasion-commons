@@ -71,6 +71,6 @@ This applies the `devils-advocate` skill to `2026-11-21_general_formulation.md` 
 2. **Separate agents.** Rerun the targeting and migration comparisons with one network per agent, or mixed populations.
 3. **The worst case.** Agents that can see who was checked; random vs repeat offenders vs a randomised mix.
 4. **A reason and a scale.** Many agents (Willis's commons up to 256; Harvest 14 or more), with communication cost reported as a share of central collection.
-5. **Say what's new.** One paragraph against Monitored MDPs, inspection games, Gans & Holden and AI Control. Lead with the effects deterrence theory doesn't predict.
-6. **Confirm "decentralised" with Yali.**
-7. **Start here.** One index page linking every doc, with the gotchas listed.
+5. **Say what's new.** Drafted 22 Nov in `2026-11-22_whats_new.md`. One paragraph against Monitored MDPs, inspection games, Gans & Holden and AI Control. Lead with the effects deterrence theory doesn't predict.
+6. **Confirm "decentralised" with Yali.** Done 22 Nov: it means the Du papers' sense (Ameer). The LLM-overseer alternative is being run as well, as the capability study.
+7. **Start here.** Done 22 Nov: `../START_HERE.md`. One index page linking every doc, with the gotchas listed.
