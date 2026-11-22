@@ -128,6 +128,8 @@ def test_job_list_format():
     assert len(list(runs(c1, dedupe=0.05))) == 2 * 2 * 2 * 3  # m2 rounds like m1
     small = list(runs(c1, one_seed_if_fails=True))
     assert sum(n.startswith("L_m3") for n, _ in small) == 4  # 1 - 0.9 - 0.1 = 0: one seed per (k, c)
+    reason = [dict(model="m1", mode="reason", rendering="summary", alpha=0.0, beta_eat=0.2)]
+    assert next(runs(reason, modes=("reason",)))[0] == "L_m1-reason_summary_k1_c1.0_seed1"
 
 
 # ------------------------------------------------------------------------------------------------ judge loop

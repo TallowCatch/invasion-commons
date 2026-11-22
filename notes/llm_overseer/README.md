@@ -1,6 +1,6 @@
 # LLM inspector ladder: how to run
 
-Plan and predictions: `protocol.md` (written before any judging). Results and what's left: `SUMMARY.md`. Tables: `results/tables.md`.
+Plan and predictions: `protocol.md` (written before any judging; run changes in its Amendments). Results: `results/tables.md` (generated) and the judged replies in `results/judge/`.
 
 All commands run from the repository root.
 
@@ -69,12 +69,14 @@ PYTHONPATH=. python3 -m experiments.llm_overseer.harvest_runs --summary notes/ll
 PYTHONPATH=. python3 -m experiments.llm_overseer.harvest_runs --dedupe 0.05 --one-seed-if-fails > runs_llm_small.tsv
 ```
 
-The trainer is unchanged (`--miss-rate`, `--false-alarm` exist since the mistakes test), so the existing array script runs these as they are. On CREATE (from the parent session; N = number of lines):
+**The chosen list is committed:** `experiments/llm_overseer/runs_llm.tsv` (40 runs). It covers the four in-between or control inspectors: gpt-oss-20B on raw maps (α 0.10, β_eat 0.08); Qwen 3B with reasoning on the summary (0.00, 0.23); Qwen 7B with reasoning on raw maps (0.47, 0.04), which C1 says fails at c = 1 and protects at c = 2; and Qwen 7B direct on raw maps (1.00, 0.04) as a no-deterrence control with 1 seed. Inspectors with α ≈ β ≈ 0 repeat the existing perfect-inspector runs and are left out.
+
+The trainer is unchanged (`--miss-rate`, `--false-alarm` exist since the mistakes test), so the existing array script runs these as they are. On CREATE (from the parent session; N = 40):
 
 ```bash
-scp runs_llm_small.tsv create:~/ippo/
+scp experiments/llm_overseer/runs_llm.tsv create:~/ippo/
 sbatch --array=1-N%8 --exclude=arc-hpc-comp035,arc-hpc-comp040 \
-    --export=ALL,RUNS=$HOME/ippo/runs_llm_small.tsv ~/ippo/ippo_overseer_array.sbatch
+    --export=ALL,RUNS=$HOME/ippo/runs_llm.tsv ~/ippo/ippo_overseer_array.sbatch
 ```
 
 Outputs go to `/scratch/users/$USER/ippo_overseer/L_<model>_<rendering>_k<k>_c<c>_seed<s>/`. Each run is 1e8 steps (18–38 min on one GPU).

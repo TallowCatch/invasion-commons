@@ -27,6 +27,11 @@ Running an LLM inside 1e8-step RL is infeasible. So this study **measures each m
 
 **Amendment 1 (22 Nov, after the 50-item smoke test, before any full run).** A test found that in 478 of 7,090 eats the centre of the raw map showed empty ground: SocialJax regrows apples at the start of a step, before agents move, so the apple taken had regrown on that very step and is not on the previous map (which is the map the wrapper judges). The raw rendering now always draws the centre as the apple taken; the 12 cells around it are unchanged, and so are the labels and the summary rendering. The dataset was rebuilt and the smoke test rerun. The partial 0.5B full run started before the fix was discarded.
 
+**Amendment 2 (22 Nov, recorded after the runs; none changes a label, prompt or item).**
+- **Cloud smoke test first.** After Qwen 3B answered NO to almost every Harvest record, gpt-oss-120B judged 50 subset items (`--limit 50`) to check the prompt before the full cloud runs (section 7). Those 50 calls count toward the token cap: the cloud total was 1,107,628 tokens over 1,250 calls, under the 1.5M cap. The cloud runs started before Qwen 7B had finished.
+- **Qwen 7B on the 8 GB M1.** The first 7B run was killed after 493 of 600 items: it was swapping, and swap filled the disk. Its last 107 items (BazaarBench public) were rerun with `--num-ctx 4096` instead of 8192. Every remaining prompt fits: the longest is 3,690 tokens.
+- **Reason mode (P7)** ran only for Qwen 3B and 7B, only on the 120 w = 1 Harvest items (`--windows 1`, `--num-ctx 2048`), because of the time and memory 7B needs. One 3B item failed with an HTTP 500 and was rerun.
+
 ## 2. BazaarBench judging set
 
 `overseer/llm/bazaar_records.py`, built by `experiments/llm_overseer/make_bazaar_dataset.py` from the offline-replay download (`data/bazaarbench/`, git-ignored). The texts are not committed; the index of chosen pairs with the GPT-5 labels is (`experiments/llm_overseer/data/bazaar_index.tsv`).

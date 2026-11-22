@@ -8,7 +8,7 @@ harvests, as the wrapper models them since 21 Nov).
   python -m experiments.llm_overseer.harvest_runs --summary notes/llm_overseer/results/summary.json > runs_llm.tsv
   python -m experiments.llm_overseer.harvest_runs --dedupe 0.05 --one-seed-if-fails > runs_llm_small.tsv
 
-Each line: L_<model>_<rendering>_k<k>_c<c>_seed<s>  --k k --chooser random --penalty-apples 7c/k --miss-rate a
+Each line: L_<model>[-<mode> if not direct]_<rendering>_k<k>_c<c>_seed<s>  --k k --chooser random --penalty-apples 7c/k --miss-rate a
 --false-alarm b --seed s (1e8 steps from scratch, as in the mistakes test).
 """
 from __future__ import annotations
@@ -38,7 +38,8 @@ def runs(c1_entries, modes=("direct",), renderings=("summary", "raw"), ks=(1, 7)
             for c in levels:
                 fails = c1_class(effective_penalty(a, b, c)) == "fails"
                 for s in (seeds[:1] if (fails and one_seed_if_fails) else seeds):
-                    name = f"L_{e['model']}_{e['rendering']}_k{k}_c{c}_seed{s}"
+                    tag = e["model"] if e["mode"] == "direct" else f"{e['model']}-{e['mode']}"
+                    name = f"L_{tag}_{e['rendering']}_k{k}_c{c}_seed{s}"
                     yield name, (f"--k {k} --chooser random --penalty-apples {penalty(k, c)} "
                                  f"--miss-rate {a} --false-alarm {b} --seed {s}")
 
