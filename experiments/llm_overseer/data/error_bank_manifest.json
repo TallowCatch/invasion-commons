@@ -1,0 +1,62 @@
+{
+ "n_items": 13159,
+ "violations": 1717,
+ "per_source": {
+  "A_none_seed1": {
+   "episodes": 32,
+   "eats": 2145,
+   "violations": 972
+  },
+  "B_random_k1_c1.0_seed1": {
+   "episodes": 6,
+   "eats": 2558,
+   "violations": 321
+  },
+  "B_random_k2_c1.0_seed1": {
+   "episodes": 6,
+   "eats": 2467,
+   "violations": 193
+  },
+  "B_random_k7_c2.0_seed1": {
+   "episodes": 6,
+   "eats": 3170,
+   "violations": 33
+  },
+  "D_history_k2_c1.0_seed1": {
+   "episodes": 6,
+   "eats": 2819,
+   "violations": 198
+  }
+ },
+ "steps": 1000,
+ "near": {
+  "0": 497,
+  "1": 500,
+  "2": 720,
+  "3": 7232,
+  "4": 2080,
+  "5": 1227,
+  "6": 520,
+  "7": 220,
+  "8": 45,
+  "9": 35,
+  "10": 83
+ },
+ "near_by_label": {
+  "0": {
+   "3": 7232,
+   "4": 2080,
+   "5": 1227,
+   "6": 520,
+   "7": 220,
+   "8": 45,
+   "9": 35,
+   "10": 83
+  },
+  "1": {
+   "0": 497,
+   "1": 500,
+   "2": 720
+  }
+ }
+}

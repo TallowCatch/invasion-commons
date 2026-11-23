@@ -1,0 +1,4 @@
+time	model	id	rendering	tokens_in	tokens_out
+2026-11-23T10:31:33	gpt-oss:20b	bank_A_none_seed1_e31_t12_a0	raw	515	437
+2026-11-23T10:31:36	gpt-oss:20b	bank_A_none_seed1_e26_t13_a1	raw	515	447
+2026-11-23T10:31:41	gpt-oss:20b	bank_A_none_seed1_e4_t14_a1	raw	515	523

@@ -18,6 +18,12 @@
   - `source`: which policy produced the item (a diagnostic, not a model feature, since the trainer cannot know it).
 - Each item is rendered with the existing raw renderer (`overseer/llm/harvest_records.render_raw`, w = 1) and saved with its features.
 
+**Amendment 1 (23 Nov, after a 5-episode smoke rollout and a 3-item cloud smoke test, before any judging).**
+- The smoke rollout showed violations at near = 0 and 1 are scarce (about 30 per episode from A_none, a few from each overseen policy), so the episode counts were **doubled: 32 episodes of A_none and 6 of each overseen policy**.
+- The bank (`experiments/llm_overseer/data/error_bank.jsonl.gz`): **13,159 eats, 1,717 violations** (near 0 / 1 / 2: 497 / 500 / 720). Honest eats: near 3: 7,232; 4: 2,080; 5: 1,227; 6: 520; 7: 220; 8: 45; 9: 35; 10: 83; none at 11–12. Learners eat at exactly the threshold most of the time (55% of all eats are at near = 3).
+- With the quotas of section 2 the subset is therefore **2,463 items** (1,200 violations, 1,263 honest eats), about 2.3M cloud tokens at the smoke test's 980 tokens a check, so the whole subset fits under the cap.
+- The 3-item cloud smoke test (2,952 tokens) is in the token log and its verdicts are kept (the run resumes from them).
+
 ## 2. Judging
 
 - **Inspectors** (the two borderline ones in `../SUMMARY.md`):
