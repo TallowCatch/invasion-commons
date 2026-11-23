@@ -43,12 +43,24 @@ def runs(tags, tables=TABLES, ks=(1, 7), levels=(1.0, 2.0), seeds=(1, 2, 3), sen
                                f"--k {k} --chooser random --penalty-apples {penalty(k, c)} {flags} --seed {s}")
 
 
+def inverted(tables=TABLES, ks=(1, 7), levels=(1.0, 2.0), seeds=(1, 2, 3)):
+    """H3b (notes/formulation/03_hypotheses.md): gpt-oss-20B's table with its blind spot moved onto the most harmful
+    violations (tables/gpt-oss-20b_inverted.json), matched to the same bank-average alpha as the E_*_coin arm."""
+    path = Path(tables) / "gpt-oss-20b_inverted.json"
+    for k in ks:
+        for c in levels:
+            for s in seeds:
+                yield (f"E_gptoss20b_inverted_k{k}_c{c}_seed{s}",
+                       f"--k {k} --chooser random --penalty-apples {penalty(k, c)} --inspector-table {path} --seed {s}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tags", default="gpt-oss-20b_direct,qwen2.5-7b_reason")
     ap.add_argument("--tables", default=TABLES)
+    ap.add_argument("--inverted", action="store_true", help="only the H3b inverted-table arm")
     a = ap.parse_args()
-    for name, args in runs(a.tags.split(","), a.tables):
+    for name, args in (inverted(a.tables) if a.inverted else runs(a.tags.split(","), a.tables)):
         print(f"{name}\t{args}")
 
 

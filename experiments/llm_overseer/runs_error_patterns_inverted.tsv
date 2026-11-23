@@ -1,0 +1,12 @@
+E_gptoss20b_inverted_k1_c1.0_seed1	--k 1 --chooser random --penalty-apples 7.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 1
+E_gptoss20b_inverted_k1_c1.0_seed2	--k 1 --chooser random --penalty-apples 7.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 2
+E_gptoss20b_inverted_k1_c1.0_seed3	--k 1 --chooser random --penalty-apples 7.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 3
+E_gptoss20b_inverted_k1_c2.0_seed1	--k 1 --chooser random --penalty-apples 14.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 1
+E_gptoss20b_inverted_k1_c2.0_seed2	--k 1 --chooser random --penalty-apples 14.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 2
+E_gptoss20b_inverted_k1_c2.0_seed3	--k 1 --chooser random --penalty-apples 14.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 3
+E_gptoss20b_inverted_k7_c1.0_seed1	--k 7 --chooser random --penalty-apples 1.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 1
+E_gptoss20b_inverted_k7_c1.0_seed2	--k 7 --chooser random --penalty-apples 1.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 2
+E_gptoss20b_inverted_k7_c1.0_seed3	--k 7 --chooser random --penalty-apples 1.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 3
+E_gptoss20b_inverted_k7_c2.0_seed1	--k 7 --chooser random --penalty-apples 2.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 1
+E_gptoss20b_inverted_k7_c2.0_seed2	--k 7 --chooser random --penalty-apples 2.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 2
+E_gptoss20b_inverted_k7_c2.0_seed3	--k 7 --chooser random --penalty-apples 2.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_inverted.json --seed 3

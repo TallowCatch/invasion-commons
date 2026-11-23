@@ -243,3 +243,34 @@ def test_error_pattern_job_list_parses_with_the_trainer():
             assert not a.inspector_table and 0 < a.miss_rate < 1
         names.append(name)
     assert len(names) == len(set(names))
+
+
+def test_inverted_table_h3b():
+    """H3b: the inverted table swaps gpt-oss's near=0 and near=2 miss rates (blind spot on the most harmful
+    violations), keeps beta, and is scaled so its bank-average alpha equals the matched coin flip; every job line
+    parses and points at it."""
+    import gzip
+    import json
+    import shlex
+    from experiments.llm_overseer import error_pattern_runs as R
+    tables = ROOT / R.TABLES
+    if not (tables / "gpt-oss-20b_inverted.json").exists():
+        pytest.skip("no inverted table")
+    orig = json.loads((tables / "gpt-oss-20b_direct.json").read_text())
+    inv = json.loads((tables / "gpt-oss-20b_inverted.json").read_text())
+    InspectorTable(json.dumps(inv))
+    assert inv["beta"] == orig["beta"]
+    a0, a2 = orig["alpha"][0], orig["alpha"][2]
+    f = inv["alpha"][2][0] / a0[0]
+    assert inv["alpha"][0] == pytest.approx([x * f for x in a2]) and inv["alpha"][2] == pytest.approx([x * f for x in a0])
+    rows = [json.loads(l) for l in gzip.open(ROOT / "experiments/llm_overseer/data/error_bank.jsonl.gz", "rt")]
+    viol = [r for r in rows if r["near"] < 3]
+    mean = sum(inv["alpha"][min(r["near"], 2)][0 if r["outer"] < 2 else 1] for r in viol) / len(viol)
+    assert mean == pytest.approx(orig["matched_coin_flip"]["alpha"], abs=1e-4)
+    trainer = importlib.import_module("experiments.socialjax.train_ippo_overseer")
+    names = []
+    for name, args in R.inverted(tables=str(tables)):
+        a = trainer.parser().parse_args(["--out", "x"] + shlex.split(args))
+        assert a.inspector_table.endswith("gpt-oss-20b_inverted.json") and a.miss_rate == 0
+        names.append(name)
+    assert len(names) == len(set(names)) == 12

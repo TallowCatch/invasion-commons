@@ -99,6 +99,29 @@ In words: the chance of being looked at, times the chance the inspector sees the
 
 **Status: answered; spawns H3b.**
 
+### H3b. An inspector whose blind spot sits on harmful violations does worse than random mistakes (judge × agents)
+
+Added 23 Nov at Ameer's request, before any run. It stays inside H3: it changes only *where* the inspector's misses fall.
+
+**Claim.** If learners respond to the situation-specific sanction ρ(s), then moving the same inspector's blind spot onto the most harmful violations should make it protect *worse* than a coin flip with the same average miss rate. That is the mirror image of H3's result.
+
+**The inspector.** `tables/gpt-oss-20b_inverted.json`.
+- It is gpt-oss-20B's table with its miss rates for "0 apples left" and "2 apples left" swapped.
+- It is then scaled so its average miss rate over the situation bank equals the coin flip's (0.215), with β unchanged.
+- Resulting miss rates:
+  - 0 apples left: 0.39 / 0.62 (outer apples < 2 / ≥ 2);
+  - 1 left: 0.02 / 0.51;
+  - 2 left: 0.004 / 0.14.
+- The test `test_inverted_table_h3b` checks the swap, β and the match.
+
+**Prediction.**
+- At a 2-apple average sanction, where the coin flip keeps the orchard (503–540 apples, alive in every run), the inverted inspector gives lower survival or fewer apples, and more violations that take the last apples.
+- At 1 apple both are expected to collapse, so that cell is reported but cannot discriminate.
+
+**Refuted if** at 2 apples the inverted arm matches the coin flip within seed ranges, in both outcome and placement of violations.
+
+**Runs.** 12: k ∈ {1, 7}, c ∈ {1, 2}, 3 seeds (`experiments/llm_overseer/runs_error_patterns_inverted.tsv`). They are compared with the existing `E_gptoss20b_coin` and `E_gptoss20b_table` arms.
+
 ---
 
 ## H4. Misses and false alarms do different things (judge)
