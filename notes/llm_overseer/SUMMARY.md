@@ -40,5 +40,6 @@ How well do LLMs of different sizes work as the overseer's *inspector*, the part
 ## Not done
 
 - ~~RL runs with LLM inspectors~~ **done 23 Nov:** `rl_results.md`. C1's classes held in 15 of 16 cells. The miss was gpt-oss-20B at k = 1, c = 1: misses and false alarms don't trade one for one.
+- ~~Correlated (situation-dependent) mistakes~~ **measured 23 Nov:** `error_patterns/results.md`. gpt-oss-20B's misses run 0.00–0.48 by situation; its RL test is a job list, not yet run.
 - Reasoning mode on longer windows, BazaarBench and the other models.
 - The vLLM-on-CREATE script and the live overseer are untested or design-only.

@@ -305,6 +305,7 @@ Started 14 October 2026.
   - For choosing an LLM inspector: minimise misses first. A model that over-flags is safer for the commons and costlier for honest agents.
 - **Evidence.** `notes/llm_overseer/rl_results.md`; baselines in `notes/socialjax/phase2_ippo/results.md`.
 - **Status:** verified for fixed-rate mistakes. Correlated mistakes (hard records missed more often) are untested.
+- **Update (23 Nov, F26):** on learners' records gpt-oss-20B misses 0.215–0.288 of violations, not 0.10, and its misses are strongly situation-dependent; the gpt-oss cells here used a too-good α. The β reading (false alarms barely weaken deterrence) is consistent with law-and-economics once one notes that β falls only on legal harvests, never on waiting (Lando 2006; Lando & Mungan 2018; `notes/llm_overseer/error_patterns/results.md` §7).
 
 ## F25. Trained agents cross region boundaries about half as often as bots, and their harm is as local [lead; 11 stage 1 runs, 23 Nov]
 
@@ -315,6 +316,23 @@ Started 14 October 2026.
 - **What it means.** F21 holds for learners: Harvest's harm is local and the non-locality comes from movement. For learners, evidence lost at boundaries should be smaller than the bot estimates, so placement (F23) is the main cost. χ depends on the overseer, so a gap formula should use χ measured under it.
 - **Evidence.** `notes/socialjax/locality/results.md` §8.
 - **Status:** lead (1 seed per setting; central overseers only).
+
+---
+
+## F26. A real LLM inspector's misses depend on the situation, enough to matter for deterrence; its false alarms barely do [verified offline; RL untested, 23 Nov]
+
+- **Found** (protocol written before any run, `notes/llm_overseer/error_patterns/protocol.md`; 13,159 eats from 5 trained stage 1 policies; 2,463 judged by gpt-oss-20B on raw maps, stratified by apples around the eat; 179 by Qwen 7B + reasoning):
+  - gpt-oss-20B's miss rate runs from 0.00 to 0.48 by situation: it rises with the count (0.03 / 0.17 / 0.38 at 0 / 1 / 2 apples around) and with apples in the cells that don't count (z = +9.4), the over-counting mistake. Held-out log-likelihood gain over a constant rate: +0.128 nats per item [+0.103, +0.153].
+  - Its false alarms (25 in 1,263 honest eats) sit mostly on the borderline legal eat (0.06 at exactly 3 apples, about 0.01 elsewhere); no model beats a constant out of sample.
+  - Bank averages differ from the ladder's bot-record numbers: α 0.215 (0.288 for overseen agents, who over-harvest at the borderline), β 0.039; Qwen 7B + reasoning α 0.57, β 0.10 (ladder 0.47 / 0.04), within the ladder's wide intervals.
+  - An agent keeping its over-harvests to the worst-checked cell would pay 0.52c per over-harvest instead of the coin flip's 0.79c, across F24's threshold at c = 1.
+- **What it means.**
+  - The coin-flip model of an LLM inspector is wrong for misses and adequate for false alarms. Inspectors should be described by α(s), not one α, and measured on the records the agents being overseen produce.
+  - The error model is local (a 5 × 5 patch), so a regional overseer can apply it without global information.
+  - F24 vs law and economics (Png 1986; Polinsky & Shavell 2000): not a conflict. β lowers deterrence only when the alternative to a violation is a legal act that can be wrongly flagged; in Harvest it is mostly waiting.
+- **Next.** The 36-run job list (patterned table vs coin flips at the bank and overseen-agent averages; k ∈ {1, 7}, c ∈ {1, 2}, 3 seeds): `experiments/llm_overseer/runs_error_patterns.tsv`. The most informative cell is k = 7, c = 1.
+- **Evidence.** `notes/llm_overseer/error_patterns/results.md`, `fit_tables.md`; code `overseer/socialjax/inspector_table.py`, `experiments/llm_overseer/{error_bank,judge_bank,fit_error_model,error_pattern_runs}.py`; tests `tests/test_inspector_table.py`.
+- **Status:** verified offline for gpt-oss-20B (Qwen: averages only). Deterrence effect untested.
 
 ---
 

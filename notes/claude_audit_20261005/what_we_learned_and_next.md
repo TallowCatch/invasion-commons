@@ -1,5 +1,13 @@
 # What we have learned, and what should come next
 
+## Update 18, 23 November 2026: a real LLM inspector's mistakes are patterned
+
+- **Patterned inspector errors** (F26; `notes/llm_overseer/error_patterns/results.md`; branch `claude/llm-error-patterns`): on 2,463 trained-agent eats, gpt-oss-20B misses 0.00–0.48 of violations depending on the situation (more when the count is near the threshold and when apples sit in the cells that don't count); false alarms are rare and nearly flat. On held-out items the pattern beats a coin flip for misses, not for false alarms.
+- The bank averages (α 0.215–0.288, β 0.039) replace the ladder's bot-record numbers for gpt-oss-20B.
+- F24 is reconciled with law and economics: false alarms fall only on legal harvests, not on waiting.
+- **Next:** submit `experiments/llm_overseer/runs_error_patterns.tsv` (36 runs) from a checkout of the branch.
+- **Costs:** 2,417,973 Ollama cloud tokens (about $0.77 at $0.32 per million; cap 3M); Qwen ran locally (179 items).
+
 ## Update 17, 23 November 2026: decentralised, LLM-inspector and locality results with learning agents
 
 - **Decentralised overseers with IPPO** (F23; `notes/socialjax/DECENTRALISED_RESULTS.md`; Harvest 67 of 69 runs, Coins 45 of 45):

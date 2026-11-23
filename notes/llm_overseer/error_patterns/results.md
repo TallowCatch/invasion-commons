@@ -1,15 +1,17 @@
 # Patterned LLM inspector errors: results (23 Nov 2026)
 
-**Question.** Does an LLM inspector's error pattern, measured on real situations, change deterrence compared with a coin flip at the same average miss and false-alarm rates? Protocol and predictions, written before any run: `protocol.md` (Amendments 1–2 are logistics only). How to rerun and the CREATE commands: `README.md`. Generated tables: `fit_tables.md`, `fit.json`.
+**Question.** Does an LLM inspector's error pattern, measured on real situations, change deterrence compared with a coin flip at the same average miss and false-alarm rates? Protocol and predictions, written before any run: `protocol.md` (Amendments 1–2 are logistics; Amendment 3 records the Qwen cap and one rule added after the Qwen fit). How to rerun and the CREATE commands: `README.md`. Generated tables: `fit_tables.md`, `fit.json`.
 
 **What was done here.** The offline half: a bank of real situations from trained agents, verdicts from two LLM inspectors, a fitted error model, a trainer option that plays it, and a job list. **No RL run with the patterned inspector has been done.** Section 5 lists them; section 6 says what they are expected to show.
 
 ## 1. Short answer
 
+**Not answered yet for deterrence, because the RL runs are not done. Offline, the answer splits.** For misses the coin flip is a poor model of a real LLM: the pattern is large and holds out of sample, so the coin-flip runs cannot be assumed to stand. For false alarms, the coin flip is as good as anything the data supports.
+
 - **gpt-oss-20B's misses are strongly patterned.** Its miss rate α runs from **0.00** (no apples around, few in the outer cells) to **0.48** (2 apples around, 2 or more in the outer cells). Two things drive it: how close the count is to the threshold, and how many apples sit in the cells that don't count (it counts some of them in). The pattern predicts held-out verdicts much better than a constant rate (gain +0.128 nats per item, 95% interval +0.103 to +0.153, n = 1,200 violations).
 - **Its false alarms are rare and only weakly patterned.** β is 0.06 at exactly 3 apples (the borderline legal eat) and about 0.01 elsewhere. With 25 flags in 1,263 honest eats, the pattern does not beat a constant rate on held-out items (interval includes 0). For β the coin flip is as good a model as the data can tell.
 - **The coin-flip numbers from the ladder were off for learners' records.** On the bank, gpt-oss-20B's average α is 0.215 (0.288 on the records of agents trained under an overseer), not the ladder's 0.10; its β is 0.039, not 0.077. Both ladder numbers came from 26–30 bot records; the new ones are inside the ladder's wide intervals, so this is a correction more than a contradiction.
-- **Why this could matter for deterrence.** An agent that kept its over-harvests to the worst-checked situations would face α = 0.48, so each over-harvest would cost (1 − 0.48)·c = 0.52c instead of the coin flip's 0.79c. F24 puts the learners' threshold at about 0.75–0.9 of an apple (higher at k = 1). So at c = 1 the pattern could move a cell from "alive" to "dead"; at c = 2 even the worst case (1.04 apples) stays above it. Whether learners find the pattern is the RL question (§5–6).
+- **Why this could matter for deterrence.** An agent that kept its over-harvests to the worst-checked situations would face α = 0.48, so each over-harvest would cost (1 − 0.48)·c = 0.52c instead of the coin flip's 0.79c. F24 puts the learners' threshold at about 0.75–0.9 of an apple (higher at k = 1). So at c = 1 the pattern could move a cell from "alive" to "dead"; at c = 2 even the worst case (1.04 apples) stays at or just above it. Whether learners find the pattern is the RL question (§5–6).
 - **Qwen 7B + reasoning (secondary, 179 items):** misses about half of all violations (α 0.53 on the subset; 0.57 on the bank average, 0.69 on the overseen agents' records). Its misses rise with the count and with outer apples, as gpt-oss's do (0.34 → 0.59 → 0.73 at near 0 / 1 / 2). But with 89 violations no state-dependent model beats a constant rate on held-out items, so it is reported as averages only and has no table in the job list. If its bank-average α is right, the existing Qwen 7B + reasoning runs at c = 2 overstated its deterrent: an over-harvest would cost 0.87 apples, not 1.07, near the threshold.
 
 ## 2. What was run
@@ -21,6 +23,14 @@
 - **Judging subset**, stratified by `near` (random within each value, then shuffled): 400 items for each of near 0, 1, 2; 300 / 250 / 200 / 200 for near 3 / 4 / 5 / 6; 150 for near 7, and all of near 8–10 (45, 35, 83). **2,463 items** (1,200 violations, 1,263 honest eats).
 - **gpt-oss-20B on raw maps** (Ollama cloud, `think: low`, as in the ladder) judged all 2,463. **Cloud tokens: 2,417,973** over 2,463 logged calls (982 a check: 515 in, about 470 out), under the 3M cap, about $0.77 at $0.32 per million. Up to about 4,000 more tokens were spent in calls cut off by a disk-full crash and not logged (protocol Amendment 2). 24 replies (1%) hit the 2,048-token limit without a verdict; they count as no flag (10 of them are violations, adding 0.8 points to α).
 - **Qwen 7B + reasoning on raw maps** (local, reason prompt, `--num-ctx 2048`): **179 items**, the first 179 of the same shuffled order (89 violations: 35 / 32 / 22 at near 0 / 1 / 2; 90 honest eats). The plan was 600. Ameer then capped it at 200 to free the laptop, and the disk guard stopped it twice (at 115 and 179 items) when swap left under 2 GB of disk free; it was not restarted. Because the order is shuffled, the first 179 are a random part of the stratified subset and so stratified too (the first 200 have 96 violations and 104 honest eats). 771 tokens a check (local, no cost), about 30 s each. The model was unloaded at the end.
+
+- **Trainer option** `--inspector-table` (off by default; Harvest, w = 1) and two new measures in every run (README §2). `tests/test_inspector_table.py` (9 tests) checks five things:
+  - with no table, the overseer and the trainer give exactly the results of c0f39d9;
+  - a constant table equals `--miss-rate/--false-alarm`, bit for bit;
+  - the JAX features equal the LLM's patch;
+  - the lookup picks the right cell, and a patterned table applies by situation;
+  - the job list parses.
+  The full suite passed: 533 tests with the JAX venv, plus the 8 torch tests with `.venv`; 24 skipped.
 
 ## 3. The error pattern
 

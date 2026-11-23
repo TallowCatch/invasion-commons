@@ -75,4 +75,4 @@ Wrongful fines per legal apple equal β_eat × c at both k = 1 and k = 7: 0.08 /
 - All 40 runs reached 390 updates; 18–42 min each (1,050–2,535 s).
 - gpt-oss-20B at k = 1, c = 1 varies a lot across seeds (orchard alive 0.34 / 0.66 / 0.90). Only `summary.json` was pulled, not the learning curves, so whether these runs were still improving at 1e8 steps is unknown.
 - In every run agents 0 and 1 collect about 5 apples more than the other five (for example 40, 40, 35, 35, …). This also shows when the orchard is dead (14 vs 8), so it is a spawn-position effect, not anything the inspector does.
-- These runs use α and β as fixed coin flips. A real LLM misses the hard records more often, and learners could find and exploit that (`protocol.md` §8). That is not tested here.
+- These runs use α and β as fixed coin flips. A real LLM misses the hard records more often, and learners could find and exploit that (`protocol.md` §8). That is not tested here. **Update 23 Nov:** the pattern is measured in `error_patterns/results.md`. On learners' records gpt-oss-20B's average α is 0.215–0.288, not 0.10, and a 36-run job list tests the pattern against matched coin flips.
