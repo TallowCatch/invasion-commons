@@ -19,13 +19,22 @@ unchanged (tests/test_worstcase.py checks it against the trainer at fca047d):
   --reveal-checks: every agent sees who was checked last step and when it was last checked itself
      (overseer/socialjax/reveal.py); --mixed-eps sets the "mixed" chooser's random share.
 Per-agent measures (apples, violations, catches, net reward per agent) are logged in every run.
+Added 23 Nov (notes/llm_overseer/error_patterns/protocol.md), off by default:
+  --inspector-table T.json: a patterned inspector (Harvest, --window 1). A check's miss and false-alarm chances come
+     from the table for the checked agent's situation (overseer/socialjax/inspector_table.py) instead of --miss-rate
+     and --false-alarm. tests/test_inspector_table.py checks the default path is unchanged and that a constant table
+     equals the coin flip.
+  New measures in every run (existing ones unchanged): checks_on_violations and checks_on_honest_eats (so the
+     realised miss rate is 1 - detected / checks_on_violations at w = 1, and the realised false-alarm rate
+     wrongly_stopped / checks_on_honest_eats), and in Harvest violations_by_near (3,) and eats_by_near (13,):
+     per episode, by the number of apples within two squares on the map before the move.
 
 Protocol: notes/socialjax/phase2_ippo/protocol.md; decentralised runs: notes/socialjax/DECENTRALISED_README.md
 
   python -m experiments.socialjax.train_ippo_overseer --out DIR --k 2 --chooser random --penalty-apples 3.5 \
       [--env harvest|harvest_large|coins|cleanup] [--regions 1] [--layout strips] [--share] [--region-k 1,1] \
       [--freeze 0] [--total-steps 1e8] [--num-envs 256] [--seed 1] [--init-params PATH] \
-      [--separate-nets] [--reveal-checks] [--mixed-eps 0.3]
+      [--separate-nets] [--reveal-checks] [--mixed-eps 0.3] [--inspector-table T.json]
 
 --penalty-apples is the penalty per catch in the game's goods (apples; coins in Coins): it is multiplied by the
 reward one good pays (num_agents in Harvest and Clean Up, 2 in Coins). The metric names keep Harvest's words
@@ -108,7 +117,14 @@ def episode_measures(info, unit=APPLE_REWARD, last=-2):
         violations_agent=per_agent(info["violations"]),
         catches_agent=per_agent(info["caught"]),
         net_reward_agent=per_agent(info["raw_reward"] - info["penalty"]),
+        checks_on_violations=per_env(info["checked"] & info["violations"]).mean(),
+        checks_on_honest_eats=per_env(info["checked"] & info["taken"] & ~info["violations"]).mean(),
     )
+    if "near_prev" in info:  # Harvest: eats and violations by apples within two squares before the move
+        near = jnp.clip(info["near_prev"], 0, 12)
+        by_near = jax.nn.one_hot(near, 13, dtype=jnp.float32) * info["taken"][..., None]  # (steps, envs, N, 13)
+        m["eats_by_near"] = by_near.sum((0, 2)).mean(0)
+        m["violations_by_near"] = (by_near * info["violations"][..., None]).sum((0, 2)).mean(0)[:3]
     if "pollution" in info:
         m["pollution_mean"] = info["pollution"].mean()
         m["cleaned"] = per_env(info["cleaned"]).mean()
@@ -121,7 +137,7 @@ def make_env(cfg, ov_cfg):
 
 
 def keep_fields(env):
-    extra = ("pollution", "cleaned") if env.rules.name == "cleanup" else ()
+    extra = {"cleanup": ("pollution", "cleaned"), "harvest": ("near_prev",)}.get(env.rules.name, ())
     return KEEP + extra
 
 
@@ -344,7 +360,17 @@ def parser():
     ap.add_argument("--separate-nets", action="store_true", help="one network and optimiser per agent")
     ap.add_argument("--reveal-checks", action="store_true", help="agents see who was checked last step")
     ap.add_argument("--mixed-eps", type=float, default=0.3, help="the mixed chooser's chance of random checks")
+    ap.add_argument("--inspector-table", default="", help="JSON table of situation-dependent miss and false-alarm "
+                    "chances (Harvest, --window 1); replaces --miss-rate and --false-alarm")
     return ap
+
+
+def read_table(path):
+    """The table's JSON as compact text, keeping only what the overseer reads (features, alpha, beta)."""
+    if not path:
+        return ""
+    spec = json.loads(Path(path).read_text())
+    return json.dumps({k: spec[k] for k in ("features", "alpha", "beta")}, separators=(",", ":"))
 
 
 def main():
@@ -365,7 +391,7 @@ def main():
                        regions=a.regions, layout=a.layout, region_k=region_k, share=a.share,
                        share_coverage=a.share_coverage, cost_per_message=a.cost_per_message, presume=a.presume,
                        cost_per_step_seen=a.cost_per_step_seen, mixed_eps=a.mixed_eps,
-                       reveal_checks=a.reveal_checks)
+                       reveal_checks=a.reveal_checks, inspector_table=read_table(a.inspector_table))
     init = Path(a.init_params).read_bytes() if a.init_params else None
     (out / "config.json").write_text(json.dumps(dict(cfg, overseer=asdict(ov_cfg), penalty_apples=a.penalty_apples,
                                                      reward_unit=unit, hparams=HPARAMS, devices=str(jax.devices())),

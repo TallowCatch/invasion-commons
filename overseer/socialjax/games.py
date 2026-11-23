@@ -86,12 +86,13 @@ class HarvestRules:
         eaten = raw > 0
         locs = self.positions(env_state)
         # judged on the map the agent saw when it moved (harvest_overseer.py)
-        violation = eaten & (apples_near(prev.grid, locs) < self.m)
+        near_prev = apples_near(prev.grid, locs)
+        violation = eaten & (near_prev < self.m)
         near = apples_near(env_state.grid, locs)
         apples = jnp.sum(env_state.grid == APPLE)
         return aux, dict(violation=violation, suspect=violation, clear=jnp.zeros_like(violation), honest=eaten,
                          taken=eaten, location_score=-near.astype(jnp.float32), resource=apples,
-                         extra=dict(eaten=eaten, apples=apples))
+                         extra=dict(eaten=eaten, apples=apples, near_prev=near_prev))
 
 
 class CoinsRules:

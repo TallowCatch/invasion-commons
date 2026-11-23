@@ -23,6 +23,10 @@ agents act:
 
 Choosers: none, all, random, round_robin, history, location, and mixed (added 22 Nov): each step each overseer
 flips its own coin, and with probability mixed_eps checks at random within its region, otherwise by history.
+With inspector_table set (added 23 Nov, notes/llm_overseer/error_patterns/protocol.md; Harvest at w = 1 only), the
+miss and false-alarm chances in step 4 are looked up per agent from a table fitted to an LLM's verdicts, by features
+of the situation the checked agent acted in (overseer/socialjax/inspector_table.py), instead of being one number.
+The same random numbers are drawn either way, so a table with constant entries reproduces miss_rate/false_alarm_rate.
 With reveal_checks=True (added 22 Nov, the worst case) every agent's observation also shows who was checked last step
 (by any overseer) and when it was last checked itself (overseer/socialjax/reveal.py). check_prob(state) gives each
 agent's chance of being checked in the coming step from the public state (the rules, budgets and records, not the
@@ -73,6 +77,7 @@ class DecConfig:
     presume: bool = False  # flag acts that look like violations in what the record shows
     mixed_eps: float = 0.3  # for the "mixed" chooser: chance an overseer's checks this step are random
     reveal_checks: bool = False  # agents see who was checked last step (reveal.py)
+    inspector_table: str = ""  # JSON text of a patterned inspector (inspector_table.py); "" = coin flips
 
     def __post_init__(self):
         if self.chooser not in CHOOSERS:
@@ -86,6 +91,8 @@ class DecConfig:
             raise ValueError("region_k needs one non-negative budget per region, summing to k")
         if not 0.0 <= self.mixed_eps <= 1.0:
             raise ValueError("mixed_eps must be in [0, 1]")
+        if self.inspector_table and (self.window != 1 or self.presume or self.miss_rate or self.false_alarm_rate):
+            raise ValueError("inspector_table needs window 1, no presume, and miss_rate = false_alarm_rate = 0")
 
     def budgets(self):
         """(base budget per region, number of extra checks handed to random regions each step)."""
@@ -129,6 +136,12 @@ class DecentralisedOverseer:
         ages = np.arange(w)
         self.provable_age = jnp.asarray(ages + L - 1 <= w - 1)  # the record covers the act and its lookback
         self.lookback_end = jnp.asarray(np.minimum(ages + L - 1, w - 1))
+        self.table = None
+        if config.inspector_table:
+            if rules.name != "harvest":
+                raise ValueError("inspector_table is defined for Harvest only")
+            from overseer.socialjax.inspector_table import InspectorTable
+            self.table = InspectorTable(config.inspector_table)
 
     # ---------------------------------------------------------------- state
     def _fresh(self, env_state):
@@ -288,8 +301,12 @@ class DecentralisedOverseer:
         detectable_n = detectable.sum(1)
 
         checked, budget = self._choose(k_choose, s, region, sig["location_score"])
-        seen = jax.random.uniform(k_miss, (n,)) >= cfg.miss_rate
-        alarm = jax.random.uniform(k_alarm, (n,)) < cfg.false_alarm_rate
+        if self.table is None:
+            miss_p, alarm_p = cfg.miss_rate, cfg.false_alarm_rate
+        else:  # the situation each agent acted in: the map before the move, around the cell it moved to
+            miss_p, alarm_p = self.table.rates(s.env_state.grid, self.rules.positions(env_state))
+        seen = jax.random.uniform(k_miss, (n,)) >= miss_p
+        alarm = jax.random.uniform(k_alarm, (n,)) < alarm_p
         detected = checked & (detectable_n > 0) & seen
         false_alarm = checked & (pending == 0) & sig["honest"] & alarm  # an honest act misjudged
         presumed_wrong = checked & seen & (wrongful.sum(1) > 0)  # flagged on incomplete evidence
