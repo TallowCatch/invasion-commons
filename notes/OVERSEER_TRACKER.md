@@ -129,6 +129,7 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 
 ## Log
 
+- **23 Nov (evening).** Experiments paused to define the overseer properly (`formulation/README.md`). Worst-case runs held on CREATE (separate networks undertrained at 1e8 steps). Phase 1 literature map done (`formulation/01_literature_map.md`). Phase 2 draft definition written: the overseer as a player whose action is look, judge, respond, share; June ideas restored (two levels of harm and local-pass/global-fail, observation channels, capability vector, capability gap).
 - **23 Nov (afternoon).** Patterned LLM inspector errors (finding 25 here, F26 in the findings log), branch `claude/llm-error-patterns`. Situation bank of 13,159 eats from trained agents; gpt-oss-20B judged 2,463 (2.42M cloud tokens of a 3M cap, about $0.77) and Qwen 7B + reasoning 179. Trainer option `--inspector-table` (off by default; default path tested identical) and a 36-run CREATE list, not submitted: `llm_overseer/error_patterns/`.
 - **23 Nov.** Three sets of GPU results written up (findings 22–24 here, F23–F25 in the findings log).
   - Decentralised IPPO, Harvest 67 of 69 runs (`DH_R2_random_k4_c1.0_seed1` and `DH_R2_history_k4_c1.0_seed1` still running) and Coins 45 of 45: `socialjax/DECENTRALISED_RESULTS.md`.
