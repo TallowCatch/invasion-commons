@@ -89,6 +89,17 @@ Nine hypotheses:
 3. H6 reduced rerun.
 4. H7 extensions deferred.
 
+- **Decisions (Ameer, 23 Nov): all four recommendations accepted.**
+  1. **H5 first.** An agent is measuring LPGF offline on branch `claude/h5-lpgf`.
+  2. **H2 redesign.** The held separate-network worst-case job 38845977 was cancelled. `worstcase_shared` was submitted:
+     - 18 `WS_` runs (visible checks, shared network, large-GPU constraint), job 38847109;
+     - 6 `OS_` ordinary-mode baselines for round robin and mixed, job 38847112.
+
+     Protocol amendment: `notes/socialjax/worstcase/protocol.md`, Amendment 1.
+  3. **H6 reduced rerun.** `separate_long`: 6 `SL_` runs (separate networks, 3e8 steps, 5 h limit), job 38847113.
+  4. **H7 extensions deferred.**
+- **Already running:** error patterns (H3, job 38836358, nearly done); Clean Up (H1 second game, H9); 14-agent Harvest. CREATE is limiting us by our per-user GPU quota (`QOSMaxGRESPerUser`), so batches run in turn.
+
 ### Phase 4: experiments (later)
 
 Only those Phase 3 requires.
