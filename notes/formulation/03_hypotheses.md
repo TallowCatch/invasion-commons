@@ -88,7 +88,16 @@ In words: the chance of being looked at, times the chance the inspector sees the
 
 **Evidence.** The patterned arm is done (12 runs). The inspected share of violations missed was 0.27–0.29, and about 60% of violations were in the borderline situation (2 apples near). Learners already violated there before this inspector existed, so placement alone proves nothing. The matched coin-flip arms are running (24 of 36 runs left).
 
-**Status: keep. Answered when job 38836358 finishes.**
+**Result (23 Nov, 35 of 36 runs): outcome refuted, mechanism supported.**
+- Learners did move into the blind spot: 63–66% of violations are borderline under the patterned inspector, against about 20% under coin flips.
+- But the patterned inspector *protected better*. At a 1-apple sanction it kept the orchard (255–362 apples, alive 92–100%), while both coin flips at the matched average α lost it (69–75 apples, dead). Its blind spot sits on mild violations, which still regrow. It almost never misses the harmful ones (miss rate 0.03 when no apples are left).
+- At 2 apples every arm survives (F28).
+
+**Consequence for H1:** learners respond to the situation-specific sanction ρ(s) = (k/N)(1 − α(s))F. What decides the commons is ρ(s) where violations are harmful.
+
+**Next test (proposed):** an inspector whose blind spot sits on *harmful* violations (an inverted table) should do worse than a coin flip.
+
+**Status: answered; spawns H3b.**
 
 ---
 

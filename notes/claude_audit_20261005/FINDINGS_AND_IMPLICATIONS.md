@@ -353,4 +353,27 @@ Started 14 October 2026.
 
 ---
 
+## F28. Where an inspector errs matters more than how often: an LLM inspector whose misses fall on mild violations protects better than a random-error one with the same average miss rate [verified; 35 of 36 runs, 3 seeds, 23 Nov]
+
+- **Found** (H3; gpt-oss-20B patterned inspector vs coin flips at the bank average α = 0.215 and the overseen-agent average α = 0.288; Harvest, IPPO, 1e8 steps):
+  - **At a 1-apple average sanction, the result is the opposite of H3's prediction.**
+    - Patterned inspector: orchard alive in 92–100% of games, 255–362 apples (k = 1 and k = 7).
+    - Both coin flips: orchard dead in every run, 69–75 apples.
+  - **Learners did move their violations into the inspector's blind spot.**
+    - Under the patterned inspector, 63–66% of violations are borderline (2 apples left nearby; the inspector misses up to 48%).
+    - Under the coin flips, most violations take the last apples (0 left; 14–16 per episode against 8–10).
+  - But the blind spot sits on the **least harmful** violations: 2 apples left still regrow. The inspector almost never misses the harmful ones (0 apples left: miss rate 0.03).
+  - At a 2-apple average sanction every arm survives, with the same placement of violations (80–88% borderline).
+- **What it means.**
+  - H1 needs refining. Learners respond to the sanction a violation meets *in each situation*, ρ(s) = (k/N)(1 − α(s))F, and place violations where ρ(s) is low. The commons survives if the low-ρ situations are the low-harm ones.
+  - Inspector quality should be judged by its miss rate on *harmful* violations, not its average.
+  - A uniform error model can call a usable inspector useless: the earlier coin-flip runs would have written off this one.
+  - H3 is refuted in its outcome (patterned was better, not worse) and supported in its mechanism (learners moved violations to where misses are likely).
+- **Caveats.**
+  - One inspector, one game, 3 seeds.
+  - The pattern happened to align blind spots with mild violations. An inspector whose blind spot sits on harmful violations should do worse than a coin flip. That is untested, and a clean next test.
+- **Evidence.** `results/create_pull/E_*`; design `notes/llm_overseer/error_patterns/`.
+
+---
+
 *Index entry:* this file is referenced from `what_we_learned_and_next.md` and from Ameer's Claude memory.
