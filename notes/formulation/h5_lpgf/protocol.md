@@ -125,7 +125,14 @@ No Clean Up params exist locally yet (the 24 runs are on CREATE). The script acc
 - Prediction (H5): LPGF higher than Harvest, because dirt rises whatever anyone eats, and the rule only fires on
   eats above the threshold.
 
-## 7. Files
+## 7. Amendment (23 Nov, after a 2-episode smoke run, before the main run)
+
+The smoke run showed that most locally dead cells in the overseen runs revive later in the episode. So H_dead is
+also split into **lasting** deaths: a newly dead cell that stays dead until the end of the episode (its last death),
+attributed with the same classes. Reported next to H_dead; added after seeing the smoke run, so it is secondary. No
+prediction or threshold was changed.
+
+## 8. Files
 
 - `experiments/socialjax/measure_lpgf.py`: the measures and the runner (Harvest and Clean Up).
 - `tests/test_lpgf.py`: hand-built grids (a legal kill, a joint legal kill, a violating kill, post-collapse steps).
