@@ -217,3 +217,28 @@ def test_trainer_constant_table_equals_coin_flip_flags(tiny, tmp_path):
         np.testing.assert_array_equal(x, y)
     for k in m1:
         np.testing.assert_array_equal(m1[k], m2[k], err_msg=k)
+
+
+def test_error_pattern_job_list_parses_with_the_trainer():
+    """Every line parses; table arms point at a loadable table and leave the coin flip at 0; coin arms have no
+    table; the penalty gives an average penalty of c apples under random checks; names are unique."""
+    import shlex
+    trainer = importlib.import_module("experiments.socialjax.train_ippo_overseer")
+    from experiments.llm_overseer import error_pattern_runs as R
+    tags = [t for t in ("gpt-oss-20b_direct", "qwen2.5-7b_reason") if (ROOT / R.TABLES / f"{t}.json").exists()]
+    if not tags:
+        pytest.skip("no fitted tables")
+    names = []
+    for name, args in R.runs(tags, tables=str(ROOT / R.TABLES)):
+        a = trainer.parser().parse_args(["--out", "x"] + shlex.split(args))
+        c = float(name.split("_c")[1].split("_")[0])
+        assert a.k / 7 * a.penalty_apples == pytest.approx(c)
+        if "_table_" in name:
+            text = trainer.read_table(a.inspector_table)
+            InspectorTable(text)
+            DecConfig(k=a.k, chooser=a.chooser, inspector_table=text)
+            assert a.miss_rate == 0 and a.false_alarm == 0
+        else:
+            assert not a.inspector_table and 0 < a.miss_rate < 1
+        names.append(name)
+    assert len(names) == len(set(names))
