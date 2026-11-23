@@ -336,4 +336,21 @@ Started 14 October 2026.
 
 ---
 
+## F27. In Harvest, every permanent loss of the commons involves a rule violation, so inspecting individuals is enough there [verified offline; 5 trained runs + 3 bot populations, 23 Nov]
+
+- **Found** (H5; protocol written before measuring; 32 episodes per policy):
+  - All 580 permanent losses (a patch losing its last apple) involved a rule violation. No overseen policy lost a patch to legal eats.
+  - Perfect full inspection (k = 7) lost none.
+  - Legal-only loss is structurally near impossible: it needs 4+ agents eating 4+ close apples in one step, which never happened in 256 episodes.
+  - Temporary damage often passes the rule in overseen runs (60–93% of newly dead cells), but 92–95% of those cells regrow within the episode.
+  - Side finding: random k = 1 and history k = 2 still lost a patch in 3 and 1 of 32 episodes through unchecked violations (a budget failure).
+- **What it means.**
+  - Local-pass/global-fail is negligible in Harvest. An overseer that only inspects individuals is the right first formulation there.
+  - The commons view (the planned next step) must be justified in a game where harm builds up from legal-looking behaviour; Clean Up is the test.
+  - The June τ = 0.5 LPGF reading (84–98%) is a threshold artefact (sustainable play settles near 23–29 apples), so LPGF must be counted as harm creation, not time spent below a line.
+- **Next.** The same measures on Clean Up params when those runs finish (script ready).
+- **Evidence.** `notes/formulation/h5_lpgf/results.md`, `protocol.md`; code `experiments/socialjax/measure_lpgf.py`.
+
+---
+
 *Index entry:* this file is referenced from `what_we_learned_and_next.md` and from Ameer's Claude memory.

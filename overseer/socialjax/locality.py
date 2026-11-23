@@ -46,23 +46,29 @@ def _run(overseer, act, key, mem0, steps, keep_grid=True):
             out["handover_steps"] = info["handover_steps"]
         if "stolen_from" in info:
             out["stolen_from"] = info["stolen_from"]
+        if "pollution" in info:  # Clean Up
+            out["pollution"] = info["pollution"]
         if keep_grid:
             out["grid"] = s.env_state.grid.astype(jnp.int8)
         return (s, obs, mem), out
 
     (s_end, _, _), trace = jax.lax.scan(body, (s0, obs, mem0), jax.random.split(k_run, steps))
     pos0 = overseer.rules.positions(s0.env_state)
-    return s_end, trace, pos0
+    grid0 = s0.env_state.grid.astype(jnp.int8) if keep_grid else None
+    return s_end, trace, pos0, grid0
 
 
 def collect_trace(overseer, act, key, steps, mem0=None, keep_grid=True):
-    """One episode; numpy dict with pos (T+1, N, 2) including the start, and per step (T, ...) the rest.
+    """One episode; numpy dict with pos (T+1, N, 2) including the start, grid0 (the map at reset, with keep_grid),
+    and per step (T, ...) the rest.
     `steps` must be below the env's episode length so the episode never resets inside the rollout."""
     if mem0 is None:
         mem0 = dict(burst_left=jnp.zeros(overseer.n, jnp.int32))
-    s_end, trace, pos0 = _run(overseer, act, key, mem0, steps=steps, keep_grid=keep_grid)
+    s_end, trace, pos0, grid0 = _run(overseer, act, key, mem0, steps=steps, keep_grid=keep_grid)
     t = {k: np.asarray(v) for k, v in trace.items()}
     t["pos"] = np.concatenate([np.asarray(pos0)[None], t["pos"]], 0)
+    if grid0 is not None:
+        t["grid0"] = np.asarray(grid0)  # the map at reset, before the first step
     t["left_in_window"] = int(np.asarray(s_end.window).sum())
     return t
 

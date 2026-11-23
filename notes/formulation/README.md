@@ -71,7 +71,7 @@ Nine hypotheses:
 | H2 | the look policy matters only against agents who see the looks | supported for bots; learners missing |
 | H3 | learners exploit patterned misses | running |
 | H4 | misses change behaviour; false alarms only harm compliant agents | supported |
-| H5 | high LPGF defeats individual inspection | gap |
+| H5 | high LPGF defeats individual inspection | Harvest: LPGF low (0 of 580 patch losses legal-only); Clean Up open |
 | H6 | separate networks exploit more | inconclusive at 1e8 |
 | H7 | splitting costs come from crowding; sharing or reallocation recovers them | partly; extensions later |
 | H8 | the overseer props up rather than changes behaviour | supported |
@@ -99,6 +99,11 @@ Nine hypotheses:
   3. **H6 reduced rerun.** `separate_long`: 6 `SL_` runs (separate networks, 3e8 steps, 5 h limit), job 38847113.
   4. **H7 extensions deferred.**
 - **Already running:** error patterns (H3, job 38836358, nearly done); Clean Up (H1 second game, H9); 14-agent Harvest. CREATE is limiting us by our per-user GPU quota (`QOSMaxGRESPerUser`), so batches run in turn.
+
+**H5 measured in Harvest (23 Nov 2026; `h5_lpgf/`).** Protocol written before measuring. 5 trained runs and 3 bot populations, 32 episodes each, CPU only.
+- Every permanent loss (a patch losing its last apple; 580 in all) involved a rule violation. Perfect full inspection lost no patch.
+- Temporary local damage often passes the rule in overseen runs (60–93% of newly dead cells), but 92–95% of those cells grow back.
+- So Harvest gives no reason to add the commons view. Clean Up is the test; the script is ready for its params.
 
 ### Phase 4: experiments (later)
 
