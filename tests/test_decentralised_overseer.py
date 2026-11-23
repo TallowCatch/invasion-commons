@@ -230,7 +230,7 @@ def test_gpu_job_lists_parse_with_the_trainer():
     n_agents = {"harvest": 7, "harvest_large": 14, "coins": 2, "cleanup": 7}
     names = []
     for name, fn in decentralised_runs.LISTS.items():
-        if name in ("worstcase_pilot", "separate", "worstcase"):  # tests/test_worstcase.py
+        if name in ("worstcase_pilot", "separate", "worstcase", "worstcase_shared", "separate_long"):  # tests/test_worstcase.py
             continue
         for run, args in fn():
             a = parser().parse_args(["--out", "x"] + shlex.split(args))

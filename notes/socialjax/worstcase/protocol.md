@@ -92,3 +92,19 @@ With 3 seeds there are no significance tests. A difference counts only if the se
 ## Compute
 
 About 1e8 steps per run. Stage 1 took 18–38 min per shared-network run on an A100/H200. Separate networks run 7 CNNs side by side (vmapped) and the visible checks add 3 channels to the game's 15 (20% more stored observation memory). The parameters are small, so 7 copies add little memory. These are guesses until the pilot is timed: about 30–60 min per run, so 15 runs ≈ 8–15 GPU-hours and 18 runs ≈ 10–20 GPU-hours.
+
+## Amendment 1 (23 Nov 2026, before any learner worst-case run)
+
+**What changed.** The learner worst-case runs (`worstcase`, separate networks at 1e8 steps, CREATE job 38845977) were held and then cancelled before any of them started. The reason: the 15 `separate` runs showed separate networks still improving at 1e8 steps, while shared networks level off by mid-training (curves in `results/create_pull/SN_*/metrics.npz`). Worst-case results from undertrained agents could not be read.
+
+**The replacement** is `worstcase_shared`, 24 runs:
+- the same six worst-case arms with the standard **shared** network at 1e8 steps (`WS_*`);
+- ordinary-mode shared baselines for round robin and mixed (`OS_*`), which stage 1 never ran.
+
+A shared network can still learn to dodge, because each agent's own observation carries the reveal channels ("was I checked last step", "steps since my last check").
+
+**What it separates.**
+- Does seeing the checks help agents? That is H2 in `notes/formulation/03_hypotheses.md`, answered here.
+- Do separate networks matter? That is H6, answered separately by `separate_long`: 6 runs at 3e8 steps.
+
+**Predictions.** Predictions 1–8 above stand, read for shared-network learners. The capability gap Δ = J(ordinary) − J(visible checks) is predicted large for round robin and history, and near 0 for random (`notes/formulation/02_overseer_definition.md` §5).

@@ -297,3 +297,25 @@ def test_worstcase_job_lists_parse_with_the_trainer(trainer):
             assert a.k / 7 * a.penalty_apples == pytest.approx(1.0)
             names.append(run)
     assert len(names) == len(set(names)) == 15 + 18
+
+
+def test_redesigned_job_lists_parse_with_the_trainer(trainer):
+    """H2 redesign (worstcase_shared) and H6 reduced rerun (separate_long), 23 Nov: every line parses; WS_ arms reveal
+    checks with a SHARED network; OS_ arms are the ordinary-mode shared baselines (no reveal, no separate nets);
+    SL_ arms use separate nets at 3e8 steps; all at an average penalty of 1 apple under random checks."""
+    from experiments.socialjax import decentralised_runs as d
+    names = []
+    for lst in ("worstcase_shared", "separate_long"):
+        for run, args in d.LISTS[lst]():
+            a = trainer.parser().parse_args(["--out", "x"] + shlex.split(args))
+            DecConfig(k=a.k, chooser=a.chooser, regions=a.regions, share=a.share, mixed_eps=a.mixed_eps,
+                      reveal_checks=a.reveal_checks)
+            if run.startswith("WS_"):
+                assert a.reveal_checks and not a.separate_nets, run
+            elif run.startswith("OS_"):
+                assert not a.reveal_checks and not a.separate_nets, run
+            else:
+                assert run.startswith("SL_") and a.separate_nets and not a.reveal_checks and a.total_steps == 3e8, run
+            assert a.k / 7 * a.penalty_apples == pytest.approx(1.0)
+            names.append(run)
+    assert len(names) == len(set(names)) == 24 + 6

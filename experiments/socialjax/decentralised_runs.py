@@ -120,6 +120,35 @@ def worstcase():
         yield f"WC_R2_share_k2_c1.0_seed{s}", f"{p} --chooser history --regions 2 {SHARE}"
 
 
+def worstcase_shared():
+    """H2 (notes/formulation/03_hypotheses.md), redesigned 23 Nov: the worst case with the standard SHARED network
+    (converges by 1e8 steps), checks visible to every agent (--reveal-checks). A shared network can still learn to
+    dodge: each agent's own observation carries 'was I checked last step' and 'steps since my last check'. Plus the
+    ordinary-mode (checks hidden) shared baselines that stage 1 never ran (round robin, mixed), so the capability gap
+    Delta = J(ordinary) - J(adversarial) can be computed for every look policy. The other ordinary baselines are
+    stage 1 (B_random_k2_c1.0, D_history_k2_c1.0) and DH_R2_{random,share}_k2_c1.0."""
+    for s in SEEDS:
+        p = f"--env harvest --k 2 --penalty-apples {penalty(7, 2, 1.0)} --seed {s}"
+        yield f"WS_central_random_k2_c1.0_seed{s}", f"{p} --reveal-checks --chooser random"
+        yield f"WS_central_history_k2_c1.0_seed{s}", f"{p} --reveal-checks --chooser history"
+        yield f"WS_central_roundrobin_k2_c1.0_seed{s}", f"{p} --reveal-checks --chooser round_robin"
+        yield f"WS_central_mixed0.3_k2_c1.0_seed{s}", f"{p} --reveal-checks --chooser mixed --mixed-eps 0.3"
+        yield f"WS_R2_random_k2_c1.0_seed{s}", f"{p} --reveal-checks --chooser random --regions 2"
+        yield f"WS_R2_share_k2_c1.0_seed{s}", f"{p} --reveal-checks --chooser history --regions 2 {SHARE}"
+        yield f"OS_central_roundrobin_k2_c1.0_seed{s}", f"{p} --chooser round_robin"
+        yield f"OS_central_mixed0.3_k2_c1.0_seed{s}", f"{p} --chooser mixed --mixed-eps 0.3"
+
+
+def separate_long():
+    """H6 reduced rerun, 23 Nov: separate networks were still improving at 1e8 steps (shared nets level off by
+    mid-training), so 3e8 steps, central random and 2-region random only. Compare with the shared arms
+    (B_random_k2_c1.0, DH_R2_random_k2_c1.0) and check the curves have levelled off before reading results."""
+    for s in SEEDS:
+        p = f"--env harvest --k 2 --penalty-apples {penalty(7, 2, 1.0)} --seed {s} --separate-nets --total-steps 3e8"
+        yield f"SL_central_random_k2_c1.0_seed{s}", f"{p} --chooser random"
+        yield f"SL_R2_random_k2_c1.0_seed{s}", f"{p} --chooser random --regions 2"
+
+
 def worstcase_pilot():
     """Two short runs (2e7 steps) to time separate nets with and without reveal_checks before the full lists."""
     p = f"--env harvest --k 2 --penalty-apples {penalty(7, 2, 1.0)} --seed 1 --separate-nets --total-steps 2e7"
@@ -136,8 +165,9 @@ def pilot():
 
 
 LISTS = {"pilot": pilot, "harvest": harvest, "harvest_large": harvest_large, "coins": coins, "cleanup": cleanup,
-         "worstcase_pilot": worstcase_pilot, "separate": separate, "worstcase": worstcase}
-NOT_IN_ALL = ("pilot", "worstcase_pilot", "separate", "worstcase")  # "all" is the decentralised lists only
+         "worstcase_pilot": worstcase_pilot, "separate": separate, "worstcase": worstcase,
+         "worstcase_shared": worstcase_shared, "separate_long": separate_long}
+NOT_IN_ALL = ("pilot", "worstcase_pilot", "separate", "worstcase", "worstcase_shared", "separate_long")
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
