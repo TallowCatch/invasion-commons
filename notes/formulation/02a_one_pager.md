@@ -10,8 +10,8 @@
 **The overseer is a player.** Each step it acts in four stages:
 1. **Look.**
    - Choose at most k of the N agents to inspect, and how far back to read (w steps).
-   - Optionally read system signals (apples left).
    - Everyone else goes unseen.
+   - The first formulation looks at individual agents only. Viewing the state of the commons (apples left) is a planned next step, motivated by measuring how often local-pass/global-fail happens.
 2. **Judge.** An inspector turns each record into a verdict. It may miss violations (rate α) or flag clean records (rate β), and these can depend on the situation. An LLM inspector's α and β depend on its size and on what it reads.
 3. **Respond.** Sanction or freeze flagged agents; optionally act on the system signal.
 4. **Share** (if there are several overseers). Send messages at a cost.

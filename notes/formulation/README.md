@@ -13,7 +13,7 @@ The work to define the overseer properly before running more experiments. Starte
 | `lit/C_our_prior_formulations.md` | our own June–July and Oct–Nov formulations and what to keep from each | done |
 | `02_overseer_definition.md` | the overseer defined as a player: look, judge, respond, share; capability; several overseers; timing; objectives; evaluation; testbed criteria; choice and justification; notation | draft 1, awaiting Ameer's two decisions (§10) |
 | `02a_one_pager.md` | the definition on one page, for Yali | draft 1 |
-| `03_hypotheses.md` | claims with falsifiers, mapped to existing and needed experiments | not started |
+| `03_hypotheses.md` | hypotheses H1–H9 with predictions, falsifiers, evidence and needs; every experiment mapped (keep, drop, gap, redesign) | draft 1, awaiting Ameer's four decisions |
 
 The writing style for all of these is in the `formulation-explainer` skill (`~/.claude/skills/formulation-explainer/SKILL.md`).
 
@@ -53,15 +53,41 @@ The writing style for all of these is in the `formulation-explainer` skill (`~/.
 - **The June ideas restored:** two levels of harm (individual rule, group predicate) and LPGF; observation channels (June's four architectures); the capability vector κ^O; the capability gap Δ, proposed as Elo-style ratings from match-ups (Engels et al. 2025).
 - **Borrowed structure:** the overseer as a player (Griffin; Baumann); Stackelberg-Markov timing with learning followers (Gasztowtt); ordinary and adversarial modes (Griffin); overseers as graph nodes with chosen links, plus measured locality (Du; Ma).
 - **Decision 2 (Ameer, 23 Nov):** the capability gap is Δ_c(π^O) = J(ordinary learners) − J(agent class c), for the same overseer. Engels-style ratings are kept only as a possible extension.
-- **Decision 1, still open:** whether the overseer's LOOK can include group-level signals (the "system channel"). Ameer asked why this returns to architectures; it was explained as a question about what the overseer can observe, not about architectures (23 Nov).
+- **Decision 1 (Ameer, 23 Nov):** the overseer looks at **individual agents only** in the first formulation.
+  - Ameer had asked why this returned to "architectures". It was reframed as a question of what the overseer can observe.
+  - My earlier argument that the commons view was needed for local-pass/global-fail was withdrawn as weak: LPGF can be measured from outside as a property of each testbed and rule.
+  - Viewing the state of the commons is a **planned next step**, justified if LPGF turns out large.
+- **Phase 2 closed** (draft 1 with both decisions applied). Moved to Phase 3.
 
-### Phase 3: hypotheses (not started)
+### Phase 3: hypotheses (started 23 Nov 2026)
 
-To do once Phase 2 is agreed:
-- Precise claims, each with the part of the definition it tests, a prediction, a falsifier, the cheapest experiment, and whether existing results already answer it.
-- Map every past experiment to a claim (keep, drop or gap).
-- Decide the fate of the held worst-case runs and the 3e8-step reruns.
-- Candidate theory: a bound on what inspecting k rather than N costs (Du's template).
+**Draft 1** (`03_hypotheses.md`). One quantity ties the overseer's action together: ρ = (k/N)(1 − α)F, the sanction a violation actually meets.
+
+Nine hypotheses:
+
+| | Claim | Status |
+|---|---|---|
+| H1 | learners respond only through ρ; threshold ρ* | supported in Harvest; H1b refinement: spread matters with errors |
+| H2 | the look policy matters only against agents who see the looks | supported for bots; learners missing |
+| H3 | learners exploit patterned misses | running |
+| H4 | misses change behaviour; false alarms only harm compliant agents | supported |
+| H5 | high LPGF defeats individual inspection | gap |
+| H6 | separate networks exploit more | inconclusive at 1e8 |
+| H7 | splitting costs come from crowding; sharing or reallocation recovers them | partly; extensions later |
+| H8 | the overseer props up rather than changes behaviour | supported |
+| H9 | slow violations need longer looks | Clean Up running |
+
+**Experiments mapped:**
+- Coins: dropped as a testbed.
+- The held worst-case runs: proposed redesign with shared networks at 1e8.
+- The separate-network runs: proposed reduced rerun at 3e8 (6 runs).
+- LPGF: proposed first measurement, offline with no GPU.
+
+**Decisions awaiting Ameer:**
+1. H5 first.
+2. H2 redesign.
+3. H6 reduced rerun.
+4. H7 extensions deferred.
 
 ### Phase 4: experiments (later)
 

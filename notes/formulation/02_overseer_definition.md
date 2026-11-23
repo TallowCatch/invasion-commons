@@ -79,6 +79,10 @@ In words: the overseer picks at most k agents this step. Everyone else goes unse
 - a **system channel**: public signals about the group outcome, such as apples left, pollution level or the failed-patch fraction.
 
 June's four architectures are the four combinations: none, inspection only ("local"), system only ("global signal"), and both ("hybrid").
+
+**Decided by Ameer, 23 Nov: the first formulation uses the inspection channel only.** The overseer looks at individual agents and nothing else.
+- Viewing the state of the commons (the system channel) is a **planned next step**, not part of the first formulation.
+- It will be motivated by measurement, not assumed. Local-pass/global-fail (§1) is measured from outside as a property of each testbed and its rule. If it turns out large, individual inspection cannot protect the group, and adding the commons view is the justified next step.
 - *Harvest:* the inspection channel is each checked agent's last w moves; the system channel is the apple count.
 - *Source:* our June draft. Zheng and Gasztowtt's planners see only aggregates; Sun et al. see every agent. *Assumed.*
 
@@ -115,7 +119,7 @@ More generally, α and β can depend on the situation, α(s) and β(s).
 - *Harvest:* the sanction F removes apples' worth of reward. Freezing caught agents was tried and failed (finding 5).
 - *Source:* sanctions in Vinitsky et al. 2023 and Casheekar 2026; freeze and remove in Greenblatt et al. 2024 and Ye & Steinhardt 2026. *Assumed.*
 
-**Response to the system signal** (if the overseer has that channel). A system-level response, such as closing part of the commons, setting a quota, or concentrating inspections where the signal is bad.
+**Response to the system signal** (next step only; not in the first formulation, see §2.1). A system-level response, such as closing part of the commons, setting a quota, or concentrating inspections where the signal is bad.
 - *Source:* our June draft (global signal and hybrid); Gasztowtt and Zheng (one rule for everyone). *Assumed; not yet in our SocialJax code.*
 
 **Delay.** The response may come d steps after the violation.
@@ -287,7 +291,7 @@ A game can host this overseer when:
 ## 9. The formulation we choose to try, and why
 
 **The choice.** An overseer that is a player in a Stackelberg-Markov game over a sequential social dilemma, defined by:
-- its **action**: look (choose k of N agents and a window, from the channels it has), judge (an inspector of measured quality), respond (sanction or freeze), and share (with other overseers);
+- its **action**: look (choose k of N agents and a window; individual inspection only in the first formulation), judge (an inspector of measured quality), respond (sanction or freeze), and share (with other overseers);
 - its **capability vector** κ^O;
 - its objective, scored as (S, W, H, B) against ordinary and adversarial learners.
 
@@ -336,7 +340,7 @@ The single-overseer case is M = 1.
 - The theory "slot" of Du's template: a bound on what inspecting k rather than N costs. This belongs to Phase 3.
 
 **Decisions for you:**
-1. **The system channel.** Include the June "global signal" channel (and so the four architectures) in the first formulation, or keep the first paper to the inspection channel and add it later? My suggestion: include it. Without it, LPGF has nothing to compare against.
+1. ~~The system channel.~~ **Decided 23 Nov:** individual inspection only in the first formulation. The commons view is a next step, motivated by measuring local-pass/global-fail per testbed (§2.1).
 2. ~~The capability gap Δ.~~ **Decided 23 Nov:** Δ is the drop in outcome for the same overseer from ordinary learners to a stronger agent class (§5).
 
 ---
