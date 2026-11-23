@@ -198,10 +198,24 @@ This plays the role of ξ in Ma et al. 2024: a measured number per testbed that 
 
 *Source:* ours. Engels et al. vary both sides. *Assumed ordering; to be measured.*
 
-**The capability gap Δ.** This is the June idea brought back, now as a measured quantity rather than a difference of ranks.
-- **Proposal:** play overseer configurations against agent classes. Say the overseer *holds* a match-up if the group outcome stays safe (g_t = 1 for the whole episode) and harm to compliant agents stays under a set level. Then fit ratings to the win rates, as Engels et al. 2025 do with Elo.
-- The gap Δ is the difference in rating between an agent class and an overseer.
-- *Source:* Engels et al. 2025 (Elo across overseer and agent capability); ours (applied to SSD match-ups). *Proposal; Decision 2 in §9.*
+**The capability gap Δ.** This is the June idea brought back, now measured rather than a difference of ranks. Decided by Ameer, 23 Nov: **Δ is how much worse the same overseer does against stronger agents than against ordinary ones.**
+
+For an overseer policy π^O, an outcome J (safety S or welfare W from §6) and an agent class c:
+
+  Δ_c(π^O) = J(π^O, ordinary learners) − J(π^O, agent class c).
+
+In words: run the same overseer twice, once against ordinary learners and once against a stronger class of agent. Δ is how much the outcome drops. Δ near 0 means the overseer holds up when agents get stronger. A large Δ means stronger agents get round it.
+
+- The classes c run from adversarial learners that see the inspections, to agents that exploit the inspector's blind spots, to LLM agents.
+- *Harvest examples, from bots:*
+  - With inspections visible, round robin and repeat-offenders-first are fully dodged (no catches), while random inspection holds (caught share ≈ 0.30 in both modes). So Δ is large for predictable overseers and about 0 for random ones (worst-case bot preview).
+  - The learner version is in the held worst-case runs.
+- *Why this definition:*
+  - It needs no rating fit, and every term is something we already measure.
+  - It matches Griffin et al.'s comparison of honest-mode and worst-case performance.
+  - It keeps the scalable-oversight meaning: a capability increase on the agents' side, and how much of it the overseer absorbs.
+- *What it does not give:* a single scale on which overseers and agents both sit, which Engels et al.'s Elo approach would. That stays available as an extension.
+- *Source:* Griffin et al. 2024 (honest vs worst-case modes); our June draft (Δ); Engels et al. 2025 (the capability-gap framing). *Defined.*
 
 ---
 
@@ -323,7 +337,7 @@ The single-overseer case is M = 1.
 
 **Decisions for you:**
 1. **The system channel.** Include the June "global signal" channel (and so the four architectures) in the first formulation, or keep the first paper to the inspection channel and add it later? My suggestion: include it. Without it, LPGF has nothing to compare against.
-2. **The capability gap Δ.** Accept the Elo-style match-up proposal (§5), or define Δ more simply? For example, Δ = how far the adversarial mode's outcome falls below the ordinary mode's for the same overseer.
+2. ~~The capability gap Δ.~~ **Decided 23 Nov:** Δ is the drop in outcome for the same overseer from ordinary learners to a stronger agent class (§5).
 
 ---
 
@@ -355,5 +369,5 @@ The single-overseer case is M = 1.
 | k_m | budget of overseer m | Σ k_m = k | 1 each (M = 2) | ours |
 | χ, ζ | locality: crossing rate; share of harm kept local | per agent-step; [0, 1] | 0.011–0.015; ≈1.0 (2 strips) | ours (F21); Ma 2024 |
 | G(π^O) | the game agents face once π^O is fixed | | | Gasztowtt 2024 |
-| Δ | capability gap, agent class minus overseer | rating difference | not yet measured | Engels 2025; June draft |
+| Δ_c(π^O) | capability gap: drop in outcome J for the same overseer from ordinary learners to agent class c | same units as J | bots: large for round robin, ≈ 0 for random | Griffin 2024; June draft |
 | S, W, H, B | safety, welfare, harm to compliant agents, burden | | survival rate, apples, wrongful sanctions, inspections | Griffin 2024; Perolat 2017; June draft |

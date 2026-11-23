@@ -52,9 +52,8 @@ The writing style for all of these is in the `formulation-explainer` skill (`~/.
   - **share:** messages between overseers.
 - **The June ideas restored:** two levels of harm (individual rule, group predicate) and LPGF; observation channels (June's four architectures); the capability vector κ^O; the capability gap Δ, proposed as Elo-style ratings from match-ups (Engels et al. 2025).
 - **Borrowed structure:** the overseer as a player (Griffin; Baumann); Stackelberg-Markov timing with learning followers (Gasztowtt); ordinary and adversarial modes (Griffin); overseers as graph nodes with chosen links, plus measured locality (Du; Ma).
-- **Open decisions for Ameer** (§10 of the definition):
-  1. Include the system channel in the first formulation?
-  2. Measure Δ by match-up ratings, or by the drop from ordinary to adversarial mode?
+- **Decision 2 (Ameer, 23 Nov):** the capability gap is Δ_c(π^O) = J(ordinary learners) − J(agent class c), for the same overseer. Engels-style ratings are kept only as a possible extension.
+- **Decision 1, still open:** whether the overseer's LOOK can include group-level signals (the "system channel"). Ameer asked why this returns to architectures; it was explained as a question about what the overseer can observe, not about architectures (23 Nov).
 
 ### Phase 3: hypotheses (not started)
 
