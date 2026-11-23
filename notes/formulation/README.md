@@ -105,6 +105,15 @@ Nine hypotheses:
 - Temporary local damage often passes the rule in overseen runs (60–93% of newly dead cells), but 92–95% of those cells grow back.
 - So Harvest gives no reason to add the commons view. Clean Up is the test; the script is ready for its params.
 
+- **H5 and H3 answered (23 Nov).**
+  - H5: local-pass/global-fail is negligible in Harvest (finding 26 / F27).
+  - H3: outcome refuted, mechanism supported. The patterned inspector protects better because its blind spot is on mild violations (finding 27 / F28). H1 refined to the situation-specific sanction ρ(s).
+- **H3b added and submitted (Ameer, 23 Nov):**
+  - the inverted gpt-oss inspector (blind spot on harmful violations, matched average miss rate);
+  - 12 runs, job 38848488;
+  - hypothesis written in `03_hypotheses.md` before the runs.
+- **Ameer's instruction (23 Nov): no new directions outside the agreed plan.** Every run must map to an agreed hypothesis (H1–H9, H3b). Anything else is raised with him first, not added.
+
 ### Phase 4: experiments (later)
 
 Only those Phase 3 requires.
