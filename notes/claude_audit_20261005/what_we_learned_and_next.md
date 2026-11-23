@@ -1,5 +1,17 @@
 # What we have learned, and what should come next
 
+## Update 17, 23 November 2026: decentralised, LLM-inspector and locality results with learning agents
+
+- **Decentralised overseers with IPPO** (F23; `notes/socialjax/DECENTRALISED_RESULTS.md`; Harvest 67 of 69 runs, Coins 45 of 45):
+  - 4 Harvest strips at an average penalty of 1 apple lose the orchard (76–86 apples vs 458–476 central);
+  - 2 Coins halves at break-even allow 26–29 thefts against 7–9;
+  - 2 strips, and anything at c = 2, cost little;
+  - placement only: records are handed over for free.
+- **LLM inspectors in RL** (F24; `notes/llm_overseer/rl_results.md`): C1's classes held in 15 of 16 cells. Misses weaken deterrence; false alarms mostly cost honest agents. So deterrence follows (1 − α)·c, and F20's threshold is revised to about 0.75–0.9 apples of realised fine per over-harvest.
+- **Trained-agent locality** (F25; `notes/socialjax/locality/results.md` §8): χ about half the bots' on strips; ζ unchanged.
+- **Next:** the last 2 Harvest cells; the 14-agent and Clean Up lists; a local-records arm and the separate-nets/worst-case lists for migration and evidence loss; a penalty set from the achieved catch rate.
+- **Costs:** no new compute (CREATE runs already done); no Ollama credit used (about $9.35 left).
+
 ## Update 16, 21–22 November 2026: decentralised overseers, Coins and Clean Up (scripted bots)
 
 - **Built** (branch `claude/decentralised-games`):

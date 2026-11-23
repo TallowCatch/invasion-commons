@@ -227,6 +227,7 @@ Started 14 October 2026.
   - Whether learning agents discover migration is the GPU question.
 - **Evidence.** `notes/socialjax/DECENTRALISED_SUMMARY.md`; `notes/socialjax/{harvest,coins,cleanup}/results.md`.
 - **Status:** open (bots only; 159 IPPO runs listed for CREATE).
+- **Update (23 Nov):** with IPPO learners the budget-placement cost holds and is larger (F23). The migration gain did not appear, and this design can't detect it.
 
 ## F20. An imperfect overseer: misses scale the deterrent as predicted, and few-big-check overseers fall behind many-small-check ones [verified; mistakes test, 22 Nov]
 
@@ -240,6 +241,7 @@ Started 14 October 2026.
   - "One check is nearly as good as checking everyone" (F17) holds only for a perfect inspector. With mistakes, uneven losses (rare, large, sometimes wrongful fines) slow learning, so budget spread matters for a realistic overseer.
   - This is the first "less capable overseer" result for the bounded evaluation.
 - **Evidence.** `notes/socialjax/phase2_ippo/results.md` (mistakes section), `mistakes_protocol.md`.
+- **Revised (23 Nov, F24):** the 25%-false-alarm arm's over-harvests still cost the full penalty, so it does not place the threshold at 0.5–0.75. On the fine an over-harvest actually costs, the threshold is about 0.75–0.9 (higher at k = 1).
 
 ---
 
@@ -255,7 +257,7 @@ Started 14 October 2026.
   - Split ξ_loc: χ plus budget density govern catching; ζ governs the overseers' objectives.
   - Replace P_0 in §5.2 of the formulation with the Markov form; report time-to-catch alongside catch share.
   - Budgets that follow where agents are are the obvious next test.
-- **Next.** Trained-agent χ and ζ (CREATE script prepared, not submitted); a learning-agent version of the gap.
+- **Next.** Trained-agent χ and ζ: done 23 Nov (F25). A learning-agent version of the gap is still to do.
 - **Evidence.** `notes/socialjax/locality/results.md`, `protocol.md`, `tables.md`; code `overseer/socialjax/{local_records,locality,rooms,corridor}.py`, `experiments/scale/`.
 
 ---
@@ -271,8 +273,48 @@ Started 14 October 2026.
   - "Overseer capability" is not one dial: model size, what the record shows, and reasoning budget each move the inspector across C1's protect/fail line.
   - Bounded evaluation needs the inspector's α, β measured on the rendering it will actually see.
   - BazaarBench labels need a public rubric before they can serve as ground truth.
-- **Next.** 40 RL runs with LLM inspectors (listed, not submitted).
+- **Next.** 40 RL runs with LLM inspectors: done 23 Nov (F24).
 - **Evidence.** `notes/llm_overseer/SUMMARY.md`, `results/tables.md`, `protocol.md`; code `overseer/llm/`, `experiments/llm_overseer/`.
+
+---
+
+## F23. With learning agents, splitting a budgeted overseer by region fails when it pushes the fine a violation actually costs below the threshold [verified for placement; IPPO, 23 Nov]
+
+- **Found** (IPPO, 1e8 steps, 3 seeds per cell; Harvest 67 of 69 runs, Coins 45 of 45; regional overseers with the same total budget as one central overseer; records handed over between regions for free, so this tests check placement only):
+  - **Harvest, 4 strips, average penalty 1 apple:** the orchard dies at k = 2 and k = 4. Random checks get 76–86 apples, against 458–476 centrally; sharing plus repeat offenders first gets 175–224, alive in 2–67% of games. Over-harvests are caught less often (18% vs 28% at k = 2; 38% vs 57% at k = 4), so each costs 0.65–0.75 apples instead of 1.
+  - **Coins, 2 halves, at break-even (1 coin per theft):** 26–29 thefts a game against 7–9 centrally. 28–31% of checks go unused and the catch share falls by the same third, so a theft costs 0.68 coins.
+  - **Cheap cases:** 2 Harvest strips lose 1–4 points of catch share and up to about 60 apples at c = 1. At c = 2 every split arm works.
+  - **The bot predictions, against learners:** waste is smaller in Harvest than for bots (0–13% vs 6–29%) but the catch loss with 4 strips is larger than the waste (crowding). The bots' 5× migration gain did not appear (1.1–1.3×), though the design cannot detect deliberate migration. Local targeting did not beat central at k = 4 (439 vs 484 apples).
+- **What it means.**
+  - F19's "decentralisation is not free" holds with learners, through one mechanism: fixed per-region budgets lower the realised deterrent. Set the penalty from the achieved catch rate, or let budgets follow agents.
+  - Migration and evidence lost at boundaries are still bot-only results.
+- **Evidence.** `notes/socialjax/DECENTRALISED_RESULTS.md`; `notes/socialjax/DECENTRALISED_SUMMARY.md`.
+- **Status:** verified for check placement. Open for evidence loss (local-records overseer, untrained) and for deliberate migration (separate-nets and worst-case lists).
+
+## F24. LLM inspectors in Harvest RL: C1's protect/fail line mostly holds, but misses and false alarms don't trade one for one [verified; 40 runs, 23 Nov]
+
+- **Found** (IPPO, 1e8 steps, random checks making each LLM's measured w = 1 mistakes as coin flips; 3 seeds, 1 for the Qwen 7B direct control; predictions in `notes/llm_overseer/protocol.md` §6):
+  - C1's classes held in 15 of 16 cells: "fails" cells end at 68–69 apples with the orchard dead; "protects" cells keep it, except one.
+  - **The exception:** gpt-oss-20B on raw maps (α 0.10, β 0.08, C1 e 0.82) at k = 1, c = 1: 210 apples, orchard alive in 63% of games. Qwen 3B + reasoning on summaries (α 0, β 0.23, C1 e 0.77) keeps the orchard at 380, and at k = 7 reaches 480 (perfect: 477) against gpt-oss's 361.
+  - Qwen 3B + reasoning reproduces the 25%-false-alarm arm (380 vs 382; 480 vs 482). Qwen 7B + reasoning (α 0.47) reproduces the 50%-miss arm (dead at c = 1; 389 and 494 at c = 2).
+  - k = 1 collected clearly fewer apples than k = 7 in 4 of 5 surviving pairs.
+  - Wrongful fines per legal apple = β·c (built in). At β 0.23 and c = 2 they take about 45% of what agents collect, while the orchard survives.
+- **What it means.**
+  - Deterrence follows the fine an over-harvest actually costs, (1 − α)·c. False alarms add a cost to honest agents (C2) but barely weaken deterrence. C1's symmetric (1 − α − β) is wrong in the β direction.
+  - This revises F20's "the learners' threshold lies between 0.5 and 0.75". The 25%-false-alarm arm still cost over-harvests the full 1 apple. On the realised scale, the threshold is about 0.75–0.9 at k = 2–7 (F23 and the gpt-oss k = 7 cell), and between 0.9 and 1.0 at k = 1.
+  - For choosing an LLM inspector: minimise misses first. A model that over-flags is safer for the commons and costlier for honest agents.
+- **Evidence.** `notes/llm_overseer/rl_results.md`; baselines in `notes/socialjax/phase2_ippo/results.md`.
+- **Status:** verified for fixed-rate mistakes. Correlated mistakes (hard records missed more often) are untested.
+
+## F25. Trained agents cross region boundaries about half as often as bots, and their harm is as local [lead; 11 stage 1 runs, 23 Nov]
+
+- **Found** (trained IPPO agents from stage 1 played 32 episodes under their own central overseer; 1 seed per overseer setting, 3 with no overseer):
+  - ζ matches the bots within 0.06 on every layout (1.000 for 2 strips).
+  - χ is about half the bots' on strips (0.011–0.015 vs 0.028; 0.027–0.044 vs 0.073). Under a working overseer, band crossings are 2.5× those of agents that have stripped the orchard (0.034 vs 0.013).
+  - ξ_loc at w = 50 on 2 strips is 0.27–0.47, against 0.70 for bots. Violators stay in their region longer than (1 − χ)^{w−1} says, as with bots.
+- **What it means.** F21 holds for learners: Harvest's harm is local and the non-locality comes from movement. For learners, evidence lost at boundaries should be smaller than the bot estimates, so placement (F23) is the main cost. χ depends on the overseer, so a gap formula should use χ measured under it.
+- **Evidence.** `notes/socialjax/locality/results.md` §8.
+- **Status:** lead (1 seed per setting; central overseers only).
 
 ---
 

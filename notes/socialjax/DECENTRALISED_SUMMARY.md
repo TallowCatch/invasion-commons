@@ -105,6 +105,20 @@ Harvest, 7 migrators, 2 checks per step:
 
 Every prediction is checked in the results files.
 
+## Learning-agent results (IPPO, 23 Nov): what changes
+
+Full tables: `DECENTRALISED_RESULTS.md`. Harvest 67 of 69 runs (2 still running), Coins 45 of 45, 3 seeds per cell. **Same caveat as above:** records are handed over for free, so these runs measure check placement only.
+
+- **Splitting fails exactly when it pushes the fine a violation actually costs below the learners' threshold.**
+  - Harvest, 4 strips, average penalty 1 apple: the orchard dies at k = 2 and k = 4 (76–86 apples with random checks, against 458–476 centrally). Fewer over-harvests are caught (18% vs 28% at k = 2), so an over-harvest costs 0.65–0.72 apples instead of 1.
+  - Coins, 2 halves, at break-even: 26–29 thefts a game against 7–9 centrally.
+  - At twice the penalty (c = 2), every split arm works, within about 20 apples or 1 theft a game of central.
+- **The bots' waste overstated it in Harvest and got it right in Coins.** Learners leave 0–1% of checks unused with 2 strips (bots 6–20%) and 4–13% with 4 strips (bots 22–29%). But with 4 strips the catch share falls by a third, more than the waste, because over-harvests happen where agents crowd. In Coins the waste (28–31%) matches the lost catches.
+- **The bots' migration effect did not show** (2 strips, random: 1.1–1.3× central over-harvests, against 5× for migrator bots). The design can't separate deliberate migration from crowding: checks are hidden, there is one shared network and no per-agent region logs.
+- **Targeting and sharing matter little with one shared network.** Repeat offenders first is no better than random, centrally or regionally. Sharing suspicion helped only at k = 2, c = 1 with 2 strips (420 → 457 apples; central 470), and only slightly.
+- **Bot point 3 (local targeting beats central at k = 4) failed** with learners: 439 vs 484 apples.
+- **Change to the conclusions:** the main cost of decentralising is a weaker realised deterrent from fixed per-region budgets. Set the penalty from the achieved catch rate, or let budgets follow the agents. Migration and evidence loss remain bot-only results until the worst-case and local-records runs exist.
+
 ## What's ready for the GPU
 
 The job lists come from `experiments/socialjax/decentralised_runs.py`: 159 runs, 1e8 steps, 3 seeds. Each compares central and decentralised overseers at the same total budget, with penalty per catch = N × c / k so that random checks give an average penalty of c.
@@ -143,7 +157,7 @@ done
 
 ## What's left
 
-1. **Run the GPU lists** (pilot first) and write the learning-agent results.
+1. **Run the GPU lists** (pilot first) and write the learning-agent results. *Done 23 Nov for Harvest (67 of 69) and Coins (see above); the 14-agent map and Clean Up lists are not in yet.*
    - The key question is whether IPPO agents learn to migrate: the bots show it pays (5× more over-harvests).
    - Learned agents see only an 11 x 11 window and see the overseer only through their rewards, so they may not find it.
 2. **A third game.** Assessed, not built:

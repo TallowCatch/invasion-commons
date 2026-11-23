@@ -41,6 +41,9 @@ One page for the budgeted-overseer work: an overseer that can only check a few a
 | 19 | **BazaarBench: daily checks are too late for harm; fixed local budgets waste a small budget** | everyone checked daily catches 2 and 5 of 15 carried-through failures first; 4 independent overseers at 1 unit catch 0.3–1.2% vs 6–7% central; a 500-token shared board recovers it | lead | same |
 | 20 | **Locality: crossings and uneven crowding decide what splitting costs, not where harm lands; the existing regional overseer shares records for free** | ξ_loc ranks catches lost to local records (ρ = 0.80) but not the total gap (0.42); P_0 off by up to 0.73 when agents return (Markov form within 0.003); fixed groups at N = 256 lose ≤ 0.01 | lead (bots, 7 maps) | `socialjax/locality/results.md` |
 | 21 | **LLM inspectors: a step at 7B, and what the record shows matters as much as size** | at w = 1, Qwen ≤ 3B useless, Qwen 7B and gpt-oss perfect on summaries; on raw maps only gpt-oss protects (120B α 0.03); long records hurt (α + β_eat up to 0.31 at w = 50) | lead (600 fixed items) | `llm_overseer/SUMMARY.md` |
+| 22 | **With learning agents, splitting the overseer fails when it pushes the fine a violation actually costs below the threshold** (records handed over for free, so placement only) | Harvest, 4 strips, c = 1: orchard dead at k = 2 and 4 (76–86 apples vs 458–476 central; 0.65–0.72 apples per over-harvest instead of 1); Coins, 2 halves, at break-even: 26–29 thefts vs 7–9 central; 2 strips and c = 2 cost little; no sign of bot-scale migration (1.1–1.3×) | solid (3 seeds; 2 Harvest cells have 2) | `socialjax/DECENTRALISED_RESULTS.md` |
+| 23 | **LLM inspectors in RL: C1's protect/fail classes held in 15 of 16 cells, but misses and false alarms don't trade one for one** | gpt-oss-20B on raw maps (C1 e 0.82) at k = 1, c = 1: 210 apples, orchard alive in 63% of games; Qwen 3B + reasoning (e 0.77, no misses) keeps it (380). What matters is the fine an over-harvest actually costs, (1 − α)·c: 0.90 is partly enough at k = 1, enough at k = 7 | solid (3 seeds; Qwen 7B direct 1) | `llm_overseer/rl_results.md` |
+| 24 | **Trained agents cross region boundaries about half as often as bots; harm is as local** | χ 0.011–0.015 vs 0.028 (2 strips), 0.027–0.044 vs 0.073 (4 strips); ζ within 0.06 of bots; ξ_loc at w = 50 on 2 strips 0.27–0.47 vs 0.70; band crossings rise 2.5× once the orchard lives | lead (1 seed per setting, 32 episodes, central overseers) | `socialjax/locality/results.md` §8 |
 
 **Caveat on findings 12–16 and the 159 decentralised GPU runs (found 22 Nov).** In the current regional overseer (`overseer/socialjax/decentralised.py`), an agent's record of its last w steps travels with it, and any overseer's check reads all of it, including steps spent in other regions. So these results are for regional overseers that hand records over to each other for free. They measure only the loss from checks being in the wrong place, not the loss from evidence left behind when an agent crosses a boundary. The latter (the formulation's P_0 and claim D1) needs the local-records overseer being built on branch `claude/locality-scale`.
 
@@ -111,8 +114,10 @@ So far cost is counted in checks per game: 1 check per step is 1,000 checks a ga
 
 | What | Runs | Job |
 |---|---|---|
-| Stage 2 seeds 2–3, stage 3 remainder, 2 stage 1 cells | 25 | 38794336, 38794337, 38794338 |
-| Mistakes test (misses and false alarms) | 24 | 38794367 |
+| Decentralised Harvest, last 2 cells (`DH_R2_random_k4_c1.0_seed1`, `DH_R2_history_k4_c1.0_seed1`) | 2 | from 38810497/98/513/515 |
+| Decentralised 14-agent Harvest and Clean Up lists | 45 | not in the 23 Nov pull; status to check |
+
+Stages 2–3, the mistakes test, the 40 LLM-inspector runs, the Coins list and the trained-agent locality job are done (as of 23 Nov).
 
 Nodes comp035 and comp040 have broken GPUs and are excluded.
 
@@ -123,6 +128,11 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 
 ## Log
 
+- **23 Nov.** Three sets of GPU results written up (findings 22–24 here, F23–F25 in the findings log).
+  - Decentralised IPPO, Harvest 67 of 69 runs (`DH_R2_random_k4_c1.0_seed1` and `DH_R2_history_k4_c1.0_seed1` still running) and Coins 45 of 45: `socialjax/DECENTRALISED_RESULTS.md`.
+  - 40 LLM-inspector RL runs: `llm_overseer/rl_results.md`.
+  - Trained-agent locality: `socialjax/locality/results.md` §8.
+  - Across all three, the fine a violation actually costs (catch share × penalty) sorts the outcomes. It needs to be above about 0.75–0.9 apples, and more at k = 1. False alarms fine honest agents but barely weaken deterrence.
 - **22 Nov (night).** LLM inspector ladder done (finding 21 here, F22 in the findings log): Qwen 0.5B–7B and gpt-oss 20B/120B on 600 fixed items; cloud spend 1.1M tokens of the 1.5M cap. Branch `claude/llm-overseer` merged. 40 RL runs with LLM inspectors listed, not submitted.
 - **22 Nov (late).** Separate networks and the worst case (agents see who is checked) built on branch `claude/separate-nets-worstcase`: `--separate-nets`, `--reveal-checks`, the `mixed` chooser, `check_prob`, and `just_checked` and `dodger` bots. Protocol with predictions written first (`socialjax/worstcase/protocol.md`). Bot preview (`socialjax/worstcase/results.md`): with checks visible, a dodger is never caught by round robin or history, cannot gain from random checks at c = 1, is caught 7–13% of the time under mixed (ε = 0.3), and finds crowded strips under 2-strip random checks. Cheating still kills the orchard and leaves the dodger with half the apples it gets by holding back. 33 GPU runs listed (15 separate-nets, 18 worst case), not submitted.
 - **22 Nov (evening).** Locality and scale done (finding 20 here, F21 in the findings log): crossing and harm locality measured on 11 layouts, the P_0 formula tested against simulation, D1 tested, Willis commons at N = 64 and 256. Branch `claude/locality-scale` merged. Trained-agent locality job prepared, not submitted.

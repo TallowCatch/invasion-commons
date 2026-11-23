@@ -39,6 +39,6 @@ How well do LLMs of different sizes work as the overseer's *inspector*, the part
 
 ## Not done
 
-- **RL runs with LLM inspectors** (40 runs in `experiments/llm_overseer/runs_llm.tsv`; command in `README.md` §4) are listed but not submitted.
+- ~~RL runs with LLM inspectors~~ **done 23 Nov:** `rl_results.md`. C1's classes held in 15 of 16 cells. The miss was gpt-oss-20B at k = 1, c = 1: misses and false alarms don't trade one for one.
 - Reasoning mode on longer windows, BazaarBench and the other models.
 - The vLLM-on-CREATE script and the live overseer are untested or design-only.

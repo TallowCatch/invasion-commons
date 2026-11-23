@@ -3,8 +3,8 @@
 Protocol, with the predictions written before any run: `protocol.md`. Branch `claude/locality-scale`. Every table
 here is printed by `experiments/socialjax/analyze_locality.py`; the full tables (every population, every point)
 are in `tables.md`, the numbers in `locality_numbers.json`. **Everything here uses scripted bots** (and, in task 4,
-fixed LLM-written strategies). None of it is a learning-agent result yet; the trained-agent measurement is
-prepared for CREATE (section 6).
+fixed LLM-written strategies). The trained-agent measurement (sections 6 and 8, added 23 Nov) is the only
+learning-agent result: trained agents cross strip boundaries about half as often as bots, and harm is as local.
 
 ## Summary
 
@@ -256,7 +256,7 @@ Deviation from the protocol: the third ζ measure ("counterfactual with agents")
 would have measured a one-step delay. The regrowth-only counterfactual and the footprint are reported instead.
 Task 1's bot rollouts used K = 4 for 14 agents and K = 1 in Coins (the task 3 budgets), not 2 everywhere.
 
-## 6. Trained IPPO agents (prepared, not run)
+## 6. Trained IPPO agents (prepared 22 Nov; run 23 Nov, results in section 8)
 
 `scripts/create/measure_locality_ippo.sbatch` loads each stage 1 run's `params.msgpack` with the trainer's own
 network (imported, not edited), plays 32 episodes under that run's own overseer settings, and measures χ, S_w, ζ
@@ -295,3 +295,43 @@ Raw outputs (git-ignored): `results/locality/{measure,formula,gap,scale}.json`. 
 `... measure_locality_formula` (5 min), `... measure_locality_gap` (about 3 h on a busy laptop; two processes
 over different testbeds halve it), `.venv/bin/python -m experiments.scale.run_scale` (30 s), then
 `... analyze_locality`.
+
+## 8. Trained IPPO agents (run 23 Nov 2026)
+
+`scripts/create/measure_locality_ippo.sbatch` (section 6) ran on CREATE. Output: `results/create_pull/locality/locality_ippo.json` (git-ignored). 11 stage 1 runs, each played for 32 episodes under its own **central** overseer. The four layouts are only overlays for measuring: they don't change what the agents or the overseer do. So the same episodes are measured on every layout.
+
+- **n:** no overseer (`A_none`) has 3 seeds. Every overseer setting has 1 seed (seed 1). The "working overseer" group pools 6 runs that keep the orchard alive: random k = 1, 2, 4, 7 at c = 1, random k = 2 at c = 2, and history k = 2 at c = 1.
+- **Not run:** the 14-agent map, Coins and Clean Up (no trained agents there yet), and the decentralised runs (no decentralised runs were measured).
+- Values are means, with ranges over runs in brackets. Bot values are from section 1 (10 seeds, 4 bot populations).
+
+| Layout | Agents | χ (crossings per agent-step) | ζ footprint | ζ counterfactual regrowth | ξ_loc, w = 1 | w = 10 | w = 50 |
+|---|---|---|---|---|---|---|---|
+| strips R=2 | bots | 0.028 | 1.000 | 1.000 | 0.000 | 0.107 | 0.698 |
+| | IPPO, no overseer (3) | 0.015 (0.014–0.015) | 1.000 | 1.000 | 0.00 | 0.08 (0.08–0.09) | 0.27 (0.25–0.28) |
+| | IPPO, working overseer (6) | 0.012 (0.011–0.014) | 1.000 | 1.000 | 0.00 | 0.17 (0.15–0.20) | 0.42 (0.39–0.47) |
+| strips R=4 | bots | 0.073 | 0.967 | 0.973 | 0.033 | 0.426 | 0.845 |
+| | IPPO, no overseer | 0.039 (0.038–0.039) | 0.964 | 0.945 (0.93–0.96) | 0.04 | 0.35 (0.33–0.37) | 0.68 (0.64–0.72) |
+| | IPPO, working overseer | 0.036 (0.027–0.044) | 0.980 (0.97–0.99) | 0.980 (0.97–0.99) | 0.02 | 0.34 (0.29–0.38) | 0.72 (0.63–0.79) |
+| bands R=2 | bots | 0.028 | 0.909 | 0.860 | 0.091 | 0.243 | 0.609 |
+| | IPPO, no overseer | 0.013 (0.013–0.014) | 0.902 (0.90–0.91) | 0.828 (0.81–0.85) | 0.10 | 0.26 | 0.54 (0.53–0.55) |
+| | IPPO, working overseer | 0.034 (0.029–0.037) | 0.855 (0.83–0.88) | 0.812 (0.77–0.85) | 0.14 (0.12–0.17) | 0.40 (0.34–0.48) | 0.70 (0.65–0.73) |
+| grid R=4 | bots | 0.049 | 0.896 | 0.831 | 0.104 | 0.375 | 0.898 |
+| | IPPO, no overseer | 0.027 | 0.902 (0.90–0.91) | 0.828 (0.81–0.85) | 0.10 | 0.33 | 0.65 (0.61–0.68) |
+| | IPPO, working overseer | 0.040 (0.035–0.043) | 0.855 (0.83–0.88) | 0.812 (0.77–0.85) | 0.14 (0.12–0.17) | 0.45 (0.40–0.51) | 0.75 (0.72–0.80) |
+
+The two single-run arms fall where expected. The too-weak overseer (random k = 2, c = 0.5; orchard dead) matches no overseer on every layout. Location targeting (orchard barely alive) matches the working group (χ 0.014 / 0.043 / 0.030 / 0.039).
+
+**What it says.**
+1. **Harm is as local for trained agents as for bots.** ζ is 1.000 for 2 strips (no over-harvest's footprint crosses the map's mirror line), 0.96–0.99 for 4 strips and 0.83–0.91 for bands and the grid. That is within 0.06 of the bot values everywhere. The counterfactual-regrowth ζ is again a little lower than the footprint on bands and the grid (0.81–0.83 vs 0.86–0.90). So "Harvest's harm is local; its agents are not" holds for learners.
+2. **Trained agents cross strip boundaries about half as often as bots.** χ is 0.011–0.015 against 0.028 for 2 strips, and 0.027–0.044 against 0.073 for 4 strips.
+   - **Band crossings depend on whether the orchard lives.** Agents that have stripped the orchard (no overseer) cross the horizontal band line rarely (χ 0.013). Agents under a working overseer cross it 2.5 times as often (0.029–0.037), more than the bots (0.028). So the overseer changes how agents move, and so it changes the locality it is then measured against.
+3. **Evidence stays local for longer, so ξ_loc at long windows is lower than the bots'.** On 2 strips, ξ_loc at w = 50 is 0.27–0.47, against 0.70 for bots. On the other layouts it is 0.54–0.80, close to the bots' 0.61–0.90.
+   - A violator's chance of staying in its region for 50 steps (S_50) is again above the formula (1 − χ)^{w−1}: 0.73 vs 0.49 for no overseer on 2 strips, and 0.33 vs 0.14 on 4 strips. This is the same direction as for bots (prediction 10 in section 5 failed the same way).
+   - At w = 10 under a working overseer, S_10 is below the formula (0.83 vs 0.90 on 2 strips; 0.61 vs 0.69 on the grid). Violators move more than average in the short run and less in the long run. The formula is rough in both directions.
+4. **The grid and bands give identical ζ in every row.** This is not a bug. On 2 strips ζ = 1 exactly, so adding the vertical cut moves no harm across a boundary, and the same episodes are measured on both layouts.
+
+**What it means for the decentralised work.**
+- For learners on vertical strips, the loss from evidence left behind at a boundary should be smaller than the bot estimates in section 3, because they cross less and stay longer.
+- The placement loss (fixed budgets while agents crowd) is the bigger cost with learners as well. The decentralised IPPO runs (`../DECENTRALISED_RESULTS.md`) lose the orchard with 4 strips through crowding alone, with records handed over for free.
+- χ is not a fixed property of the map. It moves with the overseer (bands: 0.013 → 0.034). Any formula that predicts the decentralisation gap from χ should use χ measured under that overseer.
+- **Caveats:** 1 seed per overseer setting; 32 episodes per run. These are central-overseer runs, so χ under a regional overseer (where agents might learn to cross more) is not measured.
