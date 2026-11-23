@@ -37,6 +37,8 @@
 
 **Amendment 2 (23 Nov, during judging, before any analysis of verdicts).** The first parallel start of both judges ran the disk out of space within 2 minutes (Qwen 7B swapping on the 8 GB M1; 12 gpt-oss and 1 Qwen verdicts were written, all intact). Up to 4 in-flight cloud calls at the crash were not logged (at most about 4,000 tokens). gpt-oss was restarted alone; Qwen 7B was restarted under a guard that stops it if free disk falls below 1.2 GB, with `--num-ctx 2048` (the setting of the ladder's own reason-mode runs, `../protocol.md` Amendment 2; the longest prompt plus 768 output tokens fits in it).
 
+**Amendment 3 (23 Nov, during judging).** Ameer capped the local Qwen judging at 200 items to free the laptop, with Qwen as the secondary inspector: fit its pattern if 200 are enough, otherwise report its averages only. The disk guard stopped it at 179. After both fits, one rule was added (so it was written after seeing the Qwen fit): a trainer table is written only if M3 beats M0 on held-out items for α or β (the lower end of the interval above 0). gpt-oss passes; Qwen does not, so the job list has gpt-oss only.
+
 ## 3. Error model
 
 - **α(s)** = P(no flag | violation, features s); **β(s)** = P(flag | honest eat, features s).

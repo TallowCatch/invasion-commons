@@ -8,6 +8,7 @@ from __future__ import annotations
 import importlib
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -231,7 +232,7 @@ def test_error_pattern_job_list_parses_with_the_trainer():
     names = []
     for name, args in R.runs(tags, tables=str(ROOT / R.TABLES)):
         a = trainer.parser().parse_args(["--out", "x"] + shlex.split(args))
-        c = float(name.split("_c")[1].split("_")[0])
+        c = float(re.search(r"_k\d+_c([\d.]+)_seed", name).group(1))
         assert a.k / 7 * a.penalty_apples == pytest.approx(c)
         if "_table_" in name:
             text = trainer.read_table(a.inspector_table)

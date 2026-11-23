@@ -10,7 +10,8 @@ For each inspector, separately for violations (alpha = P(no flag)) and honest ea
 Held-out log-likelihood per item by 5-fold cross-validation (seeded folds), against M0, with a paired bootstrap 95%
 interval of the mean difference; Brier scores; per-cell rates with Wilson intervals; the matched coin flip (rates
 averaged over the bank at its natural frequencies, and over the overseen policies only).
-Writes <out-dir>/tables/<tag>.json (the trainer's --inspector-table, with the coin flip and fit summary as metadata),
+Writes <out-dir>/tables/<tag>.json (the trainer's --inspector-table, with the coin flip and fit summary as metadata;
+only if M3 beats M0 on held-out items for alpha or beta, i.e. the interval's lower end is above 0),
 <out-dir>/fit.json and <out-dir>/fit_tables.md.
 """
 from __future__ import annotations
@@ -253,7 +254,17 @@ def main():
         res = {lab: analyse(group(items, lab), lab, bank_groups[lab]) for lab in (1, 0)}
         tokens = [r["tokens_in"] + r["tokens_out"] for r in recs.values()]
         fits[tag] = dict(n_items=len(items), no_verdict=sum(x["no_verdict"] for x in items),
-                         tokens_per_check=float(np.mean(tokens)), alpha=res[1], beta=res[0])
+                         tokens_per_check=float(np.mean(tokens)), alpha=res[1], beta=res[0],
+                         table=f"tables/{tag}.json")
+        if max(res[1]["crossval"]["M3"]["gain_ci"][0], res[0]["crossval"]["M3"]["gain_ci"][0]) <= 0:
+            # the pattern is not shown to beat the coin flip on held-out items: no table for the trainer
+            stale = out / "tables" / f"{tag}.json"
+            if stale.exists():
+                stale.unlink()
+            fits[tag]["table"] = None
+            print(f"{tag}: {len(items)} items; the table does not beat the constant rate on held-out items, so no "
+                  f"trainer table; alpha {res[1]['matched_pooled']:.3f}, beta {res[0]['matched_pooled']:.3f}")
+            continue
         table = trainer_table(res[1], res[0])
         table.update(inspector=tag, matched_coin_flip=dict(alpha=res[1]["matched_pooled"],
                                                            beta=res[0]["matched_pooled"]),

@@ -11,7 +11,7 @@ PYTHONPATH=. .venv-socialjax/bin/python -m experiments.llm_overseer.error_bank -
 PYTHONPATH=. .venv/bin/python -m experiments.llm_overseer.judge_bank --model gpt-oss-20b --think low \
     --max-tokens 2048 --workers 4 --token-cap 2980000 --token-log notes/llm_overseer/error_patterns/cloud_tokens.tsv
 PYTHONPATH=. .venv/bin/python -m experiments.llm_overseer.judge_bank --model qwen2.5-7b --mode reason \
-    --num-ctx 2048 --limit 600
+    --num-ctx 2048 --limit 200   # 179 judged (stopped by a disk guard; results.md §2)
 # fit alpha(s), beta(s); writes tables/<tag>.json (the trainer's --inspector-table), fit.json, fit_tables.md
 PYTHONPATH=. .venv-socialjax/bin/python -m experiments.llm_overseer.fit_error_model
 # job list
@@ -30,7 +30,7 @@ New measures in every run's `metrics.npz` / `summary.json` (existing ones unchan
 
 ## 3. CREATE job list (not submitted)
 
-`experiments/llm_overseer/runs_error_patterns.tsv`: per inspector (gpt-oss-20B on raw maps; Qwen 7B + reasoning on raw maps), the patterned table vs a coin flip at the matched average α, β, at k ∈ {1, 7}, c ∈ {1, 2}, seeds 1–3, random checks, 1e8 steps from scratch. Names `E_<inspector>_<arm>_k<k>_c<c>_seed<s>`, arm `table` or `coin` (and `coinov`, the overseen-policies average, where it differs from the bank average by more than 0.05). See `results.md` §5 for the count and the matched numbers.
+`experiments/llm_overseer/runs_error_patterns.tsv` (36 runs): gpt-oss-20B on raw maps (Qwen 7B + reasoning has no table: on 179 items its pattern does not beat a constant rate out of sample), the patterned table vs a coin flip at the matched average α, β, at k ∈ {1, 7}, c ∈ {1, 2}, seeds 1–3, random checks, 1e8 steps from scratch. Names `E_<inspector>_<arm>_k<k>_c<c>_seed<s>`, arm `table` or `coin` (and `coinov`, the overseen-policies average, where it differs from the bank average by more than 0.05). See `results.md` §5 for the count and the matched numbers.
 
 The runs need this branch's trainer (`--inspector-table`) and the table files, so the array script must run from a checkout of `claude/llm-error-patterns` (the script's `REPO` variable).
 
