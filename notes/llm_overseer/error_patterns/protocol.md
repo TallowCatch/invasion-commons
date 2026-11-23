@@ -35,6 +35,8 @@
 - **No verdict** counts as no flag (as in the ladder).
 - **Determinism.** Temperature 0 and a fixed seed: the same record gets the same verdict. The error model below turns this into a probability per feature cell; that is a coarser pattern than the LLM's real one (section 8).
 
+**Amendment 2 (23 Nov, during judging, before any analysis of verdicts).** The first parallel start of both judges ran the disk out of space within 2 minutes (Qwen 7B swapping on the 8 GB M1; 12 gpt-oss and 1 Qwen verdicts were written, all intact). Up to 4 in-flight cloud calls at the crash were not logged (at most about 4,000 tokens). gpt-oss was restarted alone; Qwen 7B was restarted under a guard that stops it if free disk falls below 1.2 GB, with `--num-ctx 2048` (the setting of the ladder's own reason-mode runs, `../protocol.md` Amendment 2; the longest prompt plus 768 output tokens fits in it).
+
 ## 3. Error model
 
 - **α(s)** = P(no flag | violation, features s); **β(s)** = P(flag | honest eat, features s).
