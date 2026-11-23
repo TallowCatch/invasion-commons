@@ -173,9 +173,10 @@ def harvest_from_trace(trace, spawn_mask):
 
 
 # ------------------------------------------------------------------------------------------------ Clean Up
-def cleanup_measures(pollution, apples_count, apples0, violation, window, taus=TAUS, depletion=CU_DEPLETION):
+def cleanup_measures(pollution, apples_count, capacity, violation, window, taus=TAUS, depletion=CU_DEPLETION):
     """Per-episode sums for one Clean Up episode. pollution, apples_count (T,) after each step; violation (T, N).
-    Crossings are counted from step 1 on (the pollution at reset is not in the trace)."""
+    The apple predicate is apples >= tau * capacity (the orchard's cells): Clean Up starts with no apples and with
+    pollution near 0.47, so a fraction of the initial apples is undefined. Crossings are counted from step 1 on."""
     pollution, apples_count = np.asarray(pollution, float), np.asarray(apples_count, float)
     violation = np.asarray(violation, bool)
     T = violation.shape[0]
@@ -194,17 +195,16 @@ def cleanup_measures(pollution, apples_count, apples0, violation, window, taus=T
 
     crossings(pollution < depletion, "pollution")
     for tau in taus:
-        crossings(apples_count >= tau * apples0, f"tau{tau}")
-    out.update(apples0=int(apples0), apples_end=int(apples_count[-1]), apples_mean=float(apples_count.mean()),
+        crossings(apples_count >= tau * capacity, f"tau{tau}")
+    out.update(capacity=int(capacity), apples_end=int(apples_count[-1]), apples_mean=float(apples_count.mean()),
                alive_end=int(apples_count[-1] > 0), ever_empty=int((apples_count == 0).any()),
                polluted_share=float((pollution >= depletion).mean()), pollution_mean=float(pollution.mean()))
     return out
 
 
 def cleanup_from_trace(trace, rules):
-    from overseer.socialjax.games import CU_APPLE
-    a0 = int((trace["grid0"] == CU_APPLE).sum())
-    return cleanup_measures(trace["pollution"], trace["resource"], a0, trace["violation"], rules.lookback)
+    capacity = len(np.asarray(rules.env.POTENTIAL_APPLE))
+    return cleanup_measures(trace["pollution"], trace["resource"], capacity, trace["violation"], rules.lookback)
 
 
 # ------------------------------------------------------------------------------------------------ pooling

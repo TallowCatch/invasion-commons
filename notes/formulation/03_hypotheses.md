@@ -121,14 +121,15 @@ In words: the chance of being looked at, times the chance the inspector sees the
 
 **Refuted if** a testbed with high LPGF is still fully protected by perfect full inspection, or one with low LPGF is not.
 
-**Evidence: none measured directly.** The k = 7 perfect runs suggest Harvest's rule tracks the harm well.
+**Evidence: supported in Harvest (23 Nov; `h5_lpgf/results.md`).** 5 trained runs and 3 bot populations, 32 episodes each.
+- Permanent loss (a patch losing its last apple): 0 of 580 patch extinctions came from legal eats only. Every one involved a violation. This is structural: a patch's last apples can only go legally if 4 or more agents eat them in the same step.
+- Perfect full inspection (k = 7): orchard alive in 32 of 32 episodes, no patch lost.
+- Temporary local damage passes the rule more often: 60–93% of newly dead cells in overseen runs come from legal eats, but 92–95% of them revive within the episode.
+- The June predicate at τ = 0.5 reports 84–98% LPGF for sustainable play. That is a threshold artefact: play settles at 23–29 apples, just under 0.5 × 64.
 
-**Still needed: measure LPGF offline, with no GPU.**
-- Roll out the trained agents we already have (Harvest params pulled locally; Clean Up once its runs finish).
-- Count steps where every agent passes the rule but the group predicate fails.
-- This is the measurement that decides whether the commons view (the planned next step) is needed.
+**Still needed:** Clean Up, once its runs finish (`measure_lpgf.py` is ready).
 
-**Status: gap. Cheap; do first.**
+**Status: Harvest answered (low LPGF; no case for the commons view from Harvest). Clean Up open.**
 
 ---
 
@@ -239,7 +240,7 @@ H1b says this is not the whole story when α > 0, because large sanctions with f
 | Separate networks at 1e8 (15) | H6 | inconclusive; **reduced rerun at 3e8** (6 runs) |
 | BazaarBench offline replay | judge capability; second testbed | keep as secondary testbed |
 | Coins as a testbed | (2 players, weak dilemma) | drop further work |
-| LPGF measurement | H5 | **gap: do first, offline** |
+| LPGF measurement | H5 | Harvest done (LPGF 0% on permanent loss); Clean Up when its runs finish |
 | Headcount-proportional budgets; local records with learners | H7 | gap, later |
 
 ---

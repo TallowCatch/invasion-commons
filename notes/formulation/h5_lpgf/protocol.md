@@ -114,7 +114,10 @@ No Clean Up params exist locally yet (the 24 runs are on CREATE). The script acc
   in the last W steps (default 100). One check sees one eat; proving the violation needs W steps of record.
 - **Group predicate:** g_t = 1[pollution_t < 0.4]. At 0.4 and above, apple regrowth stops (`clean_up.py`,
   `thresholdDepletion`); below it regrowth falls linearly with pollution. Also the June apple predicate with
-  τ ∈ {0.1, 0.25, 0.5} of the initial apples, and orchard survival.
+  τ ∈ {0.1, 0.25, 0.5} of the orchard's 122 cells (not of the initial apples: Clean Up starts with no apples and
+  with pollution about 0.47, found in a code check with random weights and bots; changed before any Clean Up
+  measurement), and orchard survival. Because episodes start polluted, the first event is a recovery, not a
+  crossing.
 - **Harm events:** downward crossings of g (pollution reaching 0.4) and of the apple predicate. Not permanent:
   cleaning restores regrowth.
 - **LPGF (a):** share of crossings at all-pass steps. **(a_W):** share of crossings with no violation by anyone in
