@@ -6,7 +6,8 @@
 - **H3b** (F30): an inspector with its blind spot on harmful violations draws violations there and costs apples; with F28, learners respond to the situation-specific sanction ρ(s).
 - **H6** (F31): separate networks at 3e8 match shared networks; the 1e8 gap was slow learning.
 - **H3** (F28) and **H5** (F27) were answered on 23 Nov; see `notes/formulation/03_hypotheses.md`.
-- **Next:** analyse Clean Up (H1 second game, H9, H5 in Clean Up); 14-agent Harvest (H1, H7) when its last 9 runs finish.
+- **Clean Up (later, 24 Nov):** H5 supported (F32: 54–72% of pollution crossings pass the rule; never-violating bots lose the orchard in 62% of games). H9 supported (F33). H1 inconclusive there.
+- **Next:** 14-agent Harvest (H1, H7) when its last 9 runs finish. Decision for Ameer: take up the commons view now that Clean Up justifies it.
 - **Costs:** no Ollama tokens (all runs are table lookups on CREATE).
 
 ## Update 18, 23 November 2026: a real LLM inspector's mistakes are patterned

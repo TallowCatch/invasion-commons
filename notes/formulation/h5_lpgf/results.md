@@ -167,3 +167,33 @@ W-window LPGF.
   spent after a collapse.
 
 Both papers were checked to exist by web search on 23 Nov 2026 (arXiv abstract pages and NeurIPS proceedings).
+
+## 8. Clean Up (24 Nov 2026)
+
+Measured as set out in protocol §6, before looking at any Clean Up trace. 21 trained runs (7 arms × 3 seeds) plus 3 scripted populations, 32 episodes each, CPU only. The `presume` arm (3 runs) could not be replayed, because the step-for-step overseer used for replay does not support presumed guilt; it is left out. Summary: `lpgf_cleanup_summary.json`.
+
+**Harm event:** pollution rising to 0.4, where apple regrowth stops. **LPGF (a):** share of those crossings at steps where every agent passed the rule. **(a_W):** share with no violation by anyone in the rule's own 100-step window.
+
+| population | violations per game | share of steps polluted (≥ 0.4) | crossings per game | LPGF (a) | LPGF (a_W) | orchard alive at end |
+|---|---|---|---|---|---|---|
+| 7 honest bots (never violate) | 0 | 0.30 | 6.1 | 1.00 | **1.00** | **0.38** |
+| 1 greedy + 6 honest bots | 65 | 0.72 | 4.5 | 0.99 | 0.06 | 0.00 |
+| learners, no overseer | 14.6 | 0.96 | 0.7 | 0.89 | 0.00 | 0.00 |
+| learners, random, w = 50 | 7.2 | 0.98 | 0.3 | 0.97 | 0.00 | 0.00 |
+| learners, random, w = 150, c = 1 | 11.5 | 0.82 | 5.4 | 0.98 | 0.57 | 0.46 |
+| learners, random, w = 150, c = 2 | 13.1 | 0.65 | 12.9 | 0.98 | 0.72 | 0.85 |
+| learners, repeat offenders first, w = 150 | 21.6 | 0.66 | 9.9 | 0.97 | 0.61 | 0.71 |
+| learners, 2 overseers random, w = 150 | 15.8 | 0.81 | 3.3 | 0.98 | 0.69 | 0.74 |
+| learners, 2 overseers sharing, w = 150 | 15.6 | 0.71 | 7.5 | 0.98 | 0.54 | 0.41 |
+
+(Learner rows: mean of 3 seeds.)
+
+**Answers.**
+- **LPGF is high in Clean Up.** In the overseen learner runs, 54–72% of the times pollution reaches the no-regrowth level, nobody broke the rule in the previous 100 steps. In Harvest the comparable figure was 0 of 580.
+- **Full compliance does not protect the commons.** Seven agents who never break the rule still let pollution cross the threshold 6 times a game, and the orchard is empty at the end of 62% of games. So even perfect inspection of every agent cannot keep Clean Up safe under this rule. The prediction of H5 holds, and its falsifier ("high LPGF still fully protected by perfect full inspection") is not met.
+- Where pollution stays above 0.4 throughout (no overseer, w = 50), there are few crossings to count, so a_W = 0 there means "already lost", not "the rule worked".
+- **Why.** Dirt spawns whatever anyone eats; the rule only forbids eating without having cleaned, and an agent who cleans once per 100 steps passes it while cleaning far less than the commons needs.
+
+**Caveats.** The "never violate" population is scripted, not learned. Clean Up learners were unstable at 1e8 steps (several runs peak mid-training and decline), so the learner rows describe end-of-training policies, not converged ones.
+
+**Consequence.** Clean Up is the case for the commons view (the overseer also observing the state of the commons, or a group predicate in the rule). Per Decision 1 this was planned as a next step, to be justified if LPGF turned out large. It has.

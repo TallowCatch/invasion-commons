@@ -404,6 +404,22 @@ Started 14 October 2026.
 - **Caveats.** Ordinary mode and random looks only.
 - **Evidence.** `results/create_pull/SL_*`.
 
+## F32. In Clean Up the rule can be obeyed while the commons dies, so inspecting individuals cannot protect it [verified offline; 21 trained runs + 3 bot populations, 24 Nov]
+
+- **Found** (H5; pollution reaching 0.4, where regrowth stops, as the harm event):
+  - In overseen learner runs, 54–72% of crossings had no violation by anyone in the rule's 100-step window (Harvest: 0 of 580 permanent losses).
+  - Seven scripted agents who never break the rule still cross 6 times a game; the orchard is empty at the end of 62% of games.
+- **What it means.** Local-pass/global-fail is a property of the game and rule: negligible in Harvest, high in Clean Up. In Clean Up a perfect inspector of every agent cannot beat full compliance, which already fails. This justifies the commons view (observing pollution or a group predicate), planned in Decision 1 as a next step if LPGF proved large.
+- **Caveats.** The never-violating population is scripted. Learners unstable at 1e8 steps. The presume arm could not be replayed.
+- **Evidence.** `notes/formulation/h5_lpgf/results.md` §8, `lpgf_cleanup_summary.json`.
+
+## F33. A look shorter than the rule's window proves nothing; presuming guilt substitutes at a price [verified direction; 12 runs, 3 seeds, 24 Nov]
+
+- **Found** (H9; Clean Up, k = 2, c = 1): w = 50 (rule window 100): 12 apples, dead, no violation proved, no better than no overseer (29). w = 150: 130 apples, alive 52%, better than none in every seed. w = 50 with presumed guilt: 312 apples, alive in all seeds, 35 wrongful sanctions a game; learners clean more (282 vs 126).
+- **What it means.** The look window is part of the overseer's capability, and its required size is set by the rule. With learners, presumption works where it failed with bots (finding 15): false alarms push learners into cleaning.
+- **Caveats.** Seed spread is wide and some runs decline late in training; only every-seed differences are claimed.
+- **Evidence.** `results/create_pull/DU_*`.
+
 ---
 
 *Index entry:* this file is referenced from `what_we_learned_and_next.md` and from Ameer's Claude memory.

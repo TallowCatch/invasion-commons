@@ -50,6 +50,8 @@ One page for the budgeted-overseer work: an overseer that can only check a few a
 | 28 | **Agents who see the looks dodge any predictable look policy; random looks cannot be dodged (H2)** | Shared IPPO, visible checks, k = 2, c = 1: repeat offenders first 71 apples, round robin 69, shared repeat-offender lists 72, all dead and 1–4% caught (no overseer: 68). Random 457 and 2-overseer random 431, alive, 27–28% caught. Ordinary learners: 439–487 for every policy. Mixed 30% random: 265 [170, 417] | solid (24 runs, 3 seeds) | `formulation/03_hypotheses.md` H2 |
 | 29 | **Move the same inspector's blind spot onto harmful violations and learners follow it (H3b)** | c = 2: inverted 485/491 apples vs coin flip 515/535 (k = 1/7), ranges apart; last-apple violations 5.7–7.7 per episode vs 0.4–0.8; all alive. c = 1: inverted dead like the coin flip, gpt-oss table alive | solid (12 runs, 3 seeds; one inspector) | `formulation/03_hypotheses.md` H3b |
 | 30 | **Separate networks end where shared ones do once trained long enough (H6)** | 3e8 steps: central random 447 vs shared 460; 2 overseers 438 vs 439; levelled off. The 1e8 gap (417, 347) was slow learning | solid for random looks, ordinary mode (6 runs) | `formulation/03_hypotheses.md` H6 |
+| 31 | **Clean Up: the rule can be obeyed while the commons dies, so inspecting individuals cannot protect it (H5)** | 54–72% of pollution crossings in overseen learner runs had no violation by anyone in the rule's 100-step window (Harvest: 0 of 580). Seven never-violating bots still lose the orchard in 62% of games | solid offline (21 runs + bots, 32 episodes each) | `formulation/h5_lpgf/results.md` §8 |
+| 32 | **A look shorter than the rule's window proves nothing (H9)** | Clean Up learners: w = 50 → 12 apples, dead, 0% proved (no overseer: 29); w = 150 → 130, alive 52%; w = 50 + presumed guilt → 312, alive 100%, 35 wrongful sanctions a game | solid direction (3 seeds; Clean Up learning unstable) | `formulation/03_hypotheses.md` H9 |
 
 **Caveat on findings 12–16 and the 159 decentralised GPU runs (found 22 Nov).** In the current regional overseer (`overseer/socialjax/decentralised.py`), an agent's record of its last w steps travels with it, and any overseer's check reads all of it, including steps spent in other regions. So these results are for regional overseers that hand records over to each other for free. They measure only the loss from checks being in the wrong place, not the loss from evidence left behind when an agent crosses a boundary. The latter (the formulation's P_0 and claim D1) needs the local-records overseer being built on branch `claude/locality-scale`.
 
@@ -121,7 +123,6 @@ So far cost is counted in checks per game: 1 check per step is 1,000 checks a ga
 | What | Runs | Job |
 |---|---|---|
 | 14-agent Harvest (H1, H7) | 9 of 21 queued | 38811476 |
-| Clean Up (H1, H9, H5) | done (24 Nov), not yet analysed | 38811468, 38832339 |
 
 Stages 2–3, the mistakes test, the 40 LLM-inspector runs, the Coins list and the trained-agent locality job are done (as of 23 Nov).
 
@@ -133,6 +134,8 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 - **The plan for using both testbeds:** `phd_plan/2026-11-21_way_forward.md` (written 21 Nov).
 
 ## Log
+
+- **24 Nov (later).** Clean Up analysed: H5 supported there (finding 31, F32: high LPGF, full compliance loses the orchard in 62% of games), H9 supported (finding 32, F33), H1 inconclusive in Clean Up. The commons view is now justified; decision for Ameer.
 
 - **24 Nov.** H2 answered (finding 28, F29): predictable looks are fully dodged by agents who see them; random looks hold. H3b supported (finding 29, F30). H6 refuted at 3e8 (finding 30, F31). Error-pattern, worst-case and separate-network jobs all done; Clean Up done, to analyse; 14-agent Harvest 12 of 21 done.
 

@@ -44,7 +44,7 @@ In words: the chance of being looked at, times the chance the inspector sees the
 - **Refinement (H1b):** at equal ρ, few large looks (k = 1) do worse than many small ones (k = 7) when the inspector errs (342 vs 479 apples; F20, F24). So ρ sets the outcome, but the spread of sanctions slows learning.
 
 **Still needed.**
-- The same test in a second game. Clean Up runs are in progress (24 runs, 5 done).
+- The same test in a second game. **Clean Up (24 Nov): inconclusive.** c = 2 gives more apples and survival than c = 1 (188 vs 130 apples; alive 0.82 vs 0.52) but the seed ranges overlap (109–313 vs 75–227), learning was unstable at 1e8 steps, and H5 shows that in Clean Up even full compliance loses the orchard in 62% of games, so no ρ can fully protect it. Clean Up cannot test H1 cleanly under this rule. The 14-agent Harvest runs remain the second test.
 - A one-paragraph derivation of why learners would respond to ρ: the best response of an agent whose gain from one violation is fixed.
 
 **Status: keep. Mostly answered.**
@@ -197,7 +197,12 @@ Added 23 Nov at Ameer's request, before any run. It stays inside H3: it changes 
 
 **Still needed:** Clean Up, once its runs finish (`measure_lpgf.py` is ready).
 
-**Status: Harvest answered (low LPGF; no case for the commons view from Harvest). Clean Up open.**
+**Result in Clean Up (24 Nov; `h5_lpgf/results.md` §8): supported.**
+- 54–72% of pollution crossings (regrowth stops) in overseen learner runs had no violation by anyone in the rule's 100-step window.
+- Seven scripted agents who never break the rule still cross 6 times a game and lose the orchard in 62% of games. Perfect full inspection could not do better than full compliance, so it cannot protect Clean Up under this rule.
+- So LPGF is a property of the game and rule: about 0 in Harvest, high in Clean Up.
+
+**Status: answered in both games (Harvest F27; Clean Up finding 31 / F32). The commons view is now justified (Decision 1's planned next step); whether to take it up is Ameer's decision.**
 
 ---
 
@@ -283,7 +288,21 @@ Added 23 Nov at Ameer's request, before any run. It stays inside H3: it changes 
 
 **Evidence.** Bots: the look needed equals the rule's window (Clean Up dial, finding 15). Learners: Clean Up runs in progress.
 
-**Status: keep. Answered when the Clean Up runs finish.**
+**Result (24 Nov, Clean Up learners, 3 seeds per arm, k = 2, c = 1): supported.**
+
+| look | apples eaten (end of training) | orchard alive | wrongly sanctioned per game |
+|---|---|---|---|
+| no overseer | 29 [0, 47] | 0.00 | 0 |
+| w = 50 (shorter than the rule's 100) | 12 [0, 36] | 0.00 | 0 |
+| w = 150 | 130 [75, 227] | 0.52 | 0 |
+| w = 50, presume guilt if no cleaning seen | 312 [193, 405] | 1.00 | 35 |
+
+- A look shorter than the rule's window catches nothing (0% of violations proved) and is no better than no overseer, in every seed.
+- Reading 150 steps does better than no overseer in every seed, at 2.5 cost units per check instead of 1.5.
+- Presuming guilt on a short look protects best, at the price of 35 wrongful sanctions a game. With bots the same presumption cut apples from 908 to 196 (finding 15); learners instead clean more (282 cleaned vs 126), so the false alarms push them into compliance.
+- Caveat: Clean Up learners were unstable at 1e8 steps (some runs peak and decline), so only differences that hold in every seed are claimed.
+
+**Status: answered (finding 32 / F33).**
 
 ---
 
