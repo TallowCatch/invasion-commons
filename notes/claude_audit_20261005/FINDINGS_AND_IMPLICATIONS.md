@@ -374,6 +374,36 @@ Started 14 October 2026.
   - The pattern happened to align blind spots with mild violations. An inspector whose blind spot sits on harmful violations should do worse than a coin flip. That is untested, and a clean next test.
 - **Evidence.** `results/create_pull/E_*`; design `notes/llm_overseer/error_patterns/`.
 
+## F29. Agents who can see when they are looked at dodge every predictable look policy; random looks cannot be dodged [verified; 24 runs, 3 seeds, 24 Nov]
+
+- **Found** (H2; Harvest, shared-network IPPO, 1e8 steps, k = 2 of 7, 1-apple average sanction; each agent's observation shows whether it was checked last step and how long since its last check):
+  - Repeat offenders first, round robin and two overseers sharing a repeat-offender list: 69–72 apples, orchard dead, 1–4% of violations caught. No overseer gives 68.
+  - Random looks, one or two overseers: 431–457 apples, alive, 27–28% caught, the same as when the checks are hidden.
+  - With checks hidden, every look policy ends at 439–487 apples, alive.
+  - 30% random mixed into repeat offenders first: 265 apples [170, 417]; one seed of three kept the orchard.
+- **What it means.**
+  - The capability gap Δ (ordinary minus visible) is about 400 apples for predictable looks and under 10 for random ones. The look action must be random if agents can observe it.
+  - Learners find the pattern from their own observation channels, so this needs no assumption that agents know the schedule. That is the difference from Stackelberg security games, which assume the attacker observes the defender's mixed strategy (Pita et al. 2008).
+  - Earlier "repeat offenders first is safer sooner" (finding 6) holds only when agents cannot see the checks.
+- **Caveats.** One game, one sanction level, k = 2. The reveal channels are generous (exact last-check information).
+- **Evidence.** `results/create_pull/WS_*`, `OS_*`; `experiments/socialjax/analyze_formulation_runs.py`.
+
+## F30. Learners follow an inspector's blind spot wherever it is: put it on harmful violations and the commons pays [verified; 12 runs, 3 seeds, 24 Nov]
+
+- **Found** (H3b; gpt-oss-20B's table with its miss rates for 0 and 2 apples left swapped, rescaled to the same bank-average miss rate 0.215):
+  - c = 2: 485 and 491 apples (k = 1, 7) against the coin flip's 515 and 535; seed ranges do not overlap. Violations that take the last apples: 5.7 and 7.7 per episode against 0.8 and 0.4. Orchard alive in every arm.
+  - c = 1: inverted dies like the coin flip (69–72 apples); the original table survives (283–351).
+- **What it means.** With F28, the refined H1 holds in both directions: learners place violations where the situation-specific sanction ρ(s) is low. An inspector's value is set by its miss rate on harmful violations.
+- **Caveats.** A constructed inspector, not a measured one; one game.
+- **Evidence.** `results/create_pull/E_gptoss20b_inverted_*`.
+
+## F31. Separate networks end where shared networks do once trained long enough [verified for random looks; 6 runs, 3 seeds, 24 Nov]
+
+- **Found** (H6; separate networks at 3e8 steps): central random 447 apples, 39.6 violations (shared at 1e8: 460, 38.6); two overseers random 438, 45.7 (shared: 439, 41.1). Curves levelled off (last-10% change −2 apples).
+- **What it means.** The extra violation seen at 1e8 (F23 era, `SN_*`) was slow learning. Shared networks are an acceptable, 3× cheaper stand-in here.
+- **Caveats.** Ordinary mode and random looks only.
+- **Evidence.** `results/create_pull/SL_*`.
+
 ---
 
 *Index entry:* this file is referenced from `what_we_learned_and_next.md` and from Ameer's Claude memory.

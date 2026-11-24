@@ -1,5 +1,14 @@
 # What we have learned, and what should come next
 
+## Update 19, 24 November 2026: formulation hypotheses H2, H3b and H6 answered
+
+- **H2** (F29): agents who see the checks dodge every predictable look policy completely (69–72 apples, as with no overseer); random looks lose nothing.
+- **H3b** (F30): an inspector with its blind spot on harmful violations draws violations there and costs apples; with F28, learners respond to the situation-specific sanction ρ(s).
+- **H6** (F31): separate networks at 3e8 match shared networks; the 1e8 gap was slow learning.
+- **H3** (F28) and **H5** (F27) were answered on 23 Nov; see `notes/formulation/03_hypotheses.md`.
+- **Next:** analyse Clean Up (H1 second game, H9, H5 in Clean Up); 14-agent Harvest (H1, H7) when its last 9 runs finish.
+- **Costs:** no Ollama tokens (all runs are table lookups on CREATE).
+
 ## Update 18, 23 November 2026: a real LLM inspector's mistakes are patterned
 
 - **Patterned inspector errors** (F26; `notes/llm_overseer/error_patterns/results.md`; branch `claude/llm-error-patterns`): on 2,463 trained-agent eats, gpt-oss-20B misses 0.00–0.48 of violations depending on the situation (more when the count is near the threshold and when apples sit in the cells that don't count); false alarms are rare and nearly flat. On held-out items the pattern beats a coin flip for misses, not for false alarms.

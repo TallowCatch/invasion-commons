@@ -47,6 +47,9 @@ One page for the budgeted-overseer work: an overseer that can only check a few a
 | 25 | **A real LLM inspector's misses depend on the situation; its false alarms barely do** | gpt-oss-20B on raw maps, 2,463 trained-agent eats: α 0.00 (no apples around, few in the outer cells) to 0.48 (2 around, 2+ outer); held-out gain over a constant rate +0.128 nats per item [+0.103, +0.153]. β 0.06 at exactly 3 apples, about 0.01 elsewhere; no gain over a constant. Bank averages α 0.215 (overseen agents' records 0.288), β 0.039, against the ladder's 0.10 / 0.08. Qwen 7B + reasoning, 179 items: α 0.57, β 0.10, same direction, no held-out gain | verified offline; RL untested (36-run job list written) | `llm_overseer/error_patterns/results.md` |
 | 26 | **Harvest: every permanent loss of the commons involves a rule violation, so inspecting individuals is enough there (H5)** | 580 patch losses, all with a violation; perfect full inspection lost none; temporary legal damage regrows 92–95% | solid offline (5 runs, 256 episodes) | `formulation/h5_lpgf/results.md` |
 | 27 | **Where an inspector errs matters more than how often (H3)**: gpt-oss's misses fall on mild violations, so it keeps the orchard where coin flips with the same average miss rate lose it | 1-apple sanction: patterned 255–362 apples, alive 92–100%; coin flips 69–75, dead; learners moved 63–66% of violations into the blind spot | solid (35 runs, 3 seeds; one inspector) | `formulation/03_hypotheses.md` H3 |
+| 28 | **Agents who see the looks dodge any predictable look policy; random looks cannot be dodged (H2)** | Shared IPPO, visible checks, k = 2, c = 1: repeat offenders first 71 apples, round robin 69, shared repeat-offender lists 72, all dead and 1–4% caught (no overseer: 68). Random 457 and 2-overseer random 431, alive, 27–28% caught. Ordinary learners: 439–487 for every policy. Mixed 30% random: 265 [170, 417] | solid (24 runs, 3 seeds) | `formulation/03_hypotheses.md` H2 |
+| 29 | **Move the same inspector's blind spot onto harmful violations and learners follow it (H3b)** | c = 2: inverted 485/491 apples vs coin flip 515/535 (k = 1/7), ranges apart; last-apple violations 5.7–7.7 per episode vs 0.4–0.8; all alive. c = 1: inverted dead like the coin flip, gpt-oss table alive | solid (12 runs, 3 seeds; one inspector) | `formulation/03_hypotheses.md` H3b |
+| 30 | **Separate networks end where shared ones do once trained long enough (H6)** | 3e8 steps: central random 447 vs shared 460; 2 overseers 438 vs 439; levelled off. The 1e8 gap (417, 347) was slow learning | solid for random looks, ordinary mode (6 runs) | `formulation/03_hypotheses.md` H6 |
 
 **Caveat on findings 12–16 and the 159 decentralised GPU runs (found 22 Nov).** In the current regional overseer (`overseer/socialjax/decentralised.py`), an agent's record of its last w steps travels with it, and any overseer's check reads all of it, including steps spent in other regions. So these results are for regional overseers that hand records over to each other for free. They measure only the loss from checks being in the wrong place, not the loss from evidence left behind when an agent crosses a boundary. The latter (the formulation's P_0 and claim D1) needs the local-records overseer being built on branch `claude/locality-scale`.
 
@@ -117,8 +120,8 @@ So far cost is counted in checks per game: 1 check per step is 1,000 checks a ga
 
 | What | Runs | Job |
 |---|---|---|
-| Decentralised Harvest, last 2 cells (`DH_R2_random_k4_c1.0_seed1`, `DH_R2_history_k4_c1.0_seed1`) | 2 | from 38810497/98/513/515 |
-| Decentralised 14-agent Harvest and Clean Up lists | 45 | not in the 23 Nov pull; status to check |
+| 14-agent Harvest (H1, H7) | 9 of 21 queued | 38811476 |
+| Clean Up (H1, H9, H5) | done (24 Nov), not yet analysed | 38811468, 38832339 |
 
 Stages 2–3, the mistakes test, the 40 LLM-inspector runs, the Coins list and the trained-agent locality job are done (as of 23 Nov).
 
@@ -130,6 +133,8 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 - **The plan for using both testbeds:** `phd_plan/2026-11-21_way_forward.md` (written 21 Nov).
 
 ## Log
+
+- **24 Nov.** H2 answered (finding 28, F29): predictable looks are fully dodged by agents who see them; random looks hold. H3b supported (finding 29, F30). H6 refuted at 3e8 (finding 30, F31). Error-pattern, worst-case and separate-network jobs all done; Clean Up done, to analyse; 14-agent Harvest 12 of 21 done.
 
 - **23 Nov (late).** H3 answered (finding 27, F28): opposite outcome to the prediction. The patterned inspector protects better because its blind spot is on mild violations. H1 refined to situation-specific sanction ρ(s).
 - **23 Nov (night).** H5 answered in Harvest (finding 26, F27): local-pass/global-fail is negligible, so the overseer inspects individuals only for now; Clean Up is the test for the commons view. H2 redesign (shared networks, visible checks; jobs 38847109/112) and H6 reduced rerun (38847113) submitted.

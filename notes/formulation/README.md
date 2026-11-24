@@ -68,11 +68,11 @@ Nine hypotheses:
 | | Claim | Status |
 |---|---|---|
 | H1 | learners respond only through ρ; threshold ρ* | supported in Harvest; H1b refinement: spread matters with errors |
-| H2 | the look policy matters only against agents who see the looks | supported for bots; learners missing |
-| H3 | learners exploit patterned misses | running |
+| H2 | the look policy matters only against agents who see the looks | **answered 24 Nov**: Δ ≈ 0 for random, about 400 apples for predictable looks (F29) |
+| H3 | learners exploit patterned misses | answered: outcome refuted, mechanism supported (F28); H3b supported (F30) |
 | H4 | misses change behaviour; false alarms only harm compliant agents | supported |
 | H5 | high LPGF defeats individual inspection | Harvest: LPGF low (0 of 580 patch losses legal-only); Clean Up open |
-| H6 | separate networks exploit more | inconclusive at 1e8 |
+| H6 | separate networks exploit more | **refuted 24 Nov** at 3e8 for random looks (F31) |
 | H7 | splitting costs come from crowding; sharing or reallocation recovers them | partly; extensions later |
 | H8 | the overseer props up rather than changes behaviour | supported |
 | H9 | slow violations need longer looks | Clean Up running |
@@ -113,6 +113,12 @@ Nine hypotheses:
   - 12 runs, job 38848488;
   - hypothesis written in `03_hypotheses.md` before the runs.
 - **Ameer's instruction (23 Nov): no new directions outside the agreed plan.** Every run must map to an agreed hypothesis (H1–H9, H3b). Anything else is raised with him first, not added.
+
+- **H2, H3b and H6 answered (24 Nov; `experiments/socialjax/analyze_formulation_runs.py`, summary `phase3_runs_summary.json`).**
+  - H2 (F29): with visible checks, predictable looks (repeat offenders first, round robin, shared repeat-offender lists) are dodged completely: 69–72 apples, the same as no overseer. Random looks lose nothing (Δ = 2–8 apples). Mixing in 30% random recovers part (Δ = 222, wide spread).
+  - H3b (F30): the inverted inspector draws violations onto the last apples (6–8 per episode against under 1) and costs 30–44 apples against the coin flip at c = 2; at c = 1 it collapses like the coin flip while the gpt-oss table survives.
+  - H6 (F31): at 3e8 steps separate networks level off at the shared-network result (447 vs 460; 438 vs 439). The 1e8 gap was slow learning.
+- **Still running or to analyse:** Clean Up (H1 second game, H9, H5 in Clean Up), 14-agent Harvest (H1, H7; 9 runs still queued).
 
 ### Phase 4: experiments (later)
 

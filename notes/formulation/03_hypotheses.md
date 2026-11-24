@@ -72,7 +72,25 @@ In words: the chance of being looked at, times the chance the inspector sees the
 - 18 runs, about 15 GPU-hours.
 - This separates H2 (does seeing the looks help agents) from H6 (do separate networks matter).
 
-**Status: keep. Central. The redesigned runs answer it.**
+**Result (24 Nov, 18 + 6 runs, 3 seeds, shared network, k = 2, c = 1; `analyze_formulation_runs.py`): supported, with a large gap.**
+
+| look policy | J ordinary (apples) | J visible checks | gap Δ | orchard alive (visible) | share caught (ord → vis) |
+|---|---|---|---|---|---|
+| random | 460 | 457 [450, 468] | **2** | 1.00 | 0.29 → 0.28 |
+| 2 overseers, random | 439 | 431 [374, 475] | **8** | 1.00 | 0.27 → 0.27 |
+| mixed (30% random) | 487 | 265 [170, 417] | **222** | 0.69 | 0.29 → 0.21 |
+| repeat offenders first | 474 | 71 [71, 72] | **403** | 0.00 | 0.29 → 0.02 |
+| round robin | 474 | 69 [69, 69] | **405** | 0.00 | 0.28 → 0.01 |
+| 2 overseers, repeat offenders + sharing | 457 | 72 [71, 72] | **386** | 0.00 | 0.27 → 0.04 |
+
+- No overseer gives 68 apples, so predictable looks against agents who see them are worth nothing: agents violate exactly when unwatched.
+- Against ordinary learners every look policy ends in the same place (460–487 apples, alive, about 29% caught). The first half of the claim holds.
+- Mixing 30% random looks into a predictable policy recovers only part of the loss, with wide seed spread (one seed kept the orchard, two lost most of it).
+- Two overseers do not change the picture: random stays safe, shared repeat-offender lists are dodged.
+- **Consequence for the definition:** the look action must be randomised if agents can see it. Δ separates look policies sharply, so it is a usable measure of the capability gap.
+- Related work: the same reason Stackelberg security games commit to randomised patrols (Pita et al. 2008, ARMOR at LAX, AAMAS industry track, checked 24 Nov; Tambe 2011, *Security and Game Theory*), and Griffin et al. 2024's adversarial mode. Our addition: the followers are learners that find the pattern through their own observation channels, not best responders assumed to know the schedule.
+
+**Status: answered (finding 28 / F29).**
 
 ---
 
@@ -121,6 +139,24 @@ Added 23 Nov at Ameer's request, before any run. It stays inside H3: it changes 
 **Refuted if** at 2 apples the inverted arm matches the coin flip within seed ranges, in both outcome and placement of violations.
 
 **Runs.** 12: k ∈ {1, 7}, c ∈ {1, 2}, 3 seeds (`experiments/llm_overseer/runs_error_patterns_inverted.tsv`). They are compared with the existing `E_gptoss20b_coin` and `E_gptoss20b_table` arms.
+
+**Result (24 Nov, 12 runs, 3 seeds): supported.** At a 2-apple sanction:
+
+| k | inspector | apples eaten | alive | violations | of which take the last apples (per episode) |
+|---|---|---|---|---|---|
+| 1 | coin flip | 515 [502, 533] | 1.00 | 13.4 | 0.8 |
+| 1 | gpt-oss table | 512 [504, 517] | 1.00 | 20.3 | 0.8 |
+| 1 | **inverted** | **485 [479, 497]** | 1.00 | 20.1 | **5.7** |
+| 7 | coin flip | 535 [531, 540] | 1.00 | 8.2 | 0.4 |
+| 7 | gpt-oss table | 529 [523, 533] | 1.00 | 13.1 | 0.5 |
+| 7 | **inverted** | **491 [481, 506]** | 1.00 | 16.2 | **7.7** |
+
+- Learners followed the blind spot to its new place: violations that take the last apples rose from under 1 to 6–8 per episode.
+- Apples fell by 30–44 against the coin flip, with seed ranges that do not overlap. Survival held, because 2 apples is well above the threshold even with the misses.
+- At 1 apple, inverted collapses like the coin flip (69–72 apples) while the gpt-oss table survives (283–351). So the same average miss rate gives survival or collapse depending only on where the misses fall.
+- With H3, this confirms the refined H1 in both directions: learners respond to ρ(s), and what matters is ρ(s) where violations are harmful.
+
+**Status: answered (finding 29 / F30).**
 
 ---
 
@@ -181,7 +217,19 @@ Added 23 Nov at Ameer's request, before any run. It stays inside H3: it changes 
 
 **Why it matters for the formulation.** The agents in the definition each maximise their own return; independent networks are the faithful version. Casheekar & Tangirala 2026 show parameter sharing changes how much inspection is needed.
 
-**Status: keep, lower priority. Reduced rerun.**
+**Result (24 Nov, 6 runs at 3e8 steps, 3 seeds): refuted for random looks in ordinary mode.**
+
+| | shared, 1e8 | separate, 1e8 | separate, 3e8 |
+|---|---|---|---|
+| central random: apples / violations | 460 / 38.6 | 417 / 58.7 | **447 / 39.6** |
+| 2 overseers random: apples / violations | 439 / 41.1 | 347 / 64.2 | **438 / 45.7** |
+| change over the last 10% of training (apples) | −2 to −3 | +5 to +8 (still learning) | −2 (levelled off) |
+
+- Trained to convergence, separate networks end where shared ones do. The 50% extra violation at 1e8 was slower learning, as suspected in Phase 0.
+- Limits: only random looks in ordinary mode, where there is nothing to exploit. Whether separate networks dodge predictable looks more than shared ones was not run (the visible-checks runs used shared networks, and those already dodge completely).
+- **Consequence:** the shared network is an acceptable stand-in for independent learners in this setting, and is 3 times cheaper.
+
+**Status: answered (finding 30 / F31).**
 
 ---
 
