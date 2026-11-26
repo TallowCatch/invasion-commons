@@ -319,3 +319,29 @@ def test_redesigned_job_lists_parse_with_the_trainer(trainer):
             assert a.k / 7 * a.penalty_apples == pytest.approx(1.0)
             names.append(run)
     assert len(names) == len(set(names)) == 24 + 6
+
+
+def test_formulation_job_lists_parse_with_the_trainer(trainer):
+    """X1-X4 (notes/formulation/05_formulation.md section 7), 26 Nov: every line parses, names are unique and new,
+    and each list has the arms its prediction needs."""
+    import os
+    from experiments.socialjax import formulation_runs as f
+    names = []
+    for lst, n in (("x1", 56), ("x2", 33), ("x3", 6), ("x4", 6)):
+        rows = list(f.LISTS[lst]())
+        assert len(rows) == n, lst
+        for run, args in rows:
+            a = trainer.parser().parse_args(["--out", "x"] + shlex.split(args))
+            if lst == "x1":
+                assert run.endswith(("seed4", "seed5")), run
+            if lst == "x2":
+                assert (a.reveal_checks == run.startswith("WS_")) and not a.separate_nets, run
+                assert a.k / 7 * a.penalty_apples == pytest.approx(float(run.split("_k2_c")[1].split("_")[0]))
+            if lst == "x3":
+                assert a.total_steps == 3e8 and a.k in (1, 7) and a.k / 7 * a.penalty_apples == pytest.approx(1.0)
+            if lst == "x4":
+                assert a.env == "cleanup" and a.k == 7 and a.window == 150
+            if a.inspector_table:
+                assert os.path.exists(a.inspector_table), a.inspector_table
+            names.append(run)
+    assert len(names) == len(set(names))
