@@ -15,6 +15,7 @@ step-level (a) and window-level (a_W, no violation in the rule's W-step window).
 Usage (venv .venv-socialjax):
   python -m experiments.socialjax.measure_lpgf --params-root results/create_pull \
       --runs A_none_seed1,B_random_k2_c1.0_seed1 --bots --episodes 32
+  Clean Up bots under a stricter rule (X10): --bots --bot-env cleanup --clean-window 25
 A run directory needs params.msgpack; its overseer comes from config.json if present (needed for Clean Up runs),
 else from the stage 1 run name (<stage>_<chooser>_k<k>_c<penalty apples>_seed<s>, or <stage>_none_seed<s>).
 """
@@ -353,11 +354,14 @@ def run_ippo(rdir, episodes):
     return env, ov_kw, rows
 
 
-def run_bots(env, kinds, episodes):
+def run_bots(env, kinds, episodes, clean_window=None):
+    """clean_window (Clean Up only, added 26 Nov for X10): the rule's W; None keeps the default (100). The honest bot
+    reads W from the rules, so it keeps the stricter rule too."""
     from overseer.socialjax import locality as L
     from overseer.socialjax.game_bots import kind_codes, make_policy
     from overseer.socialjax.games import make_rules
-    rules = make_rules(env, num_inner_steps=STEPS + 1)
+    kw = {} if clean_window is None else dict(clean_window=clean_window)
+    rules = make_rules(env, num_inner_steps=STEPS + 1, **kw)
     policy = make_policy(rules)
     rows = play(rules, dict(k=0, chooser="none", window=1),
                 lambda ov: L.bot_act(policy, kind_codes(kinds), ov.region_grid), episodes, 30_000,
@@ -400,6 +404,7 @@ def main():
     ap.add_argument("--runs", default="", help="comma-separated run directories under --params-root")
     ap.add_argument("--bots", action="store_true", help="also the scripted reference populations")
     ap.add_argument("--bot-env", default="harvest", choices=("harvest", "cleanup"))
+    ap.add_argument("--clean-window", type=int, default=None, help="Clean Up bots: the rule's W (default 100)")
     ap.add_argument("--episodes", type=int, default=32)
     ap.add_argument("--out", default="results/h5_lpgf/lpgf.json")
     ap.add_argument("--tables", action="store_true", help="only print the tables from --out")
@@ -414,7 +419,8 @@ def main():
     if a.bots:
         jobs += [("bots", p) for p in BOT_POPS]
     for kind, name in jobs:
-        label = name if kind == "ippo" else f"bots: {name}" + ("" if a.bot_env == "harvest" else f" ({a.bot_env})")
+        env_tag = a.bot_env + ("" if a.clean_window is None else f", W = {a.clean_window}")
+        label = name if kind == "ippo" else f"bots: {name}" + ("" if a.bot_env == "harvest" else f" ({env_tag})")
         if label in d["policies"]:
             continue
         t0 = time.time()
@@ -425,7 +431,8 @@ def main():
                 continue
             env, ov_kw, rows = run_ippo(rdir, a.episodes)
         else:
-            env, ov_kw, rows = a.bot_env, dict(k=0, chooser="none"), run_bots(a.bot_env, BOT_POPS[name], a.episodes)
+            env, ov_kw, rows = a.bot_env, dict(k=0, chooser="none"), run_bots(a.bot_env, BOT_POPS[name], a.episodes,
+                                                                     a.clean_window)
         summ = summarise_cleanup(rows) if env == "cleanup" else summarise_harvest(rows)
         d["policies"][label] = dict(env=env, overseer={k: v for k, v in ov_kw.items() if k in
                                                        ("k", "chooser", "penalty", "window")},

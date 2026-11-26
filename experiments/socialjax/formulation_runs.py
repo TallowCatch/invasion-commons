@@ -1,4 +1,4 @@
-"""GPU job lists for the formulation experiments X1-X4 (notes/formulation/05_formulation.md, section 7).
+"""GPU job lists for the formulation experiments X1-X4, X6, X7, X10 (notes/formulation/05_formulation.md, section 7).
 
 Predictions for every list were written in 05_formulation.md (26 Nov 2026) before any of these runs.
 
@@ -6,6 +6,9 @@ Predictions for every list were written in 05_formulation.md (26 Nov 2026) befor
   python -m experiments.socialjax.formulation_runs x2 > runs_x2.tsv   (33: randomisation sweep, Props 5.3-5.5)
   python -m experiments.socialjax.formulation_runs x3 > runs_x3.tsv   (6: k = 1 vs 7 at 3e8 steps, spread remark)
   python -m experiments.socialjax.formulation_runs x4 > runs_x4.tsv   (6: Clean Up full inspection, Prop 5.11)
+  python -m experiments.socialjax.formulation_runs x6 > runs_x6.tsv   (12: headcount-proportional budgets, Prop 5.12)
+  python -m experiments.socialjax.formulation_runs x7 > runs_x7.tsv   (6: public catches, section 5.8)
+  python -m experiments.socialjax.formulation_runs x10 > runs_x10.tsv (3: Clean Up with W = 25, Prop 5.11)
 """
 from __future__ import annotations
 
@@ -81,7 +84,40 @@ def x4():
                    f"--chooser random --window 150")
 
 
-LISTS = {"x1": x1, "x2": x2, "x3": x3, "x4": x4}
+def x6():
+    """Prop 5.12: regional budgets split by headcount each step, 4 and 2 regions, random checks, c = 1. Compare
+    DH_R4_random_k2_c1.0 and DH_R2_random_k2_c1.0 (equal budgets) and B_random_k2_c1.0 (central).
+    DP_: largest-remainder rounding (the planned arm). DPU_ (added 26 Nov before any run): unbiased rounding, so
+    p = k/N in every state as Prop 5.12 assumes; with 4 regions largest remainder leaves a lone agent unwatched in
+    about 13% of agent-steps (notes/formulation/x6_x7_x10/predictions.md)."""
+    for s in SEEDS:
+        p = f"--env harvest --k 2 --penalty-apples {dr.penalty(7, 2, 1.0)} --seed {s} --chooser random"
+        for R in (4, 2):
+            yield f"DP_R{R}_random_k2_c1.0_seed{s}", f"{p} --regions {R} --region-alloc proportional"
+        for R in (4, 2):
+            yield f"DPU_R{R}_random_k2_c1.0_seed{s}", f"{p} --regions {R} --region-alloc proportional_random"
+
+
+def x7():
+    """Section 5.8: catches made public in the ordinary mode (looks still hidden). Compare D_history_k2_c1.0 and
+    B_random_k2_c1.0 (same arms, catches hidden)."""
+    for s in SEEDS:
+        p = f"--env harvest --k 2 --penalty-apples {dr.penalty(7, 2, 1.0)} --seed {s} --public-catches"
+        for chooser in ("history", "random"):
+            yield f"PC_central_{chooser}_k2_c1.0_seed{s}", f"{p} --chooser {chooser}"
+
+
+def x10():
+    """Prop 5.11: Clean Up with the stricter rule W = 25 (clean at least once every 25 steps), looks reading w = 50
+    steps (>= W, so every violation is provable). Scripted bots under W = 25 first: notes/formulation/x10_strict_rule/
+    bots.md. Compare DU_central_random_w150_k2_c1.0 (W = 100)."""
+    for s in SEEDS:
+        yield (f"DS_W25_random_w50_k2_c1.0_seed{s}",
+               f"--env cleanup --k 2 --seed {s} --cost-per-step-seen 0.01 --penalty-apples {dr.penalty(7, 2, 1.0)} "
+               f"--chooser random --window 50 --clean-window 25")
+
+
+LISTS = {"x1": x1, "x2": x2, "x3": x3, "x4": x4, "x6": x6, "x7": x7, "x10": x10}
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

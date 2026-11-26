@@ -20,6 +20,7 @@ import jax.numpy as jnp
 
 REVEAL_CHANNELS = 3
 SINCE_CAP = 20  # steps; "steps since I was last checked" saturates here
+CATCH_CAP = 100  # steps; "steps since agent j was last caught" saturates here (public catches, below)
 
 
 def obs_point(agent_loc, obs_size, padding):
@@ -69,6 +70,27 @@ def reveal_channels(env, env_state, checked, since_check):
 def augment(obs, env, env_state, checked, since_check):
     """The game's observation with the 3 reveal channels appended (dtype of obs, float32 in SocialJax)."""
     extra = reveal_channels(env, env_state, checked, since_check).astype(obs.dtype)
+    return jnp.concatenate([obs, extra], axis=-1)
+
+
+def public_catch_channels(since_caught, view_shape):
+    """Public catches (X7, added 26 Nov 2026; notes/formulation/05_formulation.md section 5.8): (N, obs, obs, 2N)
+    constant planes. For agent i, plane j is "agent (i + j) mod N was caught last step" (0 or 1) and plane N + j is
+    min(steps since that agent was last caught, CATCH_CAP) / CATCH_CAP, so plane 0 and plane N are always the
+    observer's own (the same order for every agent, which a shared network needs). An agent not caught yet this
+    episode reads 1. The cap is longer than SINCE_CAP because catches are rarer than checks and the "history"
+    chooser's suspicion (decay 0.95 per step) still ranks an agent caught 80 steps ago above one never caught."""
+    n = since_caught.shape[0]
+    order = (jnp.arange(n)[:, None] + jnp.arange(n)[None, :]) % n  # (N, N): observer i's j-th agent
+    caught = (since_caught == 0).astype(jnp.float32)[order]
+    since = (jnp.minimum(since_caught, CATCH_CAP).astype(jnp.float32) / CATCH_CAP)[order]
+    planes = jnp.concatenate([caught, since], axis=1)  # (N, 2N)
+    return jnp.broadcast_to(planes[:, None, None, :], (n,) + tuple(view_shape) + (2 * n,))
+
+
+def augment_catches(obs, since_caught):
+    """The observation with the 2N public-catch planes appended."""
+    extra = public_catch_channels(since_caught, obs.shape[1:3]).astype(obs.dtype)
     return jnp.concatenate([obs, extra], axis=-1)
 
 

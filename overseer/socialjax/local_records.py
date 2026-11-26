@@ -131,7 +131,7 @@ class LocalRecordOverseer(DecentralisedOverseer):
             env_state=env_state, aux=aux, frozen=frozen, since_check=jnp.where(checked, 0, s.since_check + 1),
             since_region_check=since_region_check, belief_since=belief_since, suspicion=suspicion,
             rr_ptr=self._next_rr(s, checked, region), window=window, win_suspect=win_suspect, win_clear=win_clear,
-            win_region=win_region, t=s.t + 1)
+            win_region=win_region, t=s.t + 1, since_caught=jnp.where(caught, 0, s.since_caught + 1))
         s_next = jax.tree.map(lambda fresh, cur: jnp.where(done, fresh, cur), self._fresh(env_state), s_next)
 
         per_check = cfg.cost_per_check + cfg.cost_per_step_seen * cfg.window

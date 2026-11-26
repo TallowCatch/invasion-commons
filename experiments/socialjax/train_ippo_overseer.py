@@ -28,13 +28,19 @@ Added 23 Nov (notes/llm_overseer/error_patterns/protocol.md), off by default:
      realised miss rate is 1 - detected / checks_on_violations at w = 1, and the realised false-alarm rate
      wrongly_stopped / checks_on_honest_eats), and in Harvest violations_by_near (3,) and eats_by_near (13,):
      per episode, by the number of apples within two squares on the map before the move.
+Added 26 Nov (X6, X7; notes/formulation/05_formulation.md sections 5.7, 5.8), off by default:
+  --region-alloc proportional: each step the k checks are split across the regions in proportion to the agents in
+     each (largest remainder); proportional_random rounds without bias. Default "fixed" is the old split.
+  --public-catches: every agent's observation also carries, for every agent, "caught last step" and "steps since
+     last caught" (overseer/socialjax/reveal.py, public_catch_channels). tests/test_x6_x7.py checks both defaults.
 
 Protocol: notes/socialjax/phase2_ippo/protocol.md; decentralised runs: notes/socialjax/DECENTRALISED_README.md
 
   python -m experiments.socialjax.train_ippo_overseer --out DIR --k 2 --chooser random --penalty-apples 3.5 \
       [--env harvest|harvest_large|coins|cleanup] [--regions 1] [--layout strips] [--share] [--region-k 1,1] \
       [--freeze 0] [--total-steps 1e8] [--num-envs 256] [--seed 1] [--init-params PATH] \
-      [--separate-nets] [--reveal-checks] [--mixed-eps 0.3] [--inspector-table T.json]
+      [--separate-nets] [--reveal-checks] [--mixed-eps 0.3] [--inspector-table T.json] \
+      [--region-alloc fixed|proportional|proportional_random] [--public-catches]
 
 --penalty-apples is the penalty per catch in the game's goods (apples; coins in Coins): it is multiplied by the
 reward one good pays (num_agents in Harvest and Clean Up, 2 in Coins). The metric names keep Harvest's words
@@ -362,6 +368,10 @@ def parser():
     ap.add_argument("--mixed-eps", type=float, default=0.3, help="the mixed chooser's chance of random checks")
     ap.add_argument("--inspector-table", default="", help="JSON table of situation-dependent miss and false-alarm "
                     "chances (Harvest, --window 1); replaces --miss-rate and --false-alarm")
+    ap.add_argument("--region-alloc", default="fixed", choices=("fixed", "proportional", "proportional_random"),
+                    help="split of the k checks across regions each step (proportional: by headcount)")
+    ap.add_argument("--public-catches", action="store_true",
+                    help="agents see, for every agent, whether it was caught last step and steps since last caught")
     return ap
 
 
@@ -391,7 +401,8 @@ def main():
                        regions=a.regions, layout=a.layout, region_k=region_k, share=a.share,
                        share_coverage=a.share_coverage, cost_per_message=a.cost_per_message, presume=a.presume,
                        cost_per_step_seen=a.cost_per_step_seen, mixed_eps=a.mixed_eps,
-                       reveal_checks=a.reveal_checks, inspector_table=read_table(a.inspector_table))
+                       reveal_checks=a.reveal_checks, inspector_table=read_table(a.inspector_table),
+                       region_alloc=a.region_alloc, public_catches=a.public_catches)
     init = Path(a.init_params).read_bytes() if a.init_params else None
     (out / "config.json").write_text(json.dumps(dict(cfg, overseer=asdict(ov_cfg), penalty_apples=a.penalty_apples,
                                                      reward_unit=unit, hparams=HPARAMS, devices=str(jax.devices())),
@@ -407,7 +418,8 @@ def main():
     np.savez(out / "metrics.npz", **{k: np.asarray(v) for k, v in metrics.items()})
 
     switch = {}
-    off = DecConfig(chooser="none", k=0, regions=a.regions, layout=a.layout, reveal_checks=a.reveal_checks)
+    off = DecConfig(chooser="none", k=0, regions=a.regions, layout=a.layout, reveal_checks=a.reveal_checks,
+                    public_catches=a.public_catches)
     for name, c in (("with_overseer", ov_cfg), ("overseer_off", off)):
         m = make_eval(cfg, c, a.eval_envs)(params, jax.random.PRNGKey(10_000 + a.seed))
         switch[name] = {k: np.asarray(v).tolist() for k, v in m.items()}

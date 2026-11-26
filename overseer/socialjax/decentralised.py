@@ -31,6 +31,15 @@ With reveal_checks=True (added 22 Nov, the worst case) every agent's observation
 (by any overseer) and when it was last checked itself (overseer/socialjax/reveal.py). check_prob(state) gives each
 agent's chance of being checked in the coming step from the public state (the rules, budgets and records, not the
 coin flips), taking its region to be the one it stands in now: what the scripted "dodger" cheats on.
+Added 26 Nov (X6 and X7, notes/formulation/05_formulation.md sections 5.7 and 5.8), both off by default:
+  region_alloc="proportional": each step the k checks are split across the regions in proportion to the agents
+     standing in each (largest remainder: region r gets floor(k N_r / N), and the checks left over go to the regions
+     with the largest remainders, ties broken at random). The total is exactly k and no region gets more checks than
+     agents. "proportional_random" rounds without bias instead (systematic sampling: region r gets floor or ceil of
+     k N_r / N, the ceil with chance equal to the remainder), so every agent's chance of a check is exactly k / N in
+     every state. "fixed" (the default) is the split above, unchanged.
+  public_catches=True: every agent's observation also shows, for every agent, whether it was caught last step and
+     the steps since it was last caught (reveal.public_catch_channels; 2N constant planes, own first).
 
 Independent overseers know only their own checks and catches. With R = 1 this is the central overseer, and it
 reproduces HarvestOverseer step for step (tests/test_decentralised_overseer.py).
@@ -50,9 +59,10 @@ import numpy as np
 from flax import struct
 
 from overseer.socialjax.regions import LAYOUTS, neighbours, region_grid
-from overseer.socialjax.reveal import REVEAL_CHANNELS, augment, topk_chance
+from overseer.socialjax.reveal import CATCH_CAP, REVEAL_CHANNELS, augment, augment_catches, topk_chance
 
 CHOOSERS = ("none", "all", "random", "round_robin", "history", "location", "mixed")
+REGION_ALLOCS = ("fixed", "proportional", "proportional_random")
 
 
 @dataclass(frozen=True)
@@ -78,6 +88,8 @@ class DecConfig:
     mixed_eps: float = 0.3  # for the "mixed" chooser: chance an overseer's checks this step are random
     reveal_checks: bool = False  # agents see who was checked last step (reveal.py)
     inspector_table: str = ""  # JSON text of a patterned inspector (inspector_table.py); "" = coin flips
+    region_alloc: str = "fixed"  # one of REGION_ALLOCS: how the k checks are split across regions each step
+    public_catches: bool = False  # agents see every agent's catches (reveal.public_catch_channels)
 
     def __post_init__(self):
         if self.chooser not in CHOOSERS:
@@ -91,6 +103,10 @@ class DecConfig:
             raise ValueError("region_k needs one non-negative budget per region, summing to k")
         if not 0.0 <= self.mixed_eps <= 1.0:
             raise ValueError("mixed_eps must be in [0, 1]")
+        if self.region_alloc not in REGION_ALLOCS:
+            raise ValueError(f"region_alloc must be one of {REGION_ALLOCS}, not {self.region_alloc!r}")
+        if self.region_alloc != "fixed" and self.region_k:
+            raise ValueError("region_k sets a fixed split; it cannot be combined with a proportional region_alloc")
         if self.inspector_table and (self.window != 1 or self.presume or self.miss_rate or self.false_alarm_rate):
             raise ValueError("inspector_table needs window 1, no presume, and miss_rate = false_alarm_rate = 0")
 
@@ -116,6 +132,7 @@ class DecState:
     win_clear: jnp.ndarray  # (N, W) acts that clear the agent (e.g. cleaning), by age
     win_region: jnp.ndarray  # (N, W) region where each violation happened
     t: jnp.ndarray  # step counter within the episode
+    since_caught: jnp.ndarray  # (N,) steps since the agent was last caught (CATCH_CAP if not this episode)
 
 
 class DecentralisedOverseer:
@@ -130,6 +147,8 @@ class DecentralisedOverseer:
         self.links = int(self.nbr.sum())  # directed messages per sharing round
         base, self.extra = config.budgets()
         self.kmax = tuple(min(b + (1 if self.extra else 0), self.n) for b in base)
+        if config.region_alloc != "fixed":  # any region may hold every agent, so may need all k checks
+            self.kmax = (min(config.k, self.n),) * self.R
         self.base = jnp.asarray(base, jnp.int32)
         self.lookback = int(rules.lookback)
         w, L = config.window, self.lookback
@@ -151,17 +170,21 @@ class DecentralisedOverseer:
                         since_check=jnp.zeros(n, jnp.int32), since_region_check=jnp.zeros((R, n), jnp.int32),
                         belief_since=jnp.zeros((R, n), jnp.int32), suspicion=jnp.zeros((R, n), jnp.float32),
                         rr_ptr=jnp.zeros(R, jnp.int32), window=zi, win_suspect=zi, win_clear=zi, win_region=zi,
-                        t=jnp.zeros((), jnp.int32))
+                        t=jnp.zeros((), jnp.int32), since_caught=jnp.full(n, CATCH_CAP, jnp.int32))
 
     def obs_shape(self):
-        """Shape of one agent's observation (the game's, plus the reveal channels if reveal_checks)."""
+        """Shape of one agent's observation (the game's, plus the reveal channels if reveal_checks, plus the
+        public-catch planes if public_catches)."""
         shape = tuple(self.env.observation_space()[0].shape)
-        return shape[:-1] + (shape[-1] + REVEAL_CHANNELS,) if self.cfg.reveal_checks else shape
+        extra = REVEAL_CHANNELS * self.cfg.reveal_checks + 2 * self.n * self.cfg.public_catches
+        return shape[:-1] + (shape[-1] + extra,)
 
     def _reveal(self, obs, s, checked):
-        if not self.cfg.reveal_checks:
-            return obs
-        return augment(obs, self.env, s.env_state, checked, s.since_check)
+        if self.cfg.reveal_checks:
+            obs = augment(obs, self.env, s.env_state, checked, s.since_check)
+        if self.cfg.public_catches:
+            obs = augment_catches(obs, s.since_caught)
+        return obs
 
     @partial(jax.jit, static_argnums=0)
     def reset(self, key):
@@ -174,13 +197,43 @@ class DecentralisedOverseer:
         return self.region_grid[locs[:, 0], locs[:, 1]]
 
     # ---------------------------------------------------------------- choosing
+    def _split(self, region):
+        """Proportional allocation's pieces: (R,) agents per region, (R,) floor(k N_r / N), (R,) remainder in units
+        of 1/N (k N_r mod N), and the number of checks left after the floors."""
+        counts = jnp.zeros(self.R, jnp.int32).at[region].add(1)
+        scaled = self.cfg.k * counts
+        floor = scaled // self.n
+        return counts, floor, scaled % self.n, self.cfg.k - floor.sum()
+
+    def budget(self, key, region):
+        """(R,) checks per region this step (region: (N,) each agent's region now)."""
+        R, alloc = self.R, self.cfg.region_alloc
+        if alloc == "fixed":
+            budget = self.base
+            if self.extra:
+                extra = jax.random.permutation(jax.random.fold_in(key, 7919), R)[:self.extra]
+                budget = budget.at[extra].add(1)
+            return budget
+        counts, floor, frac, left = self._split(region)
+        k_tie = jax.random.fold_in(key, 7919)
+        if alloc == "proportional":  # largest remainder; remainders are whole numbers, so u < 1 only breaks ties
+            score = frac + jax.random.uniform(k_tie, (R,))
+            rank = (score[None, :] > score[:, None]).sum(1)  # regions with a larger remainder
+            budget = floor + (rank < left)
+        else:  # systematic sampling at a random offset v / N: region r gets the points v + jN in [A_{r-1}, A_r)
+            v = jax.random.randint(k_tie, (), 0, self.n)
+            ends = self.cfg.k * jnp.cumsum(counts)
+            starts = ends - self.cfg.k * counts
+
+            def ceil_div(x):
+                return -((v - x) // self.n)
+            budget = ceil_div(ends) - ceil_div(starts)
+        return jnp.minimum(budget, counts).astype(jnp.int32)
+
     def _choose(self, key, s, region, loc_score):
         """(N,) bool checked, (R,) budget used this step."""
         n, c, R = self.n, self.cfg.chooser, self.R
-        budget = self.base
-        if self.extra:
-            extra = jax.random.permutation(jax.random.fold_in(key, 7919), R)[:self.extra]
-            budget = budget.at[extra].add(1)
+        budget = self.budget(key, region)
         mask = jnp.zeros(n, bool)
         if c == "none":
             return mask, jnp.zeros(R, jnp.int32)
@@ -230,6 +283,11 @@ class DecentralisedOverseer:
         idx = jnp.arange(n)
         p = jnp.zeros(n)
         share = self.extra / R
+        alloc = self.cfg.region_alloc
+        if alloc != "fixed":  # (R,) floor budgets and each region's chance of one check more
+            _, floor, frac, left = self._split(region)
+            up = topk_chance(frac.astype(jnp.float32), jnp.ones(R, bool), left) if alloc == "proportional" \
+                else frac / n
         for r in range(R):
             if self.kmax[r] == 0:
                 continue
@@ -247,8 +305,11 @@ class DecentralisedOverseer:
                     return targeted
                 return self.cfg.mixed_eps * flat + (1 - self.cfg.mixed_eps) * targeted
 
-            b = self.base[r]
-            p_r = chance(b) if not self.extra else (1 - share) * chance(b) + share * chance(b + 1)
+            if alloc == "fixed":
+                b = self.base[r]
+                p_r = chance(b) if not self.extra else (1 - share) * chance(b) + share * chance(b + 1)
+            else:
+                p_r = (1 - up[r]) * chance(floor[r]) + up[r] * chance(floor[r] + 1)
             p = p + p_r
         return p
 
@@ -350,7 +411,7 @@ class DecentralisedOverseer:
             env_state=env_state, aux=aux, frozen=frozen, since_check=jnp.where(checked, 0, s.since_check + 1),
             since_region_check=since_region_check, belief_since=belief_since, suspicion=suspicion,
             rr_ptr=self._next_rr(s, checked, region), window=window, win_suspect=win_suspect, win_clear=win_clear,
-            win_region=win_region, t=s.t + 1)
+            win_region=win_region, t=s.t + 1, since_caught=jnp.where(caught, 0, s.since_caught + 1))
         s_next = jax.tree.map(lambda fresh, cur: jnp.where(done, fresh, cur), self._fresh(env_state), s_next)
 
         per_check = cfg.cost_per_check + cfg.cost_per_step_seen * cfg.window

@@ -345,3 +345,34 @@ def test_formulation_job_lists_parse_with_the_trainer(trainer):
                 assert os.path.exists(a.inspector_table), a.inspector_table
             names.append(run)
     assert len(names) == len(set(names))
+
+
+def test_x6_x7_x10_job_lists_parse_with_the_trainer(trainer):
+    """X6, X7, X10 (notes/formulation/05_formulation.md sections 5.6-5.8), 26 Nov: every line parses into a valid
+    overseer; names are unique and do not clash with X1-X4; each arm has the options its prediction needs."""
+    from experiments.socialjax import formulation_runs as f
+    names = []
+    for lst, n in (("x6", 12), ("x7", 6), ("x10", 3)):
+        rows = list(f.LISTS[lst]())
+        assert len(rows) == n, lst
+        for run, args in rows:
+            a = trainer.parser().parse_args(["--out", "x"] + shlex.split(args))
+            DecConfig(k=a.k, chooser=a.chooser, window=a.window, regions=a.regions, region_alloc=a.region_alloc,
+                      public_catches=a.public_catches)
+            assert a.k == 2 and a.k / 7 * a.penalty_apples == pytest.approx(1.0), run
+            assert not a.reveal_checks and not a.separate_nets and a.total_steps == 1e8, run
+            if lst == "x6":
+                assert a.env == "harvest" and a.chooser == "random" and a.regions in (2, 4), run
+                tag = {"proportional": "DP", "proportional_random": "DPU"}[a.region_alloc]
+                assert run.startswith(f"{tag}_R{a.regions}_random_k2_c1.0_seed"), run
+            if lst == "x7":
+                assert a.env == "harvest" and a.public_catches and a.regions == 1 and a.region_alloc == "fixed", run
+                assert run.startswith(f"PC_central_{a.chooser}_k2_c1.0_seed") and a.chooser in ("history", "random")
+            if lst == "x10":
+                assert a.env == "cleanup" and a.clean_window == 25 and a.window == 50 >= a.clean_window, run
+                assert a.chooser == "random" and a.cost_per_step_seen == 0.01 and a.region_alloc == "fixed", run
+            if lst != "x7":
+                assert not a.public_catches, run
+            names.append(run)
+    old = {r for lst in ("x1", "x2", "x3", "x4") for r, _ in f.LISTS[lst]()}
+    assert len(names) == len(set(names)) and not set(names) & old
