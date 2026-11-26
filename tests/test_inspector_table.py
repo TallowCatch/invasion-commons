@@ -274,3 +274,47 @@ def test_inverted_table_h3b():
         assert a.inspector_table.endswith("gpt-oss-20b_inverted.json") and a.miss_rate == 0
         names.append(name)
     assert len(names) == len(set(names)) == 12
+
+
+def _check_x5(jobs, out_dir, fit):
+    import shlex
+    trainer = importlib.import_module("experiments.socialjax.train_ippo_overseer")
+    names = []
+    for name, args in jobs:
+        a = trainer.parser().parse_args(["--out", "x"] + shlex.split(args))
+        m = re.fullmatch(r"X5_qwen(\d+b)_(table|coin)_k1_c([\d.]+)_seed([123])", name)
+        assert m, name
+        tag = f"qwen2.5-{m.group(1)}_reason"
+        assert a.k == 1 and a.chooser == "random" and a.k / 7 * a.penalty_apples == pytest.approx(float(m.group(3)))
+        if m.group(2) == "table":
+            assert Path(a.inspector_table) == Path(out_dir) / "tables" / f"{tag}.json"
+            text = trainer.read_table(a.inspector_table)
+            DecConfig(k=a.k, chooser=a.chooser, inspector_table=text)
+            assert a.miss_rate == 0 and a.false_alarm == 0
+        else:
+            assert not (Path(out_dir) / "tables" / f"{tag}.json").exists() and not a.inspector_table
+            assert a.miss_rate == pytest.approx(fit[tag]["alpha"]["matched_pooled"], abs=5e-4)
+            assert a.false_alarm == pytest.approx(fit[tag]["beta"]["matched_pooled"], abs=5e-4)
+        names.append(name)
+    assert len(names) == len(set(names))
+    return names
+
+
+def test_x5_job_list_parses(tmp_path, monkeypatch):
+    """X5 (notes/formulation/x5_capability/): a judge with a table plays it, one without plays a coin flip at its
+    bank averages; k = 1, c in {1, 2}, seeds 1-3; every line parses with the trainer. Checked on a synthetic fit, then
+    on the real X5 fit once it exists (6 runs per judge, 30 in all)."""
+    from experiments.llm_overseer import error_pattern_runs as R
+    monkeypatch.chdir(ROOT)  # the table paths are relative to the repository root, as on CREATE
+    out = tmp_path / "x5"
+    (out / "tables").mkdir(parents=True)
+    (out / "tables" / "qwen2.5-14b_reason.json").write_text((ROOT / R.TABLES / "gpt-oss-20b_direct.json").read_text())
+    fit = {t: dict(alpha=dict(matched_pooled=0.1 + i / 10), beta=dict(matched_pooled=0.05)) for i, t in enumerate(R.X5_TAGS)}
+    (out / "fit.json").write_text(json.dumps(fit))
+    names = _check_x5(R.x5(out_dir=str(out)), out, fit)
+    assert len(names) == 30 and sum("_table_" in n for n in names) == 6
+    real = ROOT / R.X5_DIR / "fit.json"
+    if real.exists():
+        fit = json.loads(real.read_text())
+        tags = [t for t in R.X5_TAGS if t in fit]
+        assert len(_check_x5(R.x5(tags=tags), R.X5_DIR, fit)) == 6 * len(tags)
