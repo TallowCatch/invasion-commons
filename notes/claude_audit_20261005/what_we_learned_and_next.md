@@ -1,5 +1,11 @@
 # What we have learned, and what should come next
 
+## Update 20, 26 November 2026: 14-agent Harvest; all Phase 3 runs done
+
+- **H1 across scale** (F34): with 14 agents and k = 4 (same ρ as 7 agents, k = 2), outcomes per agent match the 7-agent runs.
+- **H7 mechanism** (F34): 4 regions collapse with 7 agents but mostly hold with 14; more agents per region smooth out the budget mismatch.
+- **Nothing is running on CREATE.** Decision for Ameer: the commons view (justified by F32) and H7's headcount-budget test.
+
 ## Update 19, 24 November 2026: formulation hypotheses H2, H3b and H6 answered
 
 - **H2** (F29): agents who see the checks dodge every predictable look policy completely (69–72 apples, as with no overseer); random looks lose nothing.

@@ -45,6 +45,7 @@ In words: the chance of being looked at, times the chance the inspector sees the
 
 **Still needed.**
 - The same test in a second game. **Clean Up (24 Nov): inconclusive.** c = 2 gives more apples and survival than c = 1 (188 vs 130 apples; alive 0.82 vs 0.52) but the seed ranges overlap (109–313 vs 75–227), learning was unstable at 1e8 steps, and H5 shows that in Clean Up even full compliance loses the orchard in 62% of games, so no ρ can fully protect it. Clean Up cannot test H1 cleanly under this rule. The 14-agent Harvest runs remain the second test.
+- **14-agent Harvest (26 Nov, 21 runs, 3 seeds): supported.** The map and the agents are doubled and the overseer checks k = 4 of 14, so ρ is the same as k = 2 of 7. Per agent the outcomes match the 7-agent runs: central random 61 vs 66 apples, repeat offenders first 64 vs 68, two regions 60–67 vs 63–65, all alive, 29% caught in both; no overseer 9.7 in both. So what matters is ρ, not N or k on their own. (This is the same game at twice the size, not a second game.)
 - A one-paragraph derivation of why learners would respond to ρ: the best response of an agent whose gain from one violation is fixed.
 
 **Status: keep. Mostly answered.**
@@ -256,6 +257,7 @@ Added 23 Nov at Ameer's request, before any run. It stays inside H3: it changes 
 - Sharing suspicion recovers most of the loss with separate networks.
 - *Bots and maths:* the locality results (F21).
 - Caveat: all learner runs so far hand records over for free.
+- *14 agents (26 Nov):* the 4-region split that collapses with 7 agents (11 apples per agent, dead, 18% inspected) mostly holds with 14 (40 per agent, alive in 78% of games, 25% inspected; with sharing 56, alive). More agents per region means less mismatch between a region's fixed budget and how many agents happen to be in it. This fits the claim's mechanism, but the claim's own test (budgets in proportion to headcount) is still not run.
 
 **Still needed.**
 - Headcount-proportional budgets: a small code change plus about 12 runs.

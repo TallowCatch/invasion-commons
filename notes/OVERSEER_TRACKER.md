@@ -52,6 +52,7 @@ One page for the budgeted-overseer work: an overseer that can only check a few a
 | 30 | **Separate networks end where shared ones do once trained long enough (H6)** | 3e8 steps: central random 447 vs shared 460; 2 overseers 438 vs 439; levelled off. The 1e8 gap (417, 347) was slow learning | solid for random looks, ordinary mode (6 runs) | `formulation/03_hypotheses.md` H6 |
 | 31 | **Clean Up: the rule can be obeyed while the commons dies, so inspecting individuals cannot protect it (H5)** | 54–72% of pollution crossings in overseen learner runs had no violation by anyone in the rule's 100-step window (Harvest: 0 of 580). Seven never-violating bots still lose the orchard in 62% of games | solid offline (21 runs + bots, 32 episodes each) | `formulation/h5_lpgf/results.md` §8 |
 | 32 | **A look shorter than the rule's window proves nothing (H9)** | Clean Up learners: w = 50 → 12 apples, dead, 0% proved (no overseer: 29); w = 150 → 130, alive 52%; w = 50 + presumed guilt → 312, alive 100%, 35 wrongful sanctions a game | solid direction (3 seeds; Clean Up learning unstable) | `formulation/03_hypotheses.md` H9 |
+| 33 | **Double the agents and the map at the same sanction ρ and the outcome per agent is the same (H1)**; splitting into 4 regions hurts much less with more agents per region (H7) | 14 agents, k = 4: 60–67 apples per agent, all alive, vs 63–68 with 7 agents, k = 2. 4 regions: 40 per agent, alive 78% (7 agents: 11, dead); with sharing 56, alive (7 agents: 26, alive 15%) | solid (21 runs, 3 seeds) | `formulation/03_hypotheses.md` H1, H7 |
 
 **Caveat on findings 12–16 and the 159 decentralised GPU runs (found 22 Nov).** In the current regional overseer (`overseer/socialjax/decentralised.py`), an agent's record of its last w steps travels with it, and any overseer's check reads all of it, including steps spent in other regions. So these results are for regional overseers that hand records over to each other for free. They measure only the loss from checks being in the wrong place, not the loss from evidence left behind when an agent crosses a boundary. The latter (the formulation's P_0 and claim D1) needs the local-records overseer being built on branch `claude/locality-scale`.
 
@@ -122,7 +123,7 @@ So far cost is counted in checks per game: 1 check per step is 1,000 checks a ga
 
 | What | Runs | Job |
 |---|---|---|
-| 14-agent Harvest (H1, H7) | 9 of 21 queued | 38811476 |
+| nothing running | all Phase 3 jobs done (26 Nov) | |
 
 Stages 2–3, the mistakes test, the 40 LLM-inspector runs, the Coins list and the trained-agent locality job are done (as of 23 Nov).
 
@@ -134,6 +135,8 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 - **The plan for using both testbeds:** `phd_plan/2026-11-21_way_forward.md` (written 21 Nov).
 
 ## Log
+
+- **26 Nov.** 14-agent Harvest done (finding 33, F34): H1 holds at twice the size; 4-region split recovers with more agents per region (H7 mechanism). All Phase 3 runs finished.
 
 - **24 Nov (later).** Clean Up analysed: H5 supported there (finding 31, F32: high LPGF, full compliance loses the orchard in 62% of games), H9 supported (finding 32, F33), H1 inconclusive in Clean Up. The commons view is now justified; decision for Ameer.
 

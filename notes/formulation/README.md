@@ -67,7 +67,7 @@ Nine hypotheses:
 
 | | Claim | Status |
 |---|---|---|
-| H1 | learners respond only through ρ; threshold ρ* | supported in Harvest; H1b refinement: spread matters with errors |
+| H1 | learners respond only through ρ; threshold ρ* | supported in Harvest, also at 14 agents (F34); refined to ρ(s) (F28, F30); Clean Up inconclusive |
 | H2 | the look policy matters only against agents who see the looks | **answered 24 Nov**: Δ ≈ 0 for random, about 400 apples for predictable looks (F29) |
 | H3 | learners exploit patterned misses | answered: outcome refuted, mechanism supported (F28); H3b supported (F30) |
 | H4 | misses change behaviour; false alarms only harm compliant agents | supported |
@@ -122,7 +122,7 @@ Nine hypotheses:
   - H5 (F32): high LPGF. 54–72% of pollution crossings had no violation in the rule's window; never-violating bots lose the orchard in 62% of games. The commons view is justified, per Decision 1. Taking it up is Ameer's call.
   - H9 (F33): w = 50 proves nothing; w = 150 partly protects; presumed guilt protects best at 35 wrongful sanctions a game.
   - H1 in Clean Up: inconclusive (unstable learning; full compliance itself fails).
-- **Still running:** 14-agent Harvest (H1, H7; 9 runs queued).
+- **14-agent Harvest analysed (26 Nov; F34).** H1 holds at twice the size (same ρ, same outcome per agent). The 4-region split mostly recovers with more agents per region, which fits H7's mechanism; H7's own test is still deferred. **All Phase 3 runs are done.**
 
 ### Phase 4: experiments (later)
 

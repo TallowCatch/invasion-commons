@@ -420,6 +420,15 @@ Started 14 October 2026.
 - **Caveats.** Seed spread is wide and some runs decline late in training; only every-seed differences are claimed.
 - **Evidence.** `results/create_pull/DU_*`.
 
+## F34. At the same sanction ρ, doubling the agents gives the same outcome per agent; a regional split hurts less when each region holds more agents [verified; 21 runs, 3 seeds, 26 Nov]
+
+- **Found** (Harvest on the doubled map, 14 agents, k = 4, 1-apple average sanction, so ρ equals the 7-agent k = 2 runs):
+  - Central random 61 apples per agent (7 agents: 66), repeat offenders first 64 (68), two regions 60–67 (63–65); all alive; 29% caught in both sizes. No overseer: 9.7 per agent in both.
+  - Four regions: 40 per agent, alive in 78% of games, 25% inspected (7 agents: 11, dead, 18%). With sharing: 56, alive (7 agents: 26, alive 15%).
+- **What it means.** H1 holds across scale: the outcome is set by ρ, not by N or k separately. The cost of splitting the overseer comes from fixed regional budgets meeting uneven crowds, which averages out with more agents per region (H7's mechanism).
+- **Caveats.** Same game at twice the size, not a second game. H7's direct test (headcount-proportional budgets) is not run.
+- **Evidence.** `results/create_pull/DL_*`.
+
 ---
 
 *Index entry:* this file is referenced from `what_we_learned_and_next.md` and from Ameer's Claude memory.
