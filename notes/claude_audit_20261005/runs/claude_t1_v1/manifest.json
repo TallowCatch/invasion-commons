@@ -1,0 +1,40 @@
+{
+ "experiment": "T1",
+ "profile": "full",
+ "params": {
+  "contexts": 64,
+  "train_contexts": 8,
+  "horizon": 80,
+  "reviewer_draws": 400,
+  "ref_draws": 2000
+ },
+ "river_profile": {
+  "contexts": 64,
+  "horizon": 80,
+  "closed_draws": 2000,
+  "open_draws": 4000,
+  "reviewer_draws": 400
+ },
+ "seeds": {
+  "fishery_pop": 1800000000,
+  "harvest_pop": 1810000000,
+  "weather": 1820000000,
+  "reviewer": 1830000000,
+  "reference": 1840000000,
+  "audit": 1845000000
+ },
+ "river_shift": 460000000,
+ "lie": 0.5,
+ "seconds": 20.893831253051758,
+ "n_episodes": 640,
+ "files": {
+  "episodes.jsonl.gz": "9a1d24c48cde3fdbde336855497be728f30bae0d0291d346c58e5731db561624"
+ },
+ "source": {
+  "experiments/oversight/run_t1_audit_targeting.py": "2aa176a9c0e97a00bab5c8855d2b5397ea9131ca583ad39917339d41eb4548c4",
+  "experiments/oversight/run_s3_threshold_timing_memory.py": "d142ccf1bcbbb0c7ab0ddba8f51262dfb8b6729a28959e02483b11c2a4aba36f",
+  "experiments/oversight/run_c1_compositional_harm.py": "c738dd116bd9ae9cda75b4c4125768543cc4ee33c2bd7d6b125950bacc22aad6",
+  "fishery_sim/two_reagent.py": "3828fc4c1727e5c26026817f0896af1fae3b543e8fc504eec0b69ee365823378",
+  "fishery_sim/calibrated_oversight.py": "6215379abd63e01e938a76784b27acf148d5810e274c534c8abf6dac9cdab712"
+ }
+}

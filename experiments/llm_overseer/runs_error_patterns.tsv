@@ -1,0 +1,36 @@
+E_gptoss20b_table_k1_c1.0_seed1	--k 1 --chooser random --penalty-apples 7.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 1
+E_gptoss20b_table_k1_c1.0_seed2	--k 1 --chooser random --penalty-apples 7.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 2
+E_gptoss20b_table_k1_c1.0_seed3	--k 1 --chooser random --penalty-apples 7.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 3
+E_gptoss20b_table_k1_c2.0_seed1	--k 1 --chooser random --penalty-apples 14.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 1
+E_gptoss20b_table_k1_c2.0_seed2	--k 1 --chooser random --penalty-apples 14.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 2
+E_gptoss20b_table_k1_c2.0_seed3	--k 1 --chooser random --penalty-apples 14.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 3
+E_gptoss20b_table_k7_c1.0_seed1	--k 7 --chooser random --penalty-apples 1.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 1
+E_gptoss20b_table_k7_c1.0_seed2	--k 7 --chooser random --penalty-apples 1.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 2
+E_gptoss20b_table_k7_c1.0_seed3	--k 7 --chooser random --penalty-apples 1.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 3
+E_gptoss20b_table_k7_c2.0_seed1	--k 7 --chooser random --penalty-apples 2.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 1
+E_gptoss20b_table_k7_c2.0_seed2	--k 7 --chooser random --penalty-apples 2.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 2
+E_gptoss20b_table_k7_c2.0_seed3	--k 7 --chooser random --penalty-apples 2.0 --inspector-table notes/llm_overseer/error_patterns/tables/gpt-oss-20b_direct.json --seed 3
+E_gptoss20b_coin_k1_c1.0_seed1	--k 1 --chooser random --penalty-apples 7.0 --miss-rate 0.215 --false-alarm 0.039 --seed 1
+E_gptoss20b_coin_k1_c1.0_seed2	--k 1 --chooser random --penalty-apples 7.0 --miss-rate 0.215 --false-alarm 0.039 --seed 2
+E_gptoss20b_coin_k1_c1.0_seed3	--k 1 --chooser random --penalty-apples 7.0 --miss-rate 0.215 --false-alarm 0.039 --seed 3
+E_gptoss20b_coin_k1_c2.0_seed1	--k 1 --chooser random --penalty-apples 14.0 --miss-rate 0.215 --false-alarm 0.039 --seed 1
+E_gptoss20b_coin_k1_c2.0_seed2	--k 1 --chooser random --penalty-apples 14.0 --miss-rate 0.215 --false-alarm 0.039 --seed 2
+E_gptoss20b_coin_k1_c2.0_seed3	--k 1 --chooser random --penalty-apples 14.0 --miss-rate 0.215 --false-alarm 0.039 --seed 3
+E_gptoss20b_coin_k7_c1.0_seed1	--k 7 --chooser random --penalty-apples 1.0 --miss-rate 0.215 --false-alarm 0.039 --seed 1
+E_gptoss20b_coin_k7_c1.0_seed2	--k 7 --chooser random --penalty-apples 1.0 --miss-rate 0.215 --false-alarm 0.039 --seed 2
+E_gptoss20b_coin_k7_c1.0_seed3	--k 7 --chooser random --penalty-apples 1.0 --miss-rate 0.215 --false-alarm 0.039 --seed 3
+E_gptoss20b_coin_k7_c2.0_seed1	--k 7 --chooser random --penalty-apples 2.0 --miss-rate 0.215 --false-alarm 0.039 --seed 1
+E_gptoss20b_coin_k7_c2.0_seed2	--k 7 --chooser random --penalty-apples 2.0 --miss-rate 0.215 --false-alarm 0.039 --seed 2
+E_gptoss20b_coin_k7_c2.0_seed3	--k 7 --chooser random --penalty-apples 2.0 --miss-rate 0.215 --false-alarm 0.039 --seed 3
+E_gptoss20b_coinov_k1_c1.0_seed1	--k 1 --chooser random --penalty-apples 7.0 --miss-rate 0.288 --false-alarm 0.042 --seed 1
+E_gptoss20b_coinov_k1_c1.0_seed2	--k 1 --chooser random --penalty-apples 7.0 --miss-rate 0.288 --false-alarm 0.042 --seed 2
+E_gptoss20b_coinov_k1_c1.0_seed3	--k 1 --chooser random --penalty-apples 7.0 --miss-rate 0.288 --false-alarm 0.042 --seed 3
+E_gptoss20b_coinov_k1_c2.0_seed1	--k 1 --chooser random --penalty-apples 14.0 --miss-rate 0.288 --false-alarm 0.042 --seed 1
+E_gptoss20b_coinov_k1_c2.0_seed2	--k 1 --chooser random --penalty-apples 14.0 --miss-rate 0.288 --false-alarm 0.042 --seed 2
+E_gptoss20b_coinov_k1_c2.0_seed3	--k 1 --chooser random --penalty-apples 14.0 --miss-rate 0.288 --false-alarm 0.042 --seed 3
+E_gptoss20b_coinov_k7_c1.0_seed1	--k 7 --chooser random --penalty-apples 1.0 --miss-rate 0.288 --false-alarm 0.042 --seed 1
+E_gptoss20b_coinov_k7_c1.0_seed2	--k 7 --chooser random --penalty-apples 1.0 --miss-rate 0.288 --false-alarm 0.042 --seed 2
+E_gptoss20b_coinov_k7_c1.0_seed3	--k 7 --chooser random --penalty-apples 1.0 --miss-rate 0.288 --false-alarm 0.042 --seed 3
+E_gptoss20b_coinov_k7_c2.0_seed1	--k 7 --chooser random --penalty-apples 2.0 --miss-rate 0.288 --false-alarm 0.042 --seed 1
+E_gptoss20b_coinov_k7_c2.0_seed2	--k 7 --chooser random --penalty-apples 2.0 --miss-rate 0.288 --false-alarm 0.042 --seed 2
+E_gptoss20b_coinov_k7_c2.0_seed3	--k 7 --chooser random --penalty-apples 2.0 --miss-rate 0.288 --false-alarm 0.042 --seed 3

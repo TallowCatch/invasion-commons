@@ -1,0 +1,40 @@
+{
+ "experiment": "S4-B",
+ "profile": "full",
+ "params": {
+  "contexts": 64,
+  "train_contexts": 8,
+  "horizon": 80,
+  "reviewer_draws": 400,
+  "ref_draws": 2000
+ },
+ "seeds": {
+  "fishery_pop": 1000000000,
+  "audit": 1045000000,
+  "detect": 1046000000,
+  "train_fishery_pop": 1050000000
+ },
+ "fine": 6.0,
+ "rates": [
+  0.01,
+  0.02,
+  0.05,
+  0.1,
+  0.16666666666666666,
+  0.3333333333333333
+ ],
+ "seconds": 7.102002143859863,
+ "n_episodes": 256,
+ "files": {
+  "episodes.jsonl.gz": "706c7e87e16b81e34d41caa8916eab10347ec6d37c1fe19d8bd772602c8ace86",
+  "adaptive_search.json": "51d79452720b670ab2766a8833f58fb73360eff56227fc4e1ae0e85f48c2291f"
+ },
+ "source": {
+  "fishery_sim/calibrated_oversight.py": "27fcea3db0fd795c7814f76eb7346113d6730478e4fa96147ee608122e85e909",
+  "experiments/oversight/claude_oversight_common.py": "6b57389392d0e8b6ba3326c8968ec5c566ece5904aecf92908cdd768b31e3594",
+  "experiments/oversight/run_s1_reporting_audit.py": "1bc444330d750e692f9b65f676827006430416eae70136ef09988aa9c6294ba7",
+  "experiments/oversight/run_s2_compliance_deterrence.py": "e95e2f399a7a909d0117e3db703233f6c61fa544185318527a52830fc5907819",
+  "experiments/oversight/run_s3_threshold_timing_memory.py": "e904ccbd17bf29744858cde3a4c49696032045a70ff40f7c15fc3a94ca238cd1",
+  "experiments/oversight/run_s4_adaptive_memory_cost.py": "fa2e5f7b13af29faa2c15db0daa9fb538920822b57da6929cf31618ade82fc12"
+ }
+}

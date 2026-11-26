@@ -4,8 +4,8 @@ import math
 import numpy as np
 import pandas as pd
 
-from experiments.analyze_budgeted_reviewer_confirmation import _cluster_interval, _difference
-from experiments.run_budgeted_reviewer_confirmation import jobs_for, plan
+from experiments.paper_v5.analyze_budgeted_reviewer_confirmation import _cluster_interval, _difference
+from experiments.paper_v5.run_budgeted_reviewer_confirmation import jobs_for, plan
 
 
 def test_confirmation_inventory_and_fresh_seeds():

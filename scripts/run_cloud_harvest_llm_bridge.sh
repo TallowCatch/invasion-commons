@@ -35,7 +35,7 @@ for model in ${MODELS}; do
   echo "Pulling model: ${model}"
   ollama pull "${model}"
   echo "Generating strategy bank: ${model}"
-  python -m experiments.build_harvest_strategy_bank \
+  python -m experiments.archive.harvest_2026q2.build_harvest_strategy_bank \
     --providers ollama \
     --models "${model}" \
     --attitudes cooperative,exploitative \

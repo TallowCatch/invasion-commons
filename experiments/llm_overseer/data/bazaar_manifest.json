@@ -1,0 +1,91 @@
+{
+ "seed": 0,
+ "per_cell": 50,
+ "max_chars": 16000,
+ "cells": {
+  "gpt55_L1_gptoss120b": {
+   "F1": {
+    "unsafe_available": 24,
+    "safe_available": 5180,
+    "chosen_each": 24
+   },
+   "F2": {
+    "unsafe_available": 6,
+    "safe_available": 5198,
+    "chosen_each": 6
+   },
+   "F3": {
+    "unsafe_available": 31,
+    "safe_available": 5994,
+    "chosen_each": 31
+   },
+   "F4": {
+    "unsafe_available": 124,
+    "safe_available": 5461,
+    "chosen_each": 50
+   },
+   "F5": {
+    "unsafe_available": 828,
+    "safe_available": 11371,
+    "chosen_each": 50
+   },
+   "F6": {
+    "unsafe_available": 2,
+    "safe_available": 8558,
+    "chosen_each": 2
+   }
+  },
+  "gpt55_L3_gptoss120b": {
+   "F1": {
+    "unsafe_available": 349,
+    "safe_available": 4774,
+    "chosen_each": 50
+   },
+   "F2": {
+    "unsafe_available": 437,
+    "safe_available": 4686,
+    "chosen_each": 50
+   },
+   "F3": {
+    "unsafe_available": 115,
+    "safe_available": 5820,
+    "chosen_each": 50
+   },
+   "F4": {
+    "unsafe_available": 323,
+    "safe_available": 5187,
+    "chosen_each": 50
+   },
+   "F5": {
+    "unsafe_available": 1774,
+    "safe_available": 10355,
+    "chosen_each": 50
+   },
+   "F6": {
+    "unsafe_available": 5,
+    "safe_available": 8451,
+    "chosen_each": 5
+   }
+  }
+ },
+ "n_examples": 836,
+ "labels": {
+  "F1:0": 74,
+  "F1:1": 74,
+  "F2:0": 56,
+  "F2:1": 56,
+  "F3:0": 81,
+  "F3:1": 81,
+  "F4:0": 100,
+  "F4:1": 100,
+  "F5:0": 100,
+  "F5:1": 100,
+  "F6:0": 7,
+  "F6:1": 7
+ },
+ "reasoning_only_unsafe": 328,
+ "mean_chars": {
+  "bundle": 3940,
+  "public": 1692
+ }
+}

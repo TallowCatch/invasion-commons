@@ -1,0 +1,16 @@
+\begin{tabular}{@{}lccc@{}}
+\toprule
+ & \textsc{Fishery} & \textsc{Forest} & \textsc{River} \\
+\midrule
+Resource & one fish stock (max 100) & 6 forest plots in a ring (max 20 each) & river quality (max 100) \\
+Dynamics & regrows (logistic), $r=0.7$ & regrows, $r=0.48$, random weather & recovers, $r=1$, random weather \\
+How harm combines & added up (shared stock) & over-cutting damages neighbouring plots & two pollutants, harmful mainly together ($\kappa XY$) \\
+Agents & 6, of which 2 or 4 greedy & 6, of which 2 or 4 greedy & 6, 3 per pollutant \\
+Max request per agent & 6 per step & 6 per step & 1 per step \\
+Safety line & stock stays $\geq 10$ & $\leq$5\% chance mean plot health $<10$ & $\leq$5\% chance quality $<30$ \\
+Productive target (MSY) & leave $\geq 50$ after harvest & --- & --- \\
+Can cheating pay? & yes & no (damage falls on own plot) & not tested \\
+Steps per run; populations tested & 80 steps, 64 & 80 steps, 64 & 80 steps, 64 \\
+Studies & R1, S1--S5, R2, L1 & R1, S1, S1b, S3, R2 & C1 \\
+\bottomrule
+\end{tabular}

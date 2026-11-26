@@ -80,7 +80,7 @@ jobs:
           import os
           from pathlib import Path
 
-          from experiments.threshold_replay_shards import github_threshold_matrix_payload
+          from experiments.archive.harvest_2026q2.threshold_replay_shards import github_threshold_matrix_payload
 
           request_path = Path(os.environ.get("REQUEST_FILE", ""))
           request = json.loads(request_path.read_text()) if request_path.exists() else {}
@@ -144,7 +144,7 @@ jobs:
         env:
           SHARDS_JSON: ${{ matrix.shards_json }}
         run: |
-          python -m experiments.run_threshold_replay_shard_group \
+          python -m experiments.archive.harvest_2026q2.run_threshold_replay_shard_group \
             --shards-json "$SHARDS_JSON" \
             --output-root "${{ needs.define-matrix.outputs.output_root }}"
 
@@ -178,14 +178,14 @@ jobs:
 
       - name: Merge threshold replay shards
         run: |
-          python -m experiments.merge_threshold_replay_shards \
+          python -m experiments.archive.harvest_2026q2.merge_threshold_replay_shards \
             --input-dir downloaded \
             --merged-prefix "${{ needs.define-matrix.outputs.merged_prefix }}" \
             --summary-csv "${{ needs.define-matrix.outputs.summary_csv }}"
 
       - name: Analyze threshold replay grid
         run: |
-          python -m experiments.analyze_threshold_replay_grid \
+          python -m experiments.paper_v5.analyze_threshold_replay_grid \
             --input-csv "${{ needs.define-matrix.outputs.summary_csv }}" \
             --output-prefix "${{ needs.define-matrix.outputs.analysis_prefix }}"
 

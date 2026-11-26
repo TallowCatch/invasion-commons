@@ -1,0 +1,5 @@
+hypothesis,verdict,point_claim,p_boot,p_holm,holm_threshold,holm_reject,contexts_with_class,descriptive_only,statement
+C1-H1,not supported,False,1.0,1.0,0.025,False,56,False,"Additive control, open loop: quota within 3 points of joint on both error rates."
+C1-H2,supported,True,0.00024993751562109475,0.000999750062484379,0.0125,True,58,False,"Compositional game, open loop: quota approves > 5% of risky requests or cuts > 20% of safe ones."
+C1-H3,supported,True,0.00024993751562109475,0.000999750062484379,0.016666666666666666,True,64,False,"Compositional game, open loop: local_optimistic approves > 20% of risky requests, joint < 2%."
+C1-H4,not supported,False,1.0,1.0,0.05,False,64,False,"Compositional game, Part B: targeted audits give fewer unsafe steps than random audits, paired interval excluding 0."

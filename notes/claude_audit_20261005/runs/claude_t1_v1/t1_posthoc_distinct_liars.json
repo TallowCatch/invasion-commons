@@ -1,0 +1,30 @@
+{
+ "fishery_random": {
+  "share_of_liars_ever_caught": 1.0,
+  "harm_check": 0.073828125
+ },
+ "fishery_report": {
+  "share_of_liars_ever_caught": 0.25,
+  "harm_check": 0.9619140625
+ },
+ "harvest_random": {
+  "share_of_liars_ever_caught": 1.0,
+  "harm_check": 0.0126953125
+ },
+ "harvest_report": {
+  "share_of_liars_ever_caught": 0.484375,
+  "harm_check": 0.0138671875
+ },
+ "harvest_signal": {
+  "share_of_liars_ever_caught": 1.0,
+  "harm_check": 0.005078125
+ },
+ "river_random": {
+  "share_of_liars_ever_caught": 1.0,
+  "harm_check": 0.027929687500000005
+ },
+ "river_report": {
+  "share_of_liars_ever_caught": 0.7578125,
+  "harm_check": 0.0603515625
+ }
+}

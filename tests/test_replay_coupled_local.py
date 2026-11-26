@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from experiments.plot_reviewer_decisions import estimate
-from experiments.replay_coupled_local import replay_case
+from experiments.paper_v5.plot_reviewer_decisions import estimate
+from experiments.paper_v5.replay_coupled_local import replay_case
 from fishery_sim.budgeted_oversight import decide_budgeted_fishery, mask_requests
 from fishery_sim.config import FisheryConfig
 from fishery_sim.fishery_oversight import FisherySnapshot
