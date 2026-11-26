@@ -13,6 +13,7 @@ The work to define the overseer properly before running more experiments. Starte
 | `lit/C_our_prior_formulations.md` | our own June–July and Oct–Nov formulations and what to keep from each | done |
 | `02_overseer_definition.md` | the overseer defined as a player: look, judge, respond, share; capability; several overseers; timing; objectives; evaluation; testbed criteria; choice and justification; notation | draft 1, awaiting Ameer's two decisions (§10) |
 | `02a_one_pager.md` | the definition on one page, for Yali | draft 1 |
+| `04_feedback_evidence_next.md` | every piece of supervisor feedback against what we have; evidence grades (3 seeds = p floor 0.10); optimised overseer; WP1–WP5; devil's advocate; decisions | draft 1 (26 Nov), awaiting Ameer's four decisions |
 | `03_hypotheses.md` | hypotheses H1–H9 with predictions, falsifiers, evidence and needs; every experiment mapped (keep, drop, gap, redesign) | draft 1, awaiting Ameer's four decisions |
 
 The writing style for all of these is in the `formulation-explainer` skill (`~/.claude/skills/formulation-explainer/SKILL.md`).
