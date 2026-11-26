@@ -123,7 +123,11 @@ So far cost is counted in checks per game: 1 check per step is 1,000 checks a ga
 
 | What | Runs | Job |
 |---|---|---|
-| nothing running | all Phase 3 jobs done (26 Nov) | |
+| X2 ε sweep, sanction vs predictability (Props 5.3–5.5) | 33 | 38898974 |
+| X4 Clean Up full inspection (Prop 5.11) | 6 | 38898975 |
+| X3 k = 1 vs 7 at 3e8 (spread) | 6 | 38898976 |
+| X1 seeds 4–5 on key arms | 56 | 38898979 |
+| X5 judges 3B–72B; X6, X7, X10 | agents | branches `claude/x5-capability-curve`, `claude/x6-x7-x10` |
 
 Stages 2–3, the mistakes test, the 40 LLM-inspector runs, the Coins list and the trained-agent locality job are done (as of 23 Nov).
 
@@ -135,6 +139,8 @@ Nodes comp035 and comp040 have broken GPUs and are excluded.
 - **The plan for using both testbeds:** `phd_plan/2026-11-21_way_forward.md` (written 21 Nov).
 
 ## Log
+
+- **26 Nov (later).** Formulation draft 2 (`formulation/05_formulation.md`, Griffin-style) with pre-registered predictions; X1–X4 submitted (101 runs); X5–X7, X10 started by agents.
 
 - **26 Nov.** 14-agent Harvest done (finding 33, F34): H1 holds at twice the size; 4-region split recovers with more agents per region (H7 mechanism). All Phase 3 runs finished.
 

@@ -14,6 +14,7 @@ The work to define the overseer properly before running more experiments. Starte
 | `02_overseer_definition.md` | the overseer defined as a player: look, judge, respond, share; capability; several overseers; timing; objectives; evaluation; testbed criteria; choice and justification; notation | draft 1, awaiting Ameer's two decisions (§10) |
 | `02a_one_pager.md` | the definition on one page, for Yali | draft 1 |
 | `04_feedback_evidence_next.md` | every piece of supervisor feedback against what we have; evidence grades (3 seeds = p floor 0.10); optimised overseer; WP1–WP5; devil's advocate; decisions | draft 1 (26 Nov), awaiting Ameer's four decisions |
+| `05_formulation.md` | **draft 2 of the formulation**: Budgeted Oversight Games, written in the structure of Griffin et al. 2024; propositions 5.1–5.12 each with a prediction written before its runs; experiments X1–X10 | draft 2 (26 Nov); results pending |
 | `03_hypotheses.md` | hypotheses H1–H9 with predictions, falsifiers, evidence and needs; every experiment mapped (keep, drop, gap, redesign) | draft 1, awaiting Ameer's four decisions |
 
 The writing style for all of these is in the `formulation-explainer` skill (`~/.claude/skills/formulation-explainer/SKILL.md`).
@@ -125,6 +126,14 @@ Nine hypotheses:
   - H1 in Clean Up: inconclusive (unstable learning; full compliance itself fails).
 - **14-agent Harvest analysed (26 Nov; F34).** H1 holds at twice the size (same ρ, same outcome per agent). The 4-region split mostly recovers with more agents per region, which fits H7's mechanism; H7's own test is still deferred. **All Phase 3 runs are done.**
 
-### Phase 4: experiments (later)
+### Phase 4: formulation draft 2 and the experiments that test it (26 Nov 2026)
+
+- **Ameer (26 Nov):** focus on the formulation; write it so we know the outcome before testing; run the experiments it needs, including ones not yet done; act on all of Yali's feedback; follow the format of Griffin et al. 2024 (the attached PDF).
+- **`05_formulation.md`** written: the game (Definition 3.1), oversight equilibrium (3.2), realised sanction and capability gap (3.3), the SocialJax instances, and propositions 5.1–5.12 with predictions.
+- **Submitted to CREATE (26 Nov):** X2 ε sweep and sanction vs predictability (33 runs, job 38898974); X4 Clean Up full inspection (6, 38898975); X3 k = 1 vs 7 at 3e8 (6, 38898976); X1 seeds 4–5 on 28 key arms (56, 38898979).
+- **Started with helper agents:** X5 capability curve (Qwen 2.5 3B–72B judges on CREATE, branch `claude/x5-capability-curve`); X6 regional headcount budgets, X7 public catches, X10 stricter Clean Up rule (branch `claude/x6-x7-x10`).
+- **Desk work:** X8 cost frontier (after X5), X9 BazaarBench as an instance of the game.
+
+### Phase 5: experiments (later)
 
 Only those Phase 3 requires.
