@@ -44,6 +44,7 @@ SERVER=$!
 trap 'kill $SERVER 2>/dev/null || true' EXIT
 for i in $(seq 60); do curl -sf "http://$OLLAMA_HOST/api/version" >/dev/null && break; sleep 2; done
 "$OLL/bin/ollama" --version
+"$OLL/bin/ollama" list | grep -q "^$OLLAMA_NAME " || { echo "$OLLAMA_NAME is not pulled into $OLLAMA_MODELS; stopping"; exit 1; }
 # Load the model with the judging context (4,096 = prompt of about 500 tokens + up to 2,048 out) and stop if any of it
 # lands on the CPU, which would make the run crawl.
 curl -sf "http://$OLLAMA_HOST/api/generate" -d "{\"model\": \"$OLLAMA_NAME\", \"prompt\": \"\", \"keep_alive\": -1, \"options\": {\"num_ctx\": 4096}}" >/dev/null
